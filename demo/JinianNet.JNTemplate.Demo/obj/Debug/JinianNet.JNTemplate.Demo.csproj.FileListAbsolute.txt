@@ -1,0 +1,8 @@
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\bin\JinianNet.JNTemplate.Demo.dll
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\bin\JinianNet.JNTemplate.Demo.pdb
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\bin\JinianNet.JNTemplate.dll
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\bin\System.Data.SQLite.DLL
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\bin\JinianNet.JNTemplate.pdb
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\obj\Debug\JinianNet.JNTemplate.Demo.csprojResolveAssemblyReference.cache
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\obj\Debug\JinianNet.JNTemplate.Demo.dll
+F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\demo\JinianNet.JNTemplate.Demo\obj\Debug\JinianNet.JNTemplate.Demo.pdb

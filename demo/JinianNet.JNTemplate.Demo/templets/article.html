@@ -1,0 +1,30 @@
+﻿$set(Model = cmd.GetArticle("id"))
+$if(cmd.IsNull(Model))
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>$Error - JNTemplate(JNT) - Best template engine</title>
+<body>
+    对不起，内容不存在!
+</body>
+</html>
+$else
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>$Model.Title - JNTemplate(JNT) - Best template engine</title>
+</head>
+<body>
+    $Load("header.html")
+    <h5>$Model.Title</h5>
+    <div style="text-align:right">时间：$Model.CreateTime 点击：$Model.Click</div>
+    <div style="padding:20px; line-break:25px;">
+        $Model.Content
+    </div>
+    $Load("footer.html")
+</body>
+</html>
+
+$end

@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>JNTemplate(JNT) - Best template engine</title>
+</head>
+<body>
+    $Load("header.html")
+    <!--加载其它页-->
+    $set(item = cmd.Execute("select [ID],[Title] from JNC_Category where [TypeID]=1 Order by [ID] desc"))
+    <!--嵌套循环-->
+    $foreach(e in item)
+        <dl>
+            <dt>$e.Title</dt>
+            $set(view = cmd.Execute("select [ID],[Title] from JNC_Article where [ChannelID]="+e.ID+" Order by [Rank] desc,ID desc Limit 10"))
+            $foreach(node in view)
+                <!--逻辑处理-->
+                <!--注意 ForeachIndex 是$foreach循环时内建的一个变量，从1开始计数，而不是常见的索引一样从0开始 -->
+                $if(ForeachIndex%2==0)
+                <dd style="background-color:#f5f5f5">
+                $else
+                <dd>
+                $end
+
+                $if(ForeachIndex<4) 
+                    <!--前3行显示 HOT 标识-->
+                    <a href="Article.aspx?id=${node.ID}">$node.Title</a> <span style="color:#f00">HOT</span>
+                $else
+                    <a href="Article.aspx?id=${node.ID}">$node.Title</a>
+                $end
+                </dd>
+            $end
+            <!--逻辑处理-->
+            $if(view.Rows.Count==0)
+            <dd>暂无数据</dd>    
+            $end
+        </dl>
+    $end
+    $Load("footer.html")
+</body>
+</html>
