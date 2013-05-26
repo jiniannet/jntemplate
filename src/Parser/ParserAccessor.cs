@@ -202,15 +202,26 @@ namespace JinianNet.JNTemplate.Parser
 
         public static object GetIndexedProperty(object container, bool isNumber, object propIndex)
         {
-            Array array = container as Array;
-            if ((array != null) && isNumber)
-            {
-                return array.GetValue((Int32)propIndex);
-            }
-            if ((container is IList) && isNumber)
+            //Array array = container as Array;
+            //if ((array != null) && isNumber)
+            //{
+            //    return array.GetValue((Int32)propIndex);
+            //}
+            if (isNumber && (container is IList))
             {
                 return ((IList)container)[(Int32)propIndex];
             }
+            if(container is System.Data.DataRowView){
+                if (isNumber)
+                {
+                    return ((System.Data.DataRowView)container)[(Int32)propIndex];
+                }
+                else
+                {
+                    return ((System.Data.DataRowView)container)[propIndex.ToString()];
+                }
+            }
+            //System.Data.DataRowView
             PropertyInfo info = container.GetType().GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
             if (info == null)
             {
