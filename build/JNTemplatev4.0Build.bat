@@ -1,9 +1,19 @@
-cd ..
-cd bin
-rd /s /q 4.0
-md 4.0
-cd ..
-cd src
-C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\csc /target:library /out:../bin/4.0/JinianNet.JNTemplate.dll /warn:0 /nologo /o /recurse:*.cs
-cd ..\build
-echo Éú³ÉÍê±Ï...
+@echo off
+
+set fdir=%WINDIR%\Microsoft.NET\Framework64
+
+if not exist %fdir% (
+	set fdir=%WINDIR%\Microsoft.NET\Framework
+)
+
+set msbuild=%fdir%\v4.0.30319\msbuild.exe
+
+%msbuild% ..\src\JinianNet.JNTemplate.csproj /p:Configuration=Release /t:Rebuild /p:OutputPath=..\bin\4.0\Release
+
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO RMDIR /S /Q "%%G"
+
+%msbuild% ..\src\JinianNet.JNTemplate.csproj /p:Configuration=Debug /t:Rebuild /p:OutputPath=..\bin\4.0\Debug
+
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO RMDIR /S /Q "%%G"
+
+pause
