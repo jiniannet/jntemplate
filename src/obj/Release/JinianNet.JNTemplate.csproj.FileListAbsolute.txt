@@ -3,3 +3,5 @@ F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\src\bin\Release\JinianNe
 F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\src\obj\Release\JinianNet.JNTemplate.csprojResolveAssemblyReference.cache
 F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\src\obj\Release\JinianNet.JNTemplate.dll
 F:\LPF\JinianNet.JNTemplate.GITHUB\JinianNet.JNTemplate\src\obj\Release\JinianNet.JNTemplate.pdb
+F:\lpf\jiniannet.jntemplate.github\JinianNet.JNTemplate\bin\4.0\Release\JinianNet.JNTemplate.dll
+F:\lpf\jiniannet.jntemplate.github\JinianNet.JNTemplate\bin\4.0\Release\JinianNet.JNTemplate.pdb
