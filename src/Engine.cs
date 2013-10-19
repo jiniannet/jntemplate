@@ -17,49 +17,90 @@ namespace JinianNet.JNTemplate
 
         #region IEngine 成员
 
-        private VariableScope _variableScope;
+        [Obsolete("模板初始数据，请直接在TemplateContext中配置该属性！")]
         public VariableScope VariableScope
         {
-            get { return _variableScope; }
-            set { _variableScope =value; }
+            get { return _ctx.TempData; }
+            private set { _ctx.TempData = value; }
         }
 
-        private String _currentPath;
+        [Obsolete("模板路径，请直接在TemplateContext中配置该属性！")]
         public String CurrentPath
         {
-            get { return _currentPath; }
-            set { _currentPath =value; }
+            get { return _ctx.CurrentPath; }
+            set { _ctx.CurrentPath = value; }
         }
-        private Encoding _charset;
+
+        [Obsolete("默认模板编码，请直接在TemplateContext中配置该属性！")]
         public Encoding Charset
         {
-            get { return _charset; }
-            set { _charset =value; }
+            get { return _ctx.Charset; }
+            set { _ctx.Charset = value; }
         }
+
+        private TemplateContext _ctx;
 
 
         public Engine()
-            : this(null, Encoding.UTF8)
+            : this(null)
         {
 
         }
 
         public Engine(String path, Encoding charset)
+            : this(new TemplateContext())
         {
-            _currentPath = path;
-            _charset = charset;
-            _variableScope = new VariableScope();
+            if (!string.IsNullOrEmpty(path))
+            {
+                _ctx.Paths.Add(path);
+            }
+            _ctx.Charset = charset;
+        }
+
+        public Engine(TemplateContext context)
+        {
+            if (context == null)
+            {
+                _ctx = new TemplateContext();
+            }
+            else
+            {
+                _ctx = context;
+            }
         }
 
         public ITemplate CreateTemplate()
         {
-            TemplateContext context =new TemplateContext();
-            context.Charset = _charset;
-            context.CurrentPath = _currentPath;
-            context.TempData = new VariableScope(_variableScope);
+            return CreateTemplate(null, _ctx.Charset);
+        }
 
-            Template template = new Template(context,null);
-            template.Context = context;
+        public ITemplate CreateTemplate(string path)
+        {
+            return CreateTemplate(path,_ctx.Charset);
+        }
+
+        public ITemplate CreateTemplate(string path, Encoding encoding)
+        {
+            Template template = new Template(TemplateContext.CreateContext(_ctx), null);
+            if (encoding != null)
+            {
+                template.Context.Charset = encoding;
+            }
+            if (!string.IsNullOrEmpty(path))
+            {
+                String fullPath = path;
+                Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);
+                if (index == -1)
+                {
+                    if (Resources.FindPath(template.Context.Paths.ToArray(), path, out fullPath) == -1)
+                    {
+                        return template;
+                    }
+                }
+
+                template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
+            }
+
             return template;
         }
 

@@ -12,7 +12,7 @@ using JinianNet.JNTemplate.Parser;
 
 namespace JinianNet.JNTemplate
 {
-    public class ContextBase
+    public class ContextBase : ICloneable
     {
         private VariableScope variableScope;
         public VariableScope TempData
@@ -25,5 +25,14 @@ namespace JinianNet.JNTemplate
         {
             variableScope = new VariableScope();
         }
+
+        #region ICloneable ≥…‘±
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        #endregion
     }
 }

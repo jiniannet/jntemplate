@@ -25,26 +25,42 @@ namespace JinianNet.JNTemplate
             this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.FunctionAnalyzer());
             this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.VariableAnalyzer());
             this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.ExpressionAnalyzer());
+            this.Paths = new List<string>();
         }
 
         private String _currentPath;
         public String CurrentPath
         {
             get { return _currentPath; }
-            set { _currentPath =value; }
+            set { _currentPath = value; }
         }
         private Encoding _charset;
         public Encoding Charset
         {
             get { return _charset; }
-            set { _charset =value; }
+            set { _charset = value; }
         }
 
         private Analyzers _analyzer;
         public Analyzers Analyzer
         {
             get { return _analyzer; }
-            set { _analyzer = value; }
+            private set { _analyzer = value; }
         }
+
+        private List<string> _paths;
+        public List<string> Paths
+        {
+            get { return _paths; }
+            private set { _paths = value; }
+        }
+
+        public static TemplateContext CreateContext(TemplateContext context)
+        {
+            TemplateContext ctx = (TemplateContext)context.Clone();
+            ctx.TempData = new VariableScope(context.TempData);
+            return ctx;
+        }
+
     }
 }

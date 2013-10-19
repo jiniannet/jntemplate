@@ -1,0 +1,88 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3744DD16-5A83-4C50-B711-74EA11DA6B27}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JinianNet.JNTemplate</RootNamespace>
+    <AssemblyName>JinianNet.JNTemplate</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\JinianNet.JNTemplate.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Application.cs" />
+    <Compile Include="BuildManager.cs" />
+    <Compile Include="ContextBase.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="EngineCollection.cs" />
+    <Compile Include="Field.cs" />
+    <Compile Include="IEngine.cs" />
+    <Compile Include="ITemplate.cs" />
+    <Compile Include="Parser\Analyzers.cs" />
+    <Compile Include="Parser\Calculator.cs" />
+    <Compile Include="Parser\CharScanner.cs" />
+    <Compile Include="Parser\Node\ComplexTag.cs" />
+    <Compile Include="Parser\Node\Element.cs" />
+    <Compile Include="Parser\Node\ExpressionTag.cs" />
+    <Compile Include="Parser\Node\ForeachTag.cs" />
+    <Compile Include="Parser\Node\FunctaionTag.cs" />
+    <Compile Include="Parser\Node\IfTag.cs" />
+    <Compile Include="Parser\Node\IncludeTag.cs" />
+    <Compile Include="Parser\Node\LoadTag.cs" />
+    <Compile Include="Parser\Node\NoActionTag.cs" />
+    <Compile Include="Parser\Node\SetTag.cs" />
+    <Compile Include="Parser\Node\SimpleTag.cs" />
+    <Compile Include="Parser\Node\Tag.cs" />
+    <Compile Include="Parser\Node\TagCollection.cs" />
+    <Compile Include="Parser\Node\Token.cs" />
+    <Compile Include="Parser\Node\ValueTag.cs" />
+    <Compile Include="Parser\Node\VariableTag.cs" />
+    <Compile Include="Parser\ParserAccessor.cs" />
+    <Compile Include="Parser\TagAnalyzer.cs" />
+    <Compile Include="Parser\TemplateLexer.cs" />
+    <Compile Include="Parser\TemplateParser.cs" />
+    <Compile Include="Parser\VariableScope.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.cs" />
+    <Compile Include="Runtime.cs" />
+    <Compile Include="Template.cs" />
+    <Compile Include="TemplateContext.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

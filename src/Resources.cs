@@ -19,9 +19,33 @@ namespace JinianNet.JNTemplate
 
         }
 
-        public static String LoadResource(String path)
+        //public static String LoadResource(String path)
+        //{
+        //    return LoadResource(Runtime.BaseDirectory.ToArray(), path);
+        //}
+
+        public static int FindPath(String[] files, String path, out String fullPath)
         {
-            return LoadResource(Runtime.BaseDirectory.ToArray(), path);
+            fullPath = null;
+            if (!String.IsNullOrEmpty(path))
+            {
+                path = NormalizePath(path);
+                String sc = String.Concat(System.IO.Path.DirectorySeparatorChar.ToString(), System.IO.Path.DirectorySeparatorChar.ToString());
+                for (Int32 i = 0; i < files.Length && !String.IsNullOrEmpty(files[i]); i++)
+                {
+                    if (files[i][files[i].Length - 1] != System.IO.Path.DirectorySeparatorChar && path[0] != System.IO.Path.DirectorySeparatorChar)
+                        fullPath = String.Concat(files[i], System.IO.Path.DirectorySeparatorChar.ToString(), path);
+                    else
+                        fullPath = String.Concat(files[i], path);
+                    while (fullPath.Contains(sc))
+                    {
+                        fullPath.Replace(sc, System.IO.Path.DirectorySeparatorChar.ToString());
+                    }
+                    if (System.IO.File.Exists(fullPath))
+                        return i;
+                }
+            }
+            return -1;
         }
 
         public static String LoadResource(String[] files, String path)
@@ -31,24 +55,10 @@ namespace JinianNet.JNTemplate
 
         public static String LoadResource(String[] files, String path, Encoding encoding)
         {
-            if (!String.IsNullOrEmpty(path))
+            String full;
+            if (FindPath(files,path,out full) != -1)
             {
-                path = NormalizePath(path);
-                String sc = String.Concat(System.IO.Path.DirectorySeparatorChar.ToString(), System.IO.Path.DirectorySeparatorChar.ToString());
-                for (Int32 i = 0; i < files.Length && !String.IsNullOrEmpty(files[i]); i++)
-                {
-                    String value;
-                    if (files[i][files[i].Length - 1] != System.IO.Path.DirectorySeparatorChar && path[0] != System.IO.Path.DirectorySeparatorChar)
-                        value = String.Concat(files[i], System.IO.Path.DirectorySeparatorChar.ToString(), path);
-                    else
-                        value = String.Concat(files[i], path);
-                    while (value.Contains(sc))
-                    {
-                        value.Replace(sc, System.IO.Path.DirectorySeparatorChar.ToString());
-                    }
-                    if (System.IO.File.Exists(value))
-                        return Load(value, encoding);
-                }
+                return Load(full, encoding);
             }
             return null;
         }
