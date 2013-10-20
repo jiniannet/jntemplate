@@ -24,12 +24,12 @@ namespace JinianNet.JNTemplate.Parser.Node
             private set { _value = value; }
         }
 
-        public override void Parse(VariableScope vars, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
             Object[] value = new Object[this.Value.Count];
             for (Int32 i = 0; i < this.Value.Count; i++)
             {
-                value[i] = this.Value[i].Parse(vars);
+                value[i] = this.Value[i].Parse(context);
             }
             Calculator actuator = new Calculator();
             writer.Write(actuator.Calculate(new Calculator().ProcessExpression(value)));

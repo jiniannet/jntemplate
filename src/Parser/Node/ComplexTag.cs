@@ -12,11 +12,11 @@ namespace JinianNet.JNTemplate.Parser.Node
             
         }
 
-        public override Object Parse(VariableScope vars)
+        public override Object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {
-                this.Parse(vars, write);
+                this.Parse(context, write);
                 return write.ToString();
             }
         }

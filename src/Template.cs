@@ -61,7 +61,7 @@ namespace JinianNet.JNTemplate
 
                 while (parser.MoveNext())
                 {
-                    parser.Current.Parse(this.Context.TempData, writer);
+                    parser.Current.Parse(this.Context, writer);
                 }
             }
         }

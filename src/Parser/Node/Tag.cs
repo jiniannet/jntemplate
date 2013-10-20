@@ -16,9 +16,9 @@ namespace JinianNet.JNTemplate.Parser.Node
             
         }
 
-        public abstract Object Parse(VariableScope vars);
+        public abstract Object Parse(TemplateContext context);
 
-        public abstract void Parse(VariableScope vars,System.IO.TextWriter write);
+        public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
 
     }
 }

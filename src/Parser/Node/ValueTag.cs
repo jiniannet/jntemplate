@@ -32,7 +32,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { _value = value; }
         }
 
-        public override Object Parse(VariableScope vars)
+        public override Object Parse(TemplateContext context)
         {
             return this.Value;
         }

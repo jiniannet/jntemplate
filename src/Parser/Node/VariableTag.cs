@@ -23,9 +23,9 @@ namespace JinianNet.JNTemplate.Parser.Node
             private set { _name = value; }
         }
 
-        public override object Parse(VariableScope vars)
+        public override object Parse(TemplateContext context)
         {
-            return ParserAccessor.Eval(vars, this.Name);
+            return ParserAccessor.Eval(context.TempData, this.Name);
         }
     }
 }

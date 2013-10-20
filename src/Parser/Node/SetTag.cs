@@ -30,15 +30,15 @@ namespace JinianNet.JNTemplate.Parser.Node
         }
 
 
-        public override Object Parse(VariableScope vars)
+        public override Object Parse(TemplateContext context)
         {
-            vars[this.Name] = this.Value.Parse(vars);
+            context.TempData[this.Name] = this.Value.Parse(context);
             return null;
         }
 
-        public override void Parse(VariableScope vars, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
-            Parse(vars);
+            Parse(context);
         }
     }
 }

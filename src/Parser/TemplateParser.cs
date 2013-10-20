@@ -219,7 +219,6 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     LoadTag tag = new LoadTag(line, col);
                     tag.Path = parser.Parse(CopyTo(tokens, 2, tokens.Length - 1 - 2), line, col);
-                    tag.Context = this.context;
                     return tag;
                 }
 
@@ -257,7 +256,6 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     IncludeTag tag = new IncludeTag(line, col);
                     tag.Path = parser.Parse(CopyTo(tokens, 2, tokens.Length - 1 - 2), line, col);
-                    tag.Context = this.context;
                     return tag;
                 }
 

@@ -12,11 +12,6 @@ namespace JinianNet.JNTemplate
 {
     public class Runtime
     {
-        private static List<String> _baseDirectory = new List<string>();
-        public static List<String> BaseDirectory
-        {
-            get { return _baseDirectory; }
-            set { _baseDirectory =value; }
-        }
+
     }
 }

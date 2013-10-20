@@ -36,12 +36,12 @@ namespace JinianNet.JNTemplate.Parser.Node
 
 
 
-        public override object Parse(VariableScope vars)
+        public override object Parse(TemplateContext context)
         {
             Object[] args = new Object[this.Args.Count];
             for (Int32 i = 0; i < this.Args.Count; i++)
             {
-                args[i] = this.Args[i].Parse(vars);
+                args[i] = this.Args[i].Parse(context);
             }
 
             String[] list = this.Name.Split('.');
@@ -54,11 +54,11 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
             else if (list.Length == 1)
             {
-                value = vars[list[0]];
+                value = context.TempData[list[0]];
             }
             else
             {
-                value = vars;
+                value = context.TempData;
 
                 for (Int32 i = 0; i < list.Length - 1; i++)
                 {

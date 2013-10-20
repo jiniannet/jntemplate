@@ -33,30 +33,30 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { _value = value; }
         }
 
-        public override void Parse(VariableScope vars, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
             Object value;
             for (Int32 i = 0; i < this.Test.Count; i++)
             {
-                value =  this.Test[i].Parse(vars);
+                value =  this.Test[i].Parse(context);
 
                 if (value != null && "TRUE".Equals(value.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
-                    ParseCollection(this.Value[i], vars, writer);
+                    ParseCollection(this.Value[i], context, writer);
                     return;
                 }
             }
             if (this.Value.Count > this.Test.Count)
             {
-                ParseCollection(this.Value[this.Value.Count - 1], vars, writer);
+                ParseCollection(this.Value[this.Value.Count - 1], context, writer);
             }
         }
 
-        private void ParseCollection(TagCollection tags, VariableScope vars, System.IO.TextWriter write)
+        private void ParseCollection(TagCollection tags, TemplateContext context, System.IO.TextWriter write)
         {
             for (Int32 i = 0; i < tags.Count; i++)
             {
-                write.Write( tags[i].Parse(vars));
+                write.Write( tags[i].Parse(context));
             }
         }
     }

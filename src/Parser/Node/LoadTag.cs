@@ -24,24 +24,18 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { _path = value; }
         }
 
-        private TemplateContext _context;
-        public TemplateContext Context
-        {
-            get { return _context; }
-            set { _context = value; }
-        }
 
 
-        public override void Parse(VariableScope vars, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
-            String path = this.Path.Parse(vars).ToString();
+            String path = this.Path.Parse(context).ToString();
             if (!String.IsNullOrEmpty(path))
             {
-                TemplateLexer lexer = new TemplateLexer(Resources.LoadResource(new String[] { this.Context.CurrentPath }, path, this.Context.Charset));
-                TemplateParser parser = new TemplateParser(lexer.Parse(), this.Context.Analyzer);
+                TemplateLexer lexer = new TemplateLexer(Resources.LoadResource(context.Paths.ToArray(), path, context.Charset));
+                TemplateParser parser = new TemplateParser(lexer.Parse(), context.Analyzer);
                 while (parser.MoveNext())
                 {
-                    parser.Current.Parse(this.Context.TempData, writer);
+                    parser.Current.Parse(context, writer);
                 }
             }
         }

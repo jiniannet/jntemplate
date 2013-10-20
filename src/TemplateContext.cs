@@ -49,6 +49,9 @@ namespace JinianNet.JNTemplate
         }
 
         private List<string> _paths;
+        /// <summary>
+        /// Ä£°åËÑË÷Â·¾¶
+        /// </summary>
         public List<string> Paths
         {
             get { return _paths; }

@@ -71,7 +71,7 @@ namespace JinianNet.JNTemplate
 
         public ITemplate CreateTemplate()
         {
-            return CreateTemplate(null, _ctx.Charset);
+            return new Template(TemplateContext.CreateContext(_ctx), null);
         }
 
         public ITemplate CreateTemplate(string path)

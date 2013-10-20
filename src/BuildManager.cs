@@ -43,10 +43,21 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentException("ITemplate");
             }
 
-            if (path.Length > 3 && Char.IsLetter(path[0]) && path[1] == System.IO.Path.VolumeSeparatorChar && path[2] == System.IO.Path.DirectorySeparatorChar)
-                template.TemplateContent = Resources.Load(path, template.Context.Charset);
-            else
-                template.TemplateContent = Resources.LoadResource(new String[] { template.Context.CurrentPath }, path, template.Context.Charset);
+            if (!string.IsNullOrEmpty(path))
+            {
+                String fullPath = path;
+                Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);
+                if (index == -1)
+                {
+                    if (Resources.FindPath(template.Context.Paths.ToArray(), path, out fullPath) == -1)
+                    {
+                        return template;
+                    }
+                }
+
+                template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
+            }
+
             return template;
 
         }

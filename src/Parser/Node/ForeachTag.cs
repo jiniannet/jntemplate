@@ -39,26 +39,25 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { _source = value; }
         }
 
-        public override void Parse(VariableScope vars, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
-            IEnumerable enumerable = ParserAccessor.ToIEnumerable(this.Source.Parse(vars));
-
+            IEnumerable enumerable = ParserAccessor.ToIEnumerable(this.Source.Parse(context));
+            TemplateContext ctx;
             if (enumerable != null)
             {
                 IEnumerator ienum = enumerable.GetEnumerator();
-                VariableScope data = new VariableScope(vars);
+                ctx = TemplateContext.CreateContext(context);
                 Int32 i = 0;
                 while (ienum.MoveNext())
                 {
-                    data[this.Name] = ienum.Current;
+                    ctx.TempData[this.Name] = ienum.Current;
                     i++;
-                    data["ForeachIndex"] = i;
+                    ctx.TempData["ForeachIndex"] = i;
                     for (Int32 n = 0; n < this.Value.Count; n++)
                     {
-                        writer.Write(this.Value[n].Parse(data));
+                        writer.Write(this.Value[n].Parse(ctx));
                     }
                 }
-                data.Clear(false);
             }
         }
     }

@@ -13,9 +13,9 @@ namespace JinianNet.JNTemplate.Parser.Node
             
         }
 
-        public override void Parse(VariableScope vars, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
-            writer.Write(this.Parse(vars));
+            writer.Write(this.Parse(context));
         }
     }
 }

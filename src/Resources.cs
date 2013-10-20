@@ -19,28 +19,37 @@ namespace JinianNet.JNTemplate
 
         }
 
-        //public static String LoadResource(String path)
-        //{
-        //    return LoadResource(Runtime.BaseDirectory.ToArray(), path);
-        //}
 
         public static int FindPath(String[] files, String path, out String fullPath)
         {
             fullPath = null;
             if (!String.IsNullOrEmpty(path))
             {
+                String checkUrl;
+                //String appPath;
+                //if (System.Web.HttpContext.Current != null)
+                //{
+                //    appPath = System.Web.HttpRuntime.AppDomainAppPath;
+                //}
                 path = NormalizePath(path);
-                String sc = String.Concat(System.IO.Path.DirectorySeparatorChar.ToString(), System.IO.Path.DirectorySeparatorChar.ToString());
+                String sc = String.Empty.PadLeft(2, System.IO.Path.DirectorySeparatorChar);
                 for (Int32 i = 0; i < files.Length && !String.IsNullOrEmpty(files[i]); i++)
                 {
-                    if (files[i][files[i].Length - 1] != System.IO.Path.DirectorySeparatorChar && path[0] != System.IO.Path.DirectorySeparatorChar)
-                        fullPath = String.Concat(files[i], System.IO.Path.DirectorySeparatorChar.ToString(), path);
+                    checkUrl = files[i];
+                    //if (checkUrl.IndexOf(System.IO.Path.VolumeSeparatorChar) == -1)
+                    //{
+                    //    //checkUrl = 
+                    //}
+                    if (checkUrl[checkUrl.Length - 1] != System.IO.Path.DirectorySeparatorChar && path[0] != System.IO.Path.DirectorySeparatorChar)
+                        fullPath = String.Concat(checkUrl, System.IO.Path.DirectorySeparatorChar.ToString(), path);
                     else
-                        fullPath = String.Concat(files[i], path);
+                        fullPath = String.Concat(checkUrl, path);
+                    fullPath = fullPath.Replace('/', System.IO.Path.DirectorySeparatorChar);
                     while (fullPath.Contains(sc))
                     {
-                        fullPath.Replace(sc, System.IO.Path.DirectorySeparatorChar.ToString());
+                        fullPath = fullPath.Replace(sc, System.IO.Path.DirectorySeparatorChar.ToString());
                     }
+
                     if (System.IO.File.Exists(fullPath))
                         return i;
                 }
@@ -56,7 +65,7 @@ namespace JinianNet.JNTemplate
         public static String LoadResource(String[] files, String path, Encoding encoding)
         {
             String full;
-            if (FindPath(files,path,out full) != -1)
+            if (FindPath(files, path, out full) != -1)
             {
                 return Load(full, encoding);
             }
