@@ -252,7 +252,7 @@ namespace JinianNet.JNTemplate.Parser
             }
             public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
             {
-                if (tokens.Length > 3 && tokens[0].Text.Equals(Field.KEY_LOAD, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
+                if (tokens.Length > 3 && tokens[0].Text.Equals(Field.KEY_INCLUDE, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
                 {
                     IncludeTag tag = new IncludeTag(line, col);
                     tag.Path = parser.Parse(CopyTo(tokens, 2, tokens.Length - 1 - 2), line, col);
