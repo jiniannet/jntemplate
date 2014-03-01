@@ -146,5 +146,5 @@ namespace JinianNet.JNTemplate
 
     }
 
-    public delegate object FuncHandler(params object[] args);
+    public delegate Object FuncHandler(params Object[] args);
 }

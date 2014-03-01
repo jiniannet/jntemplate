@@ -82,14 +82,14 @@ namespace JinianNet.JNTemplate
         }
 
 
-        public void Set(String key, object value)
+        public void Set(String key, Object value)
         {
             Context.TempData[key] = value;
         }
 
-        public void Set(Dictionary<String, object> dictionary)
+        public void Set(Dictionary<String, Object> dictionary)
         {
-            foreach (KeyValuePair<String, object> value in dictionary)
+            foreach (KeyValuePair<String, Object> value in dictionary)
             {
                 Set(value.Key, value.Value);
             }

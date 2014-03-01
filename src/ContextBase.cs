@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate
 
         #region ICloneable ≥…‘±
 
-        public object Clone()
+        public Object Clone()
         {
             return this.MemberwiseClone();
         }

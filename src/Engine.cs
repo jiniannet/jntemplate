@@ -74,12 +74,12 @@ namespace JinianNet.JNTemplate
             return new Template(TemplateContext.CreateContext(_ctx), null);
         }
 
-        public ITemplate CreateTemplate(string path)
+        public ITemplate CreateTemplate(String path)
         {
             return CreateTemplate(path,_ctx.Charset);
         }
 
-        public ITemplate CreateTemplate(string path, Encoding encoding)
+        public ITemplate CreateTemplate(String path, Encoding encoding)
         {
             Template template = new Template(TemplateContext.CreateContext(_ctx), null);
             if (encoding != null)

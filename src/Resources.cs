@@ -155,7 +155,7 @@ namespace JinianNet.JNTemplate
                 get { throw new NotImplementedException(); }
             }
 
-            public object SyncRoot
+            public Object SyncRoot
             {
                 get { throw new NotImplementedException(); }
             }

@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             private set { _name = value; }
         }
 
-        public override object Parse(TemplateContext context)
+        public override Object Parse(TemplateContext context)
         {
             return ParserAccessor.Eval(context.TempData, this.Name);
         }

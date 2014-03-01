@@ -72,7 +72,7 @@ namespace JinianNet.JNTemplate.Parser
 
         }
 
-        object System.Collections.IEnumerator.Current
+        Object System.Collections.IEnumerator.Current
         {
             get { return Current; }
         }

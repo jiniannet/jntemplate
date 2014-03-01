@@ -21,7 +21,7 @@ namespace JinianNet.JNTemplate.Parser
         private static readonly char[] _indexExprStartChars = new char[] { '[', '(' };
 
         #region EVAL解析
-        //public object Eval(String expression)
+        //public Object Eval(String expression)
         //{
         //    if (expression == null)
         //    {
@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate.Parser
         //        return null;
         //    }
 
-        //    object  = null;
+        //    Object  = null;
 
 
         //    String[] expressionParts = expression.Split(_expressionPartSeparator);
@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Parser
         //            Int32 length = expressionParts[0].IndexOfAny(_indexExprStartChars);
         //            if (length < 0)
         //            {
-        //                throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new object[] { expr }));
+        //                throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
         //            }
         //            if (length != 0)
         //            {
@@ -82,7 +82,7 @@ namespace JinianNet.JNTemplate.Parser
 
         #region 4.0版本
 
-        public static object GetIndexedPropertyValue(object container, String expr)
+        public static Object GetIndexedPropertyValue(Object container, String expr)
         {
             if (container == null)
             {
@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate.Parser
             if (((length < 0) || (num < 0)) || (num == (length + 1)))
             {
                 return null;
-                //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new object[] { expr }));
+                //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
             }
 
             String propName = null;
@@ -123,17 +123,17 @@ namespace JinianNet.JNTemplate.Parser
             //    return null;
             //    //throw new ArgumentNullException("expr");
             //}
-            //object obj2 = null;
+            //Object obj2 = null;
             //bool flag = false;
             //Int32 length = expr.IndexOfAny(_indexExprStartChars);
             //Int32 num2 = expr.IndexOfAny(_indexExprEndChars, length + 1);
             //if (((length < 0) || (num2 < 0)) || (num2 == (length + 1)))
             //{
             //    return null;
-            //    //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new object[] { expr }));
+            //    //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
             //}
             //String propName = null;
-            //object obj3 = null;
+            //Object obj3 = null;
             //String s = expr.Substring(length + 1, (num2 - length) - 1).Trim();
             //if (length != 0)
             //{
@@ -166,9 +166,9 @@ namespace JinianNet.JNTemplate.Parser
             //if (obj3 == null)
             //{
             //    return null;
-            //    //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new object[] { expr }));
+            //    //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
             //}
-            //object property = null;
+            //Object property = null;
             //if ((propName != null) && (propName.Length != 0))
             //{
             //    property = GetProperty(container, propName);
@@ -194,13 +194,13 @@ namespace JinianNet.JNTemplate.Parser
             //if (info == null)
             //{
             //    return null;
-            //    //throw new ArgumentException("DataBinder_No_Indexed_Accessor");//SR.GetString("DataBinder_No_Indexed_Accessor", new object[] { property.GetType().FullName }));
+            //    //throw new ArgumentException("DataBinder_No_Indexed_Accessor");//SR.GetString("DataBinder_No_Indexed_Accessor", new Object[] { property.GetType().FullName }));
             //}
-            //return info.Get(property, new object[] { obj3 });
+            //return info.Get(property, new Object[] { obj3 });
             #endregion
         }
 
-        public static object GetIndexedProperty(object container, bool isNumber, object propIndex)
+        public static Object GetIndexedProperty(Object container, bool isNumber, Object propIndex)
         {
             //Array array = container as Array;
             //if ((array != null) && isNumber)
@@ -226,16 +226,16 @@ namespace JinianNet.JNTemplate.Parser
             if (info == null)
             {
                 return null;
-                //throw new ArgumentException("DataBinder_No_Indexed_Accessor");//SR.GetString("DataBinder_No_Indexed_Accessor", new object[] { property.GetType().FullName }));
+                //throw new ArgumentException("DataBinder_No_Indexed_Accessor");//SR.GetString("DataBinder_No_Indexed_Accessor", new Object[] { property.GetType().FullName }));
             }
-            return info.GetValue(container, new object[] { propIndex });
+            return info.GetValue(container, new Object[] { propIndex });
         }
 
-        public static object GetIndexedProperty(object container, String propName, String propIndex)
+        public static Object GetIndexedProperty(Object container, String propName, String propIndex)
         {
             bool flag = false;
 
-            object value = null;
+            Object value = null;
 
             if (propIndex.Length != 0)
             {
@@ -264,9 +264,9 @@ namespace JinianNet.JNTemplate.Parser
             if ( value== null)
             {
                 return null;
-                //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new object[] { expr }));
+                //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
             }
-            object property = null;
+            Object property = null;
 
             if ((propName != null) && (propName.Length != 0))
             {
@@ -287,9 +287,9 @@ namespace JinianNet.JNTemplate.Parser
 
         #endregion
 
-        public static String Eval(object container, String expression, String format)
+        public static String Eval(Object container, String expression, String format)
         {
-            object obj = Eval(container, expression);
+            Object obj = Eval(container, expression);
             if ((obj == null) || (obj == DBNull.Value))
             {
                 return String.Empty;
@@ -301,7 +301,7 @@ namespace JinianNet.JNTemplate.Parser
             return String.Format(format, obj);
         }
 
-        public static object Eval(VariableScope container, String expression)
+        public static Object Eval(VariableScope container, String expression)
         {
             String[] expressionParts = expression.Split(_expressionPartSeparator);
             if (expressionParts.Length > 0)
@@ -316,7 +316,7 @@ namespace JinianNet.JNTemplate.Parser
             return null;
         }
 
-        public static object Eval(object container, String expression)
+        public static Object Eval(Object container, String expression)
         {
             if (expression == null)
             {
@@ -337,9 +337,9 @@ namespace JinianNet.JNTemplate.Parser
             return Eval(container, expressionParts);
         }
 
-        //public static object Eval(object container, String[] expressionParts)
+        //public static Object Eval(Object container, String[] expressionParts)
         //{
-        //    object property = container;
+        //    Object property = container;
         //    for (Int32 i = 0; (i < expressionParts.Length) && (property != null); i++)
         //    {
         //        String propName = expressionParts[i];
@@ -400,14 +400,14 @@ namespace JinianNet.JNTemplate.Parser
         //    return property;
         //}
         #region
-        public static object Eval(object container, String[] expressionParts)
+        public static Object Eval(Object container, String[] expressionParts)
         {
             return Eval(container, expressionParts, 0, expressionParts.Length);
         }
 
-        private static object Eval(object container, String[] expressionParts,Int32 start,Int32 end)
+        private static Object Eval(Object container, String[] expressionParts,Int32 start,Int32 end)
         {
-            object property = container;
+            Object property = container;
             for (Int32 i = start; (i < end) && (property != null); i++)
             {
                 String propName = expressionParts[i];
@@ -424,7 +424,7 @@ namespace JinianNet.JNTemplate.Parser
         }
         #endregion
 
-        public static object GetPropertyValue(object container, String propName)
+        public static Object GetPropertyValue(Object container, String propName)
         {
             if (container == null)
             {
@@ -441,7 +441,7 @@ namespace JinianNet.JNTemplate.Parser
             PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
             if (descriptor == null)
             {
-                object value;
+                Object value;
                 Int32 num;
                 bool flag = Int32.TryParse(propName, NumberStyles.Integer, CultureInfo.InvariantCulture, out num);
                 if (flag)
@@ -453,7 +453,7 @@ namespace JinianNet.JNTemplate.Parser
                      value= propName;
                 }
                 return GetIndexedProperty(container, flag, value);
-                //throw new HttpException("Property Not Found");//", new object[] { container.GetType().FullName, propName })
+                //throw new HttpException("Property Not Found");//", new Object[] { container.GetType().FullName, propName })
             }
             return descriptor.GetValue(container);
         }
@@ -469,7 +469,7 @@ namespace JinianNet.JNTemplate.Parser
                 BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance,
                 null, args, null);
         }
-        public static object GetMethod(object container, String methodName, object[] args)
+        public static Object GetMethod(Object container, String methodName, Object[] args)
         {
             Type[] types = new Type[args.Length];
             for (Int32 i = 0; i < args.Length; i++)
@@ -482,7 +482,7 @@ namespace JinianNet.JNTemplate.Parser
             return method.Invoke(container, args);
         }
 
-        public static IEnumerable ToIEnumerable(object dataSource)
+        public static IEnumerable ToIEnumerable(Object dataSource)
         {
             if (dataSource == null)
                 return null;
@@ -504,8 +504,8 @@ namespace JinianNet.JNTemplate.Parser
                     PropertyDescriptor descriptor = itemProperties[0];
                     if (descriptor != null)
                     {
-                        object component = list[0];
-                        object value = descriptor.GetValue(component);
+                        Object component = list[0];
+                        Object value = descriptor.GetValue(component);
                         if ((value != null) && (value is IEnumerable))
                         {
                             return (IEnumerable)value;

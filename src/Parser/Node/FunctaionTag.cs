@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
 
 
-        public override object Parse(TemplateContext context)
+        public override Object Parse(TemplateContext context)
         {
             Object[] args = new Object[this.Args.Count];
             for (Int32 i = 0; i < this.Args.Count; i++)
@@ -46,7 +46,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
             String[] list = this.Name.Split('.');
 
-            object value = null;
+            Object value = null;
 
             if (list.Length == 0)
             {

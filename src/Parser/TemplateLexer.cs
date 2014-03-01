@@ -126,7 +126,7 @@ namespace JinianNet.JNTemplate.Parser
                     Char value = this.scanner.Read();
                     if (this.pos.Peek().Length == 2)
                     {
-                        if ( value== '}')
+                        if (value == '}')
                         {
                             //this.pos.Pop();
                             return true;
@@ -151,18 +151,35 @@ namespace JinianNet.JNTemplate.Parser
             {
                 do
                 {
-                    if (this.scanner.Read() == '\n')
+                    //if (this.scanner.Read() == '\n')
+                    //{
+                    //    this.line++;
+                    //    this.column = 1;
+                    //}
+                    //else if (IsTagStart())
+                    //{
+                    //    this.collection.Add(GetToken(TokenKind.TagStart));
+                    //    this.mode = LexerMode.EnterLabel;
+                    //    Next(this.pos.Peek().Length);
+                    //    this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
+                    //    ReadToken();
+                    //}
+                    if (this.mode == LexerMode.EnterLabel)
                     {
-                        this.line++;
-                        this.column = 1;
+                        Next(this.pos.Peek().Length - 1);
+                        this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
+                        ReadToken();
                     }
                     else if (IsTagStart())
                     {
                         this.collection.Add(GetToken(TokenKind.TagStart));
                         this.mode = LexerMode.EnterLabel;
-                        Next(this.pos.Peek().Length);
-                        this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
-                        ReadToken();
+
+                    }
+                    else if (this.scanner.Read() == '\n')
+                    {
+                        this.line++;
+                        this.column = 1;
                     }
                 }
                 while (Next());
@@ -239,12 +256,20 @@ namespace JinianNet.JNTemplate.Parser
                         //Next(1);
                         //this.pos.Pop();
                         this.collection.Add(GetToken(TokenKind.TagEnd));
+                        this.mode = LexerMode.LeaveLabel;
                         if (this.pos.Pop().Length == 2)
                         {
                             Next(1);
                         }
-                        this.collection.Add(GetToken(TokenKind.Text));
-                        this.mode = LexerMode.LeaveLabel;
+                        if (IsTagStart())
+                        {
+                            this.collection.Add(GetToken(TokenKind.TagStart));
+                            this.mode = LexerMode.EnterLabel;
+                        }
+                        else
+                        {
+                            this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
+                        }
                         break;
                     }
 
