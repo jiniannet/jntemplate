@@ -11,6 +11,7 @@ JNTemplate --基于.Net平台的轻量级开源模板引擎
   联系方式：<br />
   Email:i@jiniannet.com<br />
   .Net交流Q群:5089240 欢迎加入<br />
+  新浪微博：@翅膀的初衷<br />
 
   <br />
   JNTemplate急需您的意见反馈，  <br />
