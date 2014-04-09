@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Parser
 {
     public class CharScanner
     {
-        const Char EOF = ' ';
+        const Char EOF = '\0';
         private Int32 index;
         private Int32 start;
         private String document;
