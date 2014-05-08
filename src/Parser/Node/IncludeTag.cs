@@ -28,9 +28,15 @@ namespace JinianNet.JNTemplate.Parser.Node
         public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
             String path = this.Path.Parse(context).ToString();
+
+            System.Collections.Generic.List<string> paths = new System.Collections.Generic.List<string>();
+            if (!string.IsNullOrWhiteSpace(context.CurrentPath))
+                paths.Add(context.CurrentPath);
+            paths.AddRange(context.Paths);
+
             if (!String.IsNullOrEmpty(path))
             {
-                writer.Write(Resources.LoadResource(context.Paths.ToArray(), path, context.Charset));
+                writer.Write(Resources.LoadResource(paths.ToArray(), path, context.Charset));
             }
         }
     }

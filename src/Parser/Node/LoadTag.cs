@@ -31,7 +31,13 @@ namespace JinianNet.JNTemplate.Parser.Node
             String path = this.Path.Parse(context).ToString();
             if (!String.IsNullOrEmpty(path))
             {
-                TemplateLexer lexer = new TemplateLexer(Resources.LoadResource(context.Paths.ToArray(), path, context.Charset));
+                System.Collections.Generic.List<string> paths = new System.Collections.Generic.List<string>();
+
+                if (!string.IsNullOrWhiteSpace(context.CurrentPath))
+                    paths.Add(context.CurrentPath);
+                paths.AddRange(context.Paths);
+
+                TemplateLexer lexer = new TemplateLexer(Resources.LoadResource(paths.ToArray(), path, context.Charset));
                 TemplateParser parser = new TemplateParser(lexer.Parse(), context.Analyzer);
                 while (parser.MoveNext())
                 {
