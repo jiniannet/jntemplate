@@ -134,7 +134,7 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     else if (value != '.' && value != '(')
                     {
-                        if (Char.IsControl(value) || Char.IsPunctuation(value) || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value))
+                        if (Char.IsControl(value) || (Char.IsPunctuation(value) && value!='_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value))
                         {
                             //this.pos.Pop();
                             return true;

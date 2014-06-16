@@ -30,7 +30,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             String path = this.Path.Parse(context).ToString();
 
             System.Collections.Generic.List<string> paths = new System.Collections.Generic.List<string>();
-            if (!string.IsNullOrWhiteSpace(context.CurrentPath))
+            if (!String.IsNullOrEmpty(context.CurrentPath))
                 paths.Add(context.CurrentPath);
             paths.AddRange(context.Paths);
 
