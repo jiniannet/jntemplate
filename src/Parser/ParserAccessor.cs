@@ -463,10 +463,8 @@ namespace JinianNet.JNTemplate.Parser
 
         public static MethodInfo GetMethod(Type type, String methodName, Type[] args)
         {
-            if (args == null)
-                return type.GetMethod(methodName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
             return type.GetMethod(methodName,
-                BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance,
+                BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic ,
                 null, args, null);
         }
         public static Object GetMethod(Object container, String methodName, Object[] args)
