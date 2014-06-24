@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
 using JinianNet.JNTemplate.Parser;
+using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate
 {

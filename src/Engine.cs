@@ -9,6 +9,7 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Parser;
+using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate
 {
@@ -16,27 +17,6 @@ namespace JinianNet.JNTemplate
     {
 
         #region IEngine 成员
-
-        [Obsolete("模板初始数据，请直接在TemplateContext中配置该属性！")]
-        public VariableScope VariableScope
-        {
-            get { return _ctx.TempData; }
-            private set { _ctx.TempData = value; }
-        }
-
-        [Obsolete("模板路径，请直接在TemplateContext中配置该属性！")]
-        public String CurrentPath
-        {
-            get { return _ctx.CurrentPath; }
-            set { _ctx.CurrentPath = value; }
-        }
-
-        [Obsolete("默认模板编码，请直接在TemplateContext中配置该属性！")]
-        public Encoding Charset
-        {
-            get { return _ctx.Charset; }
-            set { _ctx.Charset = value; }
-        }
 
         private TemplateContext _ctx;
 

@@ -7,57 +7,77 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class ForeachTag : ComplexTag
+    public class ForeachTag : SimpleTag
     {
-        public ForeachTag(Int32 line, Int32 col)
-            : base(ElementType.Foreach, line, col)
-        {
-            this.Value = new List<Tag>();
-        }
 
-        private String _name;
+        private String name;
         public String Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return name; }
+            set { name = value; }
         }
 
-        private List<Tag> _value;
-        public List<Tag> Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
-
-        private Tag _source;
+        private Tag source;
         public Tag Source
         {
-            get { return _source; }
-            set { _source = value; }
+            get { return source; }
+            set { source = value; }
         }
 
-        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
+        private void Excute(Object value, TemplateContext context, System.IO.TextWriter writer)
         {
-            IEnumerable enumerable = ParserAccessor.ToIEnumerable(this.Source.Parse(context));
+            IEnumerable enumerable = ParserAccessor.ToIEnumerable(value);
             TemplateContext ctx;
             if (enumerable != null)
             {
                 IEnumerator ienum = enumerable.GetEnumerator();
                 ctx = TemplateContext.CreateContext(context);
-                Int32 i = 0;
                 while (ienum.MoveNext())
                 {
                     ctx.TempData[this.Name] = ienum.Current;
-                    i++;
-                    ctx.TempData["ForeachIndex"] = i;
-                    for (Int32 n = 0; n < this.Value.Count; n++)
+                    for (Int32 n = 0; n < this.Children.Count; n++)
                     {
-                        writer.Write(this.Value[n].Parse(ctx));
+                        //if (this.Children[n] is WordTag)
+                        //{
+                        //    if (this.Children[n].ToString() == "break")
+                        //    {
+                        //        break;
+                        //    }
+                        //    if (this.Children[n].ToString() == "continue")
+                        //    {
+                        //        continue;
+                        //    }
+                        //}
+                        this.Children[n].Parse(ctx, writer);
                     }
                 }
+            }
+        }
+
+        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
+        {
+            Excute(this.Source.Parse(context),context, writer);
+        }
+
+        public override Object Parse(TemplateContext context)
+        {
+            using (System.IO.StringWriter write = new System.IO.StringWriter())
+            {
+                Parse(context, write);
+                return write.ToString();
+            }
+        }
+
+        public override Object Parse(Object baseValue, TemplateContext context)
+        {
+            using (System.IO.StringWriter write = new System.IO.StringWriter())
+            {
+                Excute(this.Source.Parse(baseValue,context), context, write);
+                return write.ToString();
             }
         }
     }

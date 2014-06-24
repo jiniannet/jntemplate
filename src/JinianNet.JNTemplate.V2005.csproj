@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3744DD16-5A83-4C50-B711-74EA11DA6B27}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -12,6 +12,11 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,11 +42,12 @@
     <Reference Include="System" />
     <Reference Include="System.Web" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="BuildManager.cs" />
-    <Compile Include="ContextBase.cs" />
+    <Compile Include="Context\ContextBase.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
     <Compile Include="Field.cs" />
@@ -52,13 +58,15 @@
     <Compile Include="Parser\CharScanner.cs" />
     <Compile Include="Parser\Node\ComplexTag.cs" />
     <Compile Include="Parser\Node\Element.cs" />
+    <Compile Include="Parser\Node\ElseifTag.cs" />
+    <Compile Include="Parser\Node\ElseTag.cs" />
     <Compile Include="Parser\Node\ExpressionTag.cs" />
     <Compile Include="Parser\Node\ForeachTag.cs" />
     <Compile Include="Parser\Node\FunctaionTag.cs" />
     <Compile Include="Parser\Node\IfTag.cs" />
     <Compile Include="Parser\Node\IncludeTag.cs" />
     <Compile Include="Parser\Node\LoadTag.cs" />
-    <Compile Include="Parser\Node\NoActionTag.cs" />
+    <Compile Include="Parser\Node\ReferenceTag.cs" />
     <Compile Include="Parser\Node\SetTag.cs" />
     <Compile Include="Parser\Node\SimpleTag.cs" />
     <Compile Include="Parser\Node\Tag.cs" />
@@ -66,6 +74,7 @@
     <Compile Include="Parser\Node\Token.cs" />
     <Compile Include="Parser\Node\ValueTag.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
+    <Compile Include="Parser\Node\WordTag.cs" />
     <Compile Include="Parser\ParserAccessor.cs" />
     <Compile Include="Parser\TagAnalyzer.cs" />
     <Compile Include="Parser\TemplateLexer.cs" />
@@ -75,7 +84,10 @@
     <Compile Include="Resources.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
-    <Compile Include="TemplateContext.cs" />
+    <Compile Include="Context\TemplateContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exception\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

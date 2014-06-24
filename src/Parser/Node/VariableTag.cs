@@ -5,27 +5,29 @@
  *****************************************************/
 
 using System;
+using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
     public class VariableTag : SimpleTag
     {
-        public VariableTag(String name, Int32 line, Int32 col)
-            : base(ElementType.Var, line, col)
-        {
-            this.Name = name;
-        }
 
-        private String _name;
-        public String Name 
-        { 
-            get { return _name; }
-            private set { _name = value; }
+        private String name;
+        public String Name
+        {
+            get { return name; }
+            set { name = value; }
         }
 
         public override Object Parse(TemplateContext context)
         {
-            return ParserAccessor.Eval(context.TempData, this.Name);
+            return context.TempData[this.Name];
         }
+
+        public override Object Parse(Object baseValue, TemplateContext context)
+        {
+            return ParserAccessor.Eval(baseValue, this.Name);
+        }
+
     }
 }

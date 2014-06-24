@@ -6,58 +6,36 @@
  *****************************************************/
 using System;
 using System.Collections.Generic;
+using JinianNet.JNTemplate.Context;
+using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class IfTag : ComplexTag
+    public class IfTag : SimpleTag
     {
-        public IfTag(Int32 line, Int32 col)
-            : base(ElementType.If, line, col)
-        {
-            this.Test = new List<Tag>();
-            this.Value = new List<TagCollection>();
-        }
 
-
-        private List<Tag> _test;
-        public List<Tag> Test
+        public override Object Parse(TemplateContext context)
         {
-            get { return _test; }
-            set { _test = value; }
-        }
-
-        private List<TagCollection> _value;
-        public List<TagCollection> Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
-
-        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
-        {
-            Object value;
-            for (Int32 i = 0; i < this.Test.Count; i++)
+            for (Int32 i = 0; i < this.Children.Count; i++)
             {
-                value =  this.Test[i].Parse(context);
-
-                if (value != null && "TRUE".Equals(value.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (this.Children[i].ToBoolean(context))
                 {
-                    ParseCollection(this.Value[i], context, writer);
-                    return;
+                    return this.Children[i].Parse(context);
                 }
             }
-            if (this.Value.Count > this.Test.Count)
-            {
-                ParseCollection(this.Value[this.Value.Count - 1], context, writer);
-            }
+            return null;
         }
 
-        private void ParseCollection(TagCollection tags, TemplateContext context, System.IO.TextWriter write)
+        public override Object Parse(Object baseValue, TemplateContext context)
         {
-            for (Int32 i = 0; i < tags.Count; i++)
+            for (Int32 i = 0; i < this.Children.Count; i++)
             {
-                write.Write( tags[i].Parse(context));
+                if (this.Children[i].ToBoolean(context))
+                {
+                    return this.Children[i].Parse(baseValue,context);
+                }
             }
+            return null;
         }
     }
 }

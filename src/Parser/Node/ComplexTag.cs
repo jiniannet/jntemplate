@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JinianNet.JNTemplate.Context;
+
 
 namespace JinianNet.JNTemplate.Parser.Node
 {

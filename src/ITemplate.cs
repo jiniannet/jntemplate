@@ -6,6 +6,7 @@
  *****************************************************/
 using System;
 using System.IO;
+using JinianNet.JNTemplate.Context;
 namespace JinianNet.JNTemplate
 {
     public interface ITemplate

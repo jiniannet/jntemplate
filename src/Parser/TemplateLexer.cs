@@ -10,6 +10,7 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
+
     public class TemplateLexer
     {
         /// <summary>
@@ -72,13 +73,17 @@ namespace JinianNet.JNTemplate.Parser
         private Token GetToken(TokenKind tokenKind)
         {
             Token _token = new Token(this.kind, this.scanner.GetString());
-            _token.Line = this.startLine;
-            _token.Column = this.startColumn;
+            _token.BeginLine = this.startLine;
+            _token.BeginColumn = this.startColumn;
+            _token.EndColumn = this.column;
+            _token.BeginLine = this.line;
             this.kind = tokenKind;
             this.startColumn = this.column;
             this.startLine = this.line;
             return _token;
         }
+
+
 
         private bool Next()
         {
@@ -134,7 +139,7 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     else if (value != '.' && value != '(')
                     {
-                        if (Char.IsControl(value) || (Char.IsPunctuation(value) && value!='_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value))
+                        if (Char.IsControl(value) || (Char.IsPunctuation(value) && value != '_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value))
                         {
                             //this.pos.Pop();
                             return true;
@@ -151,19 +156,6 @@ namespace JinianNet.JNTemplate.Parser
             {
                 do
                 {
-                    //if (this.scanner.Read() == '\n')
-                    //{
-                    //    this.line++;
-                    //    this.column = 1;
-                    //}
-                    //else if (IsTagStart())
-                    //{
-                    //    this.collection.Add(GetToken(TokenKind.TagStart));
-                    //    this.mode = LexerMode.EnterLabel;
-                    //    Next(this.pos.Peek().Length);
-                    //    this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
-                    //    ReadToken();
-                    //}
                     if (this.mode == LexerMode.EnterLabel)
                     {
                         Next(this.pos.Peek().Length - 1);
@@ -268,16 +260,27 @@ namespace JinianNet.JNTemplate.Parser
                         }
                         else
                         {
-                            this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
+                            this.collection.Add(GetToken(TokenKind.Text));
                         }
                         break;
                     }
 
                     TokenKind tk = GetTokenKind(this.scanner.Read());
                     //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
-                    if ((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses) && (tk != TokenKind.Number || this.kind != TokenKind.TextData))
+                    if ((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
+                        && (tk != TokenKind.Number || this.kind != TokenKind.TextData)
+                        //&& (this.kind == TokenKind.Number && tk != TokenKind.Dot)
+                        )
+                    //|| (this.kind != TokenKind.Number && tk == TokenKind.Dot)
                     {
-                        this.collection.Add(GetToken(tk));
+                        if (tk == TokenKind.Dot && this.kind == TokenKind.Number)
+                        {
+
+                        }
+                        else
+                        {
+                            this.collection.Add(GetToken(tk));
+                        }
                     }
                 }
             }
@@ -332,6 +335,8 @@ namespace JinianNet.JNTemplate.Parser
                     return TokenKind.Operator;
                 case ',':
                     return TokenKind.Comma;
+                case '.':
+                    return TokenKind.Dot;
                 default:
                     //if (Char.IsLetter(c) || Char.IsControl(c) || Char.IsSeparator(c))
                     //    return this.mode == LexerMode.EnterLabel ? TokenKind.TextData : TokenKind.Text;

@@ -5,16 +5,12 @@
  * 网址：http://www.JiNianNet.com
  *****************************************************/
 using System;
+using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class SetTag : Tag
+    public class SetTag : SimpleTag
     {
-        public SetTag(Int32 line, Int32 col)
-            : base(ElementType.Set, line, col)
-        {
-
-        }
         private String _name;
         public String Name
         {
@@ -36,9 +32,15 @@ namespace JinianNet.JNTemplate.Parser.Node
             return null;
         }
 
-        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
+        public override Object Parse(Object baseValue, TemplateContext context)
         {
-            Parse(context);
+            context.TempData[this.Name] = this.Value.Parse(baseValue,context);
+            return null;
+        }
+
+        public override void Parse(TemplateContext context, System.IO.TextWriter write)
+        {
+
         }
     }
 }
