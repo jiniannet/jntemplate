@@ -18,6 +18,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         private Int32 _endline;
         private Int32 _endcolumn;
         private TokenKind _tokenkind;
+        private Token _next;
 
         public Int32 BeginLine
         {
@@ -49,10 +50,21 @@ namespace JinianNet.JNTemplate.Parser.Node
             get { return _text; }
         }
 
+        public TokenKind TokenKind
+        {
+            get { return _tokenkind; }
+        }
+
         public Token(TokenKind kind, String text)
         {
             this._tokenkind = kind;
             this._text = text;
+        }
+
+        public Token Next
+        {
+            get { return _next; }
+            set { _next = value; }
         }
 
         public override String ToString()

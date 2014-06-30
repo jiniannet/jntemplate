@@ -23,6 +23,6 @@ namespace JinianNet.JNTemplate.Parser
             return array;
         }
 
-        public abstract Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col);
+        public abstract Tag Parse(TemplateParser parser, Token token);
     }
 }

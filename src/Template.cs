@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate
             {
                 TemplateLexer lexer = new TemplateLexer(TemplateContent);
 
-                TemplateParser parser = new TemplateParser(lexer.Parse(), this.Context.Analyzer);
+                TemplateParser parser = new TemplateParser(lexer, this.Context.Analyzer);
 
                 while (parser.MoveNext())
                 {

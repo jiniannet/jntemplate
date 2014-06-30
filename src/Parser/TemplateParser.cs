@@ -17,50 +17,16 @@ namespace JinianNet.JNTemplate.Parser
         const StringComparison stringComparer = StringComparison.OrdinalIgnoreCase;
 
         private Analyzers analyzer;
+        private TemplateLexer lexer;
 
-        private Token[] collection;
-        private Int32 index;
         private Tag tag;
+        private Token token;
 
-        public TemplateParser(Token[] tokens, Analyzers analyzer)
+        public TemplateParser(TemplateLexer lexer, Analyzers analyzer)
         {
-            this.collection = tokens;
+            this.lexer = lexer;
+            this.Token = lexer.Parse()[0];
             this.analyzer = analyzer;
-        }
-
-        private Tag ReadTag()
-        {
-            Int32 line = this.collection[this.index].Line;
-            Int32 col = this.collection[this.index].Column;
-            List<Token> list = new List<Token>();
-            while (this.index < this.collection.Length)
-            {
-                Token token = this.collection[this.index];
-                this.index++;
-
-                if (token.TokenKind == TokenKind.TagEnd)
-                    break;
-                if (token.TokenKind != TokenKind.Space && token.TokenKind != TokenKind.StringStart && token.TokenKind != TokenKind.StringEnd)
-                {
-                    list.Add(token);
-                }
-            }
-
-            return Parse(list.ToArray(), line, col);
-        }
-
-        public Tag Parse(Token[] tokens)
-        {
-            if (tokens.Length > 0)
-            {
-                return Parse(tokens, tokens[0].Line, tokens[0].Column);
-            }
-            return null;
-        }
-
-        public Tag Parse(Token[] tokens, int line, int col)
-        {
-            return this.analyzer.Parse(this, tokens, line, col);
         }
 
         public Tag Current
@@ -73,6 +39,22 @@ namespace JinianNet.JNTemplate.Parser
 
         }
 
+        public Tag ReadTag(Token token)
+        {
+            Tag t;
+            if (token.TokenKind == TokenKind.TagStart)
+            {
+                t = this.analyzer.Parse(this, token);
+            }
+            else
+            {
+                t = new TextTag();
+                t.FirstToken = token;
+                t.LastToken = null;
+            }
+            return t;
+        }
+
         Object System.Collections.IEnumerator.Current
         {
             get { return Current; }
@@ -80,26 +62,33 @@ namespace JinianNet.JNTemplate.Parser
 
         public bool MoveNext()
         {
-            while (this.index < this.collection.Length)
+            if (token == null)
             {
-                Token token = this.collection[this.index];
-                this.index++;
-                switch (token.TokenKind)
-                {
-                    default:
-                        this.tag = new ValueTag(ValueType.Text, token.Text, token.Line, token.Column);
-                        return true;
-                    case TokenKind.TagStart:
-                        this.tag = ReadTag();
-                        return true;
-                }
+                return false;
             }
-            return false;
+            Tag t = ReadTag(this.token);
+
+            if (t != null)
+            {
+                this.tag = t;
+                if (this.tag.LastToken != null)
+                    this.token = this.tag.LastToken.Next;
+                else
+                    this.token = this.tag.FirstToken.Next;
+                return true;
+            }
+            else
+            {
+                this.token = null;
+                return false;
+            }
+
+
         }
 
         public void Reset()
         {
-            this.index = 0;
+            //this.index = 0;
         }
 
         #region
@@ -107,14 +96,41 @@ namespace JinianNet.JNTemplate.Parser
 
         public class ForEachAnalyzer : TagAnalyzer
         {
-
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            /*
+             * FOREACH ( TEXEDATE IN 
+             * 
+             * END
+             */
+            public override Tag Parse(TemplateParser parser, Token token)
             {
-                if (tokens.Length > 5 && tokens[0].Text.Equals(Field.KEY_FOREACH, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[3].Text.Equals(Field.KEY_FOREACH_IN, stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
+                Token t = token;
+                if (t.Equals(Field.KEY_FOREACH, stringComparer))
                 {
-                    ForeachTag tag = new ForeachTag(line, col);
-                    tag.Name = tokens[2].Text;
-                    tag.Source = parser.Parse(CopyTo(tokens, 4, tokens.Length - 1 - 4), line, col);
+                    ForeachTag tag = new ForeachTag();
+                    tag.FirstToken = token;
+                    
+                    while((t = t.Next).TokenKind == TokenKind.Space || t.TokenKind == TokenKind.LeftBracket)
+                    {
+
+                    }
+
+                    if(t.TokenKind != TokenKind.TextData)
+                    {
+                        throw new Exception("analyzer error……");
+                    }
+
+                    tag.Name = t.Text;
+                    tag.Source = parser.ReadTag(t.Next.Next);
+                    t = (tag.Source.LastToken ?? tag.Source.FirstToken).Next;
+
+                    while ((t = t.Next).TokenKind != TokenKind.EOF && t.TokenKind != TokenKind.TagEnd) 
+                    {
+                        if (t.TokenKind != TokenKind.Space && t.TokenKind != TokenKind.RightParentheses)
+                        {
+                            throw new Exception("analyzer error……");
+                        }
+                    }
+
 
                     while (true)
                     {
@@ -137,7 +153,6 @@ namespace JinianNet.JNTemplate.Parser
                         }
                     }
                 }
-
                 return null;
             }
         }
@@ -356,7 +371,7 @@ namespace JinianNet.JNTemplate.Parser
                 Stack<TokenKind> pos = new Stack<TokenKind>();
                 for (Int32 i = 0; i < tokens.Length; i++)
                 {
-                    if (tokens[i].TokenKind == TokenKind.LeftParentheses && ((pos.Count == 0 && i > 0 && tokens[i - 1].TokenKind == TokenKind.TextData) || pos.Count>0))
+                    if (tokens[i].TokenKind == TokenKind.LeftParentheses && ((pos.Count == 0 && i > 0 && tokens[i - 1].TokenKind == TokenKind.TextData) || pos.Count > 0))
                     {
                         pos.Push(TokenKind.LeftParentheses);
                     }
@@ -364,7 +379,7 @@ namespace JinianNet.JNTemplate.Parser
                     {
                         pos.Pop();
                     }
-                  
+
                     array.Add(tokens[i]);
                     if (tokens[i].TokenKind == TokenKind.TextData && i < tokens.Length - 1 && tokens[i + 1].TokenKind == TokenKind.LeftParentheses)
                     {
@@ -378,6 +393,63 @@ namespace JinianNet.JNTemplate.Parser
                 }
                 return tag;
             }
+        }
+
+        /// <summary>
+        /// 避免处理难度，不支持多余的无意义括号
+        /// 比如：(((User.Name))) 应直写做 User.Name
+        /// </summary>
+        public class Reference : TagAnalyzer
+        {
+            public override Tag Parse(TemplateParser parser, Token token)
+            {
+                if (token.TokenKind == TokenKind.TextData && (
+                    token.Text.Equals(Field.KEY_ELSE, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_ELSEIF, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_END, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_FOR, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_FOREACH, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_FOREACH_IN, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_IF, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_INCLUDE, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_LOAD, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_SET, StringComparison.OrdinalIgnoreCase)
+                    ))
+                {
+                    WordTag tag = new WordTag();
+                    tag.FirstToken = token;
+                    tag.LastToken = null;
+                    return tag;
+                }
+                return null;
+            }
+        }
+
+        public class WordAnalyzer : TagAnalyzer
+        {
+            public override Tag Parse(TemplateParser parser, Token token)
+            {
+                if (token.TokenKind == TokenKind.TextData && (
+                    token.Text.Equals(Field.KEY_ELSE, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_ELSEIF, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_END, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_FOR, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_FOREACH, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_FOREACH_IN, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_IF, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_INCLUDE, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_LOAD, StringComparison.OrdinalIgnoreCase)
+                    || token.Text.Equals(Field.KEY_SET, StringComparison.OrdinalIgnoreCase)
+                    ))
+                {
+                    WordTag tag = new WordTag();
+                    tag.FirstToken = token;
+                    tag.LastToken = null;
+                    return tag;
+                }
+                return null;
+            }
+           
         }
         #endregion
 

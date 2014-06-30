@@ -159,12 +159,12 @@ namespace JinianNet.JNTemplate.Parser
                     if (this.mode == LexerMode.EnterLabel)
                     {
                         Next(this.pos.Peek().Length - 1);
-                        this.collection.Add(GetToken(GetTokenKind(this.scanner.Read())));
+                        AddToken(GetToken(GetTokenKind(this.scanner.Read())));
                         ReadToken();
                     }
                     else if (IsTagStart())
                     {
-                        this.collection.Add(GetToken(TokenKind.TagStart));
+                        AddToken(GetToken(TokenKind.TagStart));
                         this.mode = LexerMode.EnterLabel;
 
                     }
@@ -176,19 +176,28 @@ namespace JinianNet.JNTemplate.Parser
                 }
                 while (Next());
 
-                this.collection.Add(GetToken(TokenKind.EOF));
+                AddToken(GetToken(TokenKind.EOF));
 
 
                 if (this.mode == LexerMode.EnterLabel)
                 {
                     this.mode = LexerMode.LeaveLabel;
-                    this.collection.Add(new Token(TokenKind.TagEnd, String.Empty));
+                    AddToken(new Token(TokenKind.TagEnd, String.Empty));
                 }
 
             }
 
             return this.collection.ToArray();
 
+        }
+
+        private void AddToken(Token token)
+        {
+            if (this.collection.Count > 0 && this.collection[this.collection.Count - 1].Next == null)
+            {
+                this.collection[this.collection.Count - 1].Next = token;
+            }
+            this.collection.Add(token);
         }
 
         private void ReadToken()
@@ -201,9 +210,9 @@ namespace JinianNet.JNTemplate.Parser
                     {
                         if (this.kind == TokenKind.StringStart)
                         {
-                            this.collection.Add(GetToken(TokenKind.String));
+                            AddToken(GetToken(TokenKind.String));
                         }
-                        this.collection.Add(GetToken(TokenKind.StringEnd));
+                        AddToken(GetToken(TokenKind.StringEnd));
                         this.pos.Pop();
                         //Next(1);
                         //GetToken(GetTokenKind());
@@ -211,7 +220,7 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     else
                     {
-                        this.collection.Add(GetToken(TokenKind.StringStart));
+                        AddToken(GetToken(TokenKind.StringStart));
                         this.pos.Push("\"");
                         //Next(1);
                         //this.collection.Add(GetToken(TokenKind.String));
@@ -222,7 +231,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (this.kind == TokenKind.StringStart)
                     {
-                        this.collection.Add(GetToken(TokenKind.String));
+                        AddToken(GetToken(TokenKind.String));
                         continue;
                     }
 
@@ -247,7 +256,7 @@ namespace JinianNet.JNTemplate.Parser
                     {
                         //Next(1);
                         //this.pos.Pop();
-                        this.collection.Add(GetToken(TokenKind.TagEnd));
+                        AddToken(GetToken(TokenKind.TagEnd));
                         this.mode = LexerMode.LeaveLabel;
                         if (this.pos.Pop().Length == 2)
                         {
@@ -255,12 +264,12 @@ namespace JinianNet.JNTemplate.Parser
                         }
                         if (IsTagStart())
                         {
-                            this.collection.Add(GetToken(TokenKind.TagStart));
+                            AddToken(GetToken(TokenKind.TagStart));
                             this.mode = LexerMode.EnterLabel;
                         }
                         else
                         {
-                            this.collection.Add(GetToken(TokenKind.Text));
+                            AddToken(GetToken(TokenKind.Text));
                         }
                         break;
                     }
@@ -279,7 +288,7 @@ namespace JinianNet.JNTemplate.Parser
                         }
                         else
                         {
-                            this.collection.Add(GetToken(tk));
+                            AddToken(GetToken(tk));
                         }
                     }
                 }

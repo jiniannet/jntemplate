@@ -71,6 +71,7 @@
     <Compile Include="Parser\Node\SimpleTag.cs" />
     <Compile Include="Parser\Node\Tag.cs" />
     <Compile Include="Parser\Node\TagCollection.cs" />
+    <Compile Include="Parser\Node\TextTag.cs" />
     <Compile Include="Parser\Node\Token.cs" />
     <Compile Include="Parser\Node\ValueTag.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
@@ -84,7 +85,7 @@
     <Compile Include="Resources.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
-    <Compile Include="Context\TemplateContext.cs" />
+    <Compile Include="TemplateContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exception\" />

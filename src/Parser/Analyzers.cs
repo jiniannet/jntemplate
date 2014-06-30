@@ -13,12 +13,12 @@ namespace JinianNet.JNTemplate.Parser
 
     public class Analyzers : List<TagAnalyzer>
     {
-        public Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
+        public Tag Parse(TemplateParser parser, Token token)
         {
             Tag tag = null;
             for (int i = 0; i < this.Count; i++)
             {
-                tag = this[i].Parse(parser, tokens, line, col);
+                tag = this[i].Parse(parser, token);
                 if (tag != null)
                 {
                     break;

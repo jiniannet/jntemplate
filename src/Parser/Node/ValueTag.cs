@@ -3,6 +3,7 @@ using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /*
     public class ValueTag : SimpleTag
     {
 
@@ -38,4 +39,5 @@ namespace JinianNet.JNTemplate.Parser.Node
             return this.Value;
         }
     }
+    */
 }

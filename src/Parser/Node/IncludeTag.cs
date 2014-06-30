@@ -9,7 +9,7 @@ using System.Text;
 using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
-{
+{/*
     public class IncludeTag : ComplexTag
     {
         public IncludeTag(Int32 line, Int32 col)
@@ -41,4 +41,5 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
         }
     }
+    */
 }
