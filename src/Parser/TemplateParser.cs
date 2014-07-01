@@ -16,12 +16,164 @@ namespace JinianNet.JNTemplate.Parser
     {
         const StringComparison stringComparer = StringComparison.OrdinalIgnoreCase;
 
+        #region private field
+        private Tag tag;//当前标签
+        private Token[] tokens;//tokens列表
+        private Int32 index;//当前索引
+        private List<ITagParser> parsers;
+        #endregion
+
+        #region ctox
+        public TemplateParser(Token[] ts)
+        {
+            parsers = new List<ITagParser>();
+            //parsers.Add(new TestParser());
+            this.tokens = ts;
+            Reset();
+        }
+        #endregion
+
+        #region IEnumerator<Tag> 成员
+
+        public Tag Current
+        {
+            get
+            {
+                return tag;
+            }
+        }
+
+        #endregion
+
+        #region IDisposable 成员
+
+        public void Dispose()
+        {
+
+        }
+
+        #endregion
+
+        #region IEnumerator 成员
+
+        Object IEnumerator.Current
+        {
+            get
+            {
+                return Current;
+            }
+        }
+
+        public bool MoveNext()
+        {
+            if (this.index < this.tokens.Length)
+            {
+                Tag t = Read();
+                if (t != null)
+                {
+                    this.tag = t;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void Reset()
+        {
+            this.index = 0;
+            this.tag = null;
+        }
+
+        private Tag Read()
+        {
+            Tag t = null;
+            if (IsTagStart())
+            {
+                Token t1, t2;
+                t1 = t2 = GetToken();
+                do
+                {
+                    this.index++;
+                    t2.Next = GetToken();
+                    t2 = t2.Next;
+                } while (!IsTagEnd());
+
+                t = Read(t1.Next);
+                t.FirstToken = t1;
+                if (t.Children.Count > 0)
+                {
+                    t.LastToken = t.Children[t.Children.Count - 1].LastToken;
+                }
+                else
+                {
+                    t.LastToken = t2;
+                }
+            }
+            else
+            {
+                t = new TextTag();
+                t.FirstToken = GetToken();
+                t.LastToken = null;
+            }
+            this.index++;
+            return t;
+        }
+
+        private Tag Read(Token token)
+        {
+            Tag t = null;
+            for (Int32 i = 0; i < this.parsers.Count; i++)
+            {
+                t = this.parsers[i].Parse(this, token);
+                if (t != null)
+                {
+                    break;
+                }
+            }
+            return t;
+        }
+
+        private Boolean IsTagEnd()
+        {
+            return IsTagEnd(GetToken());
+        }
+
+        private Boolean IsTagStart()
+        {
+            return IsTagStart(GetToken());
+        }
+
+        private Boolean IsTagEnd(Token t)
+        {
+            return t == null || t.TokenKind == TokenKind.TagEnd || t.TokenKind == TokenKind.EOF;
+        }
+
+        private Boolean IsTagStart(Token t)
+        {
+            return t.TokenKind == TokenKind.TagStart;
+        }
+
+        private Token GetToken()
+        {
+            return tokens[this.index];
+        }
+
+        private Token GetToken(Int32 i)
+        {
+            return tokens[this.index + 1];
+        }
+
+        #endregion
+        #region 1.1
+#if V1
         private Analyzers analyzer;
         private TemplateLexer lexer;
 
         private Tag tag;
         private Token token;
         private Token[] tokens;
+        private Int32 index;
+
 
         public TemplateParser(TemplateLexer lexer, Analyzers analyzer)
         {
@@ -452,6 +604,8 @@ namespace JinianNet.JNTemplate.Parser
             }
            
         }
+        #endregion
+#endif
         #endregion
 
     }
