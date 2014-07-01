@@ -9,3 +9,6 @@
 6.增加方法，属性等操作的复合使用，如：$User.CreateDate.ToString("yyyy-MM-dd") 或 $Db.Query().Table.Rows.Count
 7.支持以下方式调用数据 $list.get_Item(0) 相当于 list[0]
 
+
+Open source templating engine for .net!
+

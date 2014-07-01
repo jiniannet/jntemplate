@@ -21,11 +21,12 @@ namespace JinianNet.JNTemplate.Parser
 
         private Tag tag;
         private Token token;
+        private Token[] tokens;
 
         public TemplateParser(TemplateLexer lexer, Analyzers analyzer)
         {
             this.lexer = lexer;
-            this.Token = lexer.Parse()[0];
+            this.tokens = lexer.Parse();
             this.analyzer = analyzer;
         }
 
