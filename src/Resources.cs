@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate
         }
 
 
-        public static int FindPath(String[] files, String path, out String fullPath)
+        public static Int32 FindPath(String[] files, String path, out String fullPath)
         {
             fullPath = null;
             if (!String.IsNullOrEmpty(path))

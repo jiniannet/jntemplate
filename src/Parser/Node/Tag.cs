@@ -17,7 +17,14 @@ namespace JinianNet.JNTemplate.Parser.Node
         private Tag parent;
         private List<Tag> children;
 
-        public List<Tag> Children { get; private set; }
+        public Tag()
+        {
+            this.children = new List<Tag>();
+        }
+
+        public List<Tag> Children { 
+            get { return this.children; }
+        }
 
         public abstract Object Parse(TemplateContext context);
 
@@ -33,6 +40,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public Token LastToken
         {
+            set {  last = value; }
             get { return last; }
         }
 
@@ -55,16 +63,18 @@ namespace JinianNet.JNTemplate.Parser.Node
             sb.Append(t.ToString());
             if (this.last != null)
             {
-                while ((t = t.Next) != null)
+                while ((t = t.Next) != null && t != this.last)
                 {
                     sb.Append(t.ToString());
                 }
+
+                sb.Append(this.last.ToString());
             }
 
             return sb.ToString();
         }
 
-        public virtual Boolean ToBoolean(JinianNet.JNTemplate.Context.TemplateContext context)
+        public virtual Boolean ToBoolean(TemplateContext context)
         {
             return Parse(context) == null;
         }

@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class ReferenceTag : SimpleTag
     {
-        public override Object Parse(JinianNet.JNTemplate.Context.TemplateContext context)
+        public override Object Parse(TemplateContext context)
         {
             if (this.Children.Count > 0)
             {
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             return null;
         }
 
-        public override Object Parse(Object baseValue, JinianNet.JNTemplate.Context.TemplateContext context)
+        public override Object Parse(Object baseValue, TemplateContext context)
         {
             Object result = baseValue;
             for (Int32 i = 0; i < this.Children.Count; i++)

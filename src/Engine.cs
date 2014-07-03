@@ -30,7 +30,7 @@ namespace JinianNet.JNTemplate
         public Engine(String path, Encoding charset)
             : this(new TemplateContext())
         {
-            if (!string.IsNullOrEmpty(path))
+            if (!String.IsNullOrEmpty(path))
             {
                 _ctx.Paths.Add(path);
             }
@@ -66,7 +66,7 @@ namespace JinianNet.JNTemplate
             {
                 template.Context.Charset = encoding;
             }
-            if (!string.IsNullOrEmpty(path))
+            if (!String.IsNullOrEmpty(path))
             {
                 String fullPath = path;
                 Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);

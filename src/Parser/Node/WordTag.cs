@@ -6,17 +6,29 @@ namespace JinianNet.JNTemplate.Parser.Node
 {
     public class WordTag : SimpleTag
     {
-        public override object Parse(JinianNet.JNTemplate.Context.TemplateContext context)
+        private String text;
+        public String Name
         {
-            return this.ToString();
+            get { return this.text; }
+            set { this.text = value; }
         }
 
-        public override object Parse(object baseValue, JinianNet.JNTemplate.Context.TemplateContext context)
+        public override Object Parse(TemplateContext context)
         {
-            return this.ToString();
+            return this.Name;
         }
 
-        public override void Parse(JinianNet.JNTemplate.Context.TemplateContext context, System.IO.TextWriter write)
+        public override Object Parse(Object baseValue, TemplateContext context)
+        {
+            return this.Name;
+        }
+
+        public override String ToString()
+        {
+            return this.Name;
+        }
+
+        public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
 
         }

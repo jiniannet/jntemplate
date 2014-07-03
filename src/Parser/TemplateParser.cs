@@ -23,6 +23,13 @@ namespace JinianNet.JNTemplate.Parser
         private List<ITagParser> parsers;
         #endregion
 
+        #region
+        public List<ITagParser> Parser
+        {
+            get { return this.parsers; }
+        }
+        #endregion
+
         #region ctox
         public TemplateParser(Token[] ts)
         {
@@ -56,13 +63,6 @@ namespace JinianNet.JNTemplate.Parser
 
         #region IEnumerator 成员
 
-        Object IEnumerator.Current
-        {
-            get
-            {
-                return Current;
-            }
-        }
 
         public bool MoveNext()
         {
@@ -91,22 +91,30 @@ namespace JinianNet.JNTemplate.Parser
             {
                 Token t1, t2;
                 t1 = t2 = GetToken();
+                TokenCollection tc = new TokenCollection();
+
                 do
                 {
                     this.index++;
                     t2.Next = GetToken();
                     t2 = t2.Next;
+
+                    tc.Add(t2);
+
+
                 } while (!IsTagEnd());
 
-                t = Read(t1.Next);
-                t.FirstToken = t1;
-                if (t.Children.Count > 0)
+                tc.Remove(tc.Last);
+
+                t = Read(tc);
+                if (t != null)
                 {
-                    t.LastToken = t.Children[t.Children.Count - 1].LastToken;
-                }
-                else
-                {
-                    t.LastToken = t2;
+                    t.FirstToken = t1;
+
+                    if (t.Children.Count == 0)
+                    {
+                        t.LastToken = t2;
+                    }
                 }
             }
             else
@@ -119,19 +127,29 @@ namespace JinianNet.JNTemplate.Parser
             return t;
         }
 
-        private Tag Read(Token token)
+        public Tag Read(TokenCollection tc)
         {
             Tag t = null;
             for (Int32 i = 0; i < this.parsers.Count; i++)
             {
-                t = this.parsers[i].Parse(this, token);
+                t = this.parsers[i].Parse(this, tc);
                 if (t != null)
                 {
+                    t.FirstToken = tc.First;
+                    if (t.Children.Count > 0)
+                    {
+                        t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken;
+                    }
+                    else
+                    {
+                        t.LastToken = tc.Last;
+                    }
                     break;
                 }
             }
             return t;
         }
+
 
         private Boolean IsTagEnd()
         {
@@ -164,6 +182,7 @@ namespace JinianNet.JNTemplate.Parser
         }
 
         #endregion
+
         #region 1.1
 #if V1
         private Analyzers analyzer;
@@ -313,7 +332,7 @@ namespace JinianNet.JNTemplate.Parser
         public class IfAnalyzer : TagAnalyzer
         {
 
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 if (tokens.Length > 3 && tokens[0].Text.Equals(Field.KEY_IF, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
                 {
@@ -382,7 +401,7 @@ namespace JinianNet.JNTemplate.Parser
                 this.context = ctx;
             }
 
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 if (tokens.Length > 3 && tokens[0].Text.Equals(Field.KEY_LOAD, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
                 {
@@ -397,7 +416,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public class SetAnalyzer : TagAnalyzer
         {
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 if (tokens.Length > 5 && tokens[0].Text.Equals(Field.KEY_SET, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[3].Text.Equals("=", stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
                 {
@@ -419,7 +438,7 @@ namespace JinianNet.JNTemplate.Parser
             {
                 this.context = ctx;
             }
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 if (tokens.Length > 3 && tokens[0].Text.Equals(Field.KEY_INCLUDE, stringComparer) && tokens[1].Text.Equals("(", stringComparer) && tokens[tokens.Length - 1].Text.Equals(")", stringComparer))
                 {
@@ -435,7 +454,7 @@ namespace JinianNet.JNTemplate.Parser
         public class FunctionAnalyzer : TagAnalyzer
         {
 
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 if (tokens.Length > 2 && tokens[1].TokenKind == TokenKind.LeftParentheses && tokens[tokens.Length - 1].TokenKind == TokenKind.RightParentheses)
                 {
@@ -473,7 +492,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public class VariableAnalyzer : TagAnalyzer
         {
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 if (tokens.Length == 1)
                     switch (tokens[0].TokenKind)
@@ -513,7 +532,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public class ExpressionAnalyzer : TagAnalyzer
         {
-            public override Tag Parse(TemplateParser parser, Token[] tokens, int line, int col)
+            public override Tag Parse(TemplateParser parser, Token[] tokens, Int32 line, Int32 col)
             {
                 ExpressionTag tag = new ExpressionTag(line, col);
                 /* 注意事项：避免将FunctionTag拆分成表达式
@@ -608,5 +627,17 @@ namespace JinianNet.JNTemplate.Parser
 #endif
         #endregion
 
+
+        #region IEnumerator 成员
+
+        Object System.Collections.IEnumerator.Current
+        {
+            get
+            {
+                return this.Current;
+            }
+        }
+
+        #endregion
     }
 }

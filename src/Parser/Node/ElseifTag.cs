@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { test = value; }
         }
 
-        public override Object Parse(JinianNet.JNTemplate.Context.TemplateContext context)
+        public override Object Parse(TemplateContext context)
         {
             if (this.Test.ToBoolean(context))
             {
@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             return null;
         }
 
-        public override Object Parse(Object baseValue, JinianNet.JNTemplate.Context.TemplateContext context)
+        public override Object Parse(Object baseValue, TemplateContext context)
         {
             if (this.Test.ToBoolean(context))
             {
@@ -61,7 +61,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             return null;
         }
 
-        public override void Parse(JinianNet.JNTemplate.Context.TemplateContext context, System.IO.TextWriter write)
+        public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             if (this.Test.ToBoolean(context))
             {
@@ -73,7 +73,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         }
 
 
-        public override Boolean ToBoolean(JinianNet.JNTemplate.Context.TemplateContext context)
+        public override Boolean ToBoolean(TemplateContext context)
         {
             return this.Test.ToBoolean(context);
         }

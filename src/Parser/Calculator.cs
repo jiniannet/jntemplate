@@ -249,7 +249,7 @@ namespace JinianNet.JNTemplate.Parser
                 else
                 {
                     fullName = "System.String";
-                    value[i] = string.Empty;
+                    value[i] = String.Empty;
                 }
                 switch (fullName)
                 {

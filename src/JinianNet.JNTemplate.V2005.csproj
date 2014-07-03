@@ -53,14 +53,14 @@
     <Compile Include="Field.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="ITemplate.cs" />
-    <Compile Include="Parser\Analyzers.cs" />
     <Compile Include="Parser\Calculator.cs" />
     <Compile Include="Parser\CharScanner.cs" />
-    <Compile Include="Parser\Node\ComplexTag.cs" />
+    <Compile Include="Parser\ITagParser.cs" />
     <Compile Include="Parser\Node\Element.cs" />
     <Compile Include="Parser\Node\ElseifTag.cs" />
     <Compile Include="Parser\Node\ElseTag.cs" />
     <Compile Include="Parser\Node\ExpressionTag.cs" />
+    <Compile Include="Parser\Node\FalseTag.cs" />
     <Compile Include="Parser\Node\ForeachTag.cs" />
     <Compile Include="Parser\Node\FunctaionTag.cs" />
     <Compile Include="Parser\Node\IfTag.cs" />
@@ -73,6 +73,8 @@
     <Compile Include="Parser\Node\TagCollection.cs" />
     <Compile Include="Parser\Node\TextTag.cs" />
     <Compile Include="Parser\Node\Token.cs" />
+    <Compile Include="Parser\Node\TokenCollection.cs" />
+    <Compile Include="Parser\Node\TrueTag.cs" />
     <Compile Include="Parser\Node\ValueTag.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\Node\WordTag.cs" />

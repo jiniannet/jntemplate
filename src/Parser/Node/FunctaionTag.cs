@@ -24,12 +24,8 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             if (value != null)
             {
-                if (value is FuncHandler)
-                {
-                    return (value as FuncHandler).Invoke(args);
-                }
 
-                MethodInfo method = null;// ParserAccessor.GetMethod(value.GetType(), list[list.Length - 1], types);
+                //MethodInfo method = null;// ParserAccessor.GetMethod(value.GetType(), list[list.Length - 1], types);
                 ParameterInfo[] pi = null;
 
                 Object[] args = new Object[this.Children.Count];
@@ -39,6 +35,12 @@ namespace JinianNet.JNTemplate.Parser.Node
                     args[i] = this.Children[i].Parse(context);
                     argsType[i] = args[i].GetType();
                 }
+
+                if (value is FuncHandler)
+                {
+                    return (value as FuncHandler).Invoke(args);
+                }
+
 
                 MethodInfo method = value.GetType().GetMethod(this.Name, argsType);
                 if (method != null)

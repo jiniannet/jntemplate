@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             get
             {
-                return true;
+                return new TrueTag();
             }
             set
             {

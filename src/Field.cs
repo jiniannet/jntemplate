@@ -20,9 +20,9 @@ namespace JinianNet.JNTemplate
         internal const String KEY_SET = "set";
         internal const String KEY_LOAD = "load";
         internal const String KEY_INCLUDE = "include";
-        internal const String KEY_FOREACH_IN = "in";
         internal const String KEY_END = "end";
         internal const String KEY_FOR = "for";
+        internal const String KEY_IN = "in";
     }
 
 

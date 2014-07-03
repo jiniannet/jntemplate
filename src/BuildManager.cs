@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentException("ITemplate");
             }
 
-            if (!string.IsNullOrEmpty(path))
+            if (!String.IsNullOrEmpty(path))
             {
                 String fullPath = path;
                 Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);

@@ -60,7 +60,10 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
-            Excute(this.Source.Parse(context),context, writer);
+            if (this.Source != null)
+            {
+                Excute(this.Source.Parse(context), context, writer);
+            }
         }
 
         public override Object Parse(TemplateContext context)
@@ -76,7 +79,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {
-                Excute(this.Source.Parse(baseValue,context), context, write);
+                Excute(this.Source.Parse(baseValue, context), context, write);
                 return write.ToString();
             }
         }
