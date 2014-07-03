@@ -105,7 +105,7 @@ namespace JinianNet.JNTemplate.Parser
                 } while (!IsTagEnd());
 
                 tc.Remove(tc.Last);
-
+                this.index++;
                 t = Read(tc);
                 if (t != null)
                 {
@@ -122,8 +122,8 @@ namespace JinianNet.JNTemplate.Parser
                 t = new TextTag();
                 t.FirstToken = GetToken();
                 t.LastToken = null;
+                this.index++;
             }
-            this.index++;
             return t;
         }
 

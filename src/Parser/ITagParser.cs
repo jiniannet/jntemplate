@@ -119,7 +119,7 @@ namespace JinianNet.JNTemplate.Parser
                     ForeachTag tag = new ForeachTag();
                     tag.Name = tc[2].Text;
                     TokenCollection coll = new TokenCollection();
-                    coll.Add(tc,5,tc.Count-1);
+                    coll.Add(tc,4,tc.Count-2);
                     tag.Source = parser.Read(coll);
 
                     while (parser.MoveNext())
@@ -174,6 +174,19 @@ namespace JinianNet.JNTemplate.Parser
 
             return null;
         }
+        #endregion
+    }
+
+    public class ReferenceParser : ITagParser
+    {
+
+        #region ITagParser 成员
+
+        //public Tag Parse(TemplateParser parser, TokenCollection tc)
+        //{
+        //    if()
+        //}
+
         #endregion
     }
 

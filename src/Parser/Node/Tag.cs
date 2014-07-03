@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         public Token LastToken
         {
             set {  last = value; }
-            get { return last; }
+            get { return last;}
         }
 
         public Tag Parent
@@ -58,20 +58,24 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override String ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            Token t = this.first;
-            sb.Append(t.ToString());
-            if (this.last != null)
+            if (this.last != null && this.first != this.last)
             {
+                StringBuilder sb = new StringBuilder();
+                Token t = this.first;
+                sb.Append(t.ToString());
                 while ((t = t.Next) != null && t != this.last)
                 {
                     sb.Append(t.ToString());
                 }
-
                 sb.Append(this.last.ToString());
+                return sb.ToString();
+            }
+            else
+            {
+                return this.first.ToString();
             }
 
-            return sb.ToString();
+       
         }
 
         public virtual Boolean ToBoolean(TemplateContext context)
