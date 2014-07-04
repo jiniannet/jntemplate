@@ -62,6 +62,7 @@
     <Compile Include="Parser\Node\ExpressionTag.cs" />
     <Compile Include="Parser\Node\FalseTag.cs" />
     <Compile Include="Parser\Node\ForeachTag.cs" />
+    <Compile Include="Parser\Node\ForTag.cs" />
     <Compile Include="Parser\Node\FunctaionTag.cs" />
     <Compile Include="Parser\Node\IfTag.cs" />
     <Compile Include="Parser\Node\IncludeTag.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Parser\Node\ReferenceTag.cs" />
     <Compile Include="Parser\Node\SetTag.cs" />
     <Compile Include="Parser\Node\SimpleTag.cs" />
+    <Compile Include="Parser\Node\StringTag.cs" />
     <Compile Include="Parser\Node\Tag.cs" />
     <Compile Include="Parser\Node\TagCollection.cs" />
     <Compile Include="Parser\Node\TextTag.cs" />

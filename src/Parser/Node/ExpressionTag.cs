@@ -10,30 +10,34 @@ using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    //public class ExpressionTag : ComplexTag
-    //{
-    //    public ExpressionTag(Int32 line, Int32 col)
-    //        : base(ElementType.Expression, line, col)
-    //    {
-    //        this.Value = new List<Tag>();
-    //    }
+    public class ExpressionTag : SimpleTag
+    {
+        public override object Parse(TemplateContext context)
+        {
+            Object[] value = new Object[this.Children.Count];
 
-    //    private List<Tag> _value;
-    //    public List<Tag> Value
-    //    {
-    //        get { return _value; }
-    //        private set { _value = value; }
-    //    }
+            for (Int32 i = 0; i < this.Children.Count; i++)
+            {
+                value[i] = this.Children[i].Parse(context);
+            }
 
-    //    public override void Parse(TemplateContext context, System.IO.TextWriter writer)
-    //    {
-    //        Object[] value = new Object[this.Value.Count];
-    //        for (Int32 i = 0; i < this.Value.Count; i++)
-    //        {
-    //            value[i] = this.Value[i].Parse(context);
-    //        }
-    //        Calculator actuator = new Calculator();
-    //        writer.Write(actuator.Calculate(new Calculator().ProcessExpression(value)));
-    //    }
-    //}
+            Calculator actuator = new Calculator();
+
+            return actuator.Calculate(new Calculator().ProcessExpression(value));
+        }
+
+        public override object Parse(object baseValue, TemplateContext context)
+        {
+            Object[] value = new Object[this.Children.Count];
+
+            for (Int32 i = 0; i < this.Children.Count; i++)
+            {
+                value[i] = this.Children[i].Parse(baseValue,context);
+            }
+
+            Calculator actuator = new Calculator();
+
+            return actuator.Calculate(new Calculator().ProcessExpression(value));
+        }
+    }
 }

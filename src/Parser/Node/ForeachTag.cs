@@ -70,7 +70,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {
-                Parse(context, write);
+                Excute(this.Source.Parse(context), context, write);
                 return write.ToString();
             }
         }

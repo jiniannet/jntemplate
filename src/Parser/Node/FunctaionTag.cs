@@ -20,14 +20,48 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { name = value; }
         }
 
-        private Object Excute(Object value, TemplateContext context)
+        private Object Excute(Object value, TemplateContext context,Object[] args,Type[] types)
         {
             if (value != null)
             {
 
                 //MethodInfo method = null;// ParserAccessor.GetMethod(value.GetType(), list[list.Length - 1], types);
-                ParameterInfo[] pi = null;
 
+                //判断是否委托
+                if (value is FuncHandler)
+                {
+                    return (value as FuncHandler).Invoke(args);
+                }
+
+
+
+                //不是委托，则在取方法
+                MethodInfo method = value.GetType().GetMethod(this.Name, types);
+                if (method != null)
+                {
+                    return method.Invoke(value, args);
+                }
+            }
+            return null;
+        }
+
+        public override Object Parse(TemplateContext context)
+        {
+            Object[] args = new Object[this.Children.Count];
+            Type[] argsType = new Type[this.Children.Count];
+            for (Int32 i = 0; i < this.Children.Count; i++)
+            {
+                args[i] = this.Children[i].Parse(context);
+                argsType[i] = args[i].GetType();
+            }
+
+            return Excute(context.TempData[this.Name], context, args, argsType);
+        }
+
+        public override Object Parse(Object baseValue, TemplateContext context)
+        {
+            if (baseValue != null)
+            {
                 Object[] args = new Object[this.Children.Count];
                 Type[] argsType = new Type[this.Children.Count];
                 for (Int32 i = 0; i < this.Children.Count; i++)
@@ -36,55 +70,17 @@ namespace JinianNet.JNTemplate.Parser.Node
                     argsType[i] = args[i].GetType();
                 }
 
-                if (value is FuncHandler)
+
+                Object result = Excute(baseValue, context, args, argsType);
+                if (result != null)
                 {
-                    return (value as FuncHandler).Invoke(args);
+                    return result;
                 }
-
-
-                MethodInfo method = value.GetType().GetMethod(this.Name, argsType);
-                if (method != null)
+                result = ParserAccessor.GetPropertyValue(baseValue, this.Name);
+                if (result != null && result is FuncHandler)
                 {
-                    return method.Invoke(value, args);
+                    return (result as FuncHandler).Invoke(args);
                 }
-
-                //不够精准，但是命中率高
-                //foreach (MethodInfo mi in value.GetType().GetMembers())
-                //{
-                //    pi = mi.GetParameters();
-                //    if (mi.Name.Equals(list[list.Length - 1], StringComparison.OrdinalIgnoreCase) && pi.Length == args.Length)
-                //    {
-                //        method = mi;
-                //        break;
-                //    }
-                //}
-
-                //if (method != null)
-                //{
-                //    for (Int32 i = 0; i < args.Length; i++)
-                //    {
-                //        if (args[i] != null && pi[i].ParameterType.FullName != "System.Object")
-                //        {
-                //            args[i] = Convert.ChangeType(args[i], pi[i].ParameterType);
-                //        }
-                //    }
-                //    return method.Invoke(value, args);
-                //}
-            }
-            return null;
-        }
-
-        public override Object Parse(TemplateContext context)
-        {
-            return Excute(context.TempData[this.Name], context);
-        }
-
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            if (baseValue != null)
-            {
-                Object value = ParserAccessor.GetPropertyValue(baseValue, this.Name);
-                return Excute(value, context);
             }
 
             return null;

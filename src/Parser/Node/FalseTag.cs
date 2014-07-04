@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class FalseTag : Tag
+    public class FalseTag : SimpleTag
     {
         public override Object Parse(TemplateContext context)
         {

@@ -18,19 +18,13 @@ namespace JinianNet.JNTemplate
         {
             this.Charset = System.Text.Encoding.Default;
             this.Parser = new List<ITagParser>();
-            this.Parser.Add(new JinianNet.JNTemplate.Parser.WordParser());
-            this.Parser.Add(new JinianNet.JNTemplate.Parser.VariableParser());
-            this.Parser.Add(new JinianNet.JNTemplate.Parser.VariableParser());
-            this.Parser.Add(new JinianNet.JNTemplate.Parser.ForeachParser());
-            this.Parser.Add(new JinianNet.JNTemplate.Parser.FunctionParser());
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.ForEachAnalyzer());
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.IfAnalyzer());
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.LoadAnalyzer(this));
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.IncludeAnalyzer(this));
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.SetAnalyzer());
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.FunctionAnalyzer());
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.VariableAnalyzer());
-            //this.Analyzer.Add(new JinianNet.JNTemplate.Parser.TemplateParser.ExpressionAnalyzer());
+            this.Parser.Add(new WordParser());
+            this.Parser.Add(new VariableParser());
+            this.Parser.Add(new StringParser());
+            this.Parser.Add(new ForeachParser());
+
+            this.Parser.Add(new ReferenceParser());
+            this.Parser.Add(new FunctionParser());
             this.Paths = new List<String>();
         }
 
