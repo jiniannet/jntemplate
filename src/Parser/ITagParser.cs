@@ -10,6 +10,52 @@ namespace JinianNet.JNTemplate.Parser
         Tag Parse(TemplateParser parser, TokenCollection tc);
     }
 
+    public class NumberParser : ITagParser
+    {
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count == 1 && tc.First.TokenKind == TokenKind.Number)
+            {
+                NumberTag tag = new NumberTag();
+                if (tc.First.Text.IndexOf('.') == -1)
+                {
+                    tag.Value = Int32.Parse(tc.First.Text);
+                }
+                else
+                {
+                    tag.Value = Double.Parse(tc.First.Text);
+                }
+
+                return tag;
+            }
+
+            return null;
+        }
+
+        #endregion
+    }
+
+    public class BooleanParser : ITagParser
+    {
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count == 1 
+                && (tc.First.Text  == "true" || tc.First.Text  == "false"))
+            {
+                BooleanTag tag = new BooleanTag();
+                tag.Value = tc.First.Text == "true";
+                return tag;
+            }
+
+            return null;
+        }
+
+        #endregion
+    }
     //true false
     public class WordParser : ITagParser
     {
@@ -74,7 +120,7 @@ namespace JinianNet.JNTemplate.Parser
                 )
             {
                 StringTag tag = new StringTag();
-                tag.Text = tc[1].Text;
+                tag.Value = tc[1].Text;
                 return tag;
             }
             return null;
@@ -155,7 +201,7 @@ namespace JinianNet.JNTemplate.Parser
                 tag.Name = tc[2].Text;
 
                 TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 4, tc.Count - 1);
+                coll.Add(tc, 4, tc.Count - 2);
 
                 tag.Value = parser.Read(coll);
                 return tag;
@@ -185,9 +231,30 @@ namespace JinianNet.JNTemplate.Parser
     {
     }
 
-    public class IncludeParser
+    public class IncludeParser : ITagParser
     {
 
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.First.Text == Field.KEY_INCLUDE)
+            {
+                if (tc.Count > 2
+                    && (tc[1].TokenKind == TokenKind.LeftParentheses)
+                    && tc.Last.TokenKind == TokenKind.RightParentheses)
+                {
+                    //LoadTag  
+                    IncludeTag tag = new IncludeTag();
+                    //tag.AddChild(parser.Read(coll));
+                    return tag;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 
     public class ExpressionTag : ITagParser
@@ -214,6 +281,8 @@ namespace JinianNet.JNTemplate.Parser
                     return true;
                 }
             }
+
+            return false;
         }
 
         #endregion
@@ -336,7 +405,10 @@ namespace JinianNet.JNTemplate.Parser
                             {
                                 TokenCollection coll = new TokenCollection();
                                 coll.Add(tc, start, end - 1);
-                                tag.AddChild(parser.Read(coll));
+                                if (coll.Count > 0)
+                                {
+                                    tag.AddChild(parser.Read(coll));
+                                }
                                 start = i + 1;
                             }
                             break;
@@ -353,7 +425,10 @@ namespace JinianNet.JNTemplate.Parser
                             {
                                 TokenCollection coll = new TokenCollection();
                                 coll.Add(tc, start, end - 1);
-                                tag.AddChild(parser.Read(coll));
+                                if (coll.Count > 0)
+                                {
+                                    tag.AddChild(parser.Read(coll));
+                                }
                             }
                             break;
                     }
@@ -370,6 +445,7 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
     }
 
+#if comlex
     //太过复杂的表达式 ，比如：
     //(num*(value.getNum(x,y)+8)*84).ToString("#0.00") 
     //因为处理太过麻烦 本版本暂不实现
@@ -377,32 +453,20 @@ namespace JinianNet.JNTemplate.Parser
     public class ComplexParser : ITagParser
     {
         /*
-         
          nom.aa(38+24)
 nom.aa(38+24).ToString("#0.00")
 (num*(3+8)-45).ToString("#0.00")
-
 (num*(value.getNum()+8).toFxi()-45).ToString("#0.00")
-
-
 (num*(value.getNum(x,y)+8)*84).ToString("#0.00") 
-
 (num*(value.getNum()+8).toFxi()-45).ToString("#0.00")
-
 1. 
-
 (num*(value.getNum()+8).toFxi()-45)   - 
-
                                           num
                                           (value.getNum()+8).toFxi()
                                           45
-                    
-
-
 ToString("#0.00") - 
-         * 
          */
-        #region ITagParser 成员
+    #region ITagParser 成员
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             List<Tag> list = new List<Tag>();
@@ -418,6 +482,15 @@ ToString("#0.00") -
                     {
                         case TokenKind.Operator:
                         case TokenKind.Dot:
+                            if (pos == 0)
+                            {
+                                TokenCollection coll = new TokenCollection();
+                                coll.Add(tc, start, end - 1);
+                                list.Add(parser.Read(coll));
+                                list.Add(new TextTag());
+                                list[list.Count - 1].FirstToken = tc[i];
+                                start = i + 1;
+                            }
                             break;
                         case TokenKind.LeftParentheses:
                             pos++;
@@ -446,7 +519,8 @@ ToString("#0.00") -
             return null;
         }
 
-        #endregion
-    }
+    #endregion
 
+    }
+#endif
 }

@@ -32,6 +32,13 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
 
+
+        public virtual Boolean ToBoolean(TemplateContext context)
+        {
+            return Parse(context) == null;
+        }
+
+
         public Token FirstToken
         {
             get { return first; }
@@ -56,32 +63,6 @@ namespace JinianNet.JNTemplate.Parser.Node
             Children.Add(node);
         }
 
-        public override String ToString()
-        {
-            if (this.last != null && this.first != this.last)
-            {
-                StringBuilder sb = new StringBuilder();
-                Token t = this.first;
-                sb.Append(t.ToString());
-                while ((t = t.Next) != null && t != this.last)
-                {
-                    sb.Append(t.ToString());
-                }
-                sb.Append(this.last.ToString());
-                return sb.ToString();
-            }
-            else
-            {
-                return this.first.ToString();
-            }
-
-       
-        }
-
-        public virtual Boolean ToBoolean(TemplateContext context)
-        {
-            return Parse(context) == null;
-        }
 
     }
 }

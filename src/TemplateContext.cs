@@ -18,10 +18,13 @@ namespace JinianNet.JNTemplate
         {
             this.Charset = System.Text.Encoding.Default;
             this.Parser = new List<ITagParser>();
+            this.Parser.Add(new BooleanParser());
+            this.Parser.Add(new NumberParser());
             this.Parser.Add(new WordParser());
             this.Parser.Add(new VariableParser());
             this.Parser.Add(new StringParser());
             this.Parser.Add(new ForeachParser());
+            this.Parser.Add(new SetParser());
 
             this.Parser.Add(new ReferenceParser());
             this.Parser.Add(new FunctionParser());

@@ -9,37 +9,24 @@ using System.Text;
 using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
-{/*
-    public class IncludeTag : ComplexTag
+{
+    public class IncludeTag : SimpleTag
     {
-        public IncludeTag(Int32 line, Int32 col)
-            : base(ElementType.Include, line, col)
-        {
-
-        }
-
-        private Tag _path;
+        private Tag path;
         public Tag Path
         {
-            get { return _path; }
-            set { _path = value; }
+            get { return path; }
+            set { path = value; }
         }
 
-
-        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
+        public override Object Parse(TemplateContext context)
         {
-            String path = this.Path.Parse(context).ToString();
+            throw new NotImplementedException();
+        }
 
-            System.Collections.Generic.List<String> paths = new System.Collections.Generic.List<String>();
-            if (!String.IsNullOrEmpty(context.CurrentPath))
-                paths.Add(context.CurrentPath);
-            paths.AddRange(context.Paths);
-
-            if (!String.IsNullOrEmpty(path))
-            {
-                writer.Write(Resources.LoadResource(paths.ToArray(), path, context.Charset));
-            }
+        public override Object Parse(object baseValue, TemplateContext context)
+        {
+            return Parse(context);
         }
     }
-    */
 }

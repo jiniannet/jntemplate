@@ -129,6 +129,8 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Read(TokenCollection tc)
         {
+            if (tc == null || tc.Count == 0)
+                return null;
             Tag t = null;
             for (Int32 i = 0; i < this.parsers.Count; i++)
             {

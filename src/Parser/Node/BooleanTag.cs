@@ -4,11 +4,11 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class StringTag : BaseTag<String>
+    public class BooleanTag : BaseTag<Boolean>
     {
         public override Boolean ToBoolean(TemplateContext context)
         {
-            return !String.IsNullOrEmpty(this.Value);
+            return this.Value;
         }
     }
 }

@@ -10,44 +10,32 @@ using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    /*
-     public class LoadTag : ComplexTag
-     {
-         public LoadTag(Int32 line, Int32 col)
-             : base(ElementType.Load, line, col)
-         {
+    public class LoadTag : SimpleTag
+    {
+        public override Object Parse(TemplateContext context)
+        {
+            using (System.IO.StringWriter writer = new System.IO.StringWriter())
+            {
+                for (Int32 i = 0; i < this.Children.Count; i++)
+                {
+                    this.Children[i].Parse(context, writer);
+                }
 
-         }
+                return writer.ToString();
+            }
+        }
 
-         private Tag _path;
-         public Tag Path
-         {
-             get { return _path; }
-             set { _path = value; }
-         }
+        public override Object Parse(object baseValue, TemplateContext context)
+        {
+            using (System.IO.StringWriter writer = new System.IO.StringWriter())
+            {
+                for (Int32 i = 0; i < this.Children.Count; i++)
+                {
+                    writer.Write(this.Children[i].Parse(baseValue, context));
+                }
 
-
-
-         public override void Parse(TemplateContext context, System.IO.TextWriter writer)
-         {
-             String path = this.Path.Parse(context).ToString();
-             if (!String.IsNullOrEmpty(path))
-             {
-                 System.Collections.Generic.List<String> paths = new System.Collections.Generic.List<String>();
-
-                 if (!String.IsNullOrEmpty(context.CurrentPath))
-                     paths.Add(context.CurrentPath);
-                 paths.AddRange(context.Paths);
-
-                 TemplateLexer lexer = new TemplateLexer(Resources.LoadResource(paths.ToArray(), path, context.Charset));
-                 TemplateParser parser = new TemplateParser(lexer.Parse(), context.Analyzer);
-                 while (parser.MoveNext())
-                 {
-                     parser.Current.Parse(context, writer);
-                 }
-             }
-         }
-   
-     }
-     */
+                return writer.ToString();
+            }
+        }
+    }
 }

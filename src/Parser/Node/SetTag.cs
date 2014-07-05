@@ -34,13 +34,13 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(Object baseValue, TemplateContext context)
         {
-            context.TempData[this.Name] = this.Value.Parse(baseValue,context);
+            context.TempData[this.Name] = this.Value.Parse(baseValue, context);
             return null;
         }
 
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-
+            Parse(context);
         }
     }
 }
