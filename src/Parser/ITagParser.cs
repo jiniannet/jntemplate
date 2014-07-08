@@ -178,8 +178,89 @@ namespace JinianNet.JNTemplate.Parser
     {
     }
 
-    public class IfParser
+    public class IfParser : ITagParser
     {
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count > 3
+                && tc.First.TokenKind == TokenKind.TextData
+                && tc.First.Text == Field.KEY_IF)
+            {
+                IfTag tag = new IfTag();
+
+                ElseifTag t = new ElseifTag();
+                TokenCollection coll = new TokenCollection();
+                coll.Add(tc, 2, tc.Count - 2);
+                t.Test = parser.Read(tc);
+                tag.AddChild(t);
+
+                while (parser.MoveNext())
+                {
+                    if (parser.Current is WordTag && Field.KEY_END == parser.Current.ToString())
+                    {
+                        return tag;
+                    }
+                    else if (parser.Current is ElseifTag
+                        || parser.Current is ElseTag)
+                    {
+                        tag.AddChild(parser.Current);
+                    }
+                    else
+                    {
+                        tag.Children[tag.Children.Count - 1].AddChild(parser.Current);
+                    }
+                }
+
+                return tag;
+
+            }
+
+            return null;
+        }
+
+        #endregion
+    }
+
+    public class ElseifParser : ITagParser
+    {
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count > 3
+                && tc.First.Text == Field.KEY_ELSEIF)
+            {
+                ElseifTag tag = new ElseTag();
+
+                TokenCollection coll = new TokenCollection();
+                coll.Add(tc, 2, tc.Count - 2);
+                tag.Test = parser.Read(tc);
+
+                return tag;
+            }
+
+            return null;
+        }
+
+        #endregion
+    }
+
+    public class EleseParser : ITagParser
+    {
+        #region ITagParser 成员
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count == 1
+                && tc.First.Text == Field.KEY_ELSE)
+            {
+                return new ElseTag();
+            }
+
+            return null;
+        }
+        #endregion
     }
 
     public class SetParser : ITagParser
@@ -287,6 +368,7 @@ namespace JinianNet.JNTemplate.Parser
 
         #endregion
     }
+
     public class ReferenceParser : ITagParser
     {
         #region ITagParser 成员
