@@ -43,8 +43,8 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 1 
-                && (tc.First.Text  == "true" || tc.First.Text  == "false"))
+            if (tc.Count == 1
+                && (tc.First.Text == "true" || tc.First.Text == "false"))
             {
                 BooleanTag tag = new BooleanTag();
                 tag.Value = tc.First.Text == "true";
@@ -308,13 +308,32 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
     }
 
-    public class LoadParser
+    public class LoadParser : ITagParser
     {
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.First.Text == Field.KEY_LOAD)
+            {
+                if (tc.Count > 2
+                    && (tc[1].TokenKind == TokenKind.LeftParentheses)
+                    && tc.Last.TokenKind == TokenKind.RightParentheses)
+                {
+                    LoadTag tag = new LoadTag();
+                    tag.Path = parser.Read(new TokenCollection(tc, 2, tc.Count - 2));
+                    return tag;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 
     public class IncludeParser : ITagParser
     {
-
         #region ITagParser 成员
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
@@ -325,9 +344,8 @@ namespace JinianNet.JNTemplate.Parser
                     && (tc[1].TokenKind == TokenKind.LeftParentheses)
                     && tc.Last.TokenKind == TokenKind.RightParentheses)
                 {
-                    //LoadTag  
                     IncludeTag tag = new IncludeTag();
-                    //tag.AddChild(parser.Read(coll));
+                    tag.Path = parser.Read(new TokenCollection(tc, 2, tc.Count - 2));
                     return tag;
                 }
             }
@@ -344,10 +362,10 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count > 2 && HasOperator(tc))
-            {
+            //if (tc.Count > 2 && HasOperator(tc))
+            //{
 
-            }
+            //}
 
             return null;
 
@@ -535,20 +553,20 @@ namespace JinianNet.JNTemplate.Parser
     public class ComplexParser : ITagParser
     {
         /*
-         nom.aa(38+24)
-nom.aa(38+24).ToString("#0.00")
-(num*(3+8)-45).ToString("#0.00")
-(num*(value.getNum()+8).toFxi()-45).ToString("#0.00")
-(num*(value.getNum(x,y)+8)*84).ToString("#0.00") 
-(num*(value.getNum()+8).toFxi()-45).ToString("#0.00")
-1. 
-(num*(value.getNum()+8).toFxi()-45)   - 
-                                          num
-                                          (value.getNum()+8).toFxi()
-                                          45
-ToString("#0.00") - 
+        nom.aa(38+24)
+        nom.aa(38+24).ToString("#0.00")
+        (num*(3+8)-45).ToString("#0.00")
+        (num*(value.getNum()+8).toFxi()-45).ToString("#0.00")
+        (num*(value.getNum(x,y)+8)*84).ToString("#0.00") 
+        (num*(value.getNum()+8).toFxi()-45).ToString("#0.00")
+        1. 
+        (num*(value.getNum()+8).toFxi()-45)   - 
+                                                  num
+                                                  (value.getNum()+8).toFxi()
+                                                  45
+        ToString("#0.00") - 
          */
-    #region ITagParser 成员
+        #region ITagParser 成员
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             List<Tag> list = new List<Tag>();
@@ -601,7 +619,7 @@ ToString("#0.00") -
             return null;
         }
 
-    #endregion
+        #endregion
 
     }
 #endif

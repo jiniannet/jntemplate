@@ -12,6 +12,14 @@ namespace JinianNet.JNTemplate.Parser.Node
 {
     public class LoadTag : SimpleTag
     {
+        private Tag path;
+        public Tag Path
+        {
+            get { return path; }
+            set { path = value; }
+        }
+
+
         public override Object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter writer = new System.IO.StringWriter())

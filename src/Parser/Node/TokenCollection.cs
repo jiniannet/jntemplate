@@ -14,6 +14,25 @@ namespace JinianNet.JNTemplate.Parser.Node
             this.list = new List<Token>();
         }
 
+        public TokenCollection(Int32 capacity)
+        {
+            list = new List<Token>(capacity);
+        }
+
+        public TokenCollection(IEnumerable<Token> collection)
+        {
+            list = new List<Token>(collection);
+        }
+
+        public TokenCollection(IList<Token> collection, Int32 start, Int32 end)
+        {
+            list = new List<Token>(end + 1 - start);
+            for (Int32 i = start; i <= end && i < collection.Count; i++)
+            {
+                this.Add(collection[i]);
+            }
+        }
+
         public Token First
         {
             get
@@ -97,7 +116,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public void CopyTo(Token[] array, Int32 arrayIndex)
         {
-             list.CopyTo(array, arrayIndex);
+            list.CopyTo(array, arrayIndex);
         }
 
         public Int32 Count

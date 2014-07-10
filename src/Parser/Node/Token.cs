@@ -11,7 +11,6 @@ namespace JinianNet.JNTemplate.Parser.Node
 
     public class Token
     {
-        private Int32 _column;
         private String _text;
         private Int32 _beginline;
         private Int32 _begincolumn;
