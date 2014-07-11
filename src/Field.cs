@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate
 {
     public class Field
     {
-        public const String Version = "1.1 beta";
+        public const String Version = "1.2";
         internal const String KEY_FOREACH = "foreach";
         internal const String KEY_IF = "if";
         internal const String KEY_ELSEIF = "elseif";

@@ -9,16 +9,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
-using System.Web;
 using System.Globalization;
 
 namespace JinianNet.JNTemplate.Parser
 {
     public class VariableScope
     {
-        private VariableScope _parent;
+        private VariableScope parent;
 
-        private Dictionary<String, Object> _dictionary;
+        private Dictionary<String, Object> dic;
 
         public VariableScope()
             : this(null)
@@ -28,8 +27,8 @@ namespace JinianNet.JNTemplate.Parser
 
         public VariableScope(VariableScope parent)
         {
-            this._parent = parent;
-            this._dictionary = new Dictionary<String, Object>(StringComparer.InvariantCultureIgnoreCase);
+            this.parent = parent;
+            this.dic = new Dictionary<String, Object>(StringComparer.InvariantCultureIgnoreCase);
         }
 
 
@@ -39,12 +38,12 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public void Clear(Boolean all)
         {
-            this._dictionary.Clear();
+            this.dic.Clear();
             if (all)
             {
-                if (this._parent != null)
+                if (this.parent != null)
                 {
-                    this._parent.Clear(all);
+                    this.parent.Clear(all);
                 }
             }
         }
@@ -54,7 +53,7 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public VariableScope Parent
         {
-            get { return this._parent; }
+            get { return this.parent; }
         }
 
         /// <summary>
@@ -65,22 +64,22 @@ namespace JinianNet.JNTemplate.Parser
             get
             {
                 Object val;
-                if (this._dictionary.TryGetValue(name, out val))
+                if (this.dic.TryGetValue(name, out val))
                     return val;
-                if (this._parent != null)
-                    return this._parent[name];
+                if (this.parent != null)
+                    return this.parent[name];
                 return null;
             }
             set
             {
-                this._dictionary[name] = value;
+                this.dic[name] = value;
             }
         }
 
         public VariableScope Copy()
         {
             VariableScope owen = new VariableScope(this.Parent);
-            foreach (KeyValuePair<String, Object> value in this._dictionary)
+            foreach (KeyValuePair<String, Object> value in this.dic)
             {
                 owen[value.Key] = value.Value;
             }
@@ -90,18 +89,18 @@ namespace JinianNet.JNTemplate.Parser
 
         public void Push(String key, Object value)
         {
-            this._dictionary.Add(key, value);
+            this.dic.Add(key, value);
         }
 
         public Boolean ContainsKey(String key)
         {
-            if (this._dictionary.ContainsKey(key))
+            if (this.dic.ContainsKey(key))
             {
                 return true;
             }
-            if (_parent != null)
+            if (parent != null)
             {
-                return this._parent.ContainsKey(key);
+                return this.parent.ContainsKey(key);
             }
             
             return false;
@@ -109,7 +108,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public bool Remove(String key)
         {
-            return this._dictionary.Remove(key);
+            return this.dic.Remove(key);
         }
 
     }

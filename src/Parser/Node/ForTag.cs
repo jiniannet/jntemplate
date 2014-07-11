@@ -36,7 +36,10 @@ namespace JinianNet.JNTemplate.Parser.Node
                 {
                     this.Children[i].Parse(context, writer);
                 }
-                this.Do.Parse(context);
+                if (this.Do != null)
+                {
+                    this.Do.Parse(context);
+                }
                 run = this.Test == null ? true : this.Test.ToBoolean(context);
             }
         }

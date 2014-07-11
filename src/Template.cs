@@ -54,6 +54,8 @@ namespace JinianNet.JNTemplate
 
         public virtual void Render(TextWriter writer)
         {
+            Resources.Paths = this.Context.Paths;
+
             if (!String.IsNullOrEmpty(TemplateContent))
             {
                 TemplateLexer lexer = new TemplateLexer(TemplateContent);
@@ -67,6 +69,8 @@ namespace JinianNet.JNTemplate
                     parser.Current.Parse(this.Context, writer);
                 }
             }
+
+            Resources.Paths.Clear();
         }
 
 

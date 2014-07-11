@@ -15,31 +15,27 @@ namespace JinianNet.JNTemplate
     {
         public class ResourceManager
         {
+            
 
+            //public String LoadResource(String path, Encoding encoding)
+            //{
+            //    return Resources.LoadResource(this.Paths, path, encoding);
+            //}
 
         }
 
+        public static List<String> Paths { get; set; }
 
-        public static Int32 FindPath(String[] files, String path, out String fullPath)
+        public static Int32 FindPath(IEnumerable<String> files, String path, out String fullPath)
         {
             fullPath = null;
             if (!String.IsNullOrEmpty(path))
             {
-                String checkUrl;
-                //String appPath;
-                //if (System.Web.HttpContext.Current != null)
-                //{
-                //    appPath = System.Web.HttpRuntime.AppDomainAppPath;
-                //}
                 path = NormalizePath(path);
                 String sc = String.Empty.PadLeft(2, System.IO.Path.DirectorySeparatorChar);
-                for (Int32 i = 0; i < files.Length && !String.IsNullOrEmpty(files[i]); i++)
+                Int32 i = 0;
+                foreach (String checkUrl in files)
                 {
-                    checkUrl = files[i];
-                    //if (checkUrl.IndexOf(System.IO.Path.VolumeSeparatorChar) == -1)
-                    //{
-                    //    //checkUrl = 
-                    //}
                     if (checkUrl[checkUrl.Length - 1] != System.IO.Path.DirectorySeparatorChar && path[0] != System.IO.Path.DirectorySeparatorChar)
                         fullPath = String.Concat(checkUrl, System.IO.Path.DirectorySeparatorChar.ToString(), path);
                     else
@@ -53,16 +49,17 @@ namespace JinianNet.JNTemplate
                     if (System.IO.File.Exists(fullPath))
                         return i;
                 }
+
             }
             return -1;
         }
 
-        public static String LoadResource(String[] files, String path)
+        public static String LoadResource(IEnumerable<String> files, String path)
         {
             return LoadResource(files, path, Encoding.Default);
         }
 
-        public static String LoadResource(String[] files, String path, Encoding encoding)
+        public static String LoadResource(IEnumerable<String> files, String path, Encoding encoding)
         {
             String full;
             if (FindPath(files, path, out full) != -1)
@@ -76,7 +73,6 @@ namespace JinianNet.JNTemplate
         {
             return System.IO.File.ReadAllText(path, encoding);
         }
-
 
         public static String NormalizePath(String path)
         {

@@ -111,7 +111,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     t.FirstToken = t1;
 
-                    if (t.Children.Count == 0)
+                    if (t.Children.Count == 0 || t2.CompareTo(t.LastToken) > 0)
                     {
                         t.LastToken = t2;
                     }
@@ -138,11 +138,9 @@ namespace JinianNet.JNTemplate.Parser
                 if (t != null)
                 {
                     t.FirstToken = tc.First;
-                    if (t.Children.Count > 0)
-                    {
-                        t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken;
-                    }
-                    else
+
+
+                    if (t.Children.Count == 0 || tc.Last.CompareTo(t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) > 0)
                     {
                         t.LastToken = tc.Last;
                     }

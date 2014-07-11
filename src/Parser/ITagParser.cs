@@ -174,8 +174,63 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
     }
 
-    public class ForParser
+    public class ForParser : ITagParser
     {
+        #region ITagParser 成员
+
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count > 3 && tc.First.TokenKind == TokenKind.TextData
+                && tc.First.Text == Field.KEY_FOR)
+            {
+                ForTag tag = new ForTag();
+                for (Int32 i = 2; i < tc.Count; i++)
+                {
+                    //end = i;
+                    //switch (tc[i].TokenKind)
+                    //{
+                    //    case TokenKind.Punctuation:
+                    //        if (pos == 0 && tc[i].Text==";")
+                    //        {
+                    //            TokenCollection coll = new TokenCollection();
+                    //            coll.Add(tc, start, end - 1);
+                    //            if (coll.Count > 0)
+                    //            {
+                    //                tag.AddChild(parser.Read(coll));
+                    //            }
+                    //            start = i + 1;
+                    //        }
+                    //        break;
+                    //    default:
+                    //        if (tc[i].TokenKind == TokenKind.LeftParentheses)
+                    //        {
+                    //            pos++;
+                    //        }
+                    //        else if (tc[i].TokenKind == TokenKind.RightParentheses)
+                    //        {
+                    //            pos--;
+                    //        }
+                    //        if (i == tc.Count - 1)
+                    //        {
+                    //            TokenCollection coll = new TokenCollection();
+                    //            coll.Add(tc, start, end - 1);
+                    //            if (coll.Count > 0)
+                    //            {
+                    //                tag.AddChild(parser.Read(coll));
+                    //            }
+                    //        }
+                    //        break;
+                    //}
+
+                }
+
+                return tag;
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 
     public class IfParser : ITagParser
@@ -356,19 +411,75 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
     }
 
-    public class ExpressionTag : ITagParser
+    public class ExpressionParser : ITagParser
     {
         #region ITagParser 成员
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            //if (tc.Count > 2 && HasOperator(tc))
-            //{
+            if (tc.Count > 2 && HasOperator(tc))
+            {
+                Int32 start, end, pos;
+                start = end = pos = 0;
 
-            //}
+                ExpressionTag tag = new ExpressionTag();
 
+                #region
+
+                for (Int32 i = 0; i < tc.Count; i++)
+                {
+                    end = i;
+                    switch (tc[i].TokenKind)
+                    {
+                        case TokenKind.Operator:
+                            if (pos == 0)
+                            {
+                                if (start != end)
+                                {
+                                    TokenCollection coll = new TokenCollection();
+                                    coll.Add(tc, start, end - 1);
+                                    tag.AddChild(parser.Read(coll));
+                                }
+                                tag.AddChild(new TextTag());
+                                tag.Children[tag.Children.Count - 1].FirstToken = tc[i];
+                                start = i + 1;
+                            }
+                            break;
+                        case TokenKind.LeftParentheses:
+                            pos++;
+                            break;
+                        case TokenKind.RightParentheses:
+                            pos--;
+                            if (pos == 0 && (i == tc.Count - 1 || tc[i + 1].TokenKind != TokenKind.Dot))
+                            {
+                                TokenCollection coll = new TokenCollection();
+                                if (tc[start].TokenKind == TokenKind.TextData)
+                                {
+                                    coll.Add(tc, start, end);
+                                }
+                                else
+                                {
+                                    coll.Add(tc, start + 1, end - 1);
+                                }
+                                start = i + 1;
+                                tag.AddChild(parser.Read(coll));
+                            }
+                            break;
+                    }
+                }
+
+                #endregion
+
+                if (tag.Children.Count > 0)
+                {
+                    if (tag.Children.Count == 1)
+                    {
+                        return tag.Children[0];
+                    }
+                    return tag;
+                }
+            }
             return null;
-
         }
 
         private Boolean HasOperator(TokenCollection tc)
@@ -566,7 +677,7 @@ namespace JinianNet.JNTemplate.Parser
                                                   45
         ToString("#0.00") - 
          */
-        #region ITagParser 成员
+    #region ITagParser 成员
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             List<Tag> list = new List<Tag>();
@@ -619,7 +730,7 @@ namespace JinianNet.JNTemplate.Parser
             return null;
         }
 
-        #endregion
+    #endregion
 
     }
 #endif

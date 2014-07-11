@@ -9,7 +9,7 @@ using System;
 namespace JinianNet.JNTemplate.Parser.Node
 {
 
-    public class Token
+    public class Token : IComparable<Token>
     {
         private String _text;
         private Int32 _beginline;
@@ -70,6 +70,23 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             return this.Text;
         }
+
+        #region IComparable<Token> 成员
+
+        public int CompareTo(Token other)
+        {
+            if (this.BeginLine > other.BeginLine)
+                return 1;
+            if (this.BeginLine < other.BeginLine)
+                return -1;
+            if (this.BeginColumn > other.BeginColumn)
+                return 1;
+            if (this.BeginColumn < other.BeginColumn)
+                return -1;
+            return 0;
+        }
+
+        #endregion
     }
 
 }

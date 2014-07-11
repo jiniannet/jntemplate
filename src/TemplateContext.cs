@@ -25,6 +25,12 @@ namespace JinianNet.JNTemplate
             this.Parser.Add(new StringParser());
             this.Parser.Add(new ForeachParser());
             this.Parser.Add(new SetParser());
+            this.Parser.Add(new IfParser());
+            this.Parser.Add(new ElseifParser());
+            this.Parser.Add(new EleseParser());
+            this.Parser.Add(new LoadParser());
+            this.Parser.Add(new IncludeParser());
+            this.Parser.Add(new ExpressionParser());
 
             this.Parser.Add(new ReferenceParser());
             this.Parser.Add(new FunctionParser());
