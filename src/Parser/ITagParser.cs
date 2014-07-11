@@ -445,12 +445,16 @@ namespace JinianNet.JNTemplate.Parser
                                 start = i + 1;
                             }
                             break;
-                        case TokenKind.LeftParentheses:
-                            pos++;
-                            break;
-                        case TokenKind.RightParentheses:
-                            pos--;
-                            if (pos == 0 && (i == tc.Count - 1 || tc[i + 1].TokenKind != TokenKind.Dot))
+                        default:
+                            if (tc[i].TokenKind == TokenKind.LeftParentheses)
+                            {
+                                pos++;
+                            }
+                            else if (tc[i].TokenKind == TokenKind.RightParentheses)
+                            {
+                                pos--;
+                            }
+                            if (i == tc.Count - 1)
                             {
                                 TokenCollection coll = new TokenCollection();
                                 if (tc[start].TokenKind == TokenKind.TextData)
@@ -462,7 +466,10 @@ namespace JinianNet.JNTemplate.Parser
                                     coll.Add(tc, start + 1, end - 1);
                                 }
                                 start = i + 1;
-                                tag.AddChild(parser.Read(coll));
+                                if (coll.Count > 0)
+                                {
+                                    tag.AddChild(parser.Read(coll));
+                                }
                             }
                             break;
                     }
