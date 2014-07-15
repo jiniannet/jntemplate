@@ -1,4 +1,4 @@
-当前分支，正在更新，更新完毕后会合并到主分支……
+﻿当前分支，正在更新，更新完毕后会合并到主分支……
 
 更新内容：
 1.标签结构调整
@@ -8,7 +8,9 @@
 5.增加了continue 用做for,foreach 时，跳次本次循环
 6.增加方法，属性等操作的复合使用，如：$User.CreateDate.ToString("yyyy-MM-dd") 或 $Db.Query().Table.Rows.Count
 7.支持以下方式调用数据 $list.get_Item(0) 相当于 list[0]
-
+8.增加elseif支持
+9.加强了大小写区分
+10.部分结构变更与优化
 
 Open source templating engine for .net!
 

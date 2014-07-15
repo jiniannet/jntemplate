@@ -324,7 +324,7 @@ namespace JinianNet.JNTemplate.Parser
             if (tc.Count > 3
                 && tc.First.Text == Field.KEY_ELSEIF)
             {
-                ElseifTag tag = new ElseTag();
+                ElseifTag tag = new ElseifTag();
 
                 TokenCollection coll = new TokenCollection();
                 coll.Add(tc, 2, tc.Count - 2);

@@ -10,6 +10,9 @@ using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// IF标题
+    /// </summary>
     public class IfTag : SimpleTag
     {
 

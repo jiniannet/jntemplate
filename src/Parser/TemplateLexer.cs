@@ -139,7 +139,7 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     else if (value != '.' && value != '(')
                     {
-                        if (Char.IsControl(value) || (Char.IsPunctuation(value) && value != '_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value))
+                        if (Char.IsControl(value) || (Char.IsPunctuation(value) && value != '_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value) || (Int32)value > 167)
                         {
                             //this.pos.Pop();
                             return true;
@@ -226,7 +226,7 @@ namespace JinianNet.JNTemplate.Parser
                         continue;
                     }
 
-                    if (this.kind == TokenKind.TagStart 
+                    if (this.kind == TokenKind.TagStart
                         || this.kind == TokenKind.LeftBracket
                         || this.kind == TokenKind.LeftParentheses
                         || this.kind == TokenKind.Operator
