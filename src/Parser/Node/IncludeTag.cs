@@ -19,14 +19,33 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { path = value; }
         }
 
+        private String LoadResource(Object path, TemplateContext context)
+        {
+            if (path != null)
+            {
+                if (String.IsNullOrEmpty(context.CurrentPath))
+                {
+                    return Resources.LoadResource(path.ToString(), context.Charset);
+                }
+                else
+                {
+                    return Resources.LoadResource(new String[] { context.CurrentPath }, path.ToString(), context.Charset);
+                }
+            }
+            return null;
+        }
+
         public override Object Parse(TemplateContext context)
         {
-            throw new NotImplementedException();
+            Object path = this.Path.Parse(context);
+            return LoadResource(path.ToString(), context);
+
         }
 
         public override Object Parse(object baseValue, TemplateContext context)
         {
-            return Parse(context);
+            Object path = this.Path.Parse(baseValue, context);
+            return LoadResource(path.ToString(), context);
         }
     }
 }

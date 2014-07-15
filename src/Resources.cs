@@ -59,6 +59,12 @@ namespace JinianNet.JNTemplate
             return LoadResource(files, path, Encoding.Default);
         }
 
+
+        public static String LoadResource(String path, Encoding encoding)
+        {
+            return LoadResource(Paths,path, encoding);
+        }
+
         public static String LoadResource(IEnumerable<String> files, String path, Encoding encoding)
         {
             String full;

@@ -110,8 +110,7 @@ namespace JinianNet.JNTemplate.Parser
                 if (t != null)
                 {
                     t.FirstToken = t1;
-
-                    if (t.Children.Count == 0 || t2.CompareTo(t.LastToken) > 0)
+                    if (t.Children.Count == 0 || t.LastToken==null || t2.CompareTo(t.LastToken) > 0)
                     {
                         t.LastToken = t2;
                     }

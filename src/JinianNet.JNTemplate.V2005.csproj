@@ -60,10 +60,12 @@
     <Compile Include="Parser\CharScanner.cs" />
     <Compile Include="Parser\ITagParser.cs" />
     <Compile Include="Parser\Node\BaseTag.cs" />
+    <Compile Include="Parser\Node\BlockTag.cs" />
     <Compile Include="Parser\Node\BooleanTag.cs" />
     <Compile Include="Parser\Node\Element.cs" />
     <Compile Include="Parser\Node\ElseifTag.cs" />
     <Compile Include="Parser\Node\ElseTag.cs" />
+    <Compile Include="Parser\Node\EndTag.cs" />
     <Compile Include="Parser\Node\ExpressionTag.cs" />
     <Compile Include="Parser\Node\ForeachTag.cs" />
     <Compile Include="Parser\Node\ForTag.cs" />

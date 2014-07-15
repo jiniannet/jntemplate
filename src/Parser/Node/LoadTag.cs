@@ -7,10 +7,11 @@
 using System;
 using System.Text;
 using JinianNet.JNTemplate.Context;
+using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class LoadTag : SimpleTag
+    public class LoadTag : BlockTag
     {
         private Tag path;
         public Tag Path
@@ -19,30 +20,39 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { path = value; }
         }
 
-
         public override Object Parse(TemplateContext context)
         {
-            using (System.IO.StringWriter writer = new System.IO.StringWriter())
-            {
-                for (Int32 i = 0; i < this.Children.Count; i++)
-                {
-                    this.Children[i].Parse(context, writer);
-                }
-
-                return writer.ToString();
-            }
+            Object path = this.Path.Parse(context);
+            LoadResource(path, context);
+            return base.Parse(context);
         }
 
-        public override Object Parse(object baseValue, TemplateContext context)
+        public override Object Parse(Object baseValue, TemplateContext context)
         {
-            using (System.IO.StringWriter writer = new System.IO.StringWriter())
-            {
-                for (Int32 i = 0; i < this.Children.Count; i++)
-                {
-                    writer.Write(this.Children[i].Parse(baseValue, context));
-                }
+            Object path = this.Path.Parse(baseValue, context);
+            LoadResource(path, context);
+            return base.Parse(context);
+        }
 
-                return writer.ToString();
+        public override void Parse(TemplateContext context, TextWriter write)
+        {
+            Object path = this.Path.Parse(context);
+            LoadResource(path, context);
+            base.Parse(context, write);
+        }
+
+        private void LoadResource(Object path, TemplateContext context)
+        {
+            if (path != null)
+            {
+                if (String.IsNullOrEmpty(context.CurrentPath))
+                {
+                    this.TemplateContent = Resources.LoadResource(path.ToString(), context.Charset);
+                }
+                else
+                {
+                    this.TemplateContent = Resources.LoadResource(new String[] { context.CurrentPath }, path.ToString(), context.Charset);
+                }
             }
         }
     }

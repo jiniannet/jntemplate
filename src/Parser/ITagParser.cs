@@ -57,29 +57,63 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
     }
     //true false
-    public class WordParser : ITagParser
+    #region Word
+    //public class WordParser : ITagParser
+    //{
+    //    #region ITagParser 成员
+
+    //    public Tag Parse(TemplateParser parser, TokenCollection tc)
+    //    {
+    //        if (tc.Count == 1 &&
+    //            tc.First.TokenKind == TokenKind.TextData
+    //            && (Field.KEY_ELSE == tc.First.Text
+    //            || Field.KEY_ELSEIF == tc.First.Text
+    //            || Field.KEY_END == tc.First.Text
+    //            || Field.KEY_FOR == tc.First.Text
+    //            || Field.KEY_FOREACH == tc.First.Text
+    //            || Field.KEY_IF == tc.First.Text
+    //            || Field.KEY_IN == tc.First.Text
+    //            || Field.KEY_INCLUDE == tc.First.Text
+    //            || Field.KEY_LOAD == tc.First.Text
+    //            || Field.KEY_SET == tc.First.Text)
+    //            )
+    //        {
+    //            WordTag tag = new WordTag();
+    //            tag.Name = tc.First.Text;
+    //            return tag;
+    //        }
+
+    //        return null;
+    //    }
+    //    #endregion
+    //}
+    #endregion
+
+    public class EleseParser : ITagParser
     {
         #region ITagParser 成员
-
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 1 &&
-                tc.First.TokenKind == TokenKind.TextData
-                && (Field.KEY_ELSE == tc.First.Text
-                || Field.KEY_ELSEIF == tc.First.Text
-                || Field.KEY_END == tc.First.Text
-                || Field.KEY_FOR == tc.First.Text
-                || Field.KEY_FOREACH == tc.First.Text
-                || Field.KEY_IF == tc.First.Text
-                || Field.KEY_IN == tc.First.Text
-                || Field.KEY_INCLUDE == tc.First.Text
-                || Field.KEY_LOAD == tc.First.Text
-                || Field.KEY_SET == tc.First.Text)
-                )
+            if (tc.Count == 1
+                && tc.First.Text == Field.KEY_ELSE)
             {
-                WordTag tag = new WordTag();
-                tag.Name = tc.First.Text;
-                return tag;
+                return new ElseTag();
+            }
+
+            return null;
+        }
+        #endregion
+    }
+
+    public class EndParser : ITagParser
+    {
+        #region ITagParser 成员
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count == 1
+                && tc.First.Text == Field.KEY_END)
+            {
+                return new EndTag();
             }
 
             return null;
@@ -152,7 +186,7 @@ namespace JinianNet.JNTemplate.Parser
                     while (parser.MoveNext())
                     {
                         tag.Children.Add(parser.Current);
-                        if (parser.Current is WordTag && Field.KEY_END == parser.Current.ToString())
+                        if (parser.Current is EndTag)
                         {
                             return tag;
                         }
@@ -248,13 +282,16 @@ namespace JinianNet.JNTemplate.Parser
                 ElseifTag t = new ElseifTag();
                 TokenCollection coll = new TokenCollection();
                 coll.Add(tc, 2, tc.Count - 2);
-                t.Test = parser.Read(tc);
+                t.Test = parser.Read(coll);
+                t.FirstToken = coll.First;
+                //t.LastToken = coll.Last;
                 tag.AddChild(t);
 
                 while (parser.MoveNext())
                 {
-                    if (parser.Current is WordTag && Field.KEY_END == parser.Current.ToString())
+                    if (parser.Current is EndTag)
                     {
+                        tag.AddChild(parser.Current);
                         return tag;
                     }
                     else if (parser.Current is ElseifTag
@@ -291,7 +328,7 @@ namespace JinianNet.JNTemplate.Parser
 
                 TokenCollection coll = new TokenCollection();
                 coll.Add(tc, 2, tc.Count - 2);
-                tag.Test = parser.Read(tc);
+                tag.Test = parser.Read(coll);
 
                 return tag;
             }
@@ -299,22 +336,6 @@ namespace JinianNet.JNTemplate.Parser
             return null;
         }
 
-        #endregion
-    }
-
-    public class EleseParser : ITagParser
-    {
-        #region ITagParser 成员
-        public Tag Parse(TemplateParser parser, TokenCollection tc)
-        {
-            if (tc.Count == 1
-                && tc.First.Text == Field.KEY_ELSE)
-            {
-                return new ElseTag();
-            }
-
-            return null;
-        }
         #endregion
     }
 
@@ -457,13 +478,14 @@ namespace JinianNet.JNTemplate.Parser
                             if (i == tc.Count - 1)
                             {
                                 TokenCollection coll = new TokenCollection();
-                                if (tc[start].TokenKind == TokenKind.TextData)
+                                if (tc[start].TokenKind == TokenKind.RightBracket)
                                 {
-                                    coll.Add(tc, start, end);
+                          
+                                    coll.Add(tc, start + 1, end - 1);
                                 }
                                 else
                                 {
-                                    coll.Add(tc, start + 1, end - 1);
+                                    coll.Add(tc, start, end);
                                 }
                                 start = i + 1;
                                 if (coll.Count > 0)

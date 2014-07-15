@@ -20,18 +20,17 @@ namespace JinianNet.JNTemplate
             this.Parser = new List<ITagParser>();
             this.Parser.Add(new BooleanParser());
             this.Parser.Add(new NumberParser());
-            this.Parser.Add(new WordParser());
+            this.Parser.Add(new EleseParser());
+            this.Parser.Add(new EndParser());
             this.Parser.Add(new VariableParser());
             this.Parser.Add(new StringParser());
             this.Parser.Add(new ForeachParser());
             this.Parser.Add(new SetParser());
             this.Parser.Add(new IfParser());
             this.Parser.Add(new ElseifParser());
-            this.Parser.Add(new EleseParser());
             this.Parser.Add(new LoadParser());
             this.Parser.Add(new IncludeParser());
             this.Parser.Add(new ExpressionParser());
-
             this.Parser.Add(new ReferenceParser());
             this.Parser.Add(new FunctionParser());
             this.Paths = new List<String>();

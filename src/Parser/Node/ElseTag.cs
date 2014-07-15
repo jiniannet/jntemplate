@@ -6,21 +6,9 @@ namespace JinianNet.JNTemplate.Parser.Node
 {
     public class ElseTag : ElseifTag
     {
-        private BooleanTag testValue;
-
-        public ElseTag()
+        public override Boolean ToBoolean(TemplateContext context)
         {
-            this.testValue = new BooleanTag();
-            this.testValue.Value = true;
-        }
-
-        public override Tag Test
-        {
-            get
-            {
-                return testValue;
-            }
-            set { }
+            return true;
         }
     }
 }

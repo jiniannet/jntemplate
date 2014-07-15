@@ -15,61 +15,52 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(TemplateContext context)
         {
-            if (this.Test.ToBoolean(context))
+            if (this.Children.Count == 1)
             {
-                if (this.Children.Count == 1)
+                return this.Children[0].Parse(context);
+            }
+            else
+            {
+                using (System.IO.StringWriter write = new System.IO.StringWriter())
                 {
-                    return this.Children[0].Parse(context);
-                }
-                else
-                {
-                    using (System.IO.StringWriter write = new System.IO.StringWriter())
+                    for (Int32 i = 0; i < this.Children.Count; i++)
                     {
-                        for (Int32 i = 0; i < this.Children.Count; i++)
-                        {
-                            this.Children[0].Parse(context, write);
-                        }
-                        return write.ToString();
+                        this.Children[i].Parse(context, write);
                     }
+                    return write.ToString();
                 }
             }
 
-            return null;
         }
 
         public override Object Parse(Object baseValue, TemplateContext context)
         {
-            if (this.Test.ToBoolean(context))
+
+            if (this.Children.Count == 1)
             {
-                if (this.Children.Count == 1)
+                return this.Children[0].Parse(context, context);
+            }
+            else
+            {
+                using (System.IO.StringWriter write = new System.IO.StringWriter())
                 {
-                    return this.Children[0].Parse(context, context);
-                }
-                else
-                {
-                    using (System.IO.StringWriter write = new System.IO.StringWriter())
+                    for (Int32 i = 0; i < this.Children.Count; i++)
                     {
-                        for (Int32 i = 0; i < this.Children.Count; i++)
-                        {
-                            write.Write(this.Children[0].Parse(baseValue, context));
-                        }
-                        return write.ToString();
+                        write.Write(this.Children[i].Parse(baseValue, context));
                     }
+                    return write.ToString();
                 }
             }
-
-            return null;
         }
 
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            if (this.Test.ToBoolean(context))
+
+            for (Int32 i = 0; i < this.Children.Count; i++)
             {
-                for (Int32 i = 0; i < this.Children.Count; i++)
-                {
-                    this.Children[0].Parse(context, write);
-                }
+                this.Children[0].Parse(context, write);
             }
+
         }
 
 

@@ -11,10 +11,11 @@ using System.Text.RegularExpressions;
 using System.IO;
 using JinianNet.JNTemplate.Parser;
 using JinianNet.JNTemplate.Context;
+using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate
 {
-    public class Template : ITemplate
+    public class Template : BlockTag,ITemplate
     {
         private TemplateContext _context;
         public TemplateContext Context
@@ -26,12 +27,6 @@ namespace JinianNet.JNTemplate
             set { _context = value; }
         }
 
-        private String _text;
-        public String TemplateContent
-        {
-            get { return _text; }
-            set { _text = value; }
-        }
 
         public Template()
             : this(null)
@@ -48,28 +43,14 @@ namespace JinianNet.JNTemplate
         public Template(TemplateContext context, String text)
         {
             this._context = context;
-            this._text = text;
+            this.TemplateContent = text;
         }
 
 
         public virtual void Render(TextWriter writer)
         {
             Resources.Paths = this.Context.Paths;
-
-            if (!String.IsNullOrEmpty(TemplateContent))
-            {
-                TemplateLexer lexer = new TemplateLexer(TemplateContent);
-                //this.Context.Analyzer
-                TemplateParser parser = new TemplateParser(lexer.Parse());
-
-                parser.Parser.AddRange(this.Context.Parser);
-
-                while (parser.MoveNext())
-                {
-                    parser.Current.Parse(this.Context, writer);
-                }
-            }
-
+            base.Render(this.Context, writer);
             Resources.Paths.Clear();
         }
 

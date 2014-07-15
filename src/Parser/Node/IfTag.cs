@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(TemplateContext context)
         {
-            for (Int32 i = 0; i < this.Children.Count; i++)
+            for (Int32 i = 0; i < this.Children.Count-1; i++) //最后面一个子对象为EndTag
             {
                 if (this.Children[i].ToBoolean(context))
                 {
@@ -27,7 +27,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(Object baseValue, TemplateContext context)
         {
-            for (Int32 i = 0; i < this.Children.Count; i++)
+            for (Int32 i = 0; i < this.Children.Count - 1; i++)
             {
                 if (this.Children[i].ToBoolean(context))
                 {
