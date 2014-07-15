@@ -36,9 +36,12 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 IEnumerator ienum = enumerable.GetEnumerator();
                 ctx = TemplateContext.CreateContext(context);
+                Int32 i = 0;
                 while (ienum.MoveNext())
                 {
                     ctx.TempData[this.Name] = ienum.Current;
+                    //为了兼容以前的用户 foreachIndex 保留
+                    ctx.TempData["foreachIndex"] = i;
                     for (Int32 n = 0; n < this.Children.Count; n++)
                     {
                         //if (this.Children[n] is WordTag)
@@ -54,6 +57,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                         //}
                         this.Children[n].Parse(ctx, writer);
                     }
+                    i++;
                 }
             }
         }
