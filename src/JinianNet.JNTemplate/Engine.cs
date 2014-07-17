@@ -18,7 +18,7 @@ namespace JinianNet.JNTemplate
 
         #region IEngine 成员
 
-        private TemplateContext _ctx;
+        private TemplateContext context;
 
 
         public Engine()
@@ -32,36 +32,37 @@ namespace JinianNet.JNTemplate
         {
             if (!String.IsNullOrEmpty(path))
             {
-                _ctx.Paths.Add(path);
+                context.Paths.Add(path);
             }
-            _ctx.Charset = charset;
+            context.Charset = charset;
         }
 
-        public Engine(TemplateContext context)
+        public Engine(TemplateContext ctx)
         {
-            if (context == null)
+            if (ctx == null)
             {
-                _ctx = new TemplateContext();
+                context = new TemplateContext();
             }
             else
             {
-                _ctx = context;
+                context = ctx;
             }
         }
 
         public ITemplate CreateTemplate()
         {
-            return new Template(TemplateContext.CreateContext(_ctx), null);
+            return new Template(TemplateContext.CreateContext(context), null);
         }
 
         public ITemplate CreateTemplate(String path)
         {
-            return CreateTemplate(path,_ctx.Charset);
+            return CreateTemplate(path, context.Charset);
         }
 
         public ITemplate CreateTemplate(String path, Encoding encoding)
         {
-            Template template = new Template(TemplateContext.CreateContext(_ctx), null);
+            TemplateContext ctx = TemplateContext.CreateContext(context);
+            Template template = new Template(ctx, null);
             if (encoding != null)
             {
                 template.Context.Charset = encoding;
@@ -77,13 +78,12 @@ namespace JinianNet.JNTemplate
                         return template;
                     }
                 }
-
+                ctx.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
                 template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
             }
 
             return template;
         }
-
         #endregion
     }
 }

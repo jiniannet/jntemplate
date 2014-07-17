@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate
                         return template;
                     }
                 }
-
+                template.Context.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
                 template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
             }
 

@@ -15,7 +15,7 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate
 {
-    public class Template : BlockTag,ITemplate
+    public class Template : BlockTag, ITemplate
     {
         private TemplateContext _context;
         public TemplateContext Context
@@ -53,8 +53,6 @@ namespace JinianNet.JNTemplate
             base.Render(this.Context, writer);
             Resources.Paths.Clear();
         }
-
-
 
         public String Render()
         {

@@ -49,7 +49,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
@@ -85,11 +84,9 @@
     <Compile Include="Parser\Node\SimpleTag.cs" />
     <Compile Include="Parser\Node\StringTag.cs" />
     <Compile Include="Parser\Node\Tag.cs" />
-    <Compile Include="Parser\Node\TagCollection.cs" />
     <Compile Include="Parser\Node\TextTag.cs" />
     <Compile Include="Parser\Node\Token.cs" />
     <Compile Include="Parser\Node\TokenCollection.cs" />
-    <Compile Include="Parser\Node\ValueTag.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\Node\WordTag.cs" />
     <Compile Include="Parser\ParserAccessor.cs" />

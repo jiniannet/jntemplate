@@ -10,31 +10,6 @@ using System.Reflection;
 
 namespace JinianNet.JNTemplate
 {
-    public enum ElementType
-    {
-        None = 0,
-        Var = 1,
-        Function = 2,
-        Object = 3,
-        Set = 4,
-        Load = 5,
-        Include = 6,
-        Expression = 7,
-        Foreach = 8,
-        If = 9,
-    }
-
-    public enum ValueType
-    {
-        None = 0,
-        Text = 1,
-        Integer = 2,
-        Decimal = 3,
-        Boolen = 4,
-        Punctuation = 5,
-        Mark = 6
-    }
-
     public enum TokenKind
     {
         /// <summary>
@@ -146,5 +121,10 @@ namespace JinianNet.JNTemplate
 
     }
 
+    /// <summary>
+    /// 方法标签委托
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
     public delegate Object FuncHandler(params Object[] args);
 }

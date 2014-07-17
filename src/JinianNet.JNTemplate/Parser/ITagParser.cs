@@ -192,11 +192,11 @@ namespace JinianNet.JNTemplate.Parser
                         }
                     }
 
-                    throw new Exception("can not find #end");
+                    throw new Exception.ParseException("未闭合的标签",tc.First.BeginLine,tc.First.BeginColumn);
                 }
                 else
                 {
-                    throw new Exception("-");
+                    throw new Exception.ParseException("foreach标签语法错误", tc.First.BeginLine, tc.First.BeginColumn);
                 }
 
             }
