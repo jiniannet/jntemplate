@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using JinianNet.JNTemplate.Parser;
 
-namespace JinianNet.JNTemplate.Context
+namespace JinianNet.JNTemplate
 {
     public class ContextBase : ICloneable
     {

@@ -10,7 +10,9 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class TemplateLexer
     {
         /// <summary>
@@ -363,16 +365,6 @@ namespace JinianNet.JNTemplate.Parser
                 case '"':
                     return TokenKind.StringStart;
                 default:
-                    //if (Char.IsLetter(c) || Char.IsControl(c) || Char.IsSeparator(c))
-                    //    return this.mode == LexerMode.EnterLabel ? TokenKind.TextData : TokenKind.Text;
-                    //else if (Char.IsNumber(c))
-                    //    return TokenKind.Number;
-                    //else if (Char.IsPunctuation(c))
-                    //    return TokenKind.Punctuation;
-                    //else if (Char.IsSymbol(c))
-                    //    return TokenKind.Operator;
-                    //else if (Char.IsWhiteSpace(c))
-                    //    return TokenKind.Space;
                     return TokenKind.TextData;
             }
         }

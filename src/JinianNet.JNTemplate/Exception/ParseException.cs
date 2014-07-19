@@ -4,6 +4,9 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Exception
 {
+    /// <summary>
+    /// 分析异常类
+    /// </summary>
     public class ParseException : System.Exception
     {
         private Int32 errorLine;
@@ -23,11 +26,13 @@ namespace JinianNet.JNTemplate.Exception
         public ParseException()
             : base()
         {
+
         }
 
         public ParseException(String message)
             : base(message)
         {
+
         }
 
         public ParseException(String message,Int32 line,Int32 column)

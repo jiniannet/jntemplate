@@ -6,7 +6,6 @@
  *****************************************************/
 using System;
 using System.Text;
-using JinianNet.JNTemplate.Context;
 using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node

@@ -22,6 +22,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplate.Test.csproj", "{7F607362-0680-4751-B1DC-621219294AE3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEB61DB3-0D68-43A3-91E6-E16AE02889E7}"
+	ProjectSection(SolutionItems) = preProject
+		build\JNTemplatev2.0Build.bat = build\JNTemplatev2.0Build.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,5 +63,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7F607362-0680-4751-B1DC-621219294AE3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 		{3744DD16-5A83-4C50-B711-74EA11DA6B27} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+		{9AFF50BD-BE7A-4ECC-A4C3-F9EB6928E472} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 	EndGlobalSection
 EndGlobal

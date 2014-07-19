@@ -49,13 +49,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="BuildManager.cs" />
-    <Compile Include="Context\ContextBase.cs" />
+    <Compile Include="ContextBase.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
+    <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="IEngine.cs" />
@@ -89,7 +91,9 @@
     <Compile Include="Parser\Node\TokenCollection.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\Node\WordTag.cs" />
+    <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\ParserAccessor.cs" />
+    <Compile Include="Parser\ParserHelpers.cs" />
     <Compile Include="Parser\TemplateLexer.cs" />
     <Compile Include="Parser\TemplateParser.cs" />
     <Compile Include="Parser\VariableScope.cs" />

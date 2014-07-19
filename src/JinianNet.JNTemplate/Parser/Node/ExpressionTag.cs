@@ -6,7 +6,6 @@
  *****************************************************/
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {

@@ -5,6 +5,9 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
+    /// <summary>
+    /// 标签分析器
+    /// </summary>
     public interface ITagParser
     {
         Tag Parse(TemplateParser parser, TokenCollection tc);

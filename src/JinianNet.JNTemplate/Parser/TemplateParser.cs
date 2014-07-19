@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Parser.Node;
 using JinianNet.JNTemplate.Parser;
-using JinianNet.JNTemplate.Context;
+
 
 namespace JinianNet.JNTemplate.Parser
 {
@@ -20,13 +20,33 @@ namespace JinianNet.JNTemplate.Parser
         private Tag tag;//当前标签
         private Token[] tokens;//tokens列表
         private Int32 index;//当前索引
-        private List<ITagParser> parsers;
+        private static List<ITagParser> parsers;
         #endregion
 
         #region
-        public List<ITagParser> Parser
+        public static List<ITagParser> Parser
         {
-            get { return this.parsers; }
+            get { return parsers; }
+        }
+
+        static TemplateParser()
+        {
+            parsers = new List<ITagParser>();
+            parsers.Add(new BooleanParser());
+            parsers.Add(new NumberParser());
+            parsers.Add(new EleseParser());
+            parsers.Add(new EndParser());
+            parsers.Add(new VariableParser());
+            parsers.Add(new StringParser());
+            parsers.Add(new ForeachParser());
+            parsers.Add(new SetParser());
+            parsers.Add(new IfParser());
+            parsers.Add(new ElseifParser());
+            parsers.Add(new LoadParser());
+            parsers.Add(new IncludeParser());
+            parsers.Add(new ExpressionParser());
+            parsers.Add(new ReferenceParser());
+            parsers.Add(new FunctionParser());
         }
         #endregion
 
@@ -131,9 +151,9 @@ namespace JinianNet.JNTemplate.Parser
             if (tc == null || tc.Count == 0)
                 return null;
             Tag t = null;
-            for (Int32 i = 0; i < this.parsers.Count; i++)
+            for (Int32 i = 0; i < Parser.Count; i++)
             {
-                t = this.parsers[i].Parse(this, tc);
+                t = Parser[i].Parse(this, tc);
                 if (t != null)
                 {
                     t.FirstToken = tc.First;

@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JinianNet.JNTemplate.Parser;
-using JinianNet.JNTemplate.Context;
 
 namespace JinianNet.JNTemplate
 {
@@ -17,46 +16,38 @@ namespace JinianNet.JNTemplate
         public TemplateContext()
         {
             this.Charset = System.Text.Encoding.Default;
-            this.Parser = new List<ITagParser>();
-            this.Parser.Add(new BooleanParser());
-            this.Parser.Add(new NumberParser());
-            this.Parser.Add(new EleseParser());
-            this.Parser.Add(new EndParser());
-            this.Parser.Add(new VariableParser());
-            this.Parser.Add(new StringParser());
-            this.Parser.Add(new ForeachParser());
-            this.Parser.Add(new SetParser());
-            this.Parser.Add(new IfParser());
-            this.Parser.Add(new ElseifParser());
-            this.Parser.Add(new LoadParser());
-            this.Parser.Add(new IncludeParser());
-            this.Parser.Add(new ExpressionParser());
-            this.Parser.Add(new ReferenceParser());
-            this.Parser.Add(new FunctionParser());
             this.Paths = new List<String>();
         }
 
         private String _currentPath;
+        /// <summary>
+        /// 当前资源路径
+        /// </summary>
         public String CurrentPath
         {
             get { return _currentPath; }
             set { _currentPath = value; }
         }
+
         private Encoding _charset;
+        /// <summary>
+        /// 当前资源编码
+        /// </summary>
         public Encoding Charset
         {
             get { return _charset; }
             set { _charset = value; }
         }
 
-        private List<ITagParser> _parser;
-        public List<ITagParser> Parser
-        {
-            get { return _parser; }
-            private set { _parser = value; }
-        }
+        //private List<ITagParser> _parser;
+        //public List<ITagParser> Parser
+        //{
+        //    get { return _parser; }
+        //    private set { _parser = value; }
+        //}
 
         private List<String> _paths;
+        [Obsolete("请使用Resources.Paths 来替代本对象")]
         /// <summary>
         /// 模板搜索路径
         /// </summary>
@@ -65,7 +56,11 @@ namespace JinianNet.JNTemplate
             get { return _paths; }
             private set { _paths = value; }
         }
-
+        /// <summary>
+        /// 从指定TemplateContext创建一个类似的实例
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static TemplateContext CreateContext(TemplateContext context)
         {
             TemplateContext ctx = (TemplateContext)context.Clone();
