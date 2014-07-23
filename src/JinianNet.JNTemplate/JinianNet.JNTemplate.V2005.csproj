@@ -45,11 +45,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
@@ -62,7 +57,7 @@
     <Compile Include="Field.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="ITemplate.cs" />
-    <Compile Include="Parser\Calculator.cs" />
+    <Compile Include="Common\Calculator.cs" />
     <Compile Include="Parser\CharScanner.cs" />
     <Compile Include="Parser\ITagParser.cs" />
     <Compile Include="Parser\Node\BaseTag.cs" />
@@ -92,8 +87,8 @@
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\Node\WordTag.cs" />
     <Compile Include="Parser\Parser.cs" />
-    <Compile Include="Parser\ParserAccessor.cs" />
-    <Compile Include="Parser\ParserHelpers.cs" />
+    <Compile Include="Common\ReflectionHelpers.cs" />
+    <Compile Include="Common\ParserHelpers.cs" />
     <Compile Include="Parser\TemplateLexer.cs" />
     <Compile Include="Parser\TemplateParser.cs" />
     <Compile Include="Parser\VariableScope.cs" />
@@ -102,6 +97,9 @@
     <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

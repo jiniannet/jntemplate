@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
 {
     public class BuildManager
     {
-        private static EngineCollection _engines = new EngineCollection();
+        private readonly static EngineCollection _engines = new EngineCollection();
 
         public static EngineCollection Engines
         {

@@ -23,33 +23,6 @@ namespace JinianNet.JNTemplate.Parser
         private static List<ITagParser> parsers;
         #endregion
 
-        #region
-        public static List<ITagParser> Parser
-        {
-            get { return parsers; }
-        }
-
-        static TemplateParser()
-        {
-            parsers = new List<ITagParser>();
-            parsers.Add(new BooleanParser());
-            parsers.Add(new NumberParser());
-            parsers.Add(new EleseParser());
-            parsers.Add(new EndParser());
-            parsers.Add(new VariableParser());
-            parsers.Add(new StringParser());
-            parsers.Add(new ForeachParser());
-            parsers.Add(new SetParser());
-            parsers.Add(new IfParser());
-            parsers.Add(new ElseifParser());
-            parsers.Add(new LoadParser());
-            parsers.Add(new IncludeParser());
-            parsers.Add(new ExpressionParser());
-            parsers.Add(new ReferenceParser());
-            parsers.Add(new FunctionParser());
-        }
-        #endregion
-
         #region ctox
         public TemplateParser(Token[] ts)
         {
@@ -130,7 +103,7 @@ namespace JinianNet.JNTemplate.Parser
                 if (t != null)
                 {
                     t.FirstToken = t1;
-                    if (t.Children.Count == 0 || t.LastToken==null || t2.CompareTo(t.LastToken) > 0)
+                    if (t.Children.Count == 0 || t.LastToken == null || t2.CompareTo(t.LastToken) > 0)
                     {
                         t.LastToken = t2;
                     }
@@ -150,23 +123,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (tc == null || tc.Count == 0)
                 return null;
-            Tag t = null;
-            for (Int32 i = 0; i < Parser.Count; i++)
-            {
-                t = Parser[i].Parse(this, tc);
-                if (t != null)
-                {
-                    t.FirstToken = tc.First;
-
-
-                    if (t.Children.Count == 0 || tc.Last.CompareTo(t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) > 0)
-                    {
-                        t.LastToken = tc.Last;
-                    }
-                    break;
-                }
-            }
-            return t;
+            return Parser.Parse(this, tc);
         }
 
 

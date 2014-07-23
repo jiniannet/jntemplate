@@ -12,6 +12,9 @@ namespace JinianNet.JNTemplate.Parser
 {
     public class Calculator
     {
+        /// <summary>
+        /// 字符类型
+        /// </summary>
         public enum LetterType
         {
             /// <summary>
@@ -40,14 +43,14 @@ namespace JinianNet.JNTemplate.Parser
             Other = 5
         }
 
-        private Boolean IsOperator(Char c)
+        private static Boolean IsOperator(Char c)
         {
             if ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '(') || (c == ')') || (c == '%'))
                 return true;
             return false;
         }
 
-        private Boolean IsOperator(LetterType letterType)
+        private static Boolean IsOperator(LetterType letterType)
         {
             if (letterType == LetterType.LeftParentheses || letterType == LetterType.RightParentheses || letterType == LetterType.Operator)
                 return true;
@@ -95,12 +98,12 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        private Int32 GetPriority(Char c)
+        private static Int32 GetPriority(Char c)
         {
             return GetPriority(c.ToString());
         }
 
-        private Boolean IsOperator(String value)
+        private static Boolean IsOperator(String value)
         {
             switch (value)
             {
@@ -127,7 +130,7 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        private Int32 GetPriority(String c)
+        private static Int32 GetPriority(String c)
         {
             switch (c)
             {
@@ -156,17 +159,17 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        private Boolean GetBoolean(Double n)
+        private static Boolean GetBoolean(Double n)
         {
             return !(n == 0);
         }
 
-        private Int32 GetInt(Boolean b)
+        private static Int32 GetInt(Boolean b)
         {
             return b ? 1 : 0;
         }
 
-        private LetterType GetLetterType(Char c)
+        private static LetterType GetLetterType(Char c)
         {
             switch (c)
             {
@@ -197,7 +200,7 @@ namespace JinianNet.JNTemplate.Parser
 
         }
 
-        public Stack<Object> ProcessExpression(String value)
+        public static Stack<Object> ProcessExpression(String value)
         {
             value = value.Replace("  ", String.Empty);
             List<Object> result = new List<Object>();
@@ -233,7 +236,7 @@ namespace JinianNet.JNTemplate.Parser
 
         }
 
-        public Stack<Object> ProcessExpression(Object[] value)
+        public static Stack<Object> ProcessExpression(Object[] value)
         {
             Stack<Object> post = new Stack<Object>();
             Stack<String> stack = new Stack<String>();
@@ -344,7 +347,7 @@ namespace JinianNet.JNTemplate.Parser
             return post;
         }
 
-        private bool IsNumber(String fullName)
+        private static bool IsNumber(String fullName)
         {
             switch (fullName)
             {
@@ -363,7 +366,7 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        public Object Calculate(Object x, Object y, String value)
+        public static Object Calculate(Object x, Object y, String value)
         {
             Type tX = x.GetType();
             Type tY = y.GetType();
@@ -378,7 +381,7 @@ namespace JinianNet.JNTemplate.Parser
             //throw new ArgumentException(String.Concat(tX.FullName, " 不能和类型 ", tY.FullName, " 进行操作"));
         }
 
-        public Object Calculate(Boolean x, Boolean y, String value)
+        public static Object Calculate(Boolean x, Boolean y, String value)
         {
             switch (value)
             {
@@ -395,7 +398,7 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        public Object Calculate(String x, String y, String value)
+        public static Object Calculate(String x, String y, String value)
         {
             switch (value)
             {
@@ -410,7 +413,7 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        public Object Calculate(Double x, Double y, String value)
+        public static Object Calculate(Double x, Double y, String value)
         {
             switch (value)
             {
@@ -446,7 +449,7 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        public Object Calculate(Stack<Object> value)
+        public static Object Calculate(Stack<Object> value)
         {
             Stack<Object> post = new Stack<Object>();
             while (value.Count > 0)
@@ -473,14 +476,18 @@ namespace JinianNet.JNTemplate.Parser
             return stack.Pop();
         }
 
-        public Object Calculate(Object[] value)
+        public static Object Calculate(Object[] value)
         {
             Stack<Object> stack = ProcessExpression(value);
 
             return Calculate(stack);
         }
-
-        public Object Calculate(String value)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Object Calculate(String value)
         {
             Stack<Object> stack = ProcessExpression(value);
 

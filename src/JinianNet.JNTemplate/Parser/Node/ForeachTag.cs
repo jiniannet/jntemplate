@@ -29,15 +29,16 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         private void Excute(Object value, TemplateContext context, System.IO.TextWriter writer)
         {
-            IEnumerable enumerable = ParserAccessor.ToIEnumerable(value);
+            IEnumerable enumerable = ReflectionHelpers.ToIEnumerable(value);
             TemplateContext ctx;
             if (enumerable != null)
             {
                 IEnumerator ienum = enumerable.GetEnumerator();
                 ctx = TemplateContext.CreateContext(context);
-                Int32 i = 1;
+                Int32 i = 0;
                 while (ienum.MoveNext())
                 {
+                    i++;
                     ctx.TempData[this.Name] = ienum.Current;
                     //为了兼容以前的用户 foreachIndex 保留
                     ctx.TempData["foreachIndex"] = i;
@@ -45,7 +46,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                     {
                         this.Children[n].Parse(ctx, writer);
                     }
-                    i++;
+                    
                 }
             }
         }

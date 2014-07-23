@@ -13,17 +13,6 @@ namespace JinianNet.JNTemplate
 {
     public class Resources
     {
-        public class ResourceManager
-        {
-            
-
-            //public String LoadResource(String path, Encoding encoding)
-            //{
-            //    return Resources.LoadResource(this.Paths, path, encoding);
-            //}
-
-        }
-
         public static List<String> Paths { get; set; }
 
         public static Int32 FindPath(IEnumerable<String> files, String path, out String fullPath)
@@ -58,7 +47,6 @@ namespace JinianNet.JNTemplate
         {
             return LoadResource(files, path, Encoding.Default);
         }
-
 
         public static String LoadResource(String path, Encoding encoding)
         {
@@ -137,68 +125,5 @@ namespace JinianNet.JNTemplate
             // Return the normalized path that we have completed
             return (normalized);
         }
-
-        public class ResourceCollection : ICollection
-        {
-            #region ICollection 成员
-
-            public void CopyTo(Array array, Int32 index)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Int32 Count
-            {
-                get { throw new NotImplementedException(); }
-            }
-
-            public bool IsSynchronized
-            {
-                get { throw new NotImplementedException(); }
-            }
-
-            public Object SyncRoot
-            {
-                get { throw new NotImplementedException(); }
-            }
-
-            #endregion
-
-            #region IEnumerable 成员
-
-            public IEnumerator GetEnumerator()
-            {
-                throw new NotImplementedException();
-            }
-
-            #endregion
-        }
-
-        //public interface ICodeParser
-        //{
-        //    //CodeCompileUnit Parse(TextReader codeStream);
-        //}
-
-
-
-        //public sealed class Executor
-        //{
-        //    //// Fields
-        //    //private const Int32 ProcessTimeOut = 0x927c0;
-
-        //    //// Methods
-        //    //private Executor();
-        //    //private static FileStream CreateInheritedFile(String file);
-        //    //public static void ExecWait(String cmd, TempFileCollection tempFiles);
-        //    //public static Int32 ExecWaitWithCapture(String cmd, TempFileCollection tempFiles, ref String outputName, ref String errorName);
-        //    //public static Int32 ExecWaitWithCapture(IntPtr userToken, String cmd, TempFileCollection tempFiles, ref String outputName, ref String errorName);
-        //    //public static Int32 ExecWaitWithCapture(String cmd, String currentDir, TempFileCollection tempFiles, ref String outputName, ref String errorName);
-        //    //public static Int32 ExecWaitWithCapture(IntPtr userToken, String cmd, String currentDir, TempFileCollection tempFiles, ref String outputName, ref String errorName);
-        //    //internal static Int32 ExecWaitWithCapture(SafeUserTokenHandle userToken, String cmd, String currentDir, TempFileCollection tempFiles, ref String outputName, ref String errorName, String trueCmdLine);
-        //    //private static Int32 ExecWaitWithCaptureUnimpersonated(SafeUserTokenHandle userToken, String cmd, String currentDir, TempFileCollection tempFiles, ref String outputName, ref String errorName, String trueCmdLine);
-        //    //internal static String GetRuntimeInstallDirectory();
-        //    //internal static void ReImpersonate(WindowsImpersonationContext impersonation);
-        //    //internal static WindowsImpersonationContext RevertImpersonation();
-        //}
     }
 }

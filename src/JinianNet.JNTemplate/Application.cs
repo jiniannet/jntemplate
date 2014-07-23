@@ -10,6 +10,9 @@ using System.Reflection;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// Token种类
+    /// </summary>
     public enum TokenKind
     {
         /// <summary>

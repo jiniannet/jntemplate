@@ -446,9 +446,40 @@ namespace JinianNet.JNTemplate.Parser
                 Int32 start, end, pos;
                 start = end = pos = 0;
 
+                #region 去括号 
+                //(8+2) ==》 8+2
+                //(8+2) * (10-5) ==》(8+2) * (10-5)
+                if (tc.First.TokenKind == TokenKind.LeftParentheses && tc.Last.TokenKind == TokenKind.RightParentheses)
+                {
+                    for (Int32 i = 1; i < tc.Count-1; i++)
+                    {
+                        switch (tc[i].TokenKind)
+                        {
+                            case TokenKind.LeftParentheses:
+                                pos++;
+                                break;
+                            case TokenKind.RightParentheses:
+                                if (pos > 0)
+                                {
+                                    pos--;
+                                }
+                                break;
+                        }
+                    }
+                    if (pos == 0)
+                    {
+                        tc = new TokenCollection(tc,1,tc.Count - 2);
+                    }
+                    else
+                    {
+                        pos = 0;
+                    }
+                }
+                #endregion
+
                 ExpressionTag tag = new ExpressionTag();
 
-                #region
+                #region 执行表达式折分
 
                 for (Int32 i = 0; i < tc.Count; i++)
                 {

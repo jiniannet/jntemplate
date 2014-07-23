@@ -14,11 +14,11 @@ using System.Collections;
 
 namespace JinianNet.JNTemplate.Parser
 {
-    public class ParserAccessor
+    public class ReflectionHelpers
     {
-        private static readonly char[] _expressionPartSeparator = new char[] { '.' };
-        private static readonly char[] _indexExprEndChars = new char[] { ']', ')' };
-        private static readonly char[] _indexExprStartChars = new char[] { '[', '(' };
+        private static readonly Char[] _expressionPartSeparator = new Char[] { '.' };
+        private static readonly Char[] _indexExprEndChars = new Char[] { ']', ')' };
+        private static readonly Char[] _indexExprStartChars = new Char[] { '[', '(' };
 
         #region EVAL解析
         //public Object Eval(String expression)
@@ -200,7 +200,7 @@ namespace JinianNet.JNTemplate.Parser
             #endregion
         }
 
-        public static Object GetIndexedProperty(Object container, bool isNumber, Object propIndex)
+        public static Object GetIndexedProperty(Object container, Boolean isNumber, Object propIndex)
         {
             //Array array = container as Array;
             //if ((array != null) && isNumber)
@@ -211,6 +211,7 @@ namespace JinianNet.JNTemplate.Parser
             {
                 return ((IList)container)[(Int32)propIndex];
             }
+            /*
             if(container is System.Data.DataRowView){
                 if (isNumber)
                 {
@@ -221,6 +222,7 @@ namespace JinianNet.JNTemplate.Parser
                     return ((System.Data.DataRowView)container)[propIndex.ToString()];
                 }
             }
+             */
             //System.Data.DataRowView
             PropertyInfo info = container.GetType().GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
             if (info == null)
@@ -233,7 +235,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public static Object GetIndexedProperty(Object container, String propName, String propIndex)
         {
-            bool flag = false;
+            Boolean flag = false;
 
             Object value = null;
 

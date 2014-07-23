@@ -11,12 +11,17 @@ using JinianNet.JNTemplate.Parser;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// Context
+    /// </summary>
     public class TemplateContext : ContextBase
     {
+        /// <summary>
+        /// Context
+        /// </summary>
         public TemplateContext()
         {
             this.Charset = System.Text.Encoding.Default;
-            this.Paths = new List<String>();
         }
 
         private String _currentPath;
@@ -39,23 +44,19 @@ namespace JinianNet.JNTemplate
             set { _charset = value; }
         }
 
-        //private List<ITagParser> _parser;
-        //public List<ITagParser> Parser
-        //{
-        //    get { return _parser; }
-        //    private set { _parser = value; }
-        //}
-
-        private List<String> _paths;
-        [Obsolete("请使用Resources.Paths 来替代本对象")]
         /// <summary>
-        /// 模板搜索路径
+        /// 模板资源路径
         /// </summary>
+        [Obsolete("请使用Resources.Paths 来替代本对象")]
         public List<String> Paths
         {
-            get { return _paths; }
-            private set { _paths = value; }
+            get { return Resources.Paths; }
+            private set
+            {
+                Resources.Paths.AddRange(value);
+            }
         }
+
         /// <summary>
         /// 从指定TemplateContext创建一个类似的实例
         /// </summary>
