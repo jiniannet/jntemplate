@@ -12,10 +12,14 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <SccProjectName>Svn</SccProjectName>
-    <SccLocalPath>Svn</SccLocalPath>
-    <SccAuxPath>Svn</SccAuxPath>
-    <SccProvider>SubversionScc</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,14 +48,15 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="BuildManager.cs" />
-    <Compile Include="Context\ContextBase.cs" />
+    <Compile Include="ContextBase.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
+    <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="ITemplate.cs" />
-    <Compile Include="Parser\Calculator.cs" />
+    <Compile Include="Common\Calculator.cs" />
     <Compile Include="Parser\CharScanner.cs" />
     <Compile Include="Parser\ITagParser.cs" />
     <Compile Include="Parser\Node\BaseTag.cs" />
@@ -80,7 +85,9 @@
     <Compile Include="Parser\Node\TokenCollection.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\Node\WordTag.cs" />
-    <Compile Include="Parser\ParserAccessor.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Common\ReflectionHelpers.cs" />
+    <Compile Include="Common\ParserHelpers.cs" />
     <Compile Include="Parser\TemplateLexer.cs" />
     <Compile Include="Parser\TemplateParser.cs" />
     <Compile Include="Parser\VariableScope.cs" />
