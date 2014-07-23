@@ -11,8 +11,16 @@ using System.Globalization;
 
 namespace JinianNet.JNTemplate.Common
 {
+    /// <summary>
+    /// 分析辅助类
+    /// </summary>
     public class ParserHelpers
     {
+       /// <summary>
+       /// 是否英文字母
+       /// </summary>
+       /// <param name="value">字符</param>
+       /// <returns></returns>
         public static bool IsLetter(Char value)
         {
             return Char.IsLower(value) || Char.IsUpper(value);

@@ -10,6 +10,9 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate.Common
 {
+    /// <summary>
+    /// 计算器
+    /// </summary>
     public class Calculator
     {
         /// <summary>
@@ -18,11 +21,11 @@ namespace JinianNet.JNTemplate.Common
         public enum LetterType
         {
             /// <summary>
-            /// 
+            /// 无
             /// </summary>
             None = 0,
             /// <summary>
-            /// 
+            /// 操作符
             /// </summary>
             Operator = 1,
             /// <summary>
@@ -34,11 +37,11 @@ namespace JinianNet.JNTemplate.Common
             /// </summary>
             RightParentheses = 3,
             /// <summary>
-            /// 
+            /// 数字
             /// </summary>
             Number = 4,
             /// <summary>
-            /// 
+            /// 其它
             /// </summary>
             Other = 5
         }
@@ -200,6 +203,11 @@ namespace JinianNet.JNTemplate.Common
 
         }
 
+        /// <summary>
+        /// 处理表达式
+        /// </summary>
+        /// <param name="value">表达式</param>
+        /// <returns></returns>
         public static Stack<Object> ProcessExpression(String value)
         {
             value = value.Replace("  ", String.Empty);
@@ -236,6 +244,11 @@ namespace JinianNet.JNTemplate.Common
 
         }
 
+        /// <summary>
+        /// 处理表达式
+        /// </summary>
+        /// <param name="value">表达式</param>
+        /// <returns></returns>
         public static Stack<Object> ProcessExpression(Object[] value)
         {
             Stack<Object> post = new Stack<Object>();
@@ -366,6 +379,13 @@ namespace JinianNet.JNTemplate.Common
             }
         }
 
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
         public static Object Calculate(Object x, Object y, String value)
         {
             Type tX = x.GetType();
@@ -381,6 +401,13 @@ namespace JinianNet.JNTemplate.Common
             //throw new ArgumentException(String.Concat(tX.FullName, " 不能和类型 ", tY.FullName, " 进行操作"));
         }
 
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
         public static Object Calculate(Boolean x, Boolean y, String value)
         {
             switch (value)
@@ -397,7 +424,13 @@ namespace JinianNet.JNTemplate.Common
                     throw new ArgumentException();
             }
         }
-
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
         public static Object Calculate(String x, String y, String value)
         {
             switch (value)
@@ -412,7 +445,13 @@ namespace JinianNet.JNTemplate.Common
                     throw new ArgumentException();
             }
         }
-
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
         public static Object Calculate(Double x, Double y, String value)
         {
             switch (value)
@@ -449,6 +488,11 @@ namespace JinianNet.JNTemplate.Common
             }
         }
 
+        /// <summary>
+        /// 计算后缀表达式
+        /// </summary>
+        /// <param name="value">后缀表达式</param>
+        /// <returns></returns>
         public static Object Calculate(Stack<Object> value)
         {
             Stack<Object> post = new Stack<Object>();
@@ -476,16 +520,22 @@ namespace JinianNet.JNTemplate.Common
             return stack.Pop();
         }
 
+        /// <summary>
+        /// 计算表达式
+        /// </summary>
+        /// <param name="value">表达式</param>
+        /// <returns></returns>
         public static Object Calculate(Object[] value)
         {
             Stack<Object> stack = ProcessExpression(value);
 
             return Calculate(stack);
         }
+
         /// <summary>
-        /// 
+        /// 计算表达式
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">表达式</param>
         /// <returns></returns>
         public static Object Calculate(String value)
         {

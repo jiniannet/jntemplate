@@ -14,6 +14,9 @@ using System.Collections;
 
 namespace JinianNet.JNTemplate.Common
 {
+    /// <summary>
+    /// 反射辅助类
+    /// </summary>
     public class ReflectionHelpers
     {
         private static readonly Char[] _expressionPartSeparator = new Char[] { '.' };
@@ -21,67 +24,14 @@ namespace JinianNet.JNTemplate.Common
         private static readonly Char[] _indexExprStartChars = new Char[] { '[', '(' };
 
         #region EVAL解析
-        //public Object Eval(String expression)
-        //{
-        //    if (expression == null)
-        //    {
-        //        return null;
-        //    }
-        //    expression = expression.Trim();
-        //    if (expression.Length == 0)
-        //    {
-        //        return null;
-        //    }
-
-        //    Object  = null;
-
-
-        //    String[] expressionParts = expression.Split(_expressionPartSeparator);
-        //    if (expressionParts.Length > 0)
-        //    {
-        //        if (expressionParts[0].IndexOfAny(_indexExprStartChars) < 0)
-        //        {
-        //            String[] array;
-        //            if (expressionParts.Length > 1)
-        //            {
-        //                array = new String[expressionParts.Length - 1];
-        //                Array.Copy(expressionParts, 1, array, 0, array.Length);
-        //            }
-        //            else
-        //            {
-        //                array = new String[0];
-        //            }
-        //             = Eval(this[expressionParts[0]], array);
-        //        }
-        //        else
-        //        {
-        //            Int32 length = expressionParts[0].IndexOfAny(_indexExprStartChars);
-        //            if (length < 0)
-        //            {
-        //                throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
-        //            }
-        //            if (length != 0)
-        //            {
-        //                 = this[expressionParts[0].Substring(0, length).Trim()];
-        //                expressionParts[0] = expressionParts[0].Substring(length, (expressionParts[0].Length - length));
-        //                 = Eval(, expressionParts);
-        //            }
-        //            else
-        //            {
-        //                 = Eval(this, expressionParts);
-        //            }
-        //        }
-
-        //    }
-        //    if (EnableCaching)
-        //    {
-        //        this._cacheDictionary[expression] =value;
-        //    }
-        //    return ;
-        //}
-
         #region 4.0版本
 
+        /// <summary>
+        /// 获取索引值
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="expr">表达式</param>
+        /// <returns></returns>
         public static Object GetIndexedPropertyValue(Object container, String expr)
         {
             if (container == null)
@@ -200,6 +150,13 @@ namespace JinianNet.JNTemplate.Common
             #endregion
         }
 
+        /// <summary>
+        /// 获取索引值
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="propIndex">索引名称</param>
+        /// <param name="isNumber">索引名称是否数字</param>
+        /// <returns></returns>
         public static Object GetIndexedProperty(Object container, Boolean isNumber, Object propIndex)
         {
             //Array array = container as Array;
