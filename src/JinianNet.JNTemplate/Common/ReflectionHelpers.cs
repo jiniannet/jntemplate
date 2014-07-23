@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Collections;
 
-namespace JinianNet.JNTemplate.Parser
+namespace JinianNet.JNTemplate.Common
 {
     public class ReflectionHelpers
     {
@@ -303,20 +303,20 @@ namespace JinianNet.JNTemplate.Parser
             return String.Format(format, obj);
         }
 
-        public static Object Eval(VariableScope container, String expression)
-        {
-            String[] expressionParts = expression.Split(_expressionPartSeparator);
-            if (expressionParts.Length > 0)
-            {
-                if (expressionParts.Length==1)
-                {
-                    return container[expressionParts[0]];
-                }
-                return Eval(container[expressionParts[0]], expressionParts, 1, expressionParts.Length);
-            }
+        //public static Object Eval(VariableScope container, String expression)
+        //{
+        //    String[] expressionParts = expression.Split(_expressionPartSeparator);
+        //    if (expressionParts.Length > 0)
+        //    {
+        //        if (expressionParts.Length==1)
+        //        {
+        //            return container[expressionParts[0]];
+        //        }
+        //        return Eval(container[expressionParts[0]], expressionParts, 1, expressionParts.Length);
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public static Object Eval(Object container, String expression)
         {

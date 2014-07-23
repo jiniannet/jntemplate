@@ -20,9 +20,9 @@ namespace JinianNet.JNTemplate.Parser.Node
                 value[i] = this.Children[i].Parse(context);
             }
 
-            Stack<Object> stack = Calculator.ProcessExpression(value);
+            Stack<Object> stack = Common.Calculator.ProcessExpression(value);
 
-            return Calculator.Calculate(stack);
+            return Common.Calculator.Calculate(stack);
         }
 
         public override object Parse(object baseValue, TemplateContext context)
@@ -34,9 +34,9 @@ namespace JinianNet.JNTemplate.Parser.Node
                 value[i] = this.Children[i].Parse(baseValue,context);
             }
 
-            Stack<Object> stack = Calculator.ProcessExpression(value);
+            Stack<Object> stack = Common.Calculator.ProcessExpression(value);
 
-            return Calculator.Calculate(stack);
+            return Common.Calculator.Calculate(stack);
         }
     }
 }

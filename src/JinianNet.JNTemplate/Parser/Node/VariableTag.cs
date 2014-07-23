@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(Object baseValue, TemplateContext context)
         {
-            return ReflectionHelpers.Eval(baseValue, this.Name);
+            return Common.ReflectionHelpers.Eval(baseValue, this.Name);
         }
 
     }

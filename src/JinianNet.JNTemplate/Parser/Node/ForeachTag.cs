@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         private void Excute(Object value, TemplateContext context, System.IO.TextWriter writer)
         {
-            IEnumerable enumerable = ReflectionHelpers.ToIEnumerable(value);
+            IEnumerable enumerable = Common.ReflectionHelpers.ToIEnumerable(value);
             TemplateContext ctx;
             if (enumerable != null)
             {

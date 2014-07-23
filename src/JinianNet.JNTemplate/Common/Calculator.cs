@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Parser.Node;
 
-namespace JinianNet.JNTemplate.Parser
+namespace JinianNet.JNTemplate.Common
 {
     public class Calculator
     {

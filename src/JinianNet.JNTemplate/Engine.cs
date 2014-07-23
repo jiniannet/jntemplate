@@ -32,7 +32,7 @@ namespace JinianNet.JNTemplate
         {
             if (!String.IsNullOrEmpty(path))
             {
-                context.Paths.Add(path);
+                Resources.Paths.Add(path);
             }
             context.Charset = charset;
         }
@@ -73,7 +73,7 @@ namespace JinianNet.JNTemplate
                 Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);
                 if (index == -1)
                 {
-                    if (Resources.FindPath(template.Context.Paths.ToArray(), path, out fullPath) == -1)
+                    if (Resources.FindPath(path, out fullPath) == -1)
                     {
                         return template;
                     }

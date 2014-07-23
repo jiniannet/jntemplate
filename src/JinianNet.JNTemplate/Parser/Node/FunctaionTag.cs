@@ -83,7 +83,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                 {
                     return result;
                 }
-                result = ReflectionHelpers.GetPropertyValue(baseValue, this.Name);
+                result = Common.ReflectionHelpers.GetPropertyValue(baseValue, this.Name);
                 if (result != null && result is FuncHandler)
                 {
                     return (result as FuncHandler).Invoke(args);

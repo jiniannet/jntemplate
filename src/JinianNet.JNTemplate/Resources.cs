@@ -15,6 +15,10 @@ namespace JinianNet.JNTemplate
     {
         public static List<String> Paths { get; set; }
 
+        public static Int32 FindPath( String path, out String fullPath)
+        {
+            return FindPath(Paths, path, out fullPath);
+        }
         public static Int32 FindPath(IEnumerable<String> files, String path, out String fullPath)
         {
             fullPath = null;

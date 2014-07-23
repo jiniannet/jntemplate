@@ -68,9 +68,7 @@ namespace JinianNet.JNTemplate
         /// <param name="writer"></param>
         public virtual void Render(TextWriter writer)
         {
-            Resources.Paths = this.Context.Paths;
             base.Render(this.Context, writer);
-            Resources.Paths.Clear();
         }
 
         /// <summary>
