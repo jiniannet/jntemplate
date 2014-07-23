@@ -21,9 +21,16 @@ namespace JinianNet.JNTemplate.Common
        /// </summary>
        /// <param name="value">字符</param>
        /// <returns></returns>
-        public static bool IsLetter(Char value)
+        public static Boolean IsLetter(Char value)
         {
             return Char.IsLower(value) || Char.IsUpper(value);
+        }
+
+        public static Boolean IsEqual(String x, String y)
+        {
+            if (x == null || y == null)
+                return x == y;
+            return String.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -14,13 +14,15 @@ namespace JinianNet.JNTemplate
     public class Resources
     {
         public readonly static List<String> paths = new List<string>();
-        public static List<String> Paths {
-            get {
+        public static List<String> Paths
+        {
+            get
+            {
                 return paths;
             }
         }
 
-        public static Int32 FindPath( String path, out String fullPath)
+        public static Int32 FindPath(String path, out String fullPath)
         {
             return FindPath(Paths, path, out fullPath);
         }
@@ -59,7 +61,7 @@ namespace JinianNet.JNTemplate
 
         public static String LoadResource(String path, Encoding encoding)
         {
-            return LoadResource(Paths,path, encoding);
+            return LoadResource(Paths, path, encoding);
         }
 
         public static String LoadResource(IEnumerable<String> files, String path, Encoding encoding)
