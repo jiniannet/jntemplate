@@ -13,7 +13,12 @@ namespace JinianNet.JNTemplate
 {
     public class Resources
     {
-        public static List<String> Paths { get; set; }
+        public readonly static List<String> paths = new List<string>();
+        public static List<String> Paths {
+            get {
+                return paths;
+            }
+        }
 
         public static Int32 FindPath( String path, out String fullPath)
         {
