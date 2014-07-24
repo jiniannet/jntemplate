@@ -70,15 +70,15 @@ namespace JinianNet.JNTemplate.Parser
     //        if (tc.Count == 1 &&
     //            tc.First.TokenKind == TokenKind.TextData
     //            && (Field.KEY_ELSE == tc.First.Text
-    //            || Field.KEY_ELSEIF == tc.First.Text
-    //            || Field.KEY_END == tc.First.Text
-    //            || Field.KEY_FOR == tc.First.Text
-    //            || Field.KEY_FOREACH == tc.First.Text
-    //            || Field.KEY_IF == tc.First.Text
-    //            || Field.KEY_IN == tc.First.Text
-    //            || Field.KEY_INCLUDE == tc.First.Text
-    //            || Field.KEY_LOAD == tc.First.Text
-    //            || Field.KEY_SET == tc.First.Text)
+    //            ||Field.KEY_ELSEIF == tc.First.Text
+    //            ||Field.KEY_END == tc.First.Text
+    //            ||Field.KEY_FOR == tc.First.Text
+    //            ||Field.KEY_FOREACH == tc.First.Text
+    //            ||Field.KEY_IF == tc.First.Text
+    //            ||Field.KEY_IN == tc.First.Text
+    //            ||Field.KEY_INCLUDE == tc.First.Text
+    //            ||Field.KEY_LOAD == tc.First.Text
+    //            ||Field.KEY_SET == tc.First.Text)
     //            )
     //        {
     //            WordTag tag = new WordTag();
@@ -98,7 +98,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count == 1
-                && tc.First.Text == Field.KEY_ELSE)
+                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_ELSE))
             {
                 return new ElseTag();
             }
@@ -114,7 +114,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count == 1
-                && tc.First.Text == Field.KEY_END)
+                &&  Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_END))
             {
                 return new EndTag();
             }
@@ -172,12 +172,12 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Field.KEY_FOREACH == tc.First.Text)
+            if (Common.ParserHelpers.IsEqual(Field.KEY_FOREACH , tc.First.Text))
             {
                 if (tc.Count > 5
                     && tc[1].TokenKind == TokenKind.LeftParentheses
                     && tc[2].TokenKind == TokenKind.TextData
-                    && Field.KEY_IN.Equals(tc[3].Text, StringComparison.OrdinalIgnoreCase)
+                    && Common.ParserHelpers.IsEqual(tc[3].Text,Field.KEY_IN)
                     && tc.Last.TokenKind == TokenKind.RightParentheses)
                 {
                     ForeachTag tag = new ForeachTag();
@@ -218,7 +218,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count > 3 && tc.First.TokenKind == TokenKind.TextData
-                && tc.First.Text == Field.KEY_FOR)
+                && Common.ParserHelpers.IsEqual(tc.First.Text,Field.KEY_FOR))
             {
                 ForTag tag = new ForTag();
                 for (Int32 i = 2; i < tc.Count; i++)
@@ -278,7 +278,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (tc.Count > 3
                 && tc.First.TokenKind == TokenKind.TextData
-                && tc.First.Text == Field.KEY_IF)
+                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_IF))
             {
                 IfTag tag = new IfTag();
 
@@ -325,7 +325,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count > 3
-                && tc.First.Text == Field.KEY_ELSEIF)
+                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_ELSEIF))
             {
                 ElseifTag tag = new ElseifTag();
 
@@ -352,7 +352,7 @@ namespace JinianNet.JNTemplate.Parser
             //常规格式：
             if (tc.Count > 5
                 && tc.First.TokenKind == TokenKind.TextData
-                && tc.First.Text == Field.KEY_SET
+                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_SET)
                 && tc[1].TokenKind == TokenKind.LeftParentheses
                 && tc[3].Text == "="
                 && tc.Last.TokenKind == TokenKind.RightParentheses)
@@ -393,7 +393,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.First.Text == Field.KEY_LOAD)
+            if (Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_LOAD))
             {
                 if (tc.Count > 2
                     && (tc[1].TokenKind == TokenKind.LeftParentheses)
@@ -417,7 +417,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.First.Text == Field.KEY_INCLUDE)
+            if (Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_INCLUDE))
             {
                 if (tc.Count > 2
                     && (tc[1].TokenKind == TokenKind.LeftParentheses)

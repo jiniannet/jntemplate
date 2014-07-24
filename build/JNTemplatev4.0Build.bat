@@ -8,11 +8,11 @@ if not exist %fdir% (
 
 set msbuild=%fdir%\v4.0.30319\msbuild.exe
 
-%msbuild% ..\src\JinianNet.JNTemplate.csproj /p:Configuration=Release /t:Rebuild /p:OutputPath=..\bin\4.0\Release
+%msbuild% ..\src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj /p:Configuration=Release /t:Rebuild /p:OutputPath=..\..\bin\4.0\Release
 
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO RMDIR /S /Q "%%G"
 
-%msbuild% ..\src\JinianNet.JNTemplate.csproj /p:Configuration=Debug /t:Rebuild /p:OutputPath=..\bin\4.0\Debug
+%msbuild% ..\src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj /p:Configuration=Debug /t:Rebuild /p:OutputPath=..\..\bin\4.0\Debug
 
 FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO RMDIR /S /Q "%%G"
 
