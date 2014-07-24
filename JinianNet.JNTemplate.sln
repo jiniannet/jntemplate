@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate", "src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj", "{3744DD16-5A83-4C50-B711-74EA11DA6B27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272-B7F5-4A30-8DCD-C8EB022BCD09}"
@@ -22,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplate.Test.csproj", "{7F607362-0680-4751-B1DC-621219294AE3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEB61DB3-0D68-43A3-91E6-E16AE02889E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "example", "example\example.csproj", "{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,16 @@ Global
 		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +74,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7F607362-0680-4751-B1DC-621219294AE3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 		{3744DD16-5A83-4C50-B711-74EA11DA6B27} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+		{F9560C9A-BF39-4A17-A1E9-EAE91981CA38} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 	EndGlobalSection
 EndGlobal
