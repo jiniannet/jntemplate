@@ -10,6 +10,12 @@ namespace JinianNet.JNTemplate.Parser
     /// </summary>
     public interface ITagParser
     {
+        /// <summary>
+        /// 分析标签
+        /// </summary>
+        /// <param name="parser">TemplateParser</param>
+        /// <param name="tc">Token集合</param>
+        /// <returns></returns>
         Tag Parse(TemplateParser parser, TokenCollection tc);
     }
 

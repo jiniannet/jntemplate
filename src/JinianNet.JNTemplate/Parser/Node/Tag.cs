@@ -10,28 +10,54 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 标签基类
+    /// </summary>
     public abstract class Tag 
     {
         private Token first, last;
         //private Tag parent;
         private List<Tag> children;
-
+        /// <summary>
+        /// 标签
+        /// </summary>
         public Tag()
         {
             this.children = new List<Tag>();
         }
-
+        /// <summary>
+        /// 子标签
+        /// </summary>
         public List<Tag> Children { 
             get { return this.children; }
         }
-
+        /// <summary>
+        /// 解析结果
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
         public abstract Object Parse(TemplateContext context);
 
+        /// <summary>
+        /// 解析结果
+        /// </summary>
+        /// <param name="baseValue">基本值</param>
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
         public abstract Object Parse(Object baseValue, TemplateContext context);
 
+        /// <summary>
+        /// 解析结果
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <param name="write">TextWriter</param>
         public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
 
-
+        /// <summary>
+        /// 转换为 Boolean 
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
         public virtual Boolean ToBoolean(TemplateContext context)
         {
             Object value = Parse(context);
@@ -60,25 +86,27 @@ namespace JinianNet.JNTemplate.Parser.Node
             return value != null;
         }
 
-
+        /// <summary>
+        /// 开始Token
+        /// </summary>
         public Token FirstToken
         {
             get { return first; }
             set { first = value; }
         }
-
+        /// <summary>
+        /// 结束Token
+        /// </summary>
         public Token LastToken
         {
             set {  last = value; }
             get { return last;}
         }
 
-        //public Tag Parent
-        //{
-        //    set { parent = value; }
-        //    get { return parent; }
-        //}
-
+        /// <summary>
+        /// 添加一个子标签
+        /// </summary>
+        /// <param name="node"></param>
         public void AddChild(Tag node)
         {
             //node.Parent = this;

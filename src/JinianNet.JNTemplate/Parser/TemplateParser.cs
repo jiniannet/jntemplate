@@ -12,6 +12,9 @@ using JinianNet.JNTemplate.Parser;
 
 namespace JinianNet.JNTemplate.Parser
 {
+    /// <summary>
+    /// TemplateParser
+    /// </summary>
     public class TemplateParser : IEnumerator<Tag>
     {
         const StringComparison stringComparer = StringComparison.OrdinalIgnoreCase;
@@ -34,7 +37,9 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
 
         #region IEnumerator<Tag> 成员
-
+        /// <summary>
+        /// 当前标签
+        /// </summary>
         public Tag Current
         {
             get
@@ -45,18 +50,12 @@ namespace JinianNet.JNTemplate.Parser
 
         #endregion
 
-        #region IDisposable 成员
-
-        public void Dispose()
-        {
-
-        }
-
-        #endregion
-
         #region IEnumerator 成员
 
-
+        /// <summary>
+        /// 读取下一个标签
+        /// </summary>
+        /// <returns></returns>
         public bool MoveNext()
         {
             if (this.index < this.tokens.Length)
@@ -70,7 +69,9 @@ namespace JinianNet.JNTemplate.Parser
             }
             return false;
         }
-
+        /// <summary>
+        /// 重置
+        /// </summary>
         public void Reset()
         {
             this.index = 0;
@@ -118,7 +119,11 @@ namespace JinianNet.JNTemplate.Parser
             }
             return t;
         }
-
+        /// <summary>
+        /// 读取一个标签
+        /// </summary>
+        /// <param name="tc">TOKEN集合</param>
+        /// <returns></returns>
         public Tag Read(TokenCollection tc)
         {
             if (tc == null || tc.Count == 0)
@@ -614,6 +619,13 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
+        #endregion
+
+        #region IDispose 成员
+        public void Dispose()
+        {
+
+        }
         #endregion
     }
 }

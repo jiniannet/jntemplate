@@ -13,10 +13,17 @@ namespace JinianNet.JNTemplate
 {
     public class Resources
     {
+        private readonly static List<String> collection = new List<string>();
         /// <summary>
         /// 资源路径
         /// </summary>
-        public static List<String> Paths { get; set; }
+        public static List<String> Paths
+        {
+            get
+            {
+                return collection;
+            }
+        }
 
         /// <summary>
         /// 查找指定文件
@@ -24,7 +31,7 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名</param>
         /// <param name="fullPath">查找结果</param>
         /// <returns></returns>
-        public static Int32 FindPath( String filename, out String fullPath)
+        public static Int32 FindPath(String filename, out String fullPath)
         {
             return FindPath(Paths, filename, out fullPath);
         }

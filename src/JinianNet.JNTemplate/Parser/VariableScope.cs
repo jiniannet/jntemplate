@@ -13,29 +13,37 @@ using System.Globalization;
 
 namespace JinianNet.JNTemplate.Parser
 {
-    public class VariableScope
+    /// <summary>
+    /// 变量域
+    /// </summary>
+    public class VariableScope 
     {
         private VariableScope parent;
 
         private Dictionary<String, Object> dic;
 
+        /// <summary>
+        /// VariableScope
+        /// </summary>
         public VariableScope()
             : this(null)
         {
 
         }
 
+        /// <summary>
+        /// VariableScope
+        /// </summary>
         public VariableScope(VariableScope parent)
         {
             this.parent = parent;
             this.dic = new Dictionary<String, Object>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-
-
         /// <summary>
-        /// 
+        /// 清空数据
         /// </summary>
+        /// <param name="all">是否清空父数据</param>
         public void Clear(Boolean all)
         {
             this.dic.Clear();
@@ -49,7 +57,15 @@ namespace JinianNet.JNTemplate.Parser
         }
 
         /// <summary>
-        /// 
+        /// 清空数据
+        /// </summary>
+        public void Clear()
+        {
+            Clear(false);
+        }
+
+        /// <summary>
+        /// 父对象
         /// </summary>
         public VariableScope Parent
         {
@@ -57,8 +73,10 @@ namespace JinianNet.JNTemplate.Parser
         }
 
         /// <summary>
-        /// 
+        /// 获取索引值
         /// </summary>
+        /// <param name="name">索引名称</param>
+        /// <returns></returns>
         public Object this[String name]
         {
             get
@@ -76,22 +94,35 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
-        public VariableScope Copy()
-        {
-            VariableScope owen = new VariableScope(this.Parent);
-            foreach (KeyValuePair<String, Object> value in this.dic)
-            {
-                owen[value.Key] = value.Value;
-            }
-            return owen;
-        }
+        ///// <summary>
+        ///// 复制数据
+        ///// </summary>
+        ///// <returns></returns>
+        //public VariableScope Copy()
+        //{
+        //    VariableScope owen = new VariableScope(this.Parent);
+        //    foreach (KeyValuePair<String, Object> value in this.dic)
+        //    {
+        //        owen[value.Key] = value.Value;
+        //    }
+        //    return owen;
+        //}
 
-
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
         public void Push(String key, Object value)
         {
             this.dic.Add(key, value);
         }
 
+        /// <summary>
+        /// 是否包含指定键
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <returns></returns>
         public Boolean ContainsKey(String key)
         {
             if (this.dic.ContainsKey(key))
@@ -106,6 +137,11 @@ namespace JinianNet.JNTemplate.Parser
             return false;
         }
 
+        /// <summary>
+        /// 移除指定对象
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public bool Remove(String key)
         {
             return this.dic.Remove(key);

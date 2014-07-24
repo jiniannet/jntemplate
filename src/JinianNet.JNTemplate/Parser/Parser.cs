@@ -11,6 +11,9 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
+    /// <summary>
+    /// 分析器
+    /// </summary>
     public class Parser
     {
         private readonly static List<ITagParser> collection;
@@ -20,7 +23,12 @@ namespace JinianNet.JNTemplate.Parser
             collection = new List<ITagParser>();
             Reset();
         }
-
+        /// <summary>
+        /// 分析标签
+        /// </summary>
+        /// <param name="parser">TemplateParser</param>
+        /// <param name="tc">Token集合</param>
+        /// <returns></returns>
         public static Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             Tag t;
@@ -40,22 +48,33 @@ namespace JinianNet.JNTemplate.Parser
             }
             return null;
         }
-
+        /// <summary>
+        /// 添加一个标签分析器
+        /// </summary>
+        /// <param name="item">标签分析器</param>
         public static void Add(ITagParser item)
         {
             collection.Add(item);
         }
-
+        /// <summary>
+        /// 插入一个标签分析器
+        /// </summary>
+        /// <param name="index">插入索引</param>
+        /// <param name="item">标签分析器</param>
         public static void Insert(Int32 index, ITagParser item)
         {
             collection.Insert(index, item);
         }
-
+        /// <summary>
+        /// 清除所有分析器
+        /// </summary>
         public static void Clear()
         {
             collection.Clear();
         }
-
+        /// <summary>
+        /// 重设/初始默认分析器列表
+        /// </summary>
         public static void Reset()
         {
             collection.Clear();

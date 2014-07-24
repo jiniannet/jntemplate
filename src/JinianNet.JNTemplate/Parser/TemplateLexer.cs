@@ -11,7 +11,7 @@ using JinianNet.JNTemplate.Parser.Node;
 namespace JinianNet.JNTemplate.Parser
 {
     /// <summary>
-    /// 
+    /// 词素分析器
     /// </summary>
     public class TemplateLexer
     {
@@ -51,13 +51,18 @@ namespace JinianNet.JNTemplate.Parser
         private List<Token> collection;
 
         private Stack<String> pos;
-
+        /// <summary>
+        /// TemplateLexer
+        /// </summary>
+        /// <param name="text">文本内容</param>
         public TemplateLexer(String text)
         {
             this.document = text;
             Reset();
         }
-
+        /// <summary>
+        /// 重置分析器
+        /// </summary>
         public void Reset()
         {
             this.mode = LexerMode.None;
@@ -151,7 +156,10 @@ namespace JinianNet.JNTemplate.Parser
             }
             return false;
         }
-
+        /// <summary>
+        /// 分析所有Token
+        /// </summary>
+        /// <returns></returns>
         public Token[] Parse()
         {
             if (this.kind != TokenKind.EOF)

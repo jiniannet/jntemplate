@@ -43,7 +43,6 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${(8+2)*5}";
             var template = new Template(templateContent);
             var render = template.Render();
-
             Assert.AreEqual("50", render);
         }
 
@@ -99,7 +98,6 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.AreEqual("70206", render);
         }
-
     }
   
 }
