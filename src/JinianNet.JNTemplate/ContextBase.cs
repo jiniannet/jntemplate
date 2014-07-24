@@ -12,15 +12,24 @@ using JinianNet.JNTemplate.Parser;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// ContextBase 对象
+    /// </summary>
     public class ContextBase : ICloneable
     {
+        /// <summary>
+        /// 模板数据
+        /// </summary>
         private VariableScope variableScope;
         public VariableScope TempData
         {
-            get { return variableScope;}
+            get { return variableScope; }
             set { variableScope = value; }
         }
 
+        /// <summary>
+        /// ContextBase 
+        /// </summary>
         public ContextBase()
         {
             variableScope = new VariableScope();

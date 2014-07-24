@@ -53,7 +53,10 @@ namespace JinianNet.JNTemplate
             get { return Resources.Paths; }
             private set
             {
-                Resources.Paths.AddRange(value);
+                //if (!Resources.Paths.Contains(value))
+                //{
+                    Resources.Paths.AddRange(value);
+                //}
             }
         }
 

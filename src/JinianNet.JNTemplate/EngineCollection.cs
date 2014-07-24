@@ -12,6 +12,9 @@ using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// ÒýÇæ¼¯ºÏ
+    /// </summary>
     public class EngineCollection: Collection<IEngine> {
 
         public EngineCollection() {

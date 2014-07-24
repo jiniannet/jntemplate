@@ -10,6 +10,9 @@ using System.Text;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// 系统常用字段
+    /// </summary>
     public class Field
     {
         public const String Version = "1.2";

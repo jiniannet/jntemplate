@@ -13,26 +13,42 @@ namespace JinianNet.JNTemplate
 {
     public class Resources
     {
+        /// <summary>
+        /// 资源路径
+        /// </summary>
         public static List<String> Paths { get; set; }
 
-        public static Int32 FindPath( String path, out String fullPath)
+        /// <summary>
+        /// 查找指定文件
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        /// <param name="fullPath">查找结果</param>
+        /// <returns></returns>
+        public static Int32 FindPath( String filename, out String fullPath)
         {
-            return FindPath(Paths, path, out fullPath);
+            return FindPath(Paths, filename, out fullPath);
         }
-        public static Int32 FindPath(IEnumerable<String> files, String path, out String fullPath)
+        /// <summary>
+        /// 查找指定文件
+        /// </summary>
+        /// <param name="paths">检索路径</param>
+        /// <param name="filename">文件名</param>
+        /// <param name="fullPath">查找结果：完整路径</param>
+        /// <returns></returns>
+        private static Int32 FindPath(IEnumerable<String> paths, String filename, out String fullPath)
         {
             fullPath = null;
-            if (!String.IsNullOrEmpty(path))
+            if (!String.IsNullOrEmpty(filename))
             {
-                path = NormalizePath(path);
+                filename = NormalizePath(filename);
                 String sc = String.Empty.PadLeft(2, System.IO.Path.DirectorySeparatorChar);
                 Int32 i = 0;
-                foreach (String checkUrl in files)
+                foreach (String checkUrl in paths)
                 {
-                    if (checkUrl[checkUrl.Length - 1] != System.IO.Path.DirectorySeparatorChar && path[0] != System.IO.Path.DirectorySeparatorChar)
-                        fullPath = String.Concat(checkUrl, System.IO.Path.DirectorySeparatorChar.ToString(), path);
+                    if (checkUrl[checkUrl.Length - 1] != System.IO.Path.DirectorySeparatorChar && filename[0] != System.IO.Path.DirectorySeparatorChar)
+                        fullPath = String.Concat(checkUrl, System.IO.Path.DirectorySeparatorChar.ToString(), filename);
                     else
-                        fullPath = String.Concat(checkUrl, path);
+                        fullPath = String.Concat(checkUrl, filename);
                     fullPath = fullPath.Replace('/', System.IO.Path.DirectorySeparatorChar);
                     while (fullPath.Contains(sc))
                     {
@@ -47,35 +63,53 @@ namespace JinianNet.JNTemplate
             return -1;
         }
 
-        public static String LoadResource(IEnumerable<String> files, String path)
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public static String LoadResource(String filename, Encoding encoding)
         {
-            return LoadResource(files, path, Encoding.Default);
+            return LoadResource(Paths, filename, encoding);
         }
 
-        public static String LoadResource(String path, Encoding encoding)
-        {
-            return LoadResource(Paths,path, encoding);
-        }
-
-        public static String LoadResource(IEnumerable<String> files, String path, Encoding encoding)
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="paths">检索路径</param>
+        /// <param name="filename">文件名</param>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public static String LoadResource(IEnumerable<String> paths, String filename, Encoding encoding)
         {
             String full;
-            if (FindPath(files, path, out full) != -1)
+            if (FindPath(paths, filename, out full) != -1)
             {
                 return Load(full, encoding);
             }
             return null;
         }
 
-        public static String Load(String path, Encoding encoding)
+        /// <summary>
+        /// 载入文件
+        /// </summary>
+        /// <param name="filename">完整文件路径</param>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public static String Load(String filename, Encoding encoding)
         {
-            return System.IO.File.ReadAllText(path, encoding);
+            return System.IO.File.ReadAllText(filename, encoding);
         }
-
-        public static String NormalizePath(String path)
+        /// <summary>
+        /// 路径处理
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static String NormalizePath(String filename)
         {
             // Normalize the slashes and add leading slash if necessary
-            System.String normalized = path;
+            System.String normalized = filename;
             if (normalized.IndexOf(System.IO.Path.DirectorySeparatorChar) >= 0)
             {
                 normalized = normalized.Replace(System.IO.Path.DirectorySeparatorChar, '/');

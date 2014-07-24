@@ -22,6 +22,11 @@ namespace JinianNet.JNTemplate
             }
         }
 
+        /// <summary>
+        /// 创建Template实殃
+        /// </summary>
+        /// <param name="path">模板路径</param>
+        /// <returns></returns>
         public static ITemplate CreateTemplate(String path)
         {
             if (Engines.Count == 0)
