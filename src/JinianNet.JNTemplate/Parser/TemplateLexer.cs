@@ -372,6 +372,8 @@ namespace JinianNet.JNTemplate.Parser
                     return TokenKind.Dot;
                 case '"':
                     return TokenKind.StringStart;
+                case ';':
+                    return TokenKind.Punctuation;
                 default:
                     return TokenKind.TextData;
             }

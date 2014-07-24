@@ -79,11 +79,24 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestFor()
         {
-            var templateContent = "${123}";//"$for(i=1;i<4;i=i+1)${i}$end"
+            var templateContent = "$for(i=1;i<4;i=i+1)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
             var template = new Template(templateContent);
             var render = template.Render();
 
             Assert.AreEqual("123", render);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestMethod]
+        public void TestFor1()
+        {
+            var templateContent = "$for(i=0;i<3;i++)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.AreEqual("012", render);
         }
 
         /// <summary>

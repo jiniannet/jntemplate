@@ -85,6 +85,7 @@ namespace JinianNet.JNTemplate.Parser
             collection.Add(new VariableParser());
             collection.Add(new StringParser());
             collection.Add(new ForeachParser());
+            collection.Add(new ForParser());
             collection.Add(new SetParser());
             collection.Add(new IfParser());
             collection.Add(new ElseifParser());
@@ -93,6 +94,7 @@ namespace JinianNet.JNTemplate.Parser
             collection.Add(new ExpressionParser());
             collection.Add(new ReferenceParser());
             collection.Add(new FunctionParser());
+            
         }
     }
 }

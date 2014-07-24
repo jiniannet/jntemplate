@@ -104,7 +104,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count == 1
-                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_ELSE))
+                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_ELSE))
             {
                 return new ElseTag();
             }
@@ -120,7 +120,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count == 1
-                &&  Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_END))
+                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_END))
             {
                 return new EndTag();
             }
@@ -178,12 +178,12 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Common.ParserHelpers.IsEqual(Field.KEY_FOREACH , tc.First.Text))
+            if (Common.ParserHelpers.IsEqual(Field.KEY_FOREACH, tc.First.Text))
             {
                 if (tc.Count > 5
                     && tc[1].TokenKind == TokenKind.LeftParentheses
                     && tc[2].TokenKind == TokenKind.TextData
-                    && Common.ParserHelpers.IsEqual(tc[3].Text,Field.KEY_IN)
+                    && Common.ParserHelpers.IsEqual(tc[3].Text, Field.KEY_IN)
                     && tc.Last.TokenKind == TokenKind.RightParentheses)
                 {
                     ForeachTag tag = new ForeachTag();
@@ -201,11 +201,11 @@ namespace JinianNet.JNTemplate.Parser
                         }
                     }
 
-                    throw new Exception.ParseException("未闭合的标签",tc.First.BeginLine,tc.First.BeginColumn);
+                    throw new Exception.ParseException("未闭合的foreach标签", tc.First.BeginLine, tc.First.BeginColumn);
                 }
                 else
                 {
-                    throw new Exception.ParseException("foreach标签语法错误", tc.First.BeginLine, tc.First.BeginColumn);
+                    throw new Exception.ParseException("foreach附近有语法错误", tc.First.BeginLine, tc.First.BeginColumn);
                 }
 
             }
@@ -223,51 +223,81 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count > 3 && tc.First.TokenKind == TokenKind.TextData
-                && Common.ParserHelpers.IsEqual(tc.First.Text,Field.KEY_FOR))
+            if (tc.Count > 4 && tc.First.TokenKind == TokenKind.TextData
+                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_FOR))
             {
-                ForTag tag = new ForTag();
-                for (Int32 i = 2; i < tc.Count; i++)
-                {
-                    //end = i;
-                    //switch (tc[i].TokenKind)
-                    //{
-                    //    case TokenKind.Punctuation:
-                    //        if (pos == 0 && tc[i].Text==";")
-                    //        {
-                    //            TokenCollection coll = new TokenCollection();
-                    //            coll.Add(tc, start, end - 1);
-                    //            if (coll.Count > 0)
-                    //            {
-                    //                tag.AddChild(parser.Read(coll));
-                    //            }
-                    //            start = i + 1;
-                    //        }
-                    //        break;
-                    //    default:
-                    //        if (tc[i].TokenKind == TokenKind.LeftParentheses)
-                    //        {
-                    //            pos++;
-                    //        }
-                    //        else if (tc[i].TokenKind == TokenKind.RightParentheses)
-                    //        {
-                    //            pos--;
-                    //        }
-                    //        if (i == tc.Count - 1)
-                    //        {
-                    //            TokenCollection coll = new TokenCollection();
-                    //            coll.Add(tc, start, end - 1);
-                    //            if (coll.Count > 0)
-                    //            {
-                    //                tag.AddChild(parser.Read(coll));
-                    //            }
-                    //        }
-                    //        break;
-                    //}
 
+                Int32 pos = 0,
+                    start = 2,
+                    end;
+
+                List<Tag> ts = new List<Tag>(3);
+
+                ForTag tag = new ForTag();
+                for (Int32 i = 2; i < tc.Count - 1; i++)
+                {
+                    end = i;
+                    if (tc[i].TokenKind == TokenKind.Punctuation && tc[i].Text == ";")
+                    {
+                        if (pos == 0)
+                        {
+                            TokenCollection coll = new TokenCollection();
+                            coll.Add(tc, start, end - 1);
+                            if (coll.Count > 0)
+                            {
+                                ts.Add(parser.Read(coll));
+                            }
+                            else
+                            {
+                                ts.Add(null);
+                            }
+                            start = i + 1;
+                            continue;
+                        }
+                    }
+
+                    if (tc[i].TokenKind == TokenKind.LeftParentheses)
+                    {
+                        pos++;
+                    }
+                    else if (tc[i].TokenKind == TokenKind.RightParentheses)
+                    {
+                        pos--;
+                    }
+                    if (i == tc.Count - 2)
+                    {
+                        TokenCollection coll = new TokenCollection();
+                        coll.Add(tc, start, end );
+                        if (coll.Count > 0)
+                        {
+                            ts.Add(parser.Read(coll));
+                        }
+                        else
+                        {
+                            ts.Add(null);
+                        }
+                    }
                 }
 
-                return tag;
+                if (ts.Count != 3)
+                {
+                    throw new Exception.ParseException("For附近有语法错误", tc.First.BeginLine, tc.First.BeginColumn);
+                }
+
+                tag.Initial = ts[0];
+                tag.Test = ts[1];
+                tag.Do = ts[2];
+
+                while (parser.MoveNext())
+                {
+                    tag.Children.Add(parser.Current);
+                    if (parser.Current is EndTag)
+                    {
+                        return tag;
+                    }
+                }
+
+                throw new Exception.ParseException("未闭合的For标签", tc.First.BeginLine, tc.First.BeginColumn);
             }
 
             return null;
@@ -284,7 +314,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (tc.Count > 3
                 && tc.First.TokenKind == TokenKind.TextData
-                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_IF))
+                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_IF))
             {
                 IfTag tag = new IfTag();
 
@@ -331,7 +361,7 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc.Count > 3
-                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_ELSEIF))
+                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_ELSEIF))
             {
                 ElseifTag tag = new ElseifTag();
 
@@ -358,7 +388,7 @@ namespace JinianNet.JNTemplate.Parser
             //常规格式：
             if (tc.Count > 5
                 && tc.First.TokenKind == TokenKind.TextData
-                && Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_SET)
+                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_SET)
                 && tc[1].TokenKind == TokenKind.LeftParentheses
                 && tc[3].Text == "="
                 && tc.Last.TokenKind == TokenKind.RightParentheses)
@@ -372,6 +402,32 @@ namespace JinianNet.JNTemplate.Parser
                 tag.Value = parser.Read(coll);
                 return tag;
 
+            }
+            else if (tc.Count == 2
+                && tc.First.TokenKind == TokenKind.TextData
+                && tc.Last.TokenKind == TokenKind.Operator
+                && (tc.Last.Text == "++" || tc.Last.Text == "--"))
+            {
+                SetTag tag = new SetTag();
+                tag.Name = tc.First.Text;
+
+                ExpressionTag c = new ExpressionTag();
+                c.AddChild(new VariableTag()
+                {
+                    FirstToken = tc.First,
+                    Name = tc.First.Text
+                });
+                c.AddChild(new TextTag()
+                {
+                    FirstToken = new Token(TokenKind.Operator, tc.Last.Text[0].ToString())
+                });
+                c.AddChild(new NumberTag() { 
+                     Value = 1,
+                     FirstToken  = new Token(TokenKind.Number,"1")
+                });
+
+                tag.Value = c;
+                return tag;
             }
             else if (tc.Count > 2
                 && tc.First.TokenKind == TokenKind.TextData
@@ -399,7 +455,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_LOAD))
+            if (Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_LOAD))
             {
                 if (tc.Count > 2
                     && (tc[1].TokenKind == TokenKind.LeftParentheses)
@@ -423,7 +479,7 @@ namespace JinianNet.JNTemplate.Parser
 
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Common.ParserHelpers.IsEqual(tc.First.Text ,Field.KEY_INCLUDE))
+            if (Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_INCLUDE))
             {
                 if (tc.Count > 2
                     && (tc[1].TokenKind == TokenKind.LeftParentheses)
@@ -452,12 +508,12 @@ namespace JinianNet.JNTemplate.Parser
                 Int32 start, end, pos;
                 start = end = pos = 0;
 
-                #region 去括号 
+                #region 去括号
                 //(8+2) ==》 8+2
                 //(8+2) * (10-5) ==》(8+2) * (10-5)
                 if (tc.First.TokenKind == TokenKind.LeftParentheses && tc.Last.TokenKind == TokenKind.RightParentheses)
                 {
-                    for (Int32 i = 1; i < tc.Count-1; i++)
+                    for (Int32 i = 1; i < tc.Count - 1; i++)
                     {
                         switch (tc[i].TokenKind)
                         {
@@ -474,7 +530,7 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     if (pos == 0)
                     {
-                        tc = new TokenCollection(tc,1,tc.Count - 2);
+                        tc = new TokenCollection(tc, 1, tc.Count - 2);
                     }
                     else
                     {
@@ -520,7 +576,7 @@ namespace JinianNet.JNTemplate.Parser
                                 TokenCollection coll = new TokenCollection();
                                 if (tc[start].TokenKind == TokenKind.RightBracket)
                                 {
-                          
+
                                     coll.Add(tc, start + 1, end - 1);
                                 }
                                 else

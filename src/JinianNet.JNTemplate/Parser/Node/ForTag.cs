@@ -12,20 +12,31 @@ namespace JinianNet.JNTemplate.Parser.Node
 {
     public class ForTag : SimpleTag
     {
-        public Tag initial;
-        public Tag test;
-        public Tag dothing;
+        private Tag initial;
+        private Tag test;
+        private Tag dothing;
 
+        /// <summary>
+        /// 初始标签 
+        /// </summary>
         public Tag Initial
         {
             get { return initial; }
             set { initial = value; }
         }
+
+        /// <summary>
+        /// 逻辑标签
+        /// </summary>
         public Tag Test
         {
             get { return test; }
             set { test = value; }
         }
+
+        /// <summary>
+        /// Do
+        /// </summary>
         public Tag Do
         {
             get { return dothing; }
