@@ -1,15 +1,19 @@
 @echo off
-echo 开始生成...
-cd ..
-cd bin
-rd /s /q 2.0
-md 2.0
-cd 2.0
-md Release
-md Debug
-cd ../../src
-C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\csc /target:library /out:../bin/2.0/Release/JinianNet.JNTemplate.dll /warn:0 /nologo /o /recurse:*.cs
-C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\csc /target:library /out:../bin/2.0/Debug/JinianNet.JNTemplate.dll /warn:0 /nologo /Debug /recurse:*.cs
-cd ..\build
-echo 生成完毕...
+
+set fdir=%WINDIR%\Microsoft.NET\Framework64
+
+if not exist %fdir% (
+	set fdir=%WINDIR%\Microsoft.NET\Framework
+)
+
+set msbuild=%fdir%\v2.0.50727\msbuild.exe
+
+%msbuild% ..\src\JinianNet.JNTemplate\JinianNet.JNTemplate.V2005.csproj /p:Configuration=Release /t:Rebuild /p:OutputPath=..\..\bin\4.0\Release
+
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO RMDIR /S /Q "%%G"
+
+%msbuild% ..\src\JinianNet.JNTemplate\JinianNet.JNTemplate.V2005.csproj /p:Configuration=Debug /t:Rebuild /p:OutputPath=..\..\bin\4.0\Debug
+
+FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO RMDIR /S /Q "%%G"
+
 pause
