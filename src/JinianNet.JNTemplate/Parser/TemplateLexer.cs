@@ -133,26 +133,35 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (this.pos.Count == 1)
             {
-                if (!this.scanner.IsEnd())
+                if (this.scanner.IsEnd())
                 {
-                    Char value = this.scanner.Read();
-                    if (this.pos.Peek().Length == 2)
+                    return true;
+                }
+                Char value = this.scanner.Read();
+                if (this.pos.Peek().Length == 2)
+                {
+                    if (value == '}')
                     {
-                        if (value == '}')
-                        {
-                            //this.pos.Pop();
-                            return true;
-                        }
-                    }
-                    else if (value != '.' && value != '(')
-                    {
-                        if (Char.IsControl(value) || (Char.IsPunctuation(value) && value != '_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value) || (Int32)value > 167)
-                        {
-                            //this.pos.Pop();
-                            return true;
-                        }
+                        return true;
                     }
                 }
+                else if (value != '.')
+                {
+                    if (((value == '(' || Common.ParserHelpers.IsWord(value)) && Common.ParserHelpers.IsWord(this.scanner.Read(-1)))
+                        || (Common.ParserHelpers.IsWord(value) && (this.scanner.Read(-1) == '.')))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+                //else if (value != '.' && value != '(')
+                //{
+                //    if (Char.IsControl(value) || (Char.IsPunctuation(value) && value != '_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value) || (Int32)value > 167)
+                //    {
+                //        return true;
+                //    }
+                //}
+
             }
             return false;
         }

@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate.Parser.Node
 
 
                 //不是委托，则在取方法
-                MethodInfo method = value.GetType().GetMethod(this.Name, types);
+                MethodInfo method = Common.ReflectionHelpers.GetMethod( value.GetType(),this.Name, types);
                 if (method != null)
                 {
                     return method.Invoke(value, args);

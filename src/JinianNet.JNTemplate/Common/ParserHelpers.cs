@@ -16,14 +16,23 @@ namespace JinianNet.JNTemplate.Common
     /// </summary>
     public class ParserHelpers
     {
-       /// <summary>
-       /// 是否英文字母
-       /// </summary>
-       /// <param name="value">字符</param>
-       /// <returns></returns>
+        /// <summary>
+        /// 是否英文字母
+        /// </summary>
+        /// <param name="value">字符</param>
+        /// <returns></returns>
         public static Boolean IsLetter(Char value)
         {
             return Char.IsLower(value) || Char.IsUpper(value);
+        }
+        /// <summary>
+        /// 是否单词
+        /// </summary>
+        /// <param name="value">字符</param>
+        /// <returns></returns>
+        public static Boolean IsWord(Char value)
+        {
+            return Char.IsLower(value) || Char.IsUpper(value) || Char.IsNumber(value) || value == '_';
         }
         /// <summary>
         /// 字符串是否相同
