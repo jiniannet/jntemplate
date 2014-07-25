@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using JinianNet.JNTemplate;
 
 namespace example
 {
@@ -10,7 +11,8 @@ namespace example
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            JinianNet.JNTemplate.ITemplate t = BuildManager.CreateTemplate("index.html");
+            t.Render(Response.Output);
         }
     }
 }
