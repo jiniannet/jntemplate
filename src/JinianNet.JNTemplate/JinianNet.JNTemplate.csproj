@@ -45,7 +45,8 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -103,9 +104,6 @@
     <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateContext.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="jiniannet.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -11,11 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272
 		build\JNTemplatev4.0Build.bat = build\JNTemplatev4.0Build.bat
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{ACF6A385-95A0-4DDD-AE0D-78DB340EF3C9}"
-	ProjectSection(SolutionItems) = preProject
-		bin\readMe.txt = bin\readMe.txt
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7A-4ECC-A4C3-F9EB6928E472}"
 	ProjectSection(SolutionItems) = preProject
 		License.txt = License.txt
