@@ -20,6 +20,6 @@ namespace JinianNet.JNTemplate
         /// 创建Template实现
         /// </summary>
         /// <returns></returns>
-        ITemplate CreateTemplate();
+        ITemplate CreateTemplate(String path);
     }
 }

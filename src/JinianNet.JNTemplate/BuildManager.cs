@@ -14,7 +14,9 @@ namespace JinianNet.JNTemplate
     public class BuildManager
     {
         private readonly static EngineCollection _engines = new EngineCollection();
-
+        /// <summary>
+        /// 模板处理引擎
+        /// </summary>
         public static EngineCollection Engines
         {
             get {
@@ -37,33 +39,14 @@ namespace JinianNet.JNTemplate
             ITemplate template = null;
             foreach (IEngine engine in Engines)
             {
-                template = engine.CreateTemplate();
+                template = engine.CreateTemplate(path);
                 if (template != null)
                 {
-                    break;
+                    return template;
                 }
             }
-            if (template == null)
-            {
-                throw new ArgumentException("ITemplate");
-            }
 
-            if (!String.IsNullOrEmpty(path))
-            {
-                String fullPath = path;
-                Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);
-                if (index == -1)
-                {
-                    if (Resources.FindPath(path, out fullPath) == -1)
-                    {
-                        return template;
-                    }
-                }
-                template.Context.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
-                template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
-            }
-
-            return template;
+            return null;
 
         }
     }

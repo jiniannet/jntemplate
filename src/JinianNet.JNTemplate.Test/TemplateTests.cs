@@ -233,13 +233,29 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestIndexValue3()
         {
-            var templateContent = "$data.get_item(0)"; //数组取值用get即可取到 List<Int32>用get_Item  原因见.NET的索引实现原理
+            var templateContent = "$data.get_item(0)"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
             var template = new Template(templateContent);
 
             template.Set("data",new System.Collections.Generic.List<int>(new int[] { 7, 0, 2, 0, 6 }));
             var render = template.Render();
             Assert.AreEqual("7", render);
         }
+
+
+        ///// <summary>
+        ///// 测试引擎
+        ///// </summary>
+        //[TestMethod]
+        //public void TestPath()
+        //{
+        //    Resources.Paths.Add(@"F:\Work\JinianNet.JNTemplate1.2\src\JinianNet.JNTemplate.Test\templets");
+
+        //    Engine e = new Engine();
+        //    //Template t = (Template)e.CreateTemplate("default.txt");
+        //    Template t = (Template)e.CreateTemplate("default.txt");
+        //    var render = t.Render();
+        //    Assert.AreEqual("这是头部文件", render);
+        //}
     }
   
 }

@@ -17,10 +17,11 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class ContextBase : ICloneable
     {
+
+        private VariableScope variableScope;
         /// <summary>
         /// Ä£°åÊý¾Ý
         /// </summary>
-        private VariableScope variableScope;
         public VariableScope TempData
         {
             get { return variableScope; }

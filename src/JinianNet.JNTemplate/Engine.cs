@@ -60,14 +60,7 @@ namespace JinianNet.JNTemplate
                 context = ctx;
             }
         }
-        /// <summary>
-        /// 创建 Template 实例
-        /// </summary>
-        /// <returns></returns>
-        public ITemplate CreateTemplate()
-        {
-            return new Template(TemplateContext.CreateContext(context), null);
-        }
+
         /// <summary>
         /// 根据指定路径创建Template实例
         /// </summary>
@@ -95,16 +88,23 @@ namespace JinianNet.JNTemplate
             if (!String.IsNullOrEmpty(path))
             {
                 String fullPath = path;
-                Int32 index = fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar);
-                if (index == -1)
+                //判断是否本地路径的绝对形式
+                if (fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar) != -1 || //win下判断是否包含卷分隔符（即：） c:\user\Administrator\default.html
+                    fullPath[0] == '/') //liunx判断是否为/开头，/usr/share/doc/default.html  win下请不要使用/开头的路径
                 {
-                    if (Resources.FindPath(path, out fullPath) == -1)
+                    ctx.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
+                    template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
+                }
+                else
+                {
+                    Int32 index = Resources.FindPath(path, out fullPath); //如果是相对路径，则进行路径搜索
+                    if (Resources.FindPath(path, out fullPath) != -1)
                     {
-                        return template;
+                        //设定当前工作目录 如果模板中存在Inclub或load标签，它们的处理路径会以CurrentPath 设定的路径为基准
+                        ctx.CurrentPath = Resources.Paths[index];
+                        template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
                     }
                 }
-                ctx.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
-                template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
             }
 
             return template;

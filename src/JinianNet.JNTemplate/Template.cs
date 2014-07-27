@@ -120,7 +120,7 @@ namespace JinianNet.JNTemplate
         {
             TemplateContext ctx = new TemplateContext();
             ctx.Charset = encoding;
-            ctx.CurrentPath = System.IO.Path.GetExtension(filename);
+            ctx.CurrentPath = System.IO.Path.GetDirectoryName(filename);
 
             Template template = new Template(ctx, Resources.Load(filename, encoding));
 
