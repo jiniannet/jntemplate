@@ -49,7 +49,7 @@ namespace JinianNet.JNTemplate.Test
 
             Assert.AreEqual("\r\nresult:868", render);
         }
-        
+
 
         /// <summary>
         /// 测试计算表达式
@@ -69,7 +69,7 @@ namespace JinianNet.JNTemplate.Test
         /// </summary>
         [TestMethod]
         public void TestComplicatedExpression()
-        {   
+        {
             var templateContent = "${(8+2)*(5+5) - ((2+8)/2)}";
             var template = new Template(templateContent);
             var render = template.Render();
@@ -163,7 +163,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$foreach(i in list)$i$end";
             var template = new Template(templateContent);
-            template.Set("list", new int[]{7,0,2,0,6});
+            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
             var render = template.Render();
             Assert.AreEqual("70206", render);
         }
@@ -190,7 +190,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$data.get(0)"; //数组取值用get即可取到 List<Int32>用get_Item  原因见.NET的索引实现原理
             var template = new Template(templateContent);
 
-            template.Set("data", new int []{ 7,0,2,0,6 });
+            template.Set("data", new int[] { 7, 0, 2, 0, 6 });
             var render = template.Render();
             Assert.AreEqual("7", render);
         }
@@ -236,7 +236,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$data.get_item(0)"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
             var template = new Template(templateContent);
 
-            template.Set("data",new System.Collections.Generic.List<int>(new int[] { 7, 0, 2, 0, 6 }));
+            template.Set("data", new System.Collections.Generic.List<int>(new int[] { 7, 0, 2, 0, 6 }));
             var render = template.Render();
             Assert.AreEqual("7", render);
         }
@@ -257,5 +257,6 @@ namespace JinianNet.JNTemplate.Test
         //    Assert.AreEqual("这是头部文件", render);
         //}
     }
-  
+
+
 }
