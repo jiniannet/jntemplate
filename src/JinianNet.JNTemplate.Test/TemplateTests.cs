@@ -12,20 +12,6 @@ namespace JinianNet.JNTemplate.Test
         /// 测试SET与字符串相加
         /// </summary>
         [TestMethod]
-        public void a()
-        {
-            var templateContent = "a";
-            var template = new Template(templateContent);
-
-            var render = template.Render();
-
-            Assert.AreEqual("a", render);
-        }
-
-        /// <summary>
-        /// 测试SET与字符串相加
-        /// </summary>
-        [TestMethod]
         public void z()
         {
             var templateContent = "z";
