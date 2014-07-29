@@ -1,5 +1,5 @@
 @echo off
-echo 开始生成JNTemplate 2.0 ...
+echo 开始生成 JNTemplate ...
 set fdir=%WINDIR%\Microsoft.NET\Framework
 cd ../src/JinianNet.JNTemplate
 echo v2.0.50727
@@ -8,5 +8,5 @@ echo v2.0.50727
 cd ..
 cd ..
 cd build
-echo 生成完毕...
+echo 生成完成...
 pause
