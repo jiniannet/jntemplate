@@ -422,9 +422,40 @@ namespace JinianNet.JNTemplate.Common
 
         public static MethodInfo GetMethod(Type type, String methodName, Type[] args)
         {
-            return type.GetMethod(methodName,
-                BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic ,
-                null, args, null);
+            if (args==null || Array.LastIndexOf(args, null) == -1) //
+            {
+                return type.GetMethod(methodName,
+                    BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null, args, null);
+            }
+            else
+            {
+                ParameterInfo[] pi;
+                Boolean accord;
+                foreach (MethodInfo m in type.GetMembers())
+                {
+                    if(m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)){
+                         pi =  m.GetParameters();
+                        if (pi.Length == args.Length)
+                        {
+                            accord=true;
+                            for (Int32 i = 0; i < pi.Length; i++)
+                            {
+                                if (args[i] != null && args[i]!= pi[i].ParameterType)
+                                {
+                                    accord = false;
+                                    break;
+                                }
+                            }
+                            if (accord)
+                            {
+                                return m;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
         }
         public static Object GetMethod(Object container, String methodName, Object[] args)
         {
