@@ -91,9 +91,10 @@ namespace JinianNet.JNTemplate.Parser
             collection.Add(new ElseifParser());
             collection.Add(new LoadParser());
             collection.Add(new IncludeParser());
-            collection.Add(new ExpressionParser());
-            collection.Add(new ReferenceParser());
+            //collection.Add(new ExpressionParser());
+            //collection.Add(new ReferenceParser());
             collection.Add(new FunctionParser());
+            collection.Add(new ComplexParser());
             
         }
     }

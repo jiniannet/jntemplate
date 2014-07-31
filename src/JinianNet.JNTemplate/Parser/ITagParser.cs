@@ -781,6 +781,140 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
     }
 
+    public class ComplexParser : ITagParser
+    {
+        #region ITagParser 成员
+
+        public Tag Parse(JinianNet.JNTemplate.Parser.TemplateParser parser, TokenCollection tc)
+        {
+            if (tc.Count > 2)
+            {
+                Int32 start, end, pos;
+                start = end = pos = 0;
+
+                Boolean isFunc = false;
+
+                List<Token> data = new List<Token>();
+
+                Stack<TokenCollection> stack = new Stack<TokenCollection>();
+
+                for (Int32 i = 0; i < tc.Count; i++)
+                {
+                    end = i;
+                    if (tc[i].TokenKind == TokenKind.LeftBracket)
+                    {
+                        if (pos == 0)
+                        {
+                            if (i > 0 && tc[i - 1].TokenKind == TokenKind.TextData)
+                            {
+                                isFunc = true;
+                            }
+                        }
+                        pos++;
+                    }
+                    else if (tc[i].TokenKind == TokenKind.LeftBracket)
+                    {
+                        if (pos > 0)
+                        {
+                            pos--;
+                        }
+
+                        if (pos == 0)
+                        {
+                            TokenCollection coll = new TokenCollection();
+                            if (!isFunc)
+                            {
+                                coll.Add(tc, start + 1, end - 1);
+                            }
+                            else
+                            {
+                                coll.Add(tc, start, end);
+                            }
+                            stack.Push(coll);
+                            data.Add(null);
+                            start = i + 1;
+                            //tag.AddChild(parser.Read(coll));
+                        }
+                    }
+                    else if (tc[i].TokenKind == TokenKind.Dot || tc[i].TokenKind == TokenKind.Operator)
+                    {
+                        if (end >= start)
+                        {
+                            TokenCollection coll = new TokenCollection();
+                            coll.Add(tc, start, end-1);
+                            stack.Push(coll);
+                            data.Add(null);
+                            start = i + 1;
+                        }
+                        data.Add(tc[i]);
+                    }
+
+                    if (i == tc.Count - 1 && end >= start)
+                    {
+                        TokenCollection coll = new TokenCollection();
+                        coll.Add(tc, start, end);
+                        stack.Push(coll);
+                        data.Add(null);
+                        start = i + 1;
+                    }
+                }
+
+                Stack<Tag> tags = new Stack<Tag>();
+
+                for (Int32 i = 0; i < data.Count; i++)
+                {
+                    if (data[i] == null)
+                    {
+                        tags.Push(parser.Read(stack.Pop()));
+                    }
+                    else if (data[i].TokenKind == TokenKind.Dot)
+                    {
+                        if (i == data.Count - 1 || data[i + 1] != null)
+                        {
+                            throw new Exception.ParseException(".附近有语法错误", data[i].BeginLine, data[i].BeginColumn);
+                        }
+
+                        if (tags.Peek() is ReferenceTag)
+                        {
+                            tags.Peek().AddChild(parser.Read(stack.Pop()));
+                        }
+                        else
+                        {
+                            ReferenceTag t = new ReferenceTag();
+                            t.AddChild(tags.Pop());
+                            tags.Push(t);
+                        }
+                        i++;
+                    }
+                    else if (data[i].TokenKind == TokenKind.Operator)
+                    {
+                        tags.Push(new TextTag());
+                        tags.Peek().FirstToken = data[i];
+
+                    }
+                }
+
+                if (tags.Count == 1)
+                {
+                    return tags.Pop();
+                }
+                if (tags.Count > 1)
+                {
+                    ExpressionTag t = new ExpressionTag();
+                    while (tags.Count > 0)
+                    {
+                        t.AddChild(tags.Pop());
+                    }
+
+                    return t;
+                }
+            }
+            return null;
+        }
+
+        #endregion
+    }
+
 #if comlex
     //太过复杂的表达式 ，比如：
     //(num*(value.getNum(x,y)+8)*84).ToString("#0.00") 
