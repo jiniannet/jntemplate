@@ -267,7 +267,7 @@ namespace JinianNet.JNTemplate.Parser
                     if (i == tc.Count - 2)
                     {
                         TokenCollection coll = new TokenCollection();
-                        coll.Add(tc, start, end );
+                        coll.Add(tc, start, end);
                         if (coll.Count > 0)
                         {
                             ts.Add(parser.Read(coll));
@@ -421,9 +421,10 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     FirstToken = new Token(TokenKind.Operator, tc.Last.Text[0].ToString())
                 });
-                c.AddChild(new NumberTag() { 
-                     Value = 1,
-                     FirstToken  = new Token(TokenKind.Number,"1")
+                c.AddChild(new NumberTag()
+                {
+                    Value = 1,
+                    FirstToken = new Token(TokenKind.Number, "1")
                 });
 
                 tag.Value = c;
@@ -574,7 +575,7 @@ namespace JinianNet.JNTemplate.Parser
                             if (i == tc.Count - 1)
                             {
                                 TokenCollection coll = new TokenCollection();
-                                if (tc[start].TokenKind == TokenKind.RightBracket)
+                                if (tc[start].TokenKind == TokenKind.RightParentheses)
                                 {
 
                                     coll.Add(tc, start + 1, end - 1);
@@ -796,12 +797,12 @@ namespace JinianNet.JNTemplate.Parser
 
                 List<Token> data = new List<Token>();
 
-                Stack<TokenCollection> stack = new Stack<TokenCollection>();
+                Queue<TokenCollection> queue = new Queue<TokenCollection>();
 
                 for (Int32 i = 0; i < tc.Count; i++)
                 {
                     end = i;
-                    if (tc[i].TokenKind == TokenKind.LeftBracket)
+                    if (tc[i].TokenKind == TokenKind.LeftParentheses)
                     {
                         if (pos == 0)
                         {
@@ -812,7 +813,7 @@ namespace JinianNet.JNTemplate.Parser
                         }
                         pos++;
                     }
-                    else if (tc[i].TokenKind == TokenKind.LeftBracket)
+                    else if (tc[i].TokenKind == TokenKind.RightParentheses)
                     {
                         if (pos > 0)
                         {
@@ -830,19 +831,19 @@ namespace JinianNet.JNTemplate.Parser
                             {
                                 coll.Add(tc, start, end);
                             }
-                            stack.Push(coll);
+                            queue.Enqueue(coll);
                             data.Add(null);
                             start = i + 1;
                             //tag.AddChild(parser.Read(coll));
                         }
                     }
-                    else if (tc[i].TokenKind == TokenKind.Dot || tc[i].TokenKind == TokenKind.Operator)
+                    else if (pos == 0 && (tc[i].TokenKind == TokenKind.Dot || tc[i].TokenKind == TokenKind.Operator))
                     {
                         if (end >= start)
                         {
                             TokenCollection coll = new TokenCollection();
-                            coll.Add(tc, start, end-1);
-                            stack.Push(coll);
+                            coll.Add(tc, start, end - 1);
+                            queue.Enqueue(coll);
                             data.Add(null);
                             start = i + 1;
                         }
@@ -853,59 +854,73 @@ namespace JinianNet.JNTemplate.Parser
                     {
                         TokenCollection coll = new TokenCollection();
                         coll.Add(tc, start, end);
-                        stack.Push(coll);
+                        queue.Enqueue(coll);
                         data.Add(null);
                         start = i + 1;
                     }
                 }
 
-                Stack<Tag> tags = new Stack<Tag>();
+                List<Tag> tags = new List<Tag>();
 
                 for (Int32 i = 0; i < data.Count; i++)
                 {
                     if (data[i] == null)
                     {
-                        tags.Push(parser.Read(stack.Pop()));
+                        TokenCollection coll = queue.Dequeue();
+                        if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
+                        {
+                            coll.Remove(coll.First);
+                            coll.Remove(coll.Last);
+                        }
+                        tags.Add(parser.Read(coll));
                     }
                     else if (data[i].TokenKind == TokenKind.Dot)
                     {
-                        if (i == data.Count - 1 || data[i + 1] != null)
+                        if (tags.Count==0 || i == data.Count - 1 || data[i + 1] != null)
                         {
                             throw new Exception.ParseException(".附近有语法错误", data[i].BeginLine, data[i].BeginColumn);
                         }
-
-                        if (tags.Peek() is ReferenceTag)
+                        TokenCollection coll = queue.Dequeue();
+                        if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
                         {
-                            tags.Peek().AddChild(parser.Read(stack.Pop()));
+                            coll.Remove(coll.First);
+                            coll.Remove(coll.Last);
+                        }
+                        if (tags[tags.Count-1] is ReferenceTag)
+                        {
+                            tags[tags.Count - 1].AddChild(parser.Read(coll));
                         }
                         else
                         {
                             ReferenceTag t = new ReferenceTag();
-                            t.AddChild(tags.Pop());
-                            tags.Push(t);
+                            t.AddChild(tags[tags.Count - 1]);
+                            t.AddChild(parser.Read(coll));
+                            tags[tags.Count - 1] = t;
                         }
                         i++;
                     }
                     else if (data[i].TokenKind == TokenKind.Operator)
                     {
-                        tags.Push(new TextTag());
-                        tags.Peek().FirstToken = data[i];
+                        tags.Add(new TextTag());
+                        tags[tags.Count - 1].FirstToken = data[i];
 
                     }
                 }
 
                 if (tags.Count == 1)
                 {
-                    return tags.Pop();
+                    return tags[0];
                 }
                 if (tags.Count > 1)
                 {
                     ExpressionTag t = new ExpressionTag();
-                    while (tags.Count > 0)
+
+                    for (Int32 i = 0; i < tags.Count;i++)
                     {
-                        t.AddChild(tags.Pop());
+                        t.AddChild(tags[i]);
                     }
 
+                    tags.Clear();
                     return t;
                 }
             }

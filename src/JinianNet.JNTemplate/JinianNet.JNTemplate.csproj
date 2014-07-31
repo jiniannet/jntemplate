@@ -58,6 +58,7 @@
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
     <Compile Include="Exception\CompileException.cs" />
+    <Compile Include="Exception\Exception.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="IEngine.cs" />

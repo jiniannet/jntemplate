@@ -184,7 +184,7 @@ namespace JinianNet.JNTemplate.Parser
                             case TokenKind.StringStart:
                                 this.pos.Push("\"");
                                 break;
-                            case TokenKind.LeftBracket:
+                            case TokenKind.LeftParentheses:
                                 this.pos.Push("(");
                                 break;
                         }

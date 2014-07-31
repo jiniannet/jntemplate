@@ -1,0 +1,74 @@
+﻿using JinianNet.JNTemplate.Parser.Node;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace JinianNet.JNTemplate.Exception
+{
+    /// <summary>
+    /// 常规性错误
+    /// </summary>
+    class Exception : System.Exception
+    {
+        private Int32 errorLine;
+        private Int32 errorColumn;
+        /// <summary>
+        /// 所在行
+        /// </summary>
+        public Int32 Line
+        {
+            get { return errorLine; }
+            set { errorLine = value; }
+        }
+        /// <summary>
+        /// 所在字符
+        /// </summary>
+        public Int32 Column
+        {
+            get { return errorColumn; }
+            set { errorColumn = value; }
+        }
+        /// <summary>
+        /// 常规性错误
+        /// </summary>
+        public Exception()
+            : base()
+        {
+        }
+
+        /// <summary>
+        /// 常规性错误
+        /// </summary>
+        /// <param name="tag">错误标签</param>
+        /// <param name="innerException"></param>
+        public Exception(Tag tag, System.Exception innerException)
+            : base(tag.ToString(), innerException)
+        {
+            this.errorLine = tag.FirstToken.BeginLine;
+            this.errorColumn = tag.FirstToken.BeginColumn;
+        }
+
+        /// <summary>
+        /// 常规性错误
+        /// </summary>
+        /// <param name="message">异常信息</param>
+        /// <param name="line">行</param>
+        /// <param name="column">字符</param>
+        public Exception(String message, Int32 line, Int32 column)
+            : base(message)
+        {
+            this.errorColumn = column;
+            this.errorLine = line;
+        }
+
+        public override string ToString()
+        {
+            return String.Concat("Line:",
+                this.Line.ToString(),
+                " Column:",
+                this.Column.ToString(),
+                "\r\n",
+                base.ToString());
+        }
+    }
+}

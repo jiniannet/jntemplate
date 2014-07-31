@@ -51,7 +51,14 @@ namespace JinianNet.JNTemplate.Parser.Node
 
                 while (parser.MoveNext())
                 {
-                    parser.Current.Parse(context, writer);
+                    try
+                    {
+                        parser.Current.Parse(context, writer);
+                    }
+                    catch (System.Exception e)
+                    {
+                        throw new Exception.Exception(parser.Current, e);
+                    }
                 }
             }
         }
