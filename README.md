@@ -30,8 +30,8 @@ template.Render(Response.Output);
 --------------------------------------
 1. [jntemplate v1.2 beta](http://down.jiniannet.com/jntemplate-v1.2-beta(1.2.0.4).zip)
 2. [jntemplate v1.1](http://down.jiniannet.com/jntemplate-v1.1(1.1.34).zip)
-3. [网站下载](http://pan.baidu.com/s/1jGigCpo#dir/path=%2FJNTemplate%2FDLL)
-4. 克隆源代码自行生
+3. [百度网盘下载](http://pan.baidu.com/s/1jGigCpo#dir/path=%2FJNTemplate%2FDLL)
+4. 克隆源代码自行生成
 
 ```bash
 git clone git://github.com/jquery/jquery.git
@@ -40,7 +40,7 @@ git clone git://github.com/jquery/jquery.git
 JNTemplate帮助
 --------------------------------------
 1. 开源协议：[https://github.com/jiniannet/jntemplate/blob/master/License.txt](https://github.com/jiniannet/jntemplate/blob/master/License.txt)
-2. 开源主页：[https://github.com/jiniannet/](https://github.com/jiniannet/)
+2. 开源主页：[https://github.com/jiniannet/jntemplate/](https://github.com/jiniannet/jntemplate/)
 3. 官方网站：[http://www.jiniannet.com](http://www.jiniannet.com)
 
 ### 联系方式：
