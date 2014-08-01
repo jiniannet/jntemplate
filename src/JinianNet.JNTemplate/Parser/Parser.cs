@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     t.FirstToken = tc.First;
 
-                    if (t.Children.Count == 0 || tc.Last.CompareTo(t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) > 0)
+                    if (t.Children.Count == 0 || (t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) == null || tc.Last.CompareTo(t.LastToken) > 0)
                     {
                         t.LastToken = tc.Last;
                     }
