@@ -8,19 +8,6 @@ namespace JinianNet.JNTemplate.Test
     [TestClass]
     public class TemplateTests
     {
-        /// <summary>
-        /// 测试SET与字符串相加
-        /// </summary>
-        [TestMethod]
-        public void z()
-        {
-            var templateContent = "z";
-            var template = new Template(templateContent);
-
-            var render = template.Render();
-
-            Assert.AreEqual("z", render);
-        }
 
         /// <summary>
         /// 测试SET与字符串相加
@@ -227,6 +214,19 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("7", render);
         }
 
+        [TestMethod]
+        public void TestIf1()
+        {
+            var templateContent = "$if(CreteDate >= date.AddDays(-3))yes$end"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
+            var template = new Template(templateContent);
+            template.Set("CreteDate",DateTime.Now);
+            template.Set("date", DateTime.Now);
+            var render = template.Render();
+            Assert.AreEqual("yes", render);
+
+
+
+        }
 
         ///// <summary>
         ///// 测试引擎

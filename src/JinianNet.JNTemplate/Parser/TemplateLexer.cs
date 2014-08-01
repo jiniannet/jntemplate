@@ -302,8 +302,23 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     break;
                 }
-
-                TokenKind tk = GetTokenKind(this.scanner.Read());
+                TokenKind tk;
+                if (this.scanner.Read() == '+' || this.scanner.Read() == '-') //正负数符号识别
+                {
+                    if (Char.IsNumber(this.scanner.Read(1)) && 
+                        (this.kind == TokenKind.Operator || this.kind == TokenKind.LeftParentheses))
+                    {
+                        tk = TokenKind.Number;
+                    }
+                    else
+                    {
+                        tk = TokenKind.Operator;
+                    }
+                }
+                else
+                {
+                    tk = GetTokenKind(this.scanner.Read());
+                }
                 //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
                 if ((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
                     && (tk != TokenKind.Number || this.kind != TokenKind.TextData)

@@ -839,14 +839,14 @@ namespace JinianNet.JNTemplate.Parser
                     }
                     else if (pos == 0 && (tc[i].TokenKind == TokenKind.Dot || tc[i].TokenKind == TokenKind.Operator))
                     {
-                        if (end >= start)
+                        if (end > start)
                         {
                             TokenCollection coll = new TokenCollection();
                             coll.Add(tc, start, end - 1);
                             queue.Enqueue(coll);
                             data.Add(null);
-                            start = i + 1;
                         }
+                        start = i + 1;
                         data.Add(tc[i]);
                     }
 
@@ -866,13 +866,13 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (data[i] == null)
                     {
-                        TokenCollection coll = queue.Dequeue();
-                        if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
-                        {
-                            coll.Remove(coll.First);
-                            coll.Remove(coll.Last);
-                        }
-                        tags.Add(parser.Read(coll));
+                        //TokenCollection coll = queue.Dequeue();
+                        //if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
+                        //{
+                        //    coll.Remove(coll.First);
+                        //    coll.Remove(coll.Last);
+                        //}
+                        tags.Add(parser.Read(queue.Dequeue()));
                     }
                     else if (data[i].TokenKind == TokenKind.Dot)
                     {
@@ -880,21 +880,21 @@ namespace JinianNet.JNTemplate.Parser
                         {
                             throw new Exception.ParseException(".附近有语法错误", data[i].BeginLine, data[i].BeginColumn);
                         }
-                        TokenCollection coll = queue.Dequeue();
-                        if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
-                        {
-                            coll.Remove(coll.First);
-                            coll.Remove(coll.Last);
-                        }
+                        //TokenCollection coll = queue.Dequeue();
+                        //if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
+                        //{
+                        //    coll.Remove(coll.First);
+                        //    coll.Remove(coll.Last);
+                        //}
                         if (tags[tags.Count-1] is ReferenceTag)
                         {
-                            tags[tags.Count - 1].AddChild(parser.Read(coll));
+                            tags[tags.Count - 1].AddChild(parser.Read(queue.Dequeue()));
                         }
                         else
                         {
                             ReferenceTag t = new ReferenceTag();
                             t.AddChild(tags[tags.Count - 1]);
-                            t.AddChild(parser.Read(coll));
+                            t.AddChild(parser.Read(queue.Dequeue()));
                             tags[tags.Count - 1] = t;
                         }
                         i++;

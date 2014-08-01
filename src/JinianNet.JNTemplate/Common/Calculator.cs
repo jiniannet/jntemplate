@@ -279,6 +279,7 @@ namespace JinianNet.JNTemplate.Common
                     case "System.Single":
                     case "System.Decimal":
                     case "System.Boolean":
+                    case "System.DateTime":
                         post.Push(value[i]);
                         break;
                     case "System.String":
@@ -397,6 +398,8 @@ namespace JinianNet.JNTemplate.Common
                 return Calculate((Boolean)x, (Boolean)y, value);
             if (tX.FullName == "System.String" && tY.FullName == "System.String")
                 return Calculate((String)x, (String)y, value);
+            if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
+                return Calculate((DateTime)x, (DateTime)y, value);
             return Calculate(x.ToString(), y.ToString(), value);
             //throw new ArgumentException(String.Concat(tX.FullName, " 不能和类型 ", tY.FullName, " 进行操作"));
         }
@@ -441,6 +444,34 @@ namespace JinianNet.JNTemplate.Common
                     return !x.Equals(y, StringComparison.OrdinalIgnoreCase);
                 case "+":
                     return String.Concat(x, y);
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static Object Calculate(DateTime x, DateTime y, String value)
+        {
+            switch (value)
+            {
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                case ">":
+                    return x > y;
+                case ">=":
+                    return x >= y;
+                case "<":
+                    return x < y;
+                case "<=":
+                    return x <= y;
                 default:
                     throw new ArgumentException();
             }

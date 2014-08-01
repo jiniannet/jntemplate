@@ -26,7 +26,8 @@ namespace example
             ctx.TempData.Push("Site",new { 
                 Name = "jntemplate", //网站名称
                 Title = "jntemplate 演示站点",//首页TITLE
-                Keywords = "jntemplate",//首页Keywords
+                Keywords = "jntemplate",//首页Keywords,
+                Author = "jiniannet.com",
                 Description = "asp.net 开源模板引擎", //首页Description
                 Url = "/",//网站URL
                 TemplateUrl = "/templets/Green/"
