@@ -60,7 +60,16 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (this.index < this.tokens.Length)
             {
-                Tag t = Read();
+
+                Tag t;
+                try
+                {
+                    t = Read();
+                }
+                catch (System.Exception e)
+                {
+                    throw new Exception.ParseException(e.Message,e);
+                }
                 if (t != null)
                 {
                     this.tag = t;

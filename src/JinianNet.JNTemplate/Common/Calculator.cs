@@ -536,7 +536,7 @@ namespace JinianNet.JNTemplate.Common
             while (post.Count > 0)
             {
                 Object obj = post.Pop();
-                if (IsOperator(obj.ToString()))
+                if (IsOperator((obj ?? "").ToString()))
                 {
                     Object y = stack.Pop();
                     Object x = stack.Pop();
