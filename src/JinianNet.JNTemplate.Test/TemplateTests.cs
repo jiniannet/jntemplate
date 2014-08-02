@@ -228,6 +228,25 @@ namespace JinianNet.JNTemplate.Test
 
         }
 
+        
+        [TestMethod]
+        public void TestSet1()
+        {
+            var templateContent = "$set(hotItems= ArticleList(Category.CategoryEnglishName,10,1,30,2))$hotItems"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
+            var template = new Template(templateContent);
+            template.Set("Category", new {
+                CategoryEnglishName = "xx"
+            });
+            template.Set("date", DateTime.Now);
+            template.Set("ArticleList",  new JinianNet.JNTemplate.FuncHandler(delegate(object[] args)
+            {
+                return string.Concat(args);
+            }));
+            var render = template.Render();
+            Assert.AreEqual("xx101302", render);
+            
+        }
+
         ///// <summary>
         ///// 测试引擎
         ///// </summary>
