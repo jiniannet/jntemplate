@@ -28,7 +28,7 @@ template.Render(Response.Output);
 
 如何下载JNTemplate
 --------------------------------------
-1. [jntemplate v1.2 beta](http://down.jiniannet.com/jntemplate-v1.2-beta(1.2.0.4).zip)
+1. [jntemplate v1.2 beta](http://down.jiniannet.com/jntemplate-v1.2-beta(1.2.0.5).zip)
 2. [jntemplate v1.1](http://down.jiniannet.com/jntemplate-v1.1(1.1.34).zip)
 3. [百度网盘下载](http://pan.baidu.com/s/1jGigCpo#dir/path=%2FJNTemplate%2FDLL)
 4. 克隆源代码自行生成
