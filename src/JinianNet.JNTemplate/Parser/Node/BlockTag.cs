@@ -13,12 +13,11 @@ namespace JinianNet.JNTemplate.Parser.Node
 {
     public class BlockTag : SimpleTag
     {
-
-        private String _text;
+        private String text;
         public String TemplateContent
         {
-            get { return _text; }
-            set { _text = value; }
+            get { return text; }
+            set { text = value; }
         }
 
         public override Object Parse(TemplateContext context)
@@ -47,7 +46,6 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 TemplateLexer lexer = new TemplateLexer(this.TemplateContent);
                 TemplateParser parser = new TemplateParser(lexer.Parse());
-                //parser.Parser.AddRange(context.Parser);
 
                 while (parser.MoveNext())
                 {
@@ -55,11 +53,33 @@ namespace JinianNet.JNTemplate.Parser.Node
                     {
                         parser.Current.Parse(context, writer);
                     }
+                    catch (Exception.TemplateException e)
+                    {
+                        if (context.ThrowExceptions)
+                        {
+                            throw e;
+                        }
+                        else
+                        {
+                            context.AddError(e);
+                            writer.Write(parser.Current.ToString());
+                        }
+                    }
                     catch (System.Exception e)
                     {
-                        throw new Exception.Exception(parser.Current, e);
+                        Exception.ParseException ex = new Exception.ParseException(e.Message);
+                        if (context.ThrowExceptions)
+                        {
+                            throw ex;
+                        }
+                        else
+                        {
+                            context.AddError(ex);
+                            writer.Write(parser.Current.ToString());
+                        }
                     }
                 }
+
             }
         }
     }

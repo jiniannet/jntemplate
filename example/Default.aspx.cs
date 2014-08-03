@@ -11,6 +11,7 @@ namespace example
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
             JinianNet.JNTemplate.ITemplate t = BuildManager.CreateTemplate("index.html");
             t.Context.TempData["news"] =  new [] {
                 new {
@@ -95,6 +96,7 @@ namespace example
             t.Context.TempData["date"] = DateTime.Now;
             t.Context.TempData["about"] = "极念模板引擎(JNTemplate)是一款.NET平台的解释型模板引擎，它允许用户使用简单的模板语言来定义页面及引用后台设置的对象,让前端展示与后端代码逻辑分离，同时，它也提供了一个在WebForm与Razor之外的选择！";
             t.Render(Response.Output);
+
         }
     }
 }

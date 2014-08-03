@@ -22,26 +22,27 @@ namespace JinianNet.JNTemplate
         public TemplateContext()
         {
             this.Charset = System.Text.Encoding.Default;
+            this.ThrowExceptions = true;
         }
 
-        private String _currentPath;
+        private String currentPath;
         /// <summary>
         /// 当前资源路径
         /// </summary>
         public String CurrentPath
         {
-            get { return _currentPath; }
-            set { _currentPath = value; }
+            get { return currentPath; }
+            set { currentPath = value; }
         }
 
-        private Encoding _charset;
+        private Encoding charset;
         /// <summary>
         /// 当前资源编码
         /// </summary>
         public Encoding Charset
         {
-            get { return _charset; }
-            set { _charset = value; }
+            get { return charset; }
+            set { charset = value; }
         }
 
         /// <summary>
@@ -55,9 +56,61 @@ namespace JinianNet.JNTemplate
             {
                 //if (!Resources.Paths.Contains(value))
                 //{
-                    Resources.Paths.AddRange(value);
+                Resources.Paths.AddRange(value);
                 //}
             }
+        }
+
+        private bool throwErrors;
+
+        /// <summary>
+        /// 是否抛出异常(默认为true)
+        /// </summary>
+        public bool ThrowExceptions
+        {
+            get { return throwErrors; }
+            set { throwErrors = value; }
+        }
+
+        //public virtual System.Exception[] AllErrors
+        //{
+        //    get
+        //    {
+        //        return null;
+        //    }
+        //}
+
+        ///// <summary>
+        ///// 获取当前第一个异常信息
+        ///// </summary>
+        //public virtual System.Exception Error
+        //{
+        //    get
+        //    {
+        //        if (this.AllErrors.Length > 0)
+        //        {
+        //            return this.AllErrors[0];
+        //        }
+
+        //        return null;
+        //    }
+        //}
+
+        /// <summary>
+        /// 将异常添加到当前 异常集合中。
+        /// </summary>
+        /// <param name="e">异常</param>
+        public void AddError(System.Exception e)
+        {
+
+        }
+
+        /// <summary>
+        /// 清除所有异常
+        /// </summary>
+        public void ClearError()
+        {
+
         }
 
         /// <summary>
@@ -67,10 +120,12 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext(TemplateContext context)
         {
-            TemplateContext ctx = (TemplateContext)context.Clone();
+            TemplateContext ctx = new TemplateContext();
             ctx.TempData = new VariableScope(context.TempData);
+            ctx.Charset = context.Charset;
+            ctx.CurrentPath = context.CurrentPath;
+            ctx.ThrowExceptions = context.ThrowExceptions;
             return ctx;
         }
-
     }
 }

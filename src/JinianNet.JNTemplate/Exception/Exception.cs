@@ -8,10 +8,11 @@ namespace JinianNet.JNTemplate.Exception
     /// <summary>
     /// 常规性错误
     /// </summary>
-    class Exception : System.Exception
+    public class TemplateException : System.Exception
     {
         private Int32 errorLine;
         private Int32 errorColumn;
+        private String errorCode;
         /// <summary>
         /// 所在行
         /// </summary>
@@ -29,37 +30,68 @@ namespace JinianNet.JNTemplate.Exception
             set { errorColumn = value; }
         }
         /// <summary>
-        /// 常规性错误
+        /// 错误代码
         /// </summary>
-        public Exception()
+        public String Code
+        {
+            get { return errorCode; }
+            set { errorCode = value; }
+        }
+        /// <summary>
+        /// 模板错误
+        /// </summary>
+        public TemplateException()
             : base()
         {
+
         }
 
-        /// <summary>
-        /// 常规性错误
-        /// </summary>
-        /// <param name="tag">错误标签</param>
-        /// <param name="innerException"></param>
-        public Exception(Tag tag, System.Exception innerException)
-            : base(tag.ToString(), innerException)
-        {
-            this.errorLine = tag.FirstToken.BeginLine;
-            this.errorColumn = tag.FirstToken.BeginColumn;
-        }
+        ///// <summary>
+        ///// 常规性错误
+        ///// </summary>
+        ///// <param name="tag">错误标签</param>
+        ///// <param name="innerException"></param>
+        //public TemplateException(Tag tag, System.Exception innerException)
+        //    : base(tag.ToString(), innerException)
+        //{
+        //    this.errorLine = tag.FirstToken.BeginLine;
+        //    this.errorColumn = tag.FirstToken.BeginColumn;
+        //}
 
         /// <summary>
-        /// 常规性错误
+        /// 模板错误
         /// </summary>
         /// <param name="message">异常信息</param>
         /// <param name="line">行</param>
         /// <param name="column">字符</param>
-        public Exception(String message, Int32 line, Int32 column)
+        public TemplateException(String message, Int32 line, Int32 column)
             : base(message)
         {
             this.errorColumn = column;
             this.errorLine = line;
         }
+
+        /// <summary>
+        /// 模板错误
+        /// </summary>
+        /// <param name="message">错误信息</param>
+        public TemplateException(String message)
+            : base(message)
+        {
+
+        }
+
+        /// <summary>
+        /// 模板错误
+        /// </summary>
+        /// <param name="message">错误信息</param>
+        /// <param name="innerException">基础信息</param>
+        public TemplateException(String message, System.Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
+
 
         public override string ToString()
         {
@@ -68,7 +100,7 @@ namespace JinianNet.JNTemplate.Exception
                 " Column:",
                 this.Column.ToString(),
                 "\r\n",
-                base.ToString());
+                base.Message);
         }
     }
 }

@@ -44,8 +44,8 @@
                 $foreach(row in news)
                 <div class="blog-post">
                     <h2 class="blog-post-title">$row.Title</h2>
-                    <p class="blog-post-meta">$row.CreteDate.ToString("yyyy-MM-dd") 
-                    $if(row.CreteDate >= date.AddDays(-3))
+                    <p class="blog-post-meta">$row.CreateDate.ToString("yyyy-MM-dd") 
+                    $if(row.CreateDate >= date.AddDays(-3))
                         <span style="color:#f00">new</span>
                     $end
                     <a href="#">$row.Author</a></p>

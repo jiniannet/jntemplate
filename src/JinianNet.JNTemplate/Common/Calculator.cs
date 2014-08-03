@@ -424,7 +424,7 @@ namespace JinianNet.JNTemplate.Common
                 case "&&":
                     return x && y;
                 default:
-                    throw new ArgumentException();
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Boolean\" and \"Boolean\""));
             }
         }
         /// <summary>
@@ -445,7 +445,7 @@ namespace JinianNet.JNTemplate.Common
                 case "+":
                     return String.Concat(x, y);
                 default:
-                    throw new ArgumentException();
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"String\" and \"String\""));
             }
         }
 
@@ -473,7 +473,7 @@ namespace JinianNet.JNTemplate.Common
                 case "<=":
                     return x <= y;
                 default:
-                    throw new ArgumentException();
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"DateTime\" and \"DateTime\""));
             }
         }
         /// <summary>
@@ -515,7 +515,7 @@ namespace JinianNet.JNTemplate.Common
                 //case "&&":
                 //    return GetBoolean(x.) && GetBoolean(y.) ? 1 : 0, 0, 0);
                 default:
-                    throw new ArgumentException();
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Number\" and \"Number\""));
             }
         }
 

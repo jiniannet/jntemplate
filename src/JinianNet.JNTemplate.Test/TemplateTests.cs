@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Test
             var template = new Template(templateContent);
 
             var render = template.Render();
-
+            
             Assert.AreEqual("\r\nresult:868", render);
         }
 

@@ -68,7 +68,21 @@ namespace JinianNet.JNTemplate
         /// <param name="writer"></param>
         public virtual void Render(TextWriter writer)
         {
-            base.Render(this.Context, writer);
+            try
+            {
+                base.Render(this.Context, writer);
+            }
+            catch (System.Exception e)
+            {
+                if (this.Context.ThrowExceptions)
+                {
+                    throw e;
+                }
+                else
+                {
+                    this.Context.AddError(e);
+                }
+            }
         }
 
         /// <summary>

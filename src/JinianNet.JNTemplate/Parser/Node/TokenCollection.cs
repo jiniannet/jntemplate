@@ -63,6 +63,17 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
         }
 
+        public override string ToString()
+        {
+            //return String.Concat<Token>(this.list); //不兼容2.0
+            StringBuilder sb = new StringBuilder();
+            for (Int32 i = 0; i <= this.Count; i++)
+            {
+                sb.Append(this[i].ToString());
+            }
+            return sb.ToString();
+        }
+
         #region IList<Token> 成员
 
         public Int32 IndexOf(Token item)
