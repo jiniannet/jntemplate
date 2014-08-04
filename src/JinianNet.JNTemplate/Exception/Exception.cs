@@ -65,7 +65,12 @@ namespace JinianNet.JNTemplate.Exception
         /// <param name="line">行</param>
         /// <param name="column">字符</param>
         public TemplateException(String message, Int32 line, Int32 column)
-            : base(message)
+            : base(String.Concat("Line:",
+                line.ToString(),
+                " Column:",
+                column.ToString(),
+                "\r\n",
+                message))
         {
             this.errorColumn = column;
             this.errorLine = line;
@@ -90,17 +95,6 @@ namespace JinianNet.JNTemplate.Exception
             : base(message, innerException)
         {
 
-        }
-
-
-        public override string ToString()
-        {
-            return String.Concat("Line:",
-                this.Line.ToString(),
-                " Column:",
-                this.Column.ToString(),
-                "\r\n",
-                base.Message);
         }
     }
 }
