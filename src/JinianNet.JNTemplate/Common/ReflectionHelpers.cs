@@ -425,14 +425,14 @@ namespace JinianNet.JNTemplate.Common
             if (args==null || Array.LastIndexOf(args, null) == -1) //
             {
                 return type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic,
+                    BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static,
                     null, args, null);
             }
             else
             {
                 ParameterInfo[] pi;
                 Boolean accord;
-                foreach (MethodInfo m in type.GetMembers())
+                foreach (MethodInfo m in type.GetMembers(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static))
                 {
                     if(m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)){
                          pi =  m.GetParameters();
