@@ -247,6 +247,27 @@ namespace JinianNet.JNTemplate.Test
             
         }
 
+          [TestMethod]
+        public void TestSet2()
+        {
+            var templateContent = "$set(table=\"HC_Article\")$set(list=db.Query(\"SELECT * FROM \"+table))$list";
+            var template = new Template(templateContent);
+            template.Set("db", new
+            {
+                Query = new JinianNet.JNTemplate.FuncHandler(delegate(object[] args)
+                {
+                    return string.Concat(args);
+                })
+            });
+            var render = template.Render();
+            Assert.AreEqual("SELECT * FROM HC_Article", render);
+
+
+
+        }
+
+
+
         ///// <summary>
         ///// 测试引擎
         ///// </summary>
