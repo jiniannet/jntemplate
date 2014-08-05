@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Exception
         /// <param name="line">行</param>
         /// <param name="column">字符</param>
         public ParseException(String message, Int32 line, Int32 column)
-            : base(message)
+            : base(message, line,column)
         {
             this.Column = column;
             this.Line = line;

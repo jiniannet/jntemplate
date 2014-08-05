@@ -262,9 +262,17 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.AreEqual("SELECT * FROM HC_Article", render);
 
-
-
         }
+
+          //[TestMethod]
+          //public void TestExperience()
+          //{
+          //    var templateContent = "${(3+51}";
+          //    var template = new Template(templateContent);
+          //    var render = template.Render();
+          //    Assert.AreEqual("SELECT * FROM HC_Article", render);
+
+          //}
 
 
 

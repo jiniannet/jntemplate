@@ -845,6 +845,10 @@ namespace JinianNet.JNTemplate.Parser
                         {
                             pos--;
                         }
+                        else
+                        {
+                            throw new Exception.ParseException(String.Concat("syntax error near ):", tc), data[i].BeginLine, data[i].BeginColumn);
+                        }
 
                         if (pos == 0)
                         {
@@ -878,6 +882,10 @@ namespace JinianNet.JNTemplate.Parser
 
                     if (i == tc.Count - 1 && end >= start)
                     {
+                        if(start == 0 && end == i)
+                        {
+                            throw new Exception.ParseException(String.Concat("Unexpected  tag:", tc), tc[0].BeginLine, tc[0].BeginColumn);
+                        }
                         TokenCollection coll = new TokenCollection();
                         coll.Add(tc, start, end);
                         queue.Enqueue(coll);

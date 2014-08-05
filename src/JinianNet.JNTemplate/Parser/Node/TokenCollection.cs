@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             //return String.Concat<Token>(this.list); //不兼容2.0
             StringBuilder sb = new StringBuilder();
-            for (Int32 i = 0; i <= this.Count; i++)
+            for (Int32 i = 0; i < this.Count; i++)
             {
                 sb.Append(this[i].ToString());
             }
