@@ -1,4 +1,4 @@
-﻿//*****************************************************
+﻿/*****************************************************
    Copyright (c) 2013-2014 翅膀的初衷  (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
