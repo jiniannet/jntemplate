@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("JNTemplate")]
-[assembly: AssemblyDescription("基于.NET平台的轻量级模板引擎")]
+[assembly: AssemblyDescription("Open source templating engine for .net")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JinianNet.com")]
 [assembly: AssemblyProduct("JNTemplate")]
