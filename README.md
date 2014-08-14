@@ -22,7 +22,7 @@ JNTemplate具有简单，易用，高效等特点，拓展十分方便！而且�
 如何使用JNTemplate
 --------------------------------------
 ```bash
-JinianNet.JNTemplate.Template template = new JinianNet.JNTemplate.Template("hello,$name!");//创建Template实例
+ITemplate template = new Template("hello,$name!");//创建Template实例
 template.Context.CurrentPath = "D:\\templets\\"; //指定当前模板目录
 template.Context.TempData["name"] = "world";//设置模板数据
 template.Render(Response.Output);//呈现解析结果
@@ -32,16 +32,16 @@ template.Render(Response.Output);//呈现解析结果
 如何下载JNTemplate
 --------------------------------------
 <br />最新版本 v1.2.1.下载地址：
-<br />1. [下载一](http://file.jiniannet.com/jntemplate-v1.2.1.zip) 
-<br />2. [下载二](http://down.jiniannet.com/jntemplate-v1.1%281.1.34%29.zip)
-<br />3. [源代码克隆](https://github.com/jiniannet/jntemplate.git)
+<br />1. 下载一:[http://file.jiniannet.com/jntemplate-v1.2.1.zip](http://file.jiniannet.com/jntemplate-v1.2.1.zip) 
+<br />2. 下载二:[http://down.jiniannet.com/jntemplate-v1.2.1.zip](http://down.jiniannet.com/jntemplate-v1.2.1.zip) 
+<br />3. 源代码克隆:[https://github.com/jiniannet/jntemplate.git](https://github.com/jiniannet/jntemplate.git)
 
 ```bash
 git clone https://github.com/jiniannet/jntemplate.git
 ```
 
 历史版本下载：
-<br />1. [jntemplate v1.1](http://file.jiniannet.com/jntemplate-v1.1%281.1.34%29.zip) 
+<br />1. jntemplate v1.1[http://file.jiniannet.com/jntemplate-v1.1(1.1.34).zip](http://file.jiniannet.com/jntemplate-v1.1%281.1.34%29.zip) 
 
 
 JNTemplate帮助
