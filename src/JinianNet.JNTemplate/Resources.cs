@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate
         /// 查找指定文件
         /// </summary>
         /// <param name="paths">检索路径</param>
-        /// <param name="filename">文件名 允许相对路径</param>
+        /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param>
         /// <param name="fullPath">查找结果：完整路径</param>
         /// <returns></returns>
         private static Int32 FindPath(IEnumerable<String> paths, String filename, out String fullPath)
@@ -53,22 +53,20 @@ namespace JinianNet.JNTemplate
             if (!String.IsNullOrEmpty(filename))
             {
                 filename = NormalizePath(filename);
-                
+
                 if (filename == null) //路径非法，比如用户试图跳出当前目录时（../header.txt）
                 {
-                    return -1;   
+                    return -1;
                 }
-
-                filename = filename.Replace('/', System.IO.Path.DirectorySeparatorChar);//替换目录分隔符 liunx应为 /header.txt win下应为 \\header.txt
 
                 //String sc = String.Empty.PadLeft(2, System.IO.Path.DirectorySeparatorChar);
                 Int32 i = 0;
                 foreach (String checkUrl in paths)
                 {
                     if (checkUrl[checkUrl.Length - 1] != System.IO.Path.DirectorySeparatorChar)
-                        fullPath = String.Concat(checkUrl,  filename);
+                        fullPath = String.Concat(checkUrl, filename);
                     else
-                        fullPath = String.Concat(checkUrl.Remove(checkUrl.Length - 1,1), filename);
+                        fullPath = String.Concat(checkUrl.Remove(checkUrl.Length - 1, 1), filename);
                     if (System.IO.File.Exists(fullPath))
                         return i;
                 }
@@ -123,43 +121,34 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static String NormalizePath(String filename)
         {
-            System.String normalized = filename;
-            if (!normalized.StartsWith("/"))
+            if (String.IsNullOrEmpty(filename) || filename.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
+                return null;
+
+            List<String> values = new List<string>(filename.Split('/'));
+
+            for (Int32 i = 0; i < values.Count; i++)
             {
-                normalized = "/" + normalized;
+                if (values[i] == "." || String.IsNullOrEmpty(values[i]))
+                {
+                    values.RemoveAt(i);
+                    i--;
+                }
+                else if (values[i] == "..")
+                {
+                    if (i == 0)
+                    {
+                        return null;
+                    }
+                    values.RemoveAt(i);
+                    i--;
+                    values.RemoveAt(i);
+                    i--;
+                }
             }
-            while (true)
-            {
-                Int32 index = normalized.IndexOf("//");
-                if (index < 0)
-                    break;
-                normalized = normalized.Substring(0, (index) - (0)) + normalized.Substring(index + 1);
-            }
-            while (true)
-            {
-                Int32 index = normalized.IndexOf("%20");
-                if (index < 0)
-                    break;
-                normalized = normalized.Substring(0, (index) - (0)) + " " + normalized.Substring(index + 3);
-            }
-            while (true)
-            {
-                Int32 index = normalized.IndexOf("/./");
-                if (index < 0)
-                    break;
-                normalized = normalized.Substring(0, (index) - (0)) + normalized.Substring(index + 2);
-            }
-            while (true)
-            {
-                Int32 index = normalized.IndexOf("/../");
-                if (index < 0)
-                    break;
-                if (index == 0)
-                    return (null);
-                Int32 index2 = normalized.LastIndexOf((System.Char)'/', index - 1);
-                normalized = normalized.Substring(0, (index2) - (0)) + normalized.Substring(index + 3);
-            }
-            return (normalized);
+
+            values.Insert(0, String.Empty);
+
+            return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), values.ToArray());
         }
     }
 }
