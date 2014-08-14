@@ -11,18 +11,21 @@ JNTemplate具有简单，易用，高效等特点，拓展十分方便！而且�
 
 为什么要使用JNTemplate
 --------------------------------------
-1. 简单易用 任何略懂 c#/java/javascript 语法的用户只需要10分钟就可以上手使用
-2. 轻便高效 使用了更高效的解析机制，让引擎执行更快。
+1. 简单易用 有一定 c#/java/javascript 语法基础的用户只需要10分钟就可以上手使用
+2. 轻便高效 使用了更高效的解析机制，引擎执行更快。
 3. 自由拓展 可以十分方便的自由扩展功能，灵活性更强。
 4. 免费开源 可以免费使用而无须支付任何费用，只需要在代码中保留我们的署名即可。
+
+另外JNTemplate能完美运行于Liunx(Mono)！
 
 
 如何使用JNTemplate
 --------------------------------------
 ```bash
-JinianNet.JNTemplate.Template template = new JinianNet.JNTemplate.Template("hello,$name!");
-template.Context.TempData["name"] = "world";
-template.Render(Response.Output);
+JinianNet.JNTemplate.Template template = new JinianNet.JNTemplate.Template("hello,$name!");//创建Template实例
+template.Context.CurrentPath = @"D:\"; //指定当前模板目录
+template.Context.TempData["name"] = "world";//设置模板数据
+template.Render(Response.Output);//呈现解析结果
 ```
 
 
@@ -30,8 +33,7 @@ template.Render(Response.Output);
 --------------------------------------
 1. [jntemplate v1.2 beta](http://down.jiniannet.com/jntemplate-v1.2-beta(1.2.0.5).zip)
 2. [jntemplate v1.1](http://down.jiniannet.com/jntemplate-v1.1(1.1.34).zip)
-3. [百度网盘下载](http://pan.baidu.com/s/1jGigCpo#dir/path=%2FJNTemplate%2FDLL)
-4. 克隆源代码自行生成
+3. [克隆源代码](https://github.com/jiniannet/jntemplate.git)
 
 ```bash
 git clone git://github.com/jquery/jquery.git
