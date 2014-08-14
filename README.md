@@ -23,7 +23,7 @@ JNTemplate具有简单，易用，高效等特点，拓展十分方便！而且�
 --------------------------------------
 ```bash
 JinianNet.JNTemplate.Template template = new JinianNet.JNTemplate.Template("hello,$name!");//创建Template实例
-template.Context.CurrentPath = @"D:\"; //指定当前模板目录
+template.Context.CurrentPath = "D:\\templets\\"; //指定当前模板目录
 template.Context.TempData["name"] = "world";//设置模板数据
 template.Render(Response.Output);//呈现解析结果
 ```
