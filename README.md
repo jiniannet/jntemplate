@@ -36,7 +36,7 @@ template.Render(Response.Output);//呈现解析结果
 3. [克隆源代码](https://github.com/jiniannet/jntemplate.git)
 
 ```bash
-git clone git://github.com/jquery/jquery.git
+git clone https://github.com/jiniannet/jntemplate.git
 ```
 
 JNTemplate帮助
