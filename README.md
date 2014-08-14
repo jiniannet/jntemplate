@@ -31,13 +31,18 @@ template.Render(Response.Output);//呈现解析结果
 
 如何下载JNTemplate
 --------------------------------------
-1. [jntemplate v1.2 beta](http://down.jiniannet.com/jntemplate-v1.2-beta(1.2.0.5).zip)
-2. [jntemplate v1.1](http://down.jiniannet.com/jntemplate-v1.1(1.1.34).zip)
-3. [克隆源代码](https://github.com/jiniannet/jntemplate.git)
+最新版本 v1.2.1.下载地址：
+1. [下载一](http://file.jiniannet.com/jntemplate-v1.2.1.zip) 
+2. [下载二](http://down.jiniannet.com/jntemplate-v1.1%281.1.34%29.zip)
+3. [源代码克隆](https://github.com/jiniannet/jntemplate.git)
 
 ```bash
 git clone https://github.com/jiniannet/jntemplate.git
 ```
+
+历史版本下载：
+1. [jntemplate v1.1](http://file.jiniannet.com/jntemplate-v1.1%281.1.34%29.zip) 
+
 
 JNTemplate帮助
 --------------------------------------

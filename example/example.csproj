@@ -41,9 +41,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JinianNet.JNTemplate, Version=1.2.0.7, Culture=neutral, PublicKeyToken=2b90a65531efdba4, processorArchitecture=MSIL">
+    <Reference Include="JinianNet.JNTemplate, Version=1.2.1.0, Culture=neutral, PublicKeyToken=2b90a65531efdba4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\4.0\JinianNet.JNTemplate.dll</HintPath>
+      <HintPath>packages\JinianNet.JNTemplate.1.2.1\lib\net40\JinianNet.JNTemplate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
