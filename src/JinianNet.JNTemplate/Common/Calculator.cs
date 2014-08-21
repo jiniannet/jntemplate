@@ -21,11 +21,28 @@ using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate.Common
 {
+
     /// <summary>
     /// 计算器
     /// </summary>
     public class Calculator
     {
+        #region Weights Array
+        private static readonly String[] numberWeights = new String[] {
+                "System.Int16",
+                 "System.Int32",
+                 "System.Int64",
+                 "System.Single",
+                 "System.Double",
+                 "System.Decimal"};
+
+        private static readonly String[] uintWeights = new String[] {
+                "System.UInt16",
+                 "System.UInt32",
+                 "System.UInt64"};
+        #endregion
+
+        #region LetterType
         /// <summary>
         /// 字符类型
         /// </summary>
@@ -56,7 +73,9 @@ namespace JinianNet.JNTemplate.Common
             /// </summary>
             Other = 5
         }
+        #endregion
 
+        #region common function
         private static Boolean IsOperator(Char c)
         {
             if ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '(') || (c == ')') || (c == '%'))
@@ -214,6 +233,28 @@ namespace JinianNet.JNTemplate.Common
 
         }
 
+
+        private static bool IsNumber(String fullName)
+        {
+            switch (fullName)
+            {
+                case "System.Double":
+                case "System.Int16":
+                case "System.Int32":
+                case "System.Int64":
+                case "System.UInt16":
+                case "System.UInt32":
+                case "System.UInt64":
+                case "System.Single":
+                case "System.Decimal":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        #endregion
+
+        #region ProcessExpression
         /// <summary>
         /// 处理表达式
         /// </summary>
@@ -372,25 +413,9 @@ namespace JinianNet.JNTemplate.Common
             return post;
         }
 
-        private static bool IsNumber(String fullName)
-        {
-            switch (fullName)
-            {
-                case "System.Double":
-                case "System.Int16":
-                case "System.Int32":
-                case "System.Int64":
-                case "System.UInt16":
-                case "System.UInt32":
-                case "System.UInt64":
-                case "System.Single":
-                case "System.Decimal":
-                    return true;
-                default:
-                    return false;
-            }
-        }
+        #endregion
 
+        #region Calculate
         /// <summary>
         /// 计算结果
         /// </summary>
@@ -404,16 +429,137 @@ namespace JinianNet.JNTemplate.Common
             Type tY = y.GetType();
 
             if (IsNumber(tX.FullName) && IsNumber(tY.FullName))
-                return Calculate(Convert.ToDouble(x), Convert.ToDouble(y), value);
+            {
+                Type t;
+                if (tX == tY)
+                {
+                    t = tX;
+                }
+                else
+                {
+                    Int32 i, j;
+                    if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
+                    {
+                        i = Array.IndexOf<String>(uintWeights, tX.FullName);
+                        j = Array.IndexOf<String>(uintWeights, tY.FullName);
+                    }
+                    else
+                    {
+                        if (tX.Name[0] == 'U')
+                        {
+                            tX = Type.GetType(String.Concat("System.", tX.Name.Remove(0, 1)));
+                        }
+
+                        if (tY.Name[0] == 'U')
+                        {
+                            tY = Type.GetType(String.Concat("System.", tY.Name.Remove(0, 1)));
+                        }
+
+                        i = Array.IndexOf<String>(numberWeights, tX.FullName);
+                        j = Array.IndexOf<String>(numberWeights, tY.FullName);
+                    }
+                    if (i > j)
+                    {
+                        t = tX;
+                    }
+                    else
+                    {
+                        t = tY;
+                    }
+                }
+                switch (t.FullName)
+                {
+                    case "System.Double":
+                        return Calculate((Double)x, (Double)y, value);
+                    case "System.Int16":
+                        return Calculate((Int16)x, (Int16)y, value);
+                    case "System.Int32":
+                        return Calculate((Int32)x, (Int32)y, value);
+                    case "System.Int64":
+                        return Calculate((Int64)x, (Int64)y, value);
+                    case "System.UInt16":
+                        return Calculate((UInt16)x, (UInt16)y, value);
+                    case "System.UInt32":
+                        return Calculate((UInt32)x, (UInt32)y, value);
+                    case "System.UInt64":
+                        return Calculate((UInt64)x, (UInt64)y, value);
+                    case "System.Single":
+                        return Calculate((Single)x, (Single)y, value);
+                    case "System.Decimal":
+                        return Calculate((Decimal)x, (Decimal)y, value);
+                    default:
+                        return null;
+                }
+            }
+
             if (tX.FullName == "System.Boolean" && tY.FullName == "System.Boolean")
                 return Calculate((Boolean)x, (Boolean)y, value);
-            if (tX.FullName == "System.String" && tY.FullName == "System.String")
-                return Calculate((String)x, (String)y, value);
+            //if (tX.FullName == "System.String" && tY.FullName == "System.String")
+            //    return CalculateString((String)x, (String)y, value);
             if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
                 return Calculate((DateTime)x, (DateTime)y, value);
             return Calculate(x.ToString(), y.ToString(), value);
-            //throw new ArgumentException(String.Concat(tX.FullName, " 不能和类型 ", tY.FullName, " 进行操作"));
         }
+
+        /// <summary>
+        /// 计算后缀表达式
+        /// </summary>
+        /// <param name="value">后缀表达式</param>
+        /// <returns></returns>
+        public static Object Calculate(Stack<Object> value)
+        {
+            Stack<Object> post = new Stack<Object>();
+            while (value.Count > 0)
+            {
+                post.Push(value.Pop());
+            }
+            Stack<Object> stack = new Stack<Object>();
+
+            while (post.Count > 0)
+            {
+                Object obj = post.Pop();
+                if (IsOperator((obj ?? "").ToString()))
+                {
+                    Object y = stack.Pop();
+                    Object x = stack.Pop();
+                    stack.Push(Calculate(x, y, obj.ToString()));
+                }
+                else
+                {
+                    stack.Push(obj);
+                }
+            }
+
+            return stack.Pop();
+        }
+
+        /// <summary>
+        /// 计算表达式
+        /// </summary>
+        /// <param name="value">表达式</param>
+        /// <returns></returns>
+        public static Object Calculate(Object[] value)
+        {
+            Stack<Object> stack = ProcessExpression(value);
+
+            return Calculate(stack);
+        }
+
+        /// <summary>
+        /// 计算表达式
+        /// </summary>
+        /// <param name="value">表达式</param>
+        /// <returns></returns>
+        public static Object Calculate(String value)
+        {
+            Stack<Object> stack = ProcessExpression(value);
+
+            return Calculate(stack);
+        }
+
+        #endregion
+
+        #region  Calculate
 
         /// <summary>
         /// 计算结果
@@ -520,71 +666,318 @@ namespace JinianNet.JNTemplate.Common
                     return x == y;
                 case "!=":
                     return x != y;
-
-                //case "||":
-                //    return GetBoolean(x.) || GetBoolean(y.) ? 1 : 0, 0, 0);
-                //case "&&":
-                //    return GetBoolean(x.) && GetBoolean(y.) ? 1 : 0, 0, 0);
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Number\" and \"Number\""));
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Double\" and \"Double\""));
             }
         }
 
         /// <summary>
-        /// 计算后缀表达式
+        /// 计算结果
         /// </summary>
-        /// <param name="value">后缀表达式</param>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Stack<Object> value)
+        public static Object Calculate(Single x, Single y, String value)
         {
-            Stack<Object> post = new Stack<Object>();
-            while (value.Count > 0)
+            switch (value)
             {
-                post.Push(value.Pop());
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Single\" and \"Single\""));
             }
-            Stack<Object> stack = new Stack<Object>();
+        }
 
-            while (post.Count > 0)
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static Object Calculate(Decimal x, Decimal y, String value)
+        {
+            switch (value)
             {
-                Object obj = post.Pop();
-                if (IsOperator((obj ?? "").ToString()))
-                {
-                    Object y = stack.Pop();
-                    Object x = stack.Pop();
-                    stack.Push(Calculate(x, y, obj.ToString()));
-                }
-                else
-                {
-                    stack.Push(obj);
-                }
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Decimal\" and \"Decimal\""));
             }
+        }
 
-            return stack.Pop();
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static Object Calculate(Int32 x, Int32 y, String value)
+        {
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int32\" and \"Int32\""));
+            }
         }
 
         /// <summary>
-        /// 计算表达式
+        /// 计算结果
         /// </summary>
-        /// <param name="value">表达式</param>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Object[] value)
+        public static Object Calculate(Int64 x, Int64 y, String value)
         {
-            Stack<Object> stack = ProcessExpression(value);
-
-            return Calculate(stack);
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int64\" and \"Int64\""));
+            }
         }
 
         /// <summary>
-        /// 计算表达式
+        /// 计算结果
         /// </summary>
-        /// <param name="value">表达式</param>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(String value)
+        public static Object Calculate(Int16 x, Int16 y, String value)
         {
-            Stack<Object> stack = ProcessExpression(value);
-
-            return Calculate(stack);
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
+            }
         }
+
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static Object Calculate(UInt32 x, UInt32 y, String value)
+        {
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"UInt32\" and \"UInt32\""));
+            }
+        }
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static Object Calculate(UInt64 x, UInt64 y, String value)
+        {
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"UInt64\" and \"UInt64\""));
+            }
+        }
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static Object Calculate(UInt16 x, UInt16 y, String value)
+        {
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"UInt16\" and \"UInt16\""));
+            }
+        }
+
+        #endregion
     }
     #region
 #if OLD
