@@ -261,7 +261,8 @@ namespace JinianNet.JNTemplate.Parser
                         || this.kind == TokenKind.LeftParentheses
                         || this.kind == TokenKind.Operator
                         || this.kind == TokenKind.Punctuation
-                        || this.kind == TokenKind.Comma)
+                        || this.kind == TokenKind.Comma
+                        || this.kind == TokenKind.Space)
                     {
                         AddToken(GetToken(TokenKind.StringStart));
                         this.pos.Push("\"");
