@@ -470,23 +470,23 @@ namespace JinianNet.JNTemplate.Common
                 switch (t.FullName)
                 {
                     case "System.Double":
-                        return Calculate((Double)x, (Double)y, value);
+                        return Calculate(Convert.ToDouble(x.ToString()), Convert.ToDouble(y.ToString()), value);
                     case "System.Int16":
-                        return Calculate((Int16)x, (Int16)y, value);
+                        return Calculate(Convert.ToInt16(x.ToString()), Convert.ToInt16(y.ToString()), value);
                     case "System.Int32":
-                        return Calculate((Int32)x, (Int32)y, value);
+                        return Calculate(Convert.ToInt32(x.ToString()), Convert.ToInt32(y.ToString()), value);
                     case "System.Int64":
-                        return Calculate((Int64)x, (Int64)y, value);
+                        return Calculate(Convert.ToInt64(x.ToString()), Convert.ToInt64(y.ToString()), value);
                     case "System.UInt16":
-                        return Calculate((UInt16)x, (UInt16)y, value);
+                        return Calculate(Convert.ToUInt16(x.ToString()), Convert.ToUInt16(y.ToString()), value);
                     case "System.UInt32":
-                        return Calculate((UInt32)x, (UInt32)y, value);
+                        return Calculate( Convert.ToUInt32(x.ToString()), Convert.ToUInt32(y.ToString()), value);
                     case "System.UInt64":
-                        return Calculate((UInt64)x, (UInt64)y, value);
+                        return Calculate(Convert.ToUInt64(x.ToString()), Convert.ToUInt64(y.ToString()), value);
                     case "System.Single":
-                        return Calculate((Single)x, (Single)y, value);
+                        return Calculate(Convert.ToSingle(x.ToString()),Convert.ToSingle(y.ToString()), value);
                     case "System.Decimal":
-                        return Calculate((Decimal)x, (Decimal)y, value);
+                        return Calculate(Convert.ToDecimal(x.ToString()), Convert.ToDecimal(y.ToString()), value);
                     default:
                         return null;
                 }
