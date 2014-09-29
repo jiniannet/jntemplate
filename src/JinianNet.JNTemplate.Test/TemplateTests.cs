@@ -264,6 +264,20 @@ namespace JinianNet.JNTemplate.Test
 
         }
 
+
+
+          [TestMethod]
+          public void test3()
+          {
+              var templateContent = "$if(dd==null) yes $else no $end";
+              var template = new Template(templateContent);
+              template.Set("dd",new System.Data.DataTable());
+
+              var render = template.Render();
+              Assert.AreEqual("0", render);
+
+          }
+
           //[TestMethod]
           //public void TestExperience()
           //{

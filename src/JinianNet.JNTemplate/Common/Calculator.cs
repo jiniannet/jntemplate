@@ -321,17 +321,18 @@ namespace JinianNet.JNTemplate.Common
                 }
                 switch (fullName)
                 {
-                    case "System.Double":
-                    case "System.Int16":
-                    case "System.Int32":
-                    case "System.Int64":
-                    case "System.UInt16":
-                    case "System.UInt32":
-                    case "System.UInt64":
-                    case "System.Single":
-                    case "System.Decimal":
-                    case "System.Boolean":
-                    case "System.DateTime":
+                    //case "System.Double":
+                    //case "System.Int16":
+                    //case "System.Int32":
+                    //case "System.Int64":
+                    //case "System.UInt16":
+                    //case "System.UInt32":
+                    //case "System.UInt64":
+                    //case "System.Single":
+                    //case "System.Decimal":
+                    //case "System.Boolean":
+                    //case "System.DateTime":
+                    default:
                         post.Push(value[i]);
                         break;
                     case "System.String":
@@ -494,11 +495,26 @@ namespace JinianNet.JNTemplate.Common
 
             if (tX.FullName == "System.Boolean" && tY.FullName == "System.Boolean")
                 return Calculate((Boolean)x, (Boolean)y, value);
-            //if (tX.FullName == "System.String" && tY.FullName == "System.String")
-            //    return CalculateString((String)x, (String)y, value);
+            if (tX.FullName == "System.String" && tY.FullName == "System.String")
+                return Calculate(x.ToString(), y.ToString(), value);
             if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
                 return Calculate((DateTime)x, (DateTime)y, value);
-            return Calculate(x.ToString(), y.ToString(), value);
+
+            return false;
+
+            //switch (value)
+            //{
+            //    case "==":
+            //        return x == y;
+            //    case "!=":
+            //        return x != y;
+            //    case "||":
+            //        return x || y;
+            //    case "&&":
+            //        return x && y;
+            //    default:
+            //        throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Boolean\" and \"Boolean\""));
+            //}
         }
 
         /// <summary>
