@@ -481,11 +481,11 @@ namespace JinianNet.JNTemplate.Common
                     case "System.UInt16":
                         return Calculate(Convert.ToUInt16(x.ToString()), Convert.ToUInt16(y.ToString()), value);
                     case "System.UInt32":
-                        return Calculate( Convert.ToUInt32(x.ToString()), Convert.ToUInt32(y.ToString()), value);
+                        return Calculate(Convert.ToUInt32(x.ToString()), Convert.ToUInt32(y.ToString()), value);
                     case "System.UInt64":
                         return Calculate(Convert.ToUInt64(x.ToString()), Convert.ToUInt64(y.ToString()), value);
                     case "System.Single":
-                        return Calculate(Convert.ToSingle(x.ToString()),Convert.ToSingle(y.ToString()), value);
+                        return Calculate(Convert.ToSingle(x.ToString()), Convert.ToSingle(y.ToString()), value);
                     case "System.Decimal":
                         return Calculate(Convert.ToDecimal(x.ToString()), Convert.ToDecimal(y.ToString()), value);
                     default:
@@ -499,22 +499,29 @@ namespace JinianNet.JNTemplate.Common
                 return Calculate(x.ToString(), y.ToString(), value);
             if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
                 return Calculate((DateTime)x, (DateTime)y, value);
+            switch (value)
+            {
+                case "==":
+                    return Equals(x, y, tX, tY);
+                case "!=":
+                    return !Equals(x, y, tX, tY);
+                default:
+                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Object\" and \"Object\""));
+            }
+        }
 
+        private static Boolean Equals(Object x, Object y, Type tX, Type tY)
+        {
+            if (x == null || x == null)
+            {
+                return x == null && y == null;
+            }
+            if (tX.FullName == tX.FullName)
+            {
+                //if(tX.FullName)
+                return x == y;
+            }
             return false;
-
-            //switch (value)
-            //{
-            //    case "==":
-            //        return x == y;
-            //    case "!=":
-            //        return x != y;
-            //    case "||":
-            //        return x || y;
-            //    case "&&":
-            //        return x && y;
-            //    default:
-            //        throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Boolean\" and \"Boolean\""));
-            //}
         }
 
         /// <summary>
