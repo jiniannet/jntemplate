@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 翅膀的初衷  (http://www.jiniannet.com)
+   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -57,7 +57,18 @@ namespace JinianNet.JNTemplate.Parser.Node
         private void Excute(TemplateContext context, System.IO.TextWriter writer)
         {
             this.Initial.Parse(context);
-            Boolean run = this.Test == null ? true : this.Test.ToBoolean(context) ;
+            //如果标签为空，则直接为false,避免死循环以内存溢出
+            Boolean run;
+
+            if (this.Test == null)
+            {
+                run = false;
+            }
+            else
+            {
+                run = this.Test.ToBoolean(context);
+            }
+
             while (run)
             {
                 for (Int32 i = 0; i < this.Children.Count; i++)
