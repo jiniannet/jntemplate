@@ -78,7 +78,9 @@ namespace JinianNet.JNTemplate.Parser.Node
                     }
                     catch (System.Exception e)
                     {
-                        Exception.ParseException ex = new Exception.ParseException(e.Message);
+                        System.Exception baseException = e.GetBaseException();
+
+                        Exception.ParseException ex = new Exception.ParseException(baseException.Message, baseException);
                         if (context.ThrowExceptions)
                         {
                             throw ex;
