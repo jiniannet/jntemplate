@@ -31,9 +31,9 @@ template.Render(Response.Output);//呈现解析结果
 
 如何下载JNTemplate
 --------------------------------------
-最新版本 下载地址：
-1. 官网下载:[http://bbs.jiniannet.com/forum.php?mod=viewthread&tid=1&extra=page%3D1](http://bbs.jiniannet.com/forum.php?mod=viewthread&tid=1&extra=page%3D1) 
+1. 官网下载:[http://bbs.jiniannet.com/forum.php?mod=viewthread&tid=2&extra=page%3D1](http://bbs.jiniannet.com/forum.php?mod=viewthread&tid=2&extra=page%3D1)
 2. 源代码克隆:[https://github.com/jiniannet/jntemplate.git](https://github.com/jiniannet/jntemplate.git)
+
 
 ```bash
 git clone https://github.com/jiniannet/jntemplate.git
