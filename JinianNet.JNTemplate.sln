@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7
 	ProjectSection(SolutionItems) = preProject
 		Changelog.txt = Changelog.txt
 		License.txt = License.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplate.Test.csproj", "{7F607362-0680-4751-B1DC-621219294AE3}"
