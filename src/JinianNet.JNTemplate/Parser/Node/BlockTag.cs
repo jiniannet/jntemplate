@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -53,6 +53,12 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         protected void Render(TemplateContext context, TextWriter writer)
         {
+            if (context == null)
+            {
+                writer.Write(this.TemplateContent);
+                return;
+            }
+
             if (!String.IsNullOrEmpty(this.TemplateContent))
             {
                 TemplateLexer lexer = new TemplateLexer(this.TemplateContent);

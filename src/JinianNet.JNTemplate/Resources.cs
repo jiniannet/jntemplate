@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace JinianNet.JNTemplate
 {
@@ -27,11 +28,11 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Resources
     {
-        private readonly static List<String> collection = new List<string>();
+        private readonly static Collection<String> collection = new Collection<string>();
         /// <summary>
         /// 资源路径
         /// </summary>
-        public static List<String> Paths
+        public static Collection<String> Paths
         {
             get
             {

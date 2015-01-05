@@ -1,5 +1,5 @@
 /*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -60,16 +60,9 @@ namespace JinianNet.JNTemplate
         /// 模板资源路径
         /// </summary>
         [Obsolete("请使用Resources.Paths 来替代本对象")]
-        public List<String> Paths
+        public ICollection<String> Paths
         {
             get { return Resources.Paths; }
-            private set
-            {
-                //if (!Resources.Paths.Contains(value))
-                //{
-                Resources.Paths.AddRange(value);
-                //}
-            }
         }
 
         private bool throwErrors;
