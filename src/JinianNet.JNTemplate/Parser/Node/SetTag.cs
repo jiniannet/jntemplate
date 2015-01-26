@@ -20,7 +20,7 @@ using System;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class SetTag : SimpleTag
+    public class SetTag : BaseTag
     {
         private String _name;
         public String Name
@@ -39,13 +39,11 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(TemplateContext context)
         {
-            context.TempData[this.Name] = this.Value.Parse(context);
-            return null;
-        }
-
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            context.TempData[this.Name] = this.Value.Parse(baseValue, context);
+            Object value = this.Value.Parse(context);
+            if (!context.TempData.SetValue(this.Name,value))
+            {
+                context.TempData.Push(this.Name, value);
+            }
             return null;
         }
 

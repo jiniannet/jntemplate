@@ -29,11 +29,6 @@ namespace JinianNet.JNTemplate.Parser.Node
             return this.ToString();
         }
 
-        public override object Parse(object baseValue, TemplateContext context)
-        {
-            return this.ToString();
-        }
-
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             write.Write(this.ToString());

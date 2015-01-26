@@ -21,7 +21,7 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class NumberTag : BaseTag<System.ValueType>
+    public class NumberTag : TypeTag<System.ValueType>
     {
 
     }

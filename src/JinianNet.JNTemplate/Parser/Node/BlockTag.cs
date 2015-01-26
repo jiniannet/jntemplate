@@ -22,7 +22,7 @@ using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class BlockTag : SimpleTag
+    public class BlockTag : BaseTag
     {
         private String text;
         public String TemplateContent
@@ -39,11 +39,6 @@ namespace JinianNet.JNTemplate.Parser.Node
 
                 return writer.ToString();
             }
-        }
-
-        public override object Parse(Object baseValue, TemplateContext context)
-        {
-            return Parse(context);
         }
 
         public override void Parse(TemplateContext context, TextWriter write)

@@ -21,7 +21,7 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class IncludeTag : SimpleTag
+    public class IncludeTag : BaseTag
     {
         private Tag path;
         public Tag Path
@@ -53,10 +53,5 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         }
 
-        public override Object Parse(object baseValue, TemplateContext context)
-        {
-            Object path = this.Path.Parse(baseValue, context);
-            return LoadResource(path.ToString(), context);
-        }
     }
 }

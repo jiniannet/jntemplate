@@ -21,7 +21,7 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class StringTag : BaseTag<String>
+    public class StringTag : TypeTag<String>
     {
         public override Boolean ToBoolean(TemplateContext context)
         {

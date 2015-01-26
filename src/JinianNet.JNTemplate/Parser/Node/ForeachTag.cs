@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class ForeachTag : SimpleTag
+    public class ForeachTag : BaseTag
     {
 
         private String name;
@@ -79,13 +79,5 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
         }
 
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            using (System.IO.StringWriter write = new System.IO.StringWriter())
-            {
-                Excute(this.Source.Parse(baseValue, context), context, write);
-                return write.ToString();
-            }
-        }
     }
 }

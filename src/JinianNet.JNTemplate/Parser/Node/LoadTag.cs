@@ -37,13 +37,6 @@ namespace JinianNet.JNTemplate.Parser.Node
             return base.Parse(context);
         }
 
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            Object path = this.Path.Parse(baseValue, context);
-            LoadResource(path, context);
-            return base.Parse(context);
-        }
-
         public override void Parse(TemplateContext context, TextWriter write)
         {
             Object path = this.Path.Parse(context);

@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Parser
     /// <summary>
     /// 变量域
     /// </summary>
-    public class VariableScope 
+    public class VariableScope
     {
         private VariableScope parent;
 
@@ -106,6 +106,7 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
+
         ///// <summary>
         ///// 复制数据
         ///// </summary>
@@ -119,6 +120,25 @@ namespace JinianNet.JNTemplate.Parser
         //    }
         //    return owen;
         //}
+
+        /// <summary>
+        /// 设置数据
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        internal Boolean SetValue(String key, Object value)
+        {
+            if (this.dic.ContainsKey(key))
+            {
+                this[key] = value;
+                return true;
+            }
+            if (this.parent != null)
+            {
+                return this.parent.SetValue(key, value);
+            }
+            return false;
+        }
 
         /// <summary>
         /// 添加数据
@@ -145,7 +165,7 @@ namespace JinianNet.JNTemplate.Parser
             {
                 return this.parent.ContainsKey(key);
             }
-            
+
             return false;
         }
 

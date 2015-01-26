@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// IF标题
     /// </summary>
-    public class IfTag : SimpleTag
+    public class IfTag : BaseTag
     {
 
         public override Object Parse(TemplateContext context)
@@ -39,16 +39,5 @@ namespace JinianNet.JNTemplate.Parser.Node
             return null;
         }
 
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            for (Int32 i = 0; i < this.Children.Count - 1; i++)
-            {
-                if (this.Children[i].ToBoolean(context))
-                {
-                    return this.Children[i].Parse(baseValue,context);
-                }
-            }
-            return null;
-        }
     }
 }

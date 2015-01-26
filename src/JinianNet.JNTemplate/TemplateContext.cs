@@ -80,7 +80,7 @@ namespace JinianNet.JNTemplate
         //{
         //    get
         //    {
-        //        return null;
+        //        return null;       //功能暂未实现
         //    }
         //}
 
@@ -106,7 +106,7 @@ namespace JinianNet.JNTemplate
         /// <param name="e">异常</param>
         public void AddError(System.Exception e)
         {
-
+            //功能暂未实现
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void ClearError()
         {
-
+            //功能暂未实现
         }
 
         /// <summary>

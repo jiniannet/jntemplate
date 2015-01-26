@@ -48,14 +48,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <summary>
         /// 解析结果
         /// </summary>
-        /// <param name="baseValue">基本值</param>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public abstract Object Parse(Object baseValue, TemplateContext context);
-
-        /// <summary>
-        /// 解析结果
-        /// </summary>
         /// <param name="context">TemplateContext</param>
         /// <param name="write">TextWriter</param>
         public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
@@ -89,8 +81,9 @@ namespace JinianNet.JNTemplate.Parser.Node
                     return (Double)value != 0;
                 case "System.Single":
                     return (Single)value != 0;
+                default:
+                    return value != null;
             }
-            return value != null;
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class ForTag : SimpleTag
+    public class ForTag : BaseTag
     {
         private Tag initial;
         private Tag test;
@@ -90,11 +90,6 @@ namespace JinianNet.JNTemplate.Parser.Node
                 Excute(context, write);
                 return write.ToString();
             }
-        }
-
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            return Parse(context);
         }
 
         public override void Parse(TemplateContext context, System.IO.TextWriter write)

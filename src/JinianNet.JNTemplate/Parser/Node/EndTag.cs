@@ -21,14 +21,9 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class EndTag:SimpleTag
+    public class EndTag:BaseTag
     {
         public override Object Parse(TemplateContext context)
-        {
-            return null;
-        }
-
-        public override Object Parse(Object baseValue, TemplateContext context)
         {
             return null;
         }
