@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                 Object result = this.Children[0].Parse(context);
                 for (Int32 i = 1; i < this.Children.Count; i++)
                 {
-                    result = this.Children[i].Parse(result, context);
+                    result = ((SimpleTag)this.Children[i]).Parse(result, context);
                 }
                 return result;
             }
@@ -48,7 +48,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             Object result = baseValue;
             for (Int32 i = 0; i < this.Children.Count; i++)
             {
-                result = this.Children[i].Parse(result, context);
+                result = ((SimpleTag)this.Children[i]).Parse(result, context);
             }
             return result;
         }

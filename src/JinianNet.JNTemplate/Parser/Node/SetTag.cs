@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ using System;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class SetTag : SimpleTag
+    public class SetTag : BaseTag
     {
         private String _name;
         public String Name
@@ -39,13 +39,11 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         public override Object Parse(TemplateContext context)
         {
-            context.TempData[this.Name] = this.Value.Parse(context);
-            return null;
-        }
-
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            context.TempData[this.Name] = this.Value.Parse(baseValue, context);
+            Object value = this.Value.Parse(context);
+            if (!context.TempData.SetValue(this.Name,value))
+            {
+                context.TempData.Push(this.Name, value);
+            }
             return null;
         }
 

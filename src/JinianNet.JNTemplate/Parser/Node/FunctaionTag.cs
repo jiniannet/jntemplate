@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -38,10 +38,11 @@ namespace JinianNet.JNTemplate.Parser.Node
 
                 //MethodInfo method = null;// ParserAccessor.GetMethod(value.GetType(), list[list.Length - 1], types);F:\Work\工作区\我的项目\JinianNet.JNTemplate\JinianNet.JNTemplate1.2\src\JinianNet.JNTemplate\Parser\Node\FunctaionTag.cs
 
+                FuncHandler handler = value as FuncHandler;
                 //判断是否委托
-                if (value is FuncHandler)
+                if (handler!=null)
                 {
-                    return (value as FuncHandler).Invoke(args);
+                    return handler.Invoke(args);
                 }
 
 

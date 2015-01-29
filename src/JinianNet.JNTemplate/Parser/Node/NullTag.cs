@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,14 +21,9 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class NullTag : SimpleTag
+    public class NullTag : BaseTag
     {
         public override Object Parse(TemplateContext context)
-        {
-            return null;
-        }
-
-        public override Object Parse(object baseValue, TemplateContext context)
         {
             return null;
         }

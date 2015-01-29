@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -40,8 +40,6 @@ namespace JinianNet.JNTemplate.Parser
         public CharScanner(String text)
         {
             this.document = text==null ? String.Empty : text;
-            this.index = 0;
-            this.start = 0;
         }
         /// <summary>
         /// 当前索引

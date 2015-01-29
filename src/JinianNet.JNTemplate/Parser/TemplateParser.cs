@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -186,10 +186,10 @@ namespace JinianNet.JNTemplate.Parser
             return tokens[this.index];
         }
 
-        private Token GetToken(Int32 i)
-        {
-            return tokens[this.index + 1];
-        }
+        //private Token GetToken(Int32 i)
+        //{
+        //    return tokens[this.index + 1];
+        //}
 
         #endregion
 
@@ -208,7 +208,7 @@ namespace JinianNet.JNTemplate.Parser
         #region IDispose 成员
         public void Dispose()
         {
-
+            parsers.Clear();
         }
         #endregion
     }

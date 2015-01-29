@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -175,7 +175,8 @@ namespace JinianNet.JNTemplate.Common
             //{
             //    return array.GetValue((Int32)propIndex);
             //}
-            if (isNumber && (container is IList))
+            IList list;
+            if (isNumber && (list = container as IList)!=null)
             {
                 return ((IList)container)[(Int32)propIndex];
             }
@@ -483,11 +484,14 @@ namespace JinianNet.JNTemplate.Common
 
         public static IEnumerable ToIEnumerable(Object dataSource)
         {
+            IListSource source;
+            IEnumerable result;
+
             if (dataSource == null)
                 return null;
-            if (dataSource is IListSource)
+            source = dataSource as IListSource;
+            if ((source = dataSource as IListSource)!=null)
             {
-                IListSource source = (IListSource)dataSource;
                 IList list = source.GetList();
                 if (!source.ContainsListCollection)
                 {
@@ -505,17 +509,17 @@ namespace JinianNet.JNTemplate.Common
                     {
                         Object component = list[0];
                         Object value = descriptor.GetValue(component);
-                        if ((value != null) && (value is IEnumerable))
+                        if ((value != null) && ((result = value as IEnumerable)!=null))
                         {
-                            return (IEnumerable)value;
+                            return result;
                         }
                     }
                     return null;
                 }
             }
-            if (dataSource is IEnumerable)
+            if ((result = dataSource as IEnumerable) != null)
             {
-                return (IEnumerable)dataSource;
+                return result;
             }
             return null;
 

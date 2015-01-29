@@ -58,7 +58,7 @@
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
     <Compile Include="Exception\CompileException.cs" />
-    <Compile Include="Exception\Exception.cs" />
+    <Compile Include="Exception\TemplateException.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="IEngine.cs" />
@@ -66,7 +66,8 @@
     <Compile Include="Common\Calculator.cs" />
     <Compile Include="Parser\CharScanner.cs" />
     <Compile Include="Parser\ITagParser.cs" />
-    <Compile Include="Parser\Node\BaseTag.cs" />
+    <Compile Include="Parser\Node\SimpleTag.cs" />
+    <Compile Include="Parser\Node\TypeTag.cs" />
     <Compile Include="Parser\Node\BlockTag.cs" />
     <Compile Include="Parser\Node\BooleanTag.cs" />
     <Compile Include="Parser\Node\Element.cs" />
@@ -84,7 +85,7 @@
     <Compile Include="Parser\Node\NumberTag.cs" />
     <Compile Include="Parser\Node\ReferenceTag.cs" />
     <Compile Include="Parser\Node\SetTag.cs" />
-    <Compile Include="Parser\Node\SimpleTag.cs" />
+    <Compile Include="Parser\Node\BaseTag.cs" />
     <Compile Include="Parser\Node\StringTag.cs" />
     <Compile Include="Parser\Node\Tag.cs" />
     <Compile Include="Parser\Node\TextTag.cs" />

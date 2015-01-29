@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class BlockTag : SimpleTag
+    public class BlockTag : BaseTag
     {
         private String text;
         public String TemplateContent
@@ -41,11 +41,6 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
         }
 
-        public override object Parse(Object baseValue, TemplateContext context)
-        {
-            return Parse(context);
-        }
-
         public override void Parse(TemplateContext context, TextWriter write)
         {
             Render(context, write);
@@ -53,6 +48,12 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         protected void Render(TemplateContext context, TextWriter writer)
         {
+            if (context == null)
+            {
+                writer.Write(this.TemplateContent);
+                return;
+            }
+
             if (!String.IsNullOrEmpty(this.TemplateContent))
             {
                 TemplateLexer lexer = new TemplateLexer(this.TemplateContent);

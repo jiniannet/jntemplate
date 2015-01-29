@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
-    public class IncludeTag : SimpleTag
+    public class IncludeTag : BaseTag
     {
         private Tag path;
         public Tag Path
@@ -53,10 +53,5 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         }
 
-        public override Object Parse(object baseValue, TemplateContext context)
-        {
-            Object path = this.Path.Parse(baseValue, context);
-            return LoadResource(path.ToString(), context);
-        }
     }
 }

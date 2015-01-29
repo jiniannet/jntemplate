@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
  *****************************************************/
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
@@ -28,18 +29,13 @@ namespace JinianNet.JNTemplate.Parser.Node
     {
         private Token first, last;
         //private Tag parent;
-        private List<Tag> children;
-        /// <summary>
-        /// 标签
-        /// </summary>
-        public Tag()
-        {
-            this.children = new List<Tag>();
-        }
+        private Collection<Tag> children = new Collection<Tag>();
+
         /// <summary>
         /// 子标签
         /// </summary>
-        public List<Tag> Children { 
+        public Collection<Tag> Children
+        { 
             get { return this.children; }
         }
         /// <summary>
@@ -48,14 +44,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">TemplateContext</param>
         /// <returns></returns>
         public abstract Object Parse(TemplateContext context);
-
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="baseValue">基本值</param>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public abstract Object Parse(Object baseValue, TemplateContext context);
 
         /// <summary>
         /// 解析结果
@@ -93,8 +81,9 @@ namespace JinianNet.JNTemplate.Parser.Node
                     return (Double)value != 0;
                 case "System.Single":
                     return (Single)value != 0;
+                default:
+                    return value != null;
             }
-            return value != null;
         }
 
         /// <summary>

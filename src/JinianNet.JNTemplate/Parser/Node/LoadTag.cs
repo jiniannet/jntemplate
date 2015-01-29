@@ -1,5 +1,5 @@
 ﻿/*****************************************************
-   Copyright (c) 2013-2014 jiniannet (http://www.jiniannet.com)
+   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -33,13 +33,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         public override Object Parse(TemplateContext context)
         {
             Object path = this.Path.Parse(context);
-            LoadResource(path, context);
-            return base.Parse(context);
-        }
-
-        public override Object Parse(Object baseValue, TemplateContext context)
-        {
-            Object path = this.Path.Parse(baseValue, context);
             LoadResource(path, context);
             return base.Parse(context);
         }
