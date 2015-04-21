@@ -22,21 +22,25 @@ using System.Text;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// 构建器
+    /// </summary>
     public class BuildManager
     {
-        private readonly static EngineCollection _engines = new EngineCollection();
+        private readonly static EngineCollection engines = new EngineCollection();
         /// <summary>
         /// 模板处理引擎
         /// </summary>
         public static EngineCollection Engines
         {
-            get {
-                return _engines;
+            get
+            {
+                return engines;
             }
         }
 
         /// <summary>
-        /// 创建Template实殃
+        /// 创建Template实例
         /// </summary>
         /// <param name="path">模板路径</param>
         /// <returns></returns>
@@ -50,10 +54,13 @@ namespace JinianNet.JNTemplate
             ITemplate template = null;
             foreach (IEngine engine in Engines)
             {
-                template = engine.CreateTemplate(path);
-                if (template != null)
+                if (engine != null)
                 {
-                    return template;
+                    template = engine.CreateTemplate(path);
+                    if (template != null)
+                    {
+                        return template;
+                    }
                 }
             }
 

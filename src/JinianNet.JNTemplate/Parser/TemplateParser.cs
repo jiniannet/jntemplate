@@ -28,6 +28,10 @@ namespace JinianNet.JNTemplate.Parser
     /// </summary>
     public class TemplateParser : IEnumerator<Tag>
     {
+        /// <summary>
+        /// 大小写规则
+        /// 注意：虽然本引擎为了尽量方便用户使用与兼容，个别地方对大小写未做限制，但是使用中应尽量严格按照大小写来使用。
+        /// </summary>
         const StringComparison stringComparer = StringComparison.OrdinalIgnoreCase;
 
         #region private field

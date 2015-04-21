@@ -1,4 +1,4 @@
-/*****************************************************
+﻿/*****************************************************
    Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,21 +16,29 @@
    Redistributions of source code must retain the above copyright notice
  *****************************************************/
 using System;
-using System.IO;
 
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// ����ӿ�
+    /// 表示词法分析模式的枚举值。
     /// </summary>
-    public interface IEngine
+    /// <remarks></remarks>
+    public enum LexerMode
     {
-        //void Render(TemplateContext context, TextWriter writer);
+        /// <summary>
+        /// 未定义状态。
+        /// </summary>
+        None = 0,
 
         /// <summary>
-        /// ����Templateʵ��
+        /// 进入标签。
         /// </summary>
-        /// <returns></returns>
-        ITemplate CreateTemplate(String path);
+        EnterLabel,
+
+        /// <summary>
+        /// 脱离标签。
+        /// </summary>
+        LeaveLabel,
+
     }
 }

@@ -478,12 +478,14 @@ namespace JinianNet.JNTemplate.Common
                         return Calculate(Convert.ToInt32(x.ToString()), Convert.ToInt32(y.ToString()), value);
                     case "System.Int64":
                         return Calculate(Convert.ToInt64(x.ToString()), Convert.ToInt64(y.ToString()), value);
+                    /*
                     case "System.UInt16":
                         return Calculate(Convert.ToUInt16(x.ToString()), Convert.ToUInt16(y.ToString()), value);
                     case "System.UInt32":
                         return Calculate(Convert.ToUInt32(x.ToString()), Convert.ToUInt32(y.ToString()), value);
                     case "System.UInt64":
                         return Calculate(Convert.ToUInt64(x.ToString()), Convert.ToUInt64(y.ToString()), value);
+                    */
                     case "System.Single":
                         return Calculate(Convert.ToSingle(x.ToString()), Convert.ToSingle(y.ToString()), value);
                     case "System.Decimal":
@@ -884,8 +886,8 @@ namespace JinianNet.JNTemplate.Common
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
             }
         }
-
-
+        #region 以下参数类型因不符合CLS，故取消
+        /*
         /// <summary>
         /// 计算结果
         /// </summary>
@@ -1000,6 +1002,8 @@ namespace JinianNet.JNTemplate.Common
             }
         }
 
+        */
+        #endregion
         #endregion
     }
 }

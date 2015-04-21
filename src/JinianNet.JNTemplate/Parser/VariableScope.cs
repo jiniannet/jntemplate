@@ -122,12 +122,13 @@ namespace JinianNet.JNTemplate.Parser
         //}
 
         /// <summary>
-        /// 设置数据
+        /// 为已有键设置新的值(本方法供set标签做特殊处理使用)
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
         internal Boolean SetValue(String key, Object value)
         {
+            
             if (this.dic.ContainsKey(key))
             {
                 this[key] = value;

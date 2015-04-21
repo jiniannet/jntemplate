@@ -48,7 +48,10 @@ namespace JinianNet.JNTemplate
         }
 
         #region ICloneable 成员
-
+        /// <summary>
+        /// 浅克隆当前实例
+        /// </summary>
+        /// <returns></returns>
         public Object Clone()
         {
             return this.MemberwiseClone();

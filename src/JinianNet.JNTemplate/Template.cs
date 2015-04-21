@@ -30,17 +30,17 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Template : BlockTag, ITemplate
     {
-        private TemplateContext _context;
+        private TemplateContext context;
         /// <summary>
-        /// TemplateContext
+        /// 模板上下文
         /// </summary>
         public TemplateContext Context
         {
             get
             {
-                return _context;
+                return context;
             }
-            set { _context = value; }
+            set { context = value; }
         }
 
         /// <summary>
@@ -65,11 +65,15 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Template
         /// </summary>
-        /// <param name="context">TemplateContext 对象</param>
+        /// <param name="ctx">TemplateContext 对象</param>
         /// <param name="text">模板内容</param>
-        public Template(TemplateContext context, String text)
+        public Template(TemplateContext ctx, String text)
         {
-            this._context = context;
+            if (ctx == null)
+            {
+                throw new System.ArgumentNullException("ctx");
+            }
+            this.context = ctx;
             this.TemplateContent = text;
         }
 

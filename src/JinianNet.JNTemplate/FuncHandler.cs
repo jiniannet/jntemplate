@@ -1,4 +1,4 @@
-/*****************************************************
+ï»¿/*****************************************************
    Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,21 +16,13 @@
    Redistributions of source code must retain the above copyright notice
  *****************************************************/
 using System;
-using System.IO;
 
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// ÒýÇæ½Ó¿Ú
+    /// æ–¹æ³•æ ‡ç­¾å§”æ‰˜
     /// </summary>
-    public interface IEngine
-    {
-        //void Render(TemplateContext context, TextWriter writer);
-
-        /// <summary>
-        /// ´´½¨TemplateÊµÏÖ
-        /// </summary>
-        /// <returns></returns>
-        ITemplate CreateTemplate(String path);
-    }
+    /// <param name="args"></param>
+    /// <returns></returns>
+    public delegate Object FuncHandler(params Object[] args);
 }

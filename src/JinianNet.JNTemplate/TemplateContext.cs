@@ -124,6 +124,10 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext(TemplateContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
             TemplateContext ctx = new TemplateContext();
             ctx.TempData = new VariableScope(context.TempData);
             ctx.Charset = context.Charset;

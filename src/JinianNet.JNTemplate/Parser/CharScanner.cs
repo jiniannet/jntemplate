@@ -36,10 +36,10 @@ namespace JinianNet.JNTemplate.Parser
         /// <summary>
         /// CharScanner
         /// </summary>
-        /// <param name="text">搜描内容</param>
+        /// <param name="text">扫描内容</param>
         public CharScanner(String text)
         {
-            this.document = text==null ? String.Empty : text;
+            this.document = (text ?? String.Empty);
         }
         /// <summary>
         /// 当前索引

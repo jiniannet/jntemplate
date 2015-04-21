@@ -21,12 +21,12 @@ using System.IO;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// Template 基类
+    /// Template 接口
     /// </summary>
     public interface ITemplate
     {
         /// <summary>
-        /// TemplateContext
+        /// 模板上下文
         /// </summary>
         TemplateContext Context { get;set; }
         /// <summary>

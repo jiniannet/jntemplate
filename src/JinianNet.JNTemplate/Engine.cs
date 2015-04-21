@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 创建 Engine 实例 
         /// </summary>
-        /// <param name="path">当前模板(主题)路径</param>
+        /// <param name="path">当前模板路径</param>
         /// <param name="encoding">编码</param>
         public Engine(String path, Encoding encoding)
             : this(new TemplateContext())

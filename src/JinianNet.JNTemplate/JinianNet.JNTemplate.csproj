@@ -52,7 +52,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
     <Compile Include="BuildManager.cs" />
     <Compile Include="ContextBase.cs" />
     <Compile Include="Engine.cs" />
@@ -61,9 +60,11 @@
     <Compile Include="Exception\TemplateException.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
+    <Compile Include="FuncHandler.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="Common\Calculator.cs" />
+    <Compile Include="LexerMode.cs" />
     <Compile Include="Parser\CharScanner.cs" />
     <Compile Include="Parser\ITagParser.cs" />
     <Compile Include="Parser\Node\SimpleTag.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateContext.cs" />
+    <Compile Include="TokenKind.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
