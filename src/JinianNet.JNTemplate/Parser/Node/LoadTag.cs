@@ -21,22 +21,35 @@ using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// LOAD标签
+    /// </summary>
     public class LoadTag : BlockTag
     {
         private Tag path;
+        /// <summary>
+        /// 路径
+        /// </summary>
         public Tag Path
         {
             get { return path; }
             set { path = value; }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             Object path = this.Path.Parse(context);
             LoadResource(path, context);
             return base.Parse(context);
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">write</param>
         public override void Parse(TemplateContext context, TextWriter write)
         {
             Object path = this.Path.Parse(context);

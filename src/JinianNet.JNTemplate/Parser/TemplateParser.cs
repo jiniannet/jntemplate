@@ -42,6 +42,10 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
 
         #region ctox
+        /// <summary>
+        /// 模板分模器
+        /// </summary>
+        /// <param name="ts"></param>
         public TemplateParser(Token[] ts)
         {
             parsers = new List<ITagParser>();
@@ -210,6 +214,9 @@ namespace JinianNet.JNTemplate.Parser
         #endregion
 
         #region IDispose 成员
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
             parsers.Clear();

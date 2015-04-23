@@ -18,21 +18,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JinianNet.JNTemplate.Parser.Node;
 
-namespace JinianNet.JNTemplate.Parser.Node
+namespace JinianNet.JNTemplate.Parser
 {
     /// <summary>
-    /// else标签
+    /// Boolean标签分析器
     /// </summary>
-    public class ElseTag : ElseifTag
+    public class BooleanParser : ITagParser
     {
+        #region ITagParser 成员
         /// <summary>
-        /// 获取布布值
+        /// 分析标签
         /// </summary>
-        /// <param name="context">上下文</param>
-        public override Boolean ToBoolean(TemplateContext context)
+        /// <param name="parser">TemplateParser</param>
+        /// <param name="tc">Token集合</param>
+        /// <returns></returns>
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            return true;
+            if (tc.Count == 1
+                && (tc.First.Text == "true" || tc.First.Text == "false"))
+            {
+                BooleanTag tag = new BooleanTag();
+                tag.Value = tc.First.Text == "true";
+                return tag;
+            }
+
+            return null;
         }
+
+        #endregion
     }
 }

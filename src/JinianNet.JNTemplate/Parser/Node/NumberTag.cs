@@ -21,6 +21,9 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 数字标签
+    /// </summary>
     public class NumberTag : TypeTag<System.ValueType>
     {
 

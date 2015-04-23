@@ -21,9 +21,5 @@ using System.Text;
 
 namespace JinianNet.JNTemplate
 {
-    
-    public class Runtime
-    {
 
-    }
 }

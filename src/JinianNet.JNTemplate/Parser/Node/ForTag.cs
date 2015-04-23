@@ -21,6 +21,9 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// FOR标签
+    /// </summary>
     public class ForTag : BaseTag
     {
         private Tag initial;
@@ -46,7 +49,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         }
 
         /// <summary>
-        /// Do
+        /// Do 
         /// </summary>
         public Tag Do
         {
@@ -82,7 +85,10 @@ namespace JinianNet.JNTemplate.Parser.Node
                 run = this.Test == null ? true : this.Test.ToBoolean(context);
             }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
@@ -91,7 +97,11 @@ namespace JinianNet.JNTemplate.Parser.Node
                 return write.ToString();
             }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             Excute(context, write);

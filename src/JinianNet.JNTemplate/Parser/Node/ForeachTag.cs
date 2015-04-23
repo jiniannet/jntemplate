@@ -21,10 +21,16 @@ using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// Foreach标签
+    /// </summary>
     public class ForeachTag : BaseTag
     {
 
         private String name;
+        /// <summary>
+        /// 节点名
+        /// </summary>
         public String Name
         {
             get { return name; }
@@ -32,6 +38,9 @@ namespace JinianNet.JNTemplate.Parser.Node
         }
 
         private Tag source;
+        /// <summary>
+        /// 源对象
+        /// </summary>
         public Tag Source
         {
             get { return source; }
@@ -61,7 +70,11 @@ namespace JinianNet.JNTemplate.Parser.Node
                 }
             }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="writer">writer</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
             if (this.Source != null)
@@ -69,7 +82,10 @@ namespace JinianNet.JNTemplate.Parser.Node
                 Excute(this.Source.Parse(context), context, writer);
             }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())

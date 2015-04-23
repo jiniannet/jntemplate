@@ -26,26 +26,39 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 引擎集合
     /// </summary>
-    public class EngineCollection: Collection<IEngine> {
-
-        public EngineCollection() {
+    public class EngineCollection : Collection<IEngine>
+    {
+        /// <summary>
+        /// 引擎集合
+        /// </summary>
+        public EngineCollection()
+        {
         }
-
+        /// <summary>
+        /// 引擎集合
+        /// </summary>
         public EngineCollection(IList<IEngine> list)
-            : base(list) {
+            : base(list)
+        {
         }
-
+        /// <summary>
+        /// 引擎集合
+        /// </summary>
         protected override void InsertItem(Int32 index, IEngine item)
         {
-            if (item == null) {
+            if (item == null)
+            {
                 throw new ArgumentNullException("item");
             }
             base.InsertItem(index, item);
         }
-
+        /// <summary>
+        /// 设置item
+        /// </summary>
         protected override void SetItem(Int32 index, IEngine item)
         {
-            if (item == null) {
+            if (item == null)
+            {
                 throw new ArgumentNullException("item");
             }
             base.SetItem(index, item);

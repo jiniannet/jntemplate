@@ -22,6 +22,7 @@ using System.Text;
 namespace JinianNet.JNTemplate.Parser.Node
 {
     /// <summary>
+    /// 组合标签
     /// 用于执于复杂的方法或变量
     /// 类似于
     /// $User.CreateDate.ToString("yyyy-MM-dd")
@@ -29,6 +30,10 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class ReferenceTag : SimpleTag
     {
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             if (this.Children.Count > 0)
@@ -42,7 +47,11 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
             return null;
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="baseValue">基本值</param>
         public override Object Parse(Object baseValue, TemplateContext context)
         {
             Object result = baseValue;

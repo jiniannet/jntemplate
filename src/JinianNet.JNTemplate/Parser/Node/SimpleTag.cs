@@ -5,6 +5,10 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 简单标签
+    /// 可以组合的标签
+    /// </summary>
     public abstract class SimpleTag : BaseTag
     {
         /// <summary>

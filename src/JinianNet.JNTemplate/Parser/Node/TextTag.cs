@@ -21,19 +21,31 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 文本标签
+    /// </summary>
     public class TextTag : Tag
     {
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
             return this.ToString();
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             write.Write(this.ToString());
         }
-
+        /// <summary>
+        /// 获取对象的字符串引用
+        /// </summary>
         public override string ToString()
         {
             return this.FirstToken.ToString();

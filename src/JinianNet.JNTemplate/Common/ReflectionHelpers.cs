@@ -202,6 +202,13 @@ namespace JinianNet.JNTemplate.Common
             return info.GetValue(container, new Object[] { propIndex });
         }
 
+        /// <summary>
+        /// 获取索引值
+        /// </summary>
+        /// <param name="container">原对象</param>
+        /// <param name="propName">属性名</param>
+        /// <param name="propIndex">从零开始的索引</param>
+        /// <returns></returns>
         public static Object GetIndexedProperty(Object container, String propName, String propIndex)
         {
             Boolean flag = false;
@@ -257,7 +264,13 @@ namespace JinianNet.JNTemplate.Common
         }
 
         #endregion
-
+        /// <summary>
+        /// 执行表达式
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="expression">表达式</param>
+        /// <param name="format">格式化对象</param>
+        /// <returns></returns>
         public static String Eval(Object container, String expression, String format)
         {
             Object obj = Eval(container, expression);
@@ -286,7 +299,12 @@ namespace JinianNet.JNTemplate.Common
 
         //    return null;
         //}
-
+        /// <summary>
+        /// 执行表达式
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="expression">表达式</param>
+        /// <returns></returns>
         public static Object Eval(Object container, String expression)
         {
             if (expression == null)
@@ -371,11 +389,24 @@ namespace JinianNet.JNTemplate.Common
         //    return property;
         //}
         #region
+        /// <summary>
+        /// 执行表达式
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="expressionParts">表达式集合</param>
+        /// <returns></returns>
         public static Object Eval(Object container, String[] expressionParts)
         {
             return Eval(container, expressionParts, 0, expressionParts.Length);
         }
-
+        /// <summary>
+        /// 执行表达式
+        /// </summary>
+        /// <param name="container">对像</param>
+        /// <param name="expressionParts">表达式</param>
+        /// <param name="start">开始索引</param>
+        /// <param name="end">结束索引</param>
+        /// <returns></returns>
         private static Object Eval(Object container, String[] expressionParts,Int32 start,Int32 end)
         {
             Object property = container;
@@ -394,7 +425,12 @@ namespace JinianNet.JNTemplate.Common
             return property;
         }
         #endregion
-
+        /// <summary>
+        /// 获取属性值
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="propName">属性名</param>
+        /// <returns></returns>
         public static Object GetPropertyValue(Object container, String propName)
         {
             if (container == null)
@@ -431,7 +467,13 @@ namespace JinianNet.JNTemplate.Common
 
         #endregion
         #region
-
+        /// <summary>
+        /// 根据形参与方法名获取MethodInfo
+        /// </summary>
+        /// <param name="type">目标TYPE</param>
+        /// <param name="methodName">方法名</param>
+        /// <param name="args">形参</param>
+        /// <returns>MethodInfo</returns>
         public static MethodInfo GetMethod(Type type, String methodName, Type[] args)
         {
             if (args==null || Array.LastIndexOf(args, null) == -1) //
@@ -469,7 +511,14 @@ namespace JinianNet.JNTemplate.Common
             }
             return null;
         }
-        public static Object GetMethod(Object container, String methodName, Object[] args)
+        /// <summary>
+        /// 调用实例方法
+        /// </summary>
+        /// <param name="container">实例对象</param>
+        /// <param name="methodName">方法名</param>
+        /// <param name="args">形参</param>
+        /// <returns>Object</returns>
+        public static Object InvokeMethod(Object container, String methodName, Object[] args)
         {
             Type[] types = new Type[args.Length];
             for (Int32 i = 0; i < args.Length; i++)
@@ -481,7 +530,11 @@ namespace JinianNet.JNTemplate.Common
 
             return method.Invoke(container, args);
         }
-
+        /// <summary>
+        /// 将对象转换为IEnumerable
+        /// </summary>
+        /// <param name="dataSource">源对象</param>
+        /// <returns>IEnumerable</returns>
         public static IEnumerable ToIEnumerable(Object dataSource)
         {
             IListSource source;

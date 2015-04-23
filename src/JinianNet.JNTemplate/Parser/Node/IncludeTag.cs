@@ -21,9 +21,15 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// INCLUDE标签
+    /// </summary>
     public class IncludeTag : BaseTag
     {
         private Tag path;
+        /// <summary>
+        /// 模板路径
+        /// </summary>
         public Tag Path
         {
             get { return path; }
@@ -45,7 +51,10 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
             return null;
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             Object path = this.Path.Parse(context);

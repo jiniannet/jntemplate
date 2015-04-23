@@ -22,15 +22,25 @@ using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 标签块
+    /// </summary>
     public class BlockTag : BaseTag
     {
         private String text;
+        /// <summary>
+        /// 模板上下文
+        /// </summary>
         public String TemplateContent
         {
             get { return text; }
             set { text = value; }
         }
 
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter writer = new StringWriter())
@@ -40,12 +50,20 @@ namespace JinianNet.JNTemplate.Parser.Node
                 return writer.ToString();
             }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">write</param>
         public override void Parse(TemplateContext context, TextWriter write)
         {
             Render(context, write);
         }
-
+        /// <summary>
+        /// 呈现标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="writer">writer</param>
         protected void Render(TemplateContext context, TextWriter writer)
         {
             if (context == null)

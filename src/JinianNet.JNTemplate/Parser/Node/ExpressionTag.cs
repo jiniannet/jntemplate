@@ -20,8 +20,15 @@ using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 表达式
+    /// </summary>
     public class ExpressionTag : BaseTag
     {
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
             Object[] value = new Object[this.Children.Count];

@@ -20,9 +20,15 @@ using System;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 赋值标签
+    /// </summary>
     public class SetTag : BaseTag
     {
         private String _name;
+        /// <summary>
+        /// 变量名
+        /// </summary>
         public String Name
         {
             get { return _name; }
@@ -30,13 +36,19 @@ namespace JinianNet.JNTemplate.Parser.Node
         }
 
         private Tag _value;
+        /// <summary>
+        /// 值
+        /// </summary>
         public Tag Value
         {
             get { return _value; }
             set { _value = value; }
         }
 
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             Object value = this.Value.Parse(context);
@@ -46,7 +58,11 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
             return null;
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             Parse(context);

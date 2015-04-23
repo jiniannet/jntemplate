@@ -22,9 +22,15 @@ using System.Reflection;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// 函数（方法）标签
+    /// </summary>
     public class FunctaionTag : SimpleTag
     {
         private String name;
+        /// <summary>
+        /// 方法名
+        /// </summary>
         public String Name
         {
             get { return name; }
@@ -56,7 +62,10 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
             return null;
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             Object[] args = new Object[this.Children.Count];
@@ -69,7 +78,11 @@ namespace JinianNet.JNTemplate.Parser.Node
 
             return Excute(context.TempData[this.Name], context, args, argsType);
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="baseValue">baseValue</param>
         public override Object Parse(Object baseValue, TemplateContext context)
         {
             if (baseValue != null)

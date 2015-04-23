@@ -21,15 +21,25 @@ using System.Text;
 
 namespace JinianNet.JNTemplate.Parser.Node
 {
+    /// <summary>
+    /// ELSE if 标签
+    /// </summary>
     public class ElseifTag : BaseTag
     {
+
         private Tag test;
+        /// <summary>
+        /// 条件
+        /// </summary>
         public virtual Tag Test
         {
             get { return test; }
             set { test = value; }
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
             if (this.Children.Count == 1)
@@ -50,6 +60,11 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         }
 
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
 
@@ -60,7 +75,10 @@ namespace JinianNet.JNTemplate.Parser.Node
 
         }
 
-
+        /// <summary>
+        /// 获取布布值
+        /// </summary>
+        /// <param name="context">上下文</param>
         public override Boolean ToBoolean(TemplateContext context)
         {
             return this.Test.ToBoolean(context);
