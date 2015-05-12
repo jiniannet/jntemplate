@@ -15,6 +15,7 @@
 
    Redistributions of source code must retain the above copyright notice
  *****************************************************/
+//#define NEEDFIELD  //如果需要支持字段取值，请取消本行最开始的// 使用BUILD.bat执行生成时忽略本项
 using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Parser.Node;
@@ -36,130 +37,6 @@ namespace JinianNet.JNTemplate.Common
 
         #region EVAL解析
         #region 4.0版本
-
-        ///// <summary>
-        ///// 获取索引值
-        ///// </summary>
-        ///// <param name="container">对象</param>
-        ///// <param name="expr">表达式</param>
-        ///// <returns></returns>
-        //private static Object GetIndexedProperty(Object container, String expr)
-        //{
-        //    if (container == null)
-        //    {
-        //        return null;
-        //        //throw new ArgumentNullException("container");
-        //    }
-        //    if (String.IsNullOrEmpty(expr))
-        //    {
-        //        return null;
-        //        //throw new ArgumentNullException("expr");
-        //    }
-
-        //    Int32 length = expr.IndexOfAny(indexExprStartChars);
-        //    Int32 num = expr.IndexOfAny(indexExprEndChars, length + 1);
-        //    if (((length < 0) || (num < 0)) || (num == (length + 1)))
-        //    {
-        //        return null;
-        //        //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
-        //    }
-
-        //    String propName = null;
-        //    String propIndex = expr.Substring(length + 1, (num - length) - 1).Trim();
-        //    if (length != 0)
-        //    {
-        //        propName = expr.Substring(0, length);
-        //    }
-
-        //    return GetIndexedProperty(container, propName, propIndex);
-
-        //    #region
-        //    //if (container == null)
-        //    //{
-        //    //    return null;
-        //    //    //throw new ArgumentNullException("container");
-        //    //}
-        //    //if (String.IsNullOrEmpty(expr))
-        //    //{
-        //    //    return null;
-        //    //    //throw new ArgumentNullException("expr");
-        //    //}
-        //    //Object obj2 = null;
-        //    //bool flag = false;
-        //    //Int32 length = expr.IndexOfAny(_indexExprStartChars);
-        //    //Int32 num2 = expr.IndexOfAny(_indexExprEndChars, length + 1);
-        //    //if (((length < 0) || (num2 < 0)) || (num2 == (length + 1)))
-        //    //{
-        //    //    return null;
-        //    //    //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
-        //    //}
-        //    //String propName = null;
-        //    //Object obj3 = null;
-        //    //String s = expr.Substring(length + 1, (num2 - length) - 1).Trim();
-        //    //if (length != 0)
-        //    //{
-        //    //    propName = expr.Substring(0, length);
-        //    //}
-        //    //if (s.Length != 0)
-        //    //{
-        //    //    if (((s[0] == '"') && (s[s.Length - 1] == '"')) || ((s[0] == '\'') && (s[s.Length - 1] == '\'')))
-        //    //    {
-        //    //        obj3 = s.Substring(1, s.Length - 2);
-        //    //    }
-        //    //    else if (char.IsDigit(s[0]))
-        //    //    {
-        //    //        Int32 num3;
-        //    //        flag = Int32.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out num3);
-        //    //        if (flag)
-        //    //        {
-        //    //            obj3 = num3;
-        //    //        }
-        //    //        else
-        //    //        {
-        //    //            obj3 = s;
-        //    //        }
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        obj3 = s;
-        //    //    }
-        //    //}
-        //    //if (obj3 == null)
-        //    //{
-        //    //    return null;
-        //    //    //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
-        //    //}
-        //    //Object property = null;
-        //    //if ((propName != null) && (propName.Length != 0))
-        //    //{
-        //    //    property = GetProperty(container, propName);
-        //    //}
-        //    //else
-        //    //{
-        //    //    property = container;
-        //    //}
-        //    //if (property == null)
-        //    //{
-        //    //    return obj2;
-        //    //}
-        //    //Array array = property as Array;
-        //    //if ((array != null) && flag)
-        //    //{
-        //    //    return array.Get((Int32)obj3);
-        //    //}
-        //    //if ((property is IList) && flag)
-        //    //{
-        //    //    return ((IList)property)[(Int32)obj3];
-        //    //}
-        //    //PropertyInfo info = property.GetType().GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { obj3.GetType() }, null);
-        //    //if (info == null)
-        //    //{
-        //    //    return null;
-        //    //    //throw new ArgumentException("DataBinder_No_Indexed_Accessor");//SR.GetString("DataBinder_No_Indexed_Accessor", new Object[] { property.GetType().FullName }));
-        //    //}
-        //    //return info.Get(property, new Object[] { obj3 });
-        //    #endregion
-        //}
 
         /// <summary>
         /// 获取索引值
@@ -188,68 +65,6 @@ namespace JinianNet.JNTemplate.Common
             return info.GetValue(container, new Object[] { propIndex });
         }
 
-        ///// <summary>
-        ///// 获取索引值
-        ///// </summary>
-        ///// <param name="container">原对象</param>
-        ///// <param name="propName">属性名</param>
-        ///// <param name="propIndex">从零开始的索引</param>
-        ///// <returns></returns>
-        //internal static Object GetIndexedProperty(Object container, String propName, String propIndex)
-        //{
-
-        //    Boolean flag = false;
-
-        //    Object value = null;
-
-        //    if (propIndex.Length != 0)
-        //    {
-        //        if (((propIndex[0] == '"') && (propIndex[propIndex.Length - 1] == '"')) || ((propIndex[0] == '\'') && (propIndex[propIndex.Length - 1] == '\'')))
-        //        {
-        //            value = propIndex.Substring(1, propIndex.Length - 2);
-        //        }
-        //        else if (char.IsDigit(propIndex[0]))
-        //        {
-        //            Int32 num;
-        //            flag = Int32.TryParse(propIndex, NumberStyles.Integer, CultureInfo.InvariantCulture, out num);
-        //            if (flag)
-        //            {
-        //                value = num;
-        //            }
-        //            else
-        //            {
-        //                value = propIndex;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            value = propIndex;
-        //        }
-        //    }
-        //    if (value == null)
-        //    {
-        //        return null;
-        //        //throw new ArgumentException("DataBinder_Invalid_Indexed_Expr");//SR.GetString("DataBinder_Invalid_Indexed_Expr", new Object[] { expr }));
-        //    }
-        //    Object property = null;
-
-        //    if ((propName != null) && (propName.Length != 0))
-        //    {
-        //        property = GetProperty(container, propName);
-        //    }
-        //    else
-        //    {
-        //        property = container;
-        //    }
-        //    if (property == null)
-        //    {
-        //        return null;
-        //    }
-
-        //    return GetIndexedProperty(property, flag, value);
-
-        //}
-
         #endregion
 
         #region Property
@@ -271,12 +86,14 @@ namespace JinianNet.JNTemplate.Common
                 {
                     return p.GetValue(container, null);
                 }
+#if NEEDFIELD
                 //取字段
                 FieldInfo f = t.GetField(propName);
                 if (f != null)
                 {
                     return f.GetValue(container);
                 }
+#endif
             }
 
             Int32 index;
@@ -316,20 +133,6 @@ namespace JinianNet.JNTemplate.Common
             return String.Format(format, obj);
         }
 
-        //public static Object Eval(VariableScope container, String expression)
-        //{
-        //    String[] expressionParts = expression.Split(_expressionPartSeparator);
-        //    if (expressionParts.Length > 0)
-        //    {
-        //        if (expressionParts.Length==1)
-        //        {
-        //            return container[expressionParts[0]];
-        //        }
-        //        return Eval(container[expressionParts[0]], expressionParts, 1, expressionParts.Length);
-        //    }
-
-        //    return null;
-        //}
         /// <summary>
         /// 执行表达式
         /// </summary>
@@ -356,69 +159,6 @@ namespace JinianNet.JNTemplate.Common
             String[] expressionParts = expression.Split(expressionPartSeparator);
             return Eval(container, expressionParts);
         }
-
-        //public static Object Eval(Object container, String[] expressionParts)
-        //{
-        //    Object property = container;
-        //    for (Int32 i = 0; (i < expressionParts.Length) && (property != null); i++)
-        //    {
-        //        String propName = expressionParts[i];
-        //        bool isIndexedProperty = false;
-        //        if (propName.IndexOfAny(_indexExprStartChars) >= 0)
-        //        {
-        //            propName = propName.TrimStart('[').TrimEnd(']').Trim('"');
-        //            isIndexedProperty = true;
-        //        }
-
-        //        #region 针对特定类型做处理，加快解析速度
-        //        if (property == null || container == null)
-        //        {
-
-        //        }
-        //        //else if (container is IDictionary)
-        //        //{
-        //        //    property = (container as IDictionary)[propName];
-
-        //        //}
-        //        //else if (container is IList)
-        //        //{
-        //        //    property = (container as IList)[Convert.ToInt32(propName)];
-
-        //        //}
-        //        //else if (container is System.Data.DataRowCollection)
-        //        //{
-        //        //    property = (container as System.Data.DataRowCollection)[Convert.ToInt32(propName)];
-        //        //}
-        //        //else if (container is System.Data.DataRow || container is System.Data.DataRowView)
-        //        //{
-        //        //    System.Data.DataRow dr;
-        //        //    if (container is System.Data.DataRowView)
-        //        //        dr = (container as System.Data.DataRowView).Row;
-        //        //    else
-        //        //        dr = container as System.Data.DataRow;
-
-        //        //    if (ParserRegex.Number.Match(propName).Success)
-        //        //        property = dr[Convert.ToInt32(propName)];
-        //        //    else
-        //        //        property = dr[propName];
-        //        //}
-        //        else
-        //        {
-        //            propName = expressionParts[i];
-        //            if (!isIndexedProperty)
-        //            {
-        //                property = GetProperty(property, propName);
-        //            }
-        //            else
-        //            {
-        //                property = GetIndexedProperty(property, propName);
-        //            }
-        //        }
-        //        #endregion
-
-        //    }
-        //    return property;
-        //}
         #region
         /// <summary>
         /// 执行表达式
@@ -453,45 +193,6 @@ namespace JinianNet.JNTemplate.Common
             return property;
         }
         #endregion
-        ///// <summary>
-        ///// 获取属性值
-        ///// </summary>
-        ///// <param name="container">对象</param>
-        ///// <param name="propName">属性名</param>
-        ///// <returns></returns>
-        //public static Object GetPropertyValue(Object container, String propName)
-        //{
-        //    if (container == null)
-        //    {
-        //        return null;
-        //        //throw new ArgumentNullException("container");
-        //    }
-        //    if (String.IsNullOrEmpty(propName))
-        //    {
-        //        return null;
-        //        //throw new ArgumentNullException("propName");
-        //    }
-        //    //PropertyDescriptor descriptor = GetPropertiesFromCache(container).Find(propName, true);
-
-        //    PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
-        //    if (descriptor == null)
-        //    {
-        //        Object value;
-        //        Int32 num;
-        //        bool flag = Int32.TryParse(propName, NumberStyles.Integer, CultureInfo.InvariantCulture, out num);
-        //        if (flag)
-        //        {
-        //             value= num;
-        //        }
-        //        else
-        //        {
-        //             value= propName;
-        //        }
-        //        return GetIndexedProperty(container, flag, value);
-        //        //throw new HttpException("Property Not Found");//", new Object[] { container.GetType().FullName, propName })
-        //    }
-        //    return descriptor.GetValue(container);
-        //}
 
         #endregion
         #region Method
