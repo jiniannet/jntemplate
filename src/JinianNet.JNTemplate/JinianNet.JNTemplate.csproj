@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildManager.cs" />
+    <Compile Include="Configuration\ITemplateConfiguration.cs" />
     <Compile Include="ContextBase.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="FuncHandler.cs" />
+    <Compile Include="ICachingProvider.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="Common\Calculator.cs" />

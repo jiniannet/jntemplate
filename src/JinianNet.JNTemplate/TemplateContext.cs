@@ -65,12 +65,12 @@ namespace JinianNet.JNTemplate
             get { return Resources.Paths; }
         }
 
-        private bool throwErrors;
+        private Boolean throwErrors;
 
         /// <summary>
         /// 是否抛出异常(默认为true)
         /// </summary>
-        public bool ThrowExceptions
+        public Boolean ThrowExceptions
         {
             get { return throwErrors; }
             set { throwErrors = value; }
