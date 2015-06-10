@@ -572,7 +572,6 @@ namespace JinianNet.JNTemplate.Common
                 post.Push(value.Pop());
             }
             Stack<Object> stack = new Stack<Object>();
-            Operator op;
 
             while (post.Count > 0)
             {
