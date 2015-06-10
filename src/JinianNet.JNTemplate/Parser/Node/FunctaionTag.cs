@@ -73,7 +73,14 @@ namespace JinianNet.JNTemplate.Parser.Node
             for (Int32 i = 0; i < this.Children.Count; i++)
             {
                 args[i] = this.Children[i].Parse(context);
-                argsType[i] = args[i].GetType();
+                if (args[i] != null)
+                {
+                    argsType[i] = args[i].GetType();
+                }
+                else
+                {
+                    argsType[i] = null;
+                }
             }
 
             return Excute(context.TempData[this.Name], context, args, argsType);

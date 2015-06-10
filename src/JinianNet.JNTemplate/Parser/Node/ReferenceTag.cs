@@ -41,6 +41,10 @@ namespace JinianNet.JNTemplate.Parser.Node
                 Object result = this.Children[0].Parse(context);
                 for (Int32 i = 1; i < this.Children.Count; i++)
                 {
+                    if(result==null)
+                    {
+                        return null;
+                    }
                     result = ((SimpleTag)this.Children[i]).Parse(result, context);
                 }
                 return result;
