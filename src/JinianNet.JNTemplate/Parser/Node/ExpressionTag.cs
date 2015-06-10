@@ -35,7 +35,14 @@ namespace JinianNet.JNTemplate.Parser.Node
 
             for (Int32 i = 0; i < this.Children.Count; i++)
             {
-                value[i] = this.Children[i].Parse(context);
+                if (this.Children[i] is TextTag)
+                {
+                    value[i] = Common.OperatorHelpers.Parse(this.Children[i].Parse(context).ToString());
+                }
+                else
+                {
+                    value[i] = this.Children[i].Parse(context);
+                }
             }
 
             Stack<Object> stack = Common.Calculator.ProcessExpression(value);

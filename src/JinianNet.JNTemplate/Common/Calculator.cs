@@ -171,6 +171,10 @@ namespace JinianNet.JNTemplate.Common
                 case "|":
                 case "&":
                 case "&&":
+                case "Or":
+                case "LogicalOr":
+                case "LogicAnd":
+                case "And":
                     return 5;
                 case ">":
                 case ">=":
@@ -178,14 +182,28 @@ namespace JinianNet.JNTemplate.Common
                 case "<=":
                 case "==":
                 case "!=":
+
+                case "GreaterThan":
+                case "GreaterThanOrEqual":
+                case "LessThan":
+                case "LessThanOrEqual":
+                case "Equal":
+                case "NotEqual":
                     return 6;
                 case "+":
                 case "-":
+
+                case "Plus":
+                case "Minus":
                     return 7;
                 case "%":
                 case "*":
+
+                case "Percent":
+                case "Times":
                     return 8;
                 case "/":
+                case "Divided":
                     return 9;
                 default:
                     return 9;
@@ -266,6 +284,7 @@ namespace JinianNet.JNTemplate.Common
             List<Object> result = new List<Object>();
             Int32 j = 0;
             Int32 i;
+            String num;
 
             for (i = 0; i < value.Length; i++)
             {
@@ -280,10 +299,18 @@ namespace JinianNet.JNTemplate.Common
                     case '%':
                         if (j < i)
                         {
-                            result.Add(Double.Parse(value.Substring(j, i - j)));
+                            num = value.Substring(j, i - j);
+                            if (num.IndexOf('.') == -1)
+                            {
+                                result.Add(Int32.Parse(value.Substring(j, i - j)));
+                            }
+                            else
+                            {
+                                result.Add(Double.Parse(value.Substring(j, i - j)));
+                            }
                             j = i;
                         }
-                        result.Add(value[i].ToString());
+                        result.Add(OperatorHelpers.Parse(value[i].ToString()));
                         j++;
                         break;
                 }
@@ -304,7 +331,7 @@ namespace JinianNet.JNTemplate.Common
         public static Stack<Object> ProcessExpression(Object[] value)
         {
             Stack<Object> post = new Stack<Object>();
-            Stack<String> stack = new Stack<String>();
+            Stack<Object> stack = new Stack<Object>();
 
 
             for (Int32 i = 0; i < value.Length; i++)
@@ -321,30 +348,21 @@ namespace JinianNet.JNTemplate.Common
                 }
                 switch (fullName)
                 {
-                    //case "System.Double":
-                    //case "System.Int16":
-                    //case "System.Int32":
-                    //case "System.Int64":
-                    //case "System.UInt16":
-                    //case "System.UInt32":
-                    //case "System.UInt64":
-                    //case "System.Single":
-                    //case "System.Decimal":
-                    //case "System.Boolean":
-                    //case "System.DateTime":
                     default:
                         post.Push(value[i]);
                         break;
-                    case "System.String":
+                    case "JinianNet.JNTemplate.Operator":
                         switch (value[i].ToString())
                         {
                             case "(":
+                            case "LeftParentheses":
                                 stack.Push("(");
                                 break;
                             case ")":
+                            case "RightParentheses":
                                 while (stack.Count > 0)
                                 {
-                                    if (stack.Peek() == "(")
+                                    if (stack.Peek().ToString() == "(")
                                     {
                                         stack.Pop();
                                         break;
@@ -368,15 +386,30 @@ namespace JinianNet.JNTemplate.Common
                             case "<=":
                             case "==":
                             case "!=":
+                            case "Plus":
+                            case "Minus":
+                            case "Times":
+                            case "Percent":
+                            case "Divided":
+                            case "LogicalOr":
+                            case "Or":
+                            case "LogicAnd":
+                            case "And":
+                            case "GreaterThan":
+                            case "GreaterThanOrEqual":
+                            case "LessThan":
+                            case "LessThanOrEqual":
+                            case "Equal":
+                            case "NotEqual":
                                 if (stack.Count == 0)
                                 {
-                                    stack.Push(value[i].ToString());
+                                    stack.Push(value[i]);
                                 }
                                 else
                                 {
-                                    String eX = stack.Peek();
-                                    String eY = value[i].ToString();
-                                    if (GetPriority(eY) >= GetPriority(eX))
+                                    Object eX = stack.Peek();
+                                    Object eY = value[i];
+                                    if (GetPriority(eY.ToString()) >= GetPriority(eX.ToString()))
                                     {
                                         stack.Push(eY);
                                     }
@@ -384,7 +417,7 @@ namespace JinianNet.JNTemplate.Common
                                     {
                                         while (stack.Count > 0)
                                         {
-                                            if (GetPriority(eX) > GetPriority(eY) && stack.Peek() != "(")// && stack.Peek() != '('
+                                            if (GetPriority(eX.ToString()) > GetPriority(eY.ToString()) && stack.Peek().ToString() != "(")// && stack.Peek() != '('
                                             {
                                                 post.Push(stack.Pop());
                                             }
@@ -539,15 +572,16 @@ namespace JinianNet.JNTemplate.Common
                 post.Push(value.Pop());
             }
             Stack<Object> stack = new Stack<Object>();
+            Operator op;
 
             while (post.Count > 0)
             {
                 Object obj = post.Pop();
-                if (IsOperator((obj ?? "").ToString()))
+                if (obj != null && obj.GetType().FullName == "JinianNet.JNTemplate.Operator")
                 {
                     Object y = stack.Pop();
                     Object x = stack.Pop();
-                    stack.Push(Calculate(x, y, obj.ToString()));
+                    stack.Push(Calculate(x, y, OperatorHelpers.ToString((Operator)obj)));
                 }
                 else
                 {
@@ -1005,5 +1039,6 @@ namespace JinianNet.JNTemplate.Common
         */
         #endregion
         #endregion
+
     }
 }
