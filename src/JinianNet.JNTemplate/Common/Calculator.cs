@@ -540,6 +540,8 @@ namespace JinianNet.JNTemplate.Common
                     return Equals(x, y, tX, tY);
                 case "!=":
                     return !Equals(x, y, tX, tY);
+                case "+":
+                    return String.Concat(x.ToString(),y.ToString());
                 default:
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Object\" and \"Object\""));
             }
