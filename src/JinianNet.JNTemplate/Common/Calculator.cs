@@ -252,7 +252,7 @@ namespace JinianNet.JNTemplate.Common
         //}
 
 
-        private static bool IsNumber(String fullName)
+        private static Boolean IsNumber(String fullName)
         {
             switch (fullName)
             {

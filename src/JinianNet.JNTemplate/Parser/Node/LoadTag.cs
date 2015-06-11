@@ -63,11 +63,14 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 if (String.IsNullOrEmpty(context.CurrentPath))
                 {
-                    this.TemplateContent = Resources.LoadResource(path.ToString(), context.Charset);
+                    this.TemplateContent = Resources.LoadResource(context.Config.Paths,path.ToString(),context.Charset);
                 }
                 else
                 {
-                    this.TemplateContent = Resources.LoadResource(new String[] { context.CurrentPath }, path.ToString(), context.Charset);
+                    this.TemplateContent = Resources.LoadResource(
+                        Resources.MergerPaths(context.Config.Paths,context.CurrentPath), 
+                        path.ToString(), 
+                        context.Charset);
                 }
             }
         }

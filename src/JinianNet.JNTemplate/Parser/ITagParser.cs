@@ -258,9 +258,9 @@ namespace JinianNet.JNTemplate.Parser
             return null;
         }
 
-        public bool HasDot(TokenCollection tc)
+        public Boolean HasDot(TokenCollection tc)
         {
-            int pos = 0;
+            Int32 pos = 0;
             for (Int32 i = 0; i < tc.Count; i++)
             {
                 switch (tc[i].TokenKind)

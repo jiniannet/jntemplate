@@ -19,24 +19,50 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JinianNet.JNTemplate.Parser;
+using JinianNet.JNTemplate.Configuration;
 
 namespace JinianNet.JNTemplate
 {
     /// <summary>
     /// Context
     /// </summary>
-    public class TemplateContext : ContextBase
+    public class TemplateContext : ICloneable
     {
+        private VariableScope variableScope;
+        private ITemplateConfiguration config;
+        private String currentPath;
+        private Encoding charset;
+        private Boolean throwErrors;
+
         /// <summary>
-        /// Context
+        /// 模板上下文
         /// </summary>
         public TemplateContext()
+            : this(new DefaultConfiguration())
+        {
+
+        }
+
+        /// <summary>
+        /// 模板上下文
+        /// </summary>
+        /// <param name="config"></param>
+        public TemplateContext(ITemplateConfiguration config)
         {
             this.Charset = System.Text.Encoding.Default;
             this.ThrowExceptions = true;
+            this.config = config;
         }
 
-        private String currentPath;
+        /// <summary>
+        /// 模板数据
+        /// </summary>
+        public VariableScope TempData
+        {
+            get { return variableScope; }
+            set { variableScope = value; }
+        }
+
         /// <summary>
         /// 当前资源路径
         /// </summary>
@@ -46,7 +72,6 @@ namespace JinianNet.JNTemplate
             set { currentPath = value; }
         }
 
-        private Encoding charset;
         /// <summary>
         /// 当前资源编码
         /// </summary>
@@ -59,13 +84,11 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板资源路径
         /// </summary>
-        [Obsolete("请使用Resources.Paths 来替代本对象")]
+        [Obsolete("请使用Config.Paths 来替代本对象")]
         public ICollection<String> Paths
         {
-            get { return Resources.Paths; }
+            get { return Config.Paths; }
         }
-
-        private Boolean throwErrors;
 
         /// <summary>
         /// 是否抛出异常(默认为true)
@@ -74,6 +97,15 @@ namespace JinianNet.JNTemplate
         {
             get { return throwErrors; }
             set { throwErrors = value; }
+        }
+
+        /// <summary>
+        /// 模板配置数据
+        /// </summary>
+        public ITemplateConfiguration Config
+        {
+            get { return config; }
+            set { config = value; }
         }
 
         //public virtual System.Exception[] AllErrors
@@ -135,5 +167,17 @@ namespace JinianNet.JNTemplate
             ctx.ThrowExceptions = context.ThrowExceptions;
             return ctx;
         }
+
+        #region ICloneable 成员
+        /// <summary>
+        /// 浅克隆当前实例
+        /// </summary>
+        /// <returns></returns>
+        public Object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        #endregion
     }
 }

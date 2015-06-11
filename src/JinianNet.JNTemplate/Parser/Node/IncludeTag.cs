@@ -36,17 +36,20 @@ namespace JinianNet.JNTemplate.Parser.Node
             set { path = value; }
         }
 
-        private String LoadResource(Object path, TemplateContext context)
+        protected String LoadResource(Object path, TemplateContext context)
         {
             if (path != null)
             {
                 if (String.IsNullOrEmpty(context.CurrentPath))
                 {
-                    return Resources.LoadResource(path.ToString(), context.Charset);
+                    return Resources.LoadResource(context.Config.Paths, path.ToString(), context.Charset);
                 }
                 else
                 {
-                    return Resources.LoadResource(new String[] { context.CurrentPath }, path.ToString(), context.Charset);
+                    return Resources.LoadResource(
+                        Resources.MergerPaths(context.Config.Paths, context.CurrentPath),
+                        path.ToString(),
+                        context.Charset);
                 }
             }
             return null;
@@ -59,7 +62,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             Object path = this.Path.Parse(context);
             return LoadResource(path.ToString(), context);
-
         }
 
     }

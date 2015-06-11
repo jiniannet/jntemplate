@@ -60,13 +60,13 @@ namespace JinianNet.JNTemplate.Parser.Node
         ///// 输出STRING
         ///// </summary>
         ///// <returns></returns>
-        //public override string ToString()
+        //public override String ToString()
         //{
         //    if (this.Value != null)
         //    {
         //        return this.Value.ToString();
         //    }
-        //    return string.Empty;
+        //    return String.Empty;
         //}
     }
 }

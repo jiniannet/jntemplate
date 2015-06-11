@@ -28,28 +28,20 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Resources
     {
-        private readonly static Collection<String> collection = new Collection<string>();
         /// <summary>
-        /// 资源路径
+        /// 合并集合
         /// </summary>
-        public static Collection<String> Paths
+        /// <param name="oldPaths">原路径集合</param>
+        /// <param name="newPaths">待合并的路径集合</param>
+        /// <returns>新的路径集合</returns>
+        public static IEnumerable<String> MergerPaths(IEnumerable<String> oldPaths, params String[] newPaths)
         {
-            get
-            {
-                return collection;
-            }
+            List<String> list = new List<String>();
+            list.AddRange(newPaths);
+            list.AddRange(oldPaths);
+            return list;
         }
 
-        /// <summary>
-        /// 查找指定文件
-        /// </summary>
-        /// <param name="filename">文件名</param>
-        /// <param name="fullPath">查找结果</param>
-        /// <returns></returns>
-        public static Int32 FindPath(String filename, out String fullPath)
-        {
-            return FindPath(Paths, filename, out fullPath);
-        }
         /// <summary>
         /// 查找指定文件
         /// </summary>
@@ -57,7 +49,7 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param>
         /// <param name="fullPath">查找结果：完整路径</param>
         /// <returns></returns>
-        private static Int32 FindPath(IEnumerable<String> paths, String filename, out String fullPath)
+        public static Int32 FindPath(IEnumerable<String> paths, String filename, out String fullPath)
         {
             //filename 允许单纯的文件名或相对路径
             fullPath = null;
@@ -85,17 +77,6 @@ namespace JinianNet.JNTemplate
 
             }
             return -1;
-        }
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="filename">文件名</param>
-        /// <param name="encoding">编码</param>
-        /// <returns></returns>
-        public static String LoadResource(String filename, Encoding encoding)
-        {
-            return LoadResource(Paths, filename, encoding);
         }
 
         /// <summary>
@@ -136,7 +117,7 @@ namespace JinianNet.JNTemplate
             if (String.IsNullOrEmpty(filename) || filename.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
                 return null;
 
-            List<String> values = new List<string>(filename.Split('/'));
+            List<String> values = new List<String>(filename.Split('/'));
 
             for (Int32 i = 0; i < values.Count; i++)
             {

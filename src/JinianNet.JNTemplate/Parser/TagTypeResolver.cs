@@ -28,13 +28,18 @@ namespace JinianNet.JNTemplate.Parser
     public class TagTypeResolver : ITagTypeResolver,ICollection<ITagParser>
     {
         private readonly List<ITagParser> collection;
-
+        /// <summary>
+        /// 标签类型分析器
+        /// </summary>
         public TagTypeResolver()
             : this(new ITagParser[0])
         {
             this.collection = new List<ITagParser>();
         }
-
+        /// <summary>
+        /// 标签类型分析器
+        /// </summary>
+        /// <param name="parsers">各类标签分析器集合</param>
         public TagTypeResolver(IEnumerable<ITagParser> parsers)
         {
             this.collection = new List<ITagParser>(parsers);
@@ -90,7 +95,7 @@ namespace JinianNet.JNTemplate.Parser
         }
 
         /// <summary>
-        /// 如果在 System.Collections.Generic.List<T> 中找到 item，则为 true，否则为 false。
+        /// 如果在集合中找到 item，则为 true，否则为 false。
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -98,12 +103,18 @@ namespace JinianNet.JNTemplate.Parser
         {
             return this.collection.Contains(item);
         }
-
-        public void CopyTo(ITagParser[] array, int arrayIndex)
+        /// <summary>
+        /// 将整个 ITagParser[] 复制到兼容的一维数组中，从目标数组的指定索引位置开始放置。
+        /// </summary>
+        /// <param name="array">待复制的集合</param>
+        /// <param name="arrayIndex">开始位置</param>
+        public void CopyTo(ITagParser[] array, Int32 arrayIndex)
         {
             this.collection.CopyTo(array, arrayIndex);
         }
-
+        /// <summary>
+        /// 返回集合个数
+        /// </summary>
         public Int32 Count
         {
             get
@@ -111,7 +122,9 @@ namespace JinianNet.JNTemplate.Parser
                 return this.collection.Count;
             }
         }
-
+        /// <summary>
+        /// 集合是否只读
+        /// </summary>
         public Boolean IsReadOnly
         {
             get
@@ -119,23 +132,37 @@ namespace JinianNet.JNTemplate.Parser
                 return false;
             }
         }
-
+        /// <summary>
+        /// 获取或设置集合的指定索引位置的值
+        /// </summary>
+        /// <param name="index">索引</param>
+        /// <returns>ITagParser</returns>
         public ITagParser this[Int32 index]
         {
             set { this.collection[index] = value; }
             get { return this.collection[index]; }
         }
-
+        /// <summary>
+        /// 从 分析器中 中移除特定对象的第一个匹配项。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public Boolean Remove(ITagParser item)
         {
             return this.collection.Remove(item);
         }
-
+        /// <summary>
+        /// 返回循环访问 ITagParser的枚举器。
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<ITagParser> GetEnumerator()
         {
             return this.collection.GetEnumerator();
         }
-
+        /// <summary>
+        /// 返回循环访问 ITagParser的枚举器。
+        /// </summary>
+        /// <returns></returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             for (Int32 i = 0; i < Count; i++)

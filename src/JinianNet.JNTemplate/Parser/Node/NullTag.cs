@@ -37,16 +37,16 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// 获取标签的BOOLEAN
         /// </summary>
         /// <param name="context">上下文</param>
-        public override bool ToBoolean(TemplateContext context)
+        public override Boolean ToBoolean(TemplateContext context)
         {
             return false;
         }
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>
-        public override string ToString()
+        public override String ToString()
         {
-            return string.Empty;
+            return String.Empty;
         }
     }
 }

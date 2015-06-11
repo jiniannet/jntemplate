@@ -175,7 +175,7 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public bool Remove(String key)
+        public Boolean Remove(String key)
         {
             return this.dic.Remove(key);
         }

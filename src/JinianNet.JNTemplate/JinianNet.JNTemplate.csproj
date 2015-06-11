@@ -56,7 +56,6 @@
     <Compile Include="Common\OperatorHelpers.cs" />
     <Compile Include="Configuration\DefaultConfiguration.cs" />
     <Compile Include="Configuration\ITemplateConfiguration.cs" />
-    <Compile Include="ContextBase.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
     <Compile Include="Exception\CompileException.cs" />

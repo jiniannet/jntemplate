@@ -103,11 +103,11 @@ namespace JinianNet.JNTemplate.Parser
 
 
 
-        private bool Next()
+        private Boolean Next()
         {
             return Next(1);
         }
-        private bool Next(Int32 i)
+        private Boolean Next(Int32 i)
         {
             if (this.scanner.Next(i))
             {
@@ -118,7 +118,7 @@ namespace JinianNet.JNTemplate.Parser
             return false;
         }
 
-        private bool IsTagStart()
+        private Boolean IsTagStart()
         {
             if (this.scanner.Read() == '$')
             {
@@ -140,7 +140,7 @@ namespace JinianNet.JNTemplate.Parser
             return false;
         }
 
-        private bool IsTagEnd()
+        private Boolean IsTagEnd()
         {
             if (this.pos.Count == 1)
             {

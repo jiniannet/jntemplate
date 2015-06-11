@@ -46,7 +46,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>
-        public override string ToString()
+        public override String ToString()
         {
             return this.FirstToken.ToString();
         }

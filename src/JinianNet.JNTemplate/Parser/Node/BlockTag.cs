@@ -66,22 +66,32 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="writer">writer</param>
         protected void Render(TemplateContext context, TextWriter writer)
         {
+            //缓存功能，待添加
             if (context == null)
             {
                 writer.Write(this.TemplateContent);
                 return;
             }
+            Tag[] collection;
 
             if (!String.IsNullOrEmpty(this.TemplateContent))
             {
                 TemplateLexer lexer = new TemplateLexer(this.TemplateContent);
-                TemplateParser parser = new TemplateParser(lexer.Parse());
+                TemplateParser parser = new TemplateParser(lexer.Parse(), context.Config.Resolver);
+                collection = parser.ToArray();
+            }
+            else
+            {
+                collection = new Tag[0];
+            }
 
-                while (parser.MoveNext())
+            if (collection.Length > 0)
+            {
+                for (Int32 i = 0; i < collection.Length; i++)
                 {
                     try
                     {
-                        parser.Current.Parse(context, writer);
+                        collection[i].Parse(context, writer);
                     }
                     catch (Exception.TemplateException e)
                     {
@@ -92,7 +102,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                         else
                         {
                             context.AddError(e);
-                            writer.Write(parser.Current.ToString());
+                            writer.Write(collection[i].ToString());
                         }
                     }
                     catch (System.Exception e)
@@ -107,11 +117,10 @@ namespace JinianNet.JNTemplate.Parser.Node
                         else
                         {
                             context.AddError(ex);
-                            writer.Write(parser.Current.ToString());
+                            writer.Write(collection[i].ToString());
                         }
                     }
                 }
-
             }
         }
     }

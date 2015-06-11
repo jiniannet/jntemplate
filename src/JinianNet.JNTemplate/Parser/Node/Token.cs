@@ -111,7 +111,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(Token other)
+        public Int32 CompareTo(Token other)
         {
             if (this.BeginLine > other.BeginLine)
                 return 1;

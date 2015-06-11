@@ -96,6 +96,41 @@ namespace JinianNet.JNTemplate.Common
 #endif
             }
 
+            /*
+if (propName.IndexOfAny(indexExprStartChars) < 0)
+            {
+#if NET20
+                Type t = container.GetType();
+                PropertyInfo p = t.GetProperty(propName);
+                //取属性
+                if (p != null)
+                {
+                    return p.GetValue(container, null);
+                }
+#if NEEDFIELD
+                //取字段
+                FieldInfo f = t.GetField(propName);
+                if (f != null)
+                {
+                    return f.GetValue(container);
+                }
+#endif
+#else
+                System.Linq.Expressions.MemberExpression exp;
+#if NEEDFIELD
+                exp = System.Linq.Expressions.Expression.PropertyOrField(System.Linq.Expressions.Expression.Constant(container), propName);
+#else
+                exp = System.Linq.Expressions.Expression.Property(System.Linq.Expressions.Expression.Constant(container), propName);
+#endif
+                if (exp != null)
+                {
+                    return System.Linq.Expressions.Expression.Lambda(exp).Compile().DynamicInvoke();
+                }
+#endif
+
+            }
+             */
+
             Int32 index;
             if (Char.IsDigit(propName[0]) && Int32.TryParse(propName, out index))
             {

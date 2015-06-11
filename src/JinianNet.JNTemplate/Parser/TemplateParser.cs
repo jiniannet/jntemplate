@@ -38,19 +38,19 @@ namespace JinianNet.JNTemplate.Parser
         private Tag tag;//当前标签
         private Token[] tokens;//tokens列表
         private Int32 index;//当前索引
-        private static List<ITagParser> parsers;
+        private ITagTypeResolver resolver;
         #endregion
 
         #region ctox
         /// <summary>
         /// 模板分模器
         /// </summary>
-        /// <param name="ts"></param>
-        public TemplateParser(Token[] ts)
+        /// <param name="ts">TOKEN集合</param>
+        /// <param name="TagTypeResolver">标签类型分析器</param>
+        public TemplateParser(Token[] ts, ITagTypeResolver TagTypeResolver)
         {
-            parsers = new List<ITagParser>();
-            //parsers.Add(new TestParser());
             this.tokens = ts;
+            this.resolver = TagTypeResolver;
             Reset();
         }
         #endregion
@@ -75,7 +75,7 @@ namespace JinianNet.JNTemplate.Parser
         /// 读取下一个标签
         /// </summary>
         /// <returns></returns>
-        public bool MoveNext()
+        public Boolean MoveNext()
         {
             if (this.index < this.tokens.Length)
             {
@@ -165,7 +165,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (tc == null || tc.Count == 0)
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
-            return Parser.Parse(this, tc);
+            return resolver.Resolver(this, tc);
         }
 
 
@@ -219,8 +219,22 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public void Dispose()
         {
-            parsers.Clear();
+
         }
         #endregion
+
+        /// <summary>
+        /// 将解析结果复制到数组中
+        /// </summary>
+        /// <returns>Tag[]</returns>
+        public Tag[] ToArray()
+        {
+            List<Tag> arr = new List<Tag>();
+            while (MoveNext())
+            {
+                arr.Add(Current);
+            }
+            return arr.ToArray();
+        }
     }
 }

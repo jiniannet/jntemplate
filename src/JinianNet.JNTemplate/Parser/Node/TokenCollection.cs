@@ -103,7 +103,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// 获取所有TOKEN的字符串值
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
+        public override String ToString()
         {
             //return String.Concat<Token>(this.list); //不兼容2.0
             StringBuilder sb = new StringBuilder();
