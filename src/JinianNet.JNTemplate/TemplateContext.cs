@@ -1,20 +1,7 @@
-/*****************************************************
-   Copyright (c) 2013-2015 jiniannet (http://www.jiniannet.com)
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
-   Redistributions of source code must retain the above copyright notice
- *****************************************************/
+/********************************************************************************
+ Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
+ Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+ ********************************************************************************/
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,7 +22,7 @@ namespace JinianNet.JNTemplate
         private Boolean throwErrors;
 
         /// <summary>
-        /// Ä£°åÉÏÏÂÎÄ
+        /// æ¨¡æ¿ä¸Šä¸‹æ–‡
         /// </summary>
         public TemplateContext()
             : this(new DefaultConfiguration())
@@ -44,7 +31,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Ä£°åÉÏÏÂÎÄ
+        /// æ¨¡æ¿ä¸Šä¸‹æ–‡
         /// </summary>
         /// <param name="config"></param>
         public TemplateContext(ITemplateConfiguration config)
@@ -55,7 +42,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Ä£°åÊı¾İ
+        /// æ¨¡æ¿æ•°æ®
         /// </summary>
         public VariableScope TempData
         {
@@ -64,7 +51,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// µ±Ç°×ÊÔ´Â·¾¶
+        /// å½“å‰èµ„æºè·¯å¾„
         /// </summary>
         public String CurrentPath
         {
@@ -73,7 +60,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// µ±Ç°×ÊÔ´±àÂë
+        /// å½“å‰èµ„æºç¼–ç 
         /// </summary>
         public Encoding Charset
         {
@@ -82,16 +69,16 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Ä£°å×ÊÔ´Â·¾¶
+        /// æ¨¡æ¿èµ„æºè·¯å¾„
         /// </summary>
-        [Obsolete("ÇëÊ¹ÓÃConfig.Paths À´Ìæ´ú±¾¶ÔÏó")]
+        [Obsolete("è¯·ä½¿ç”¨Config.Paths æ¥æ›¿ä»£æœ¬å¯¹è±¡")]
         public ICollection<String> Paths
         {
             get { return Config.Paths; }
         }
 
         /// <summary>
-        /// ÊÇ·ñÅ×³öÒì³£(Ä¬ÈÏÎªtrue)
+        /// æ˜¯å¦æŠ›å‡ºå¼‚å¸¸(é»˜è®¤ä¸ºtrue)
         /// </summary>
         public Boolean ThrowExceptions
         {
@@ -100,7 +87,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Ä£°åÅäÖÃÊı¾İ
+        /// æ¨¡æ¿é…ç½®æ•°æ®
         /// </summary>
         public ITemplateConfiguration Config
         {
@@ -112,12 +99,12 @@ namespace JinianNet.JNTemplate
         //{
         //    get
         //    {
-        //        return null;       //¹¦ÄÜÔİÎ´ÊµÏÖ
+        //        return null;       //åŠŸèƒ½æš‚æœªå®ç°
         //    }
         //}
 
         ///// <summary>
-        ///// »ñÈ¡µ±Ç°µÚÒ»¸öÒì³£ĞÅÏ¢
+        ///// è·å–å½“å‰ç¬¬ä¸€ä¸ªå¼‚å¸¸ä¿¡æ¯
         ///// </summary>
         //public virtual System.Exception Error
         //{
@@ -133,24 +120,24 @@ namespace JinianNet.JNTemplate
         //}
 
         /// <summary>
-        /// ½«Òì³£Ìí¼Óµ½µ±Ç° Òì³£¼¯ºÏÖĞ¡£
+        /// å°†å¼‚å¸¸æ·»åŠ åˆ°å½“å‰ å¼‚å¸¸é›†åˆä¸­ã€‚
         /// </summary>
-        /// <param name="e">Òì³£</param>
+        /// <param name="e">å¼‚å¸¸</param>
         public void AddError(System.Exception e)
         {
-            //¹¦ÄÜÔİÎ´ÊµÏÖ
+            //åŠŸèƒ½æš‚æœªå®ç°
         }
 
         /// <summary>
-        /// Çå³ıËùÓĞÒì³£
+        /// æ¸…é™¤æ‰€æœ‰å¼‚å¸¸
         /// </summary>
         public void ClearError()
         {
-            //¹¦ÄÜÔİÎ´ÊµÏÖ
+            //åŠŸèƒ½æš‚æœªå®ç°
         }
 
         /// <summary>
-        /// ´ÓÖ¸¶¨TemplateContext´´½¨Ò»¸öÀàËÆµÄÊµÀı
+        /// ä»æŒ‡å®šTemplateContextåˆ›å»ºä¸€ä¸ªç±»ä¼¼çš„å®ä¾‹
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
@@ -168,9 +155,9 @@ namespace JinianNet.JNTemplate
             return ctx;
         }
 
-        #region ICloneable ³ÉÔ±
+        #region ICloneable æˆå‘˜
         /// <summary>
-        /// Ç³¿ËÂ¡µ±Ç°ÊµÀı
+        /// æµ…å…‹éš†å½“å‰å®ä¾‹
         /// </summary>
         /// <returns></returns>
         public Object Clone()
