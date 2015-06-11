@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="BuildManager.cs" />
     <Compile Include="Common\OperatorHelpers.cs" />
+    <Compile Include="Configuration\DefaultConfiguration.cs" />
     <Compile Include="Configuration\ITemplateConfiguration.cs" />
     <Compile Include="ContextBase.cs" />
     <Compile Include="Engine.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="FuncHandler.cs" />
-    <Compile Include="ICachingProvider.cs" />
+    <Compile Include="Caching\ICachingProvider.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="Common\Calculator.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Parser\IfParser.cs" />
     <Compile Include="Parser\IncludeParser.cs" />
     <Compile Include="Parser\ITagParser.cs" />
+    <Compile Include="Parser\ITagTypeResolver.cs" />
     <Compile Include="Parser\LoadParser.cs" />
     <Compile Include="Parser\Node\SimpleTag.cs" />
     <Compile Include="Parser\Node\TypeTag.cs" />
@@ -108,7 +110,7 @@
     <Compile Include="Parser\Node\TokenCollection.cs" />
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\NumberParser.cs" />
-    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\TagTypeResolver.cs" />
     <Compile Include="Common\ReflectionHelpers.cs" />
     <Compile Include="Common\ParserHelpers.cs" />
     <Compile Include="Parser\SetParser.cs" />

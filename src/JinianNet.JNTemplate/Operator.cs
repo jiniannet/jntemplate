@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// 操作符
+    /// </summary>
     public enum Operator
     {
         /// <summary>

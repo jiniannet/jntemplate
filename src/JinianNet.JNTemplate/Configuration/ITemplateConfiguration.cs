@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JinianNet.JNTemplate.Caching;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -21,13 +22,17 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         Char TagFlag {get;}
         /// <summary>
-        /// 缓存Provider
+        /// 缓存提供器
         /// </summary>
-        ICachingProvider CachingProvider { get; set; }
+        ICache CachingProvider { get; }
         /// <summary>
         /// 是否抛出异常
         /// </summary>
-        Boolean ThrowExceptions { get; set; }
+        Boolean ThrowExceptions { get; }
 
+        /// <summary>
+        /// 标签分析器
+        /// </summary>
+        Parser.ITagTypeResolver Resolver { get; }
     }
 }
