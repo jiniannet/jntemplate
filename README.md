@@ -45,6 +45,7 @@ JNTemplate帮助
 1. 开源协议：[https://github.com/jiniannet/jntemplate/blob/master/License.txt](https://github.com/jiniannet/jntemplate/blob/master/License.txt)
 2. 开源主页：[https://github.com/jiniannet/jntemplate/](https://github.com/jiniannet/jntemplate/)
 3. 官方网站：[http://www.jiniannet.com](http://www.jiniannet.com)
+4. 国内代码库：[http://git.oschina.net/jiniannet/jntemplate](http://git.oschina.net/jiniannet/jntemplate)
 
 ### 联系方式：
 1. Email:i@jiniannet.com
