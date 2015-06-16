@@ -15,12 +15,12 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestSet()
         {
-            var templateContent = "$set(n=868)\r\n${\"result:\"+n.ToString()}";
+            var templateContent = "$set(aGroupName = \"Begin\")$aGroupName";
             var template = new Template(templateContent);
 
             var render = template.Render();
             
-            Assert.AreEqual("\r\nresult:868", render);
+            Assert.AreEqual("Begin", render);
         }
 
 

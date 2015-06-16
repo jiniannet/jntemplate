@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate
         /// 模板上下文
         /// </summary>
         public TemplateContext()
-            : this(new DefaultConfiguration())
+            : this(new DefaultConfiguration(),new VariableScope())
         {
 
         }
@@ -34,11 +34,21 @@ namespace JinianNet.JNTemplate
         /// 模板上下文
         /// </summary>
         /// <param name="config"></param>
-        public TemplateContext(ITemplateConfiguration config)
+        public TemplateContext(ITemplateConfiguration config,VariableScope data)
         {
+            if (config == null)
+            {
+                throw new ArgumentException("config");
+            }
+
+            if (data == null)
+            {
+                throw new ArgumentException("data");
+            }
             this.Charset = System.Text.Encoding.Default;
             this.ThrowExceptions = true;
             this.config = config;
+            this.variableScope = data;
         }
 
         /// <summary>
@@ -152,6 +162,7 @@ namespace JinianNet.JNTemplate
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
+            ctx.Config = context.Config;
             return ctx;
         }
 
