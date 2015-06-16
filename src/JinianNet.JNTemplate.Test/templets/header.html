@@ -1,0 +1,15 @@
+﻿<div class="header">
+    <div class="topbar wrapper">
+            <a href="/Login.aspx">登录</a> <a href="/Register.aspx">注册</a>
+    </div>
+    <div class="head-hd"></div>
+    <div class="nav">
+      <ul class="wrapper">
+        <li class="active"><a href="/default.aspx">首页</a></li>
+        $foreach(row in func.GetProductList())
+        <li><a href="$func.GetProductUrl(row)">$row.Title</a></li>
+        $end
+        <li><a href="/Support.aspx">服务支持</a></li>
+      </ul>
+    </div>
+</div>

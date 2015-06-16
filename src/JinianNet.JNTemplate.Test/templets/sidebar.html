@@ -1,0 +1,32 @@
+﻿    $set(list=func.GetCategoryList(3))
+    $set(id=func.GetInt("4"))
+    $set(pro_list=func.GetProductList())
+        <div class="help-search">
+        快速帮助:
+        <select id="SearchProduct">
+        $foreach(row in pro_list)
+        <option value="$row.BasisId">$row.Title</option>
+        $end
+        </select>
+        <input type="text" value="" id="SearchKey" />
+        <button class="btn btn-success" id="btnSupportSearch">搜索</button>
+        </div>
+        <div class="help-sidebar">
+            $foreach(row in pro_list)
+            $if(id==row.BasisId)
+            <dl class="activate">
+                <dt><a href="/Support.aspx?product=$row.BasisId">$row.Title</a></dt>
+                $foreach(node in list)
+                <dd><a href="/Category/${node.EnglishName}.aspx?product=$row.BasisId">$node.CategoryName</a></dd>
+                $end
+            </dl>
+            $else
+            <dl>
+                <dt><a href="/Support.aspx?product=$row.BasisId">$row.Title</a></dt>
+                $foreach(node in list)
+                <dd><a href="/Category/${node.EnglishName}.aspx?product=$row.BasisId">$node.CategoryName</a></dd>
+                $end
+            </dl>
+            $end
+            $end
+        </div>
