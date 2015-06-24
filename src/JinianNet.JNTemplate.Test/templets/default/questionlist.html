@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>$Site.Title</title>
+    $load("meta.html")
+</head>
+
+<body role="document">
+    $load("header.html")
+
+    $set(product = func.GetProductItem("4"))
+
+    <div class="wrapper">
+        $load("sidebar.html")
+
+        $set(type=func.GetDefaultInt("",1))
+        <div class="help-hd">
+            <div class="hd-mod">
+                <h1>$product.Title</h1>
+                <dl>
+                    <dt>功能模块：</dt>
+                    $foreach(row in func.GetProductModule(id))
+                    <dd><a href='${func.GetRequestUrl("mod")}${row.ProductModuleId}'>$row.ModuleName</a></dd>
+                    $end
+                </dl>
+            </div>
+            <div class="hd-tbl">
+                <ul class="hd-tbl-head" id="tblHead">
+                    <li><a href="?tag=1">热门问题</a></li>
+                    <li><a href="?tag=2">最新推荐</a></li>
+                    <li><a href="?tag=3">最新提问</a></li>
+                </ul>
+
+                $set(list=func.GetHelpList(product.CategoryId,id,0,type))
+                <div class="help-items">
+                    <ul>
+                        $foreach(row in list)
+                        <li><a href="$func.GetHelpUrl(row)">$row.Title</a></li>
+                        $end
+                    </ul>
+                </div>
+
+            </div>
+            <div class="aspnet-pager">
+                $func.GetPager()
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+
+    $load("footer.html")
+    <script type="text/javascript">
+        (function () {
+            var id = '$func.Get("1")';
+            if (id === "1" || id === "2" || id === "3") {
+                jQuery("#tblHead li").eq(parseInt(id) - 1).addClass("activate");
+            } else {
+                jQuery("#tblHead li").eq(0).addClass("activate");
+            }
+        })();
+    </script>
+</body>
+</html>

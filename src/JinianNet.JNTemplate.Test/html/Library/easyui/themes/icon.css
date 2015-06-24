@@ -1,0 +1,281 @@
+.icon-blank{
+	background:url('icons/blank.gif') no-repeat center center;
+}
+.icon-add{
+	background:url('icons/edit_add.png') no-repeat center center;
+}
+.icon-edit{
+	background:url('icons/pencil.png') no-repeat center center;
+}
+.icon-remove{
+	background:url('icons/edit_remove.png') no-repeat center center;
+}
+.icon-save{
+	background:url('icons/filesave.png') no-repeat center center;
+}
+.icon-cut{
+	background:url('icons/cut.png') no-repeat center center;
+}
+.icon-ok{
+	background:url('icons/ok.png') no-repeat center center;
+}
+.icon-no{
+	background:url('icons/no.png') no-repeat center center;
+}
+.icon-cancel{
+	background:url('icons/cancel.png') no-repeat center center;
+}
+.icon-reload{
+	background:url('icons/reload.png') no-repeat center center;
+}
+.icon-search{
+	background:url('icons/search.png') no-repeat center center;
+}
+.icon-print{
+	background:url('icons/print.png') no-repeat center center;
+}
+.icon-help{
+	background:url('icons/help.png') no-repeat center center;
+}
+.icon-undo{
+	background:url('icons/undo.png') no-repeat center center;
+}
+.icon-redo{
+	background:url('icons/redo.png') no-repeat center center;
+}
+.icon-back{
+	background:url('icons/back.png') no-repeat center center;
+}
+.icon-sum{
+	background:url('icons/sum.png') no-repeat center center;
+}
+.icon-tip{
+	background:url('icons/tip.png') no-repeat center center;
+}
+
+.icon-mini-add{
+	background:url('icons/mini_add.png') no-repeat center center;
+}
+.icon-mini-edit{
+	background:url('icons/mini_edit.png') no-repeat center center;
+}
+.icon-mini-refresh{
+	background:url('icons/mini_refresh.png') no-repeat center center;
+}
+
+.icon-u-address-book {background:url('u-icons/address-book.png') no-repeat center center;}
+.icon-u-aero-window--list {background:url('u-icons/aero-window--list.png') no-repeat center center;}
+.icon-u-aero-window-explorer {background:url('u-icons/aero-window-explorer.png') no-repeat center center;}
+.icon-u-alert {background:url('u-icons/alert.png') no-repeat center center;}
+.icon-u-applications {background:url('u-icons/applications.png') no-repeat center center;}
+.icon-u-battery-display-charging {background:url('u-icons/battery-display-charging.png') no-repeat center center;}
+.icon-u-battery-display-full {background:url('u-icons/battery-display-full.png') no-repeat center center;}
+.icon-u-battery-display-low {background:url('u-icons/battery-display-low.png') no-repeat center center;}
+.icon-u-battery-display {background:url('u-icons/battery-display.png') no-repeat center center;}
+.icon-u-battery {background:url('u-icons/battery.png') no-repeat center center;}
+.icon-u-bell {background:url('u-icons/bell.png') no-repeat center center;}
+.icon-u-book-bookmark {background:url('u-icons/book-bookmark.png') no-repeat center center;}
+.icon-u-book {background:url('u-icons/book.png') no-repeat center center;}
+.icon-u-bookshelf-empty {background:url('u-icons/bookshelf-empty.png') no-repeat center center;}
+.icon-u-bookshelf {background:url('u-icons/bookshelf.png') no-repeat center center;}
+.icon-u-box-this-side-up {background:url('u-icons/box-this-side-up.png') no-repeat center center;}
+.icon-u-box {background:url('u-icons/box.png') no-repeat center center;}
+.icon-u-burn {background:url('u-icons/burn.png') no-repeat center center;}
+.icon-u-calendar-blue {background:url('u-icons/calendar-blue.png') no-repeat center center;}
+.icon-u-calendar-day-view {background:url('u-icons/calendar-day-view.png') no-repeat center center;}
+.icon-u-calendar-month-view {background:url('u-icons/calendar-month-view.png') no-repeat center center;}
+.icon-u-camera {background:url('u-icons/camera.png') no-repeat center center;}
+.icon-u-cd-burn {background:url('u-icons/cd-burn.png') no-repeat center center;}
+.icon-u-cd {background:url('u-icons/cd.png') no-repeat center center;}
+.icon-u-chalkboard-empty {background:url('u-icons/chalkboard-empty.png') no-repeat center center;}
+.icon-u-chalkboard {background:url('u-icons/chalkboard.png') no-repeat center center;}
+.icon-u-chart-bars {background:url('u-icons/chart-bars.png') no-repeat center center;}
+.icon-u-chart-pie {background:url('u-icons/chart-pie.png') no-repeat center center;}
+.icon-u-chest-of-drawers-open-files {background:url('u-icons/chest-of-drawers-open-files.png') no-repeat center center;}
+.icon-u-chest-of-drawers {background:url('u-icons/chest-of-drawers.png') no-repeat center center;}
+.icon-u-chip {background:url('u-icons/chip.png') no-repeat center center;}
+.icon-u-christmas-tree-lit {background:url('u-icons/christmas-tree-lit.png') no-repeat center center;}
+.icon-u-christmas-tree-undecorated {background:url('u-icons/christmas-tree-undecorated.png') no-repeat center center;}
+.icon-u-christmas-tree {background:url('u-icons/christmas-tree.png') no-repeat center center;}
+.icon-u-clapperboard-blank {background:url('u-icons/clapperboard-blank.png') no-repeat center center;}
+.icon-u-clapperboard-closed {background:url('u-icons/clapperboard-closed.png') no-repeat center center;}
+.icon-u-clapperboard-picture {background:url('u-icons/clapperboard-picture.png') no-repeat center center;}
+.icon-u-clapperboard {background:url('u-icons/clapperboard.png') no-repeat center center;}
+.icon-u-clipboard-empty {background:url('u-icons/clipboard-empty.png') no-repeat center center;}
+.icon-u-clipboard-fold {background:url('u-icons/clipboard-fold.png') no-repeat center center;}
+.icon-u-clipboard-text {background:url('u-icons/clipboard-text.png') no-repeat center center;}
+.icon-u-clipboard-torn {background:url('u-icons/clipboard-torn.png') no-repeat center center;}
+.icon-u-clipboard {background:url('u-icons/clipboard.png') no-repeat center center;}
+.icon-u-contact-card {background:url('u-icons/contact-card.png') no-repeat center center;}
+.icon-u-decoration-branch {background:url('u-icons/decoration-branch.png') no-repeat center center;}
+.icon-u-decoration {background:url('u-icons/decoration.png') no-repeat center center;}
+.icon-u-delete {background:url('u-icons/delete.png') no-repeat center center;}
+.icon-u-design-blueprint {background:url('u-icons/design-blueprint.png') no-repeat center center;}
+.icon-u-design {background:url('u-icons/design.png') no-repeat center center;}
+.icon-u-desktop {background:url('u-icons/desktop.png') no-repeat center center;}
+.icon-u-dictionary {background:url('u-icons/dictionary.png') no-repeat center center;}
+.icon-u-disk-time-machine {background:url('u-icons/disk-time-machine.png') no-repeat center center;}
+.icon-u-door-chat-room {background:url('u-icons/door-chat-room.png') no-repeat center center;}
+.icon-u-door {background:url('u-icons/door.png') no-repeat center center;}
+.icon-u-download-high-speed {background:url('u-icons/download-high-speed.png') no-repeat center center;}
+.icon-u-download-turbo-speed {background:url('u-icons/download-turbo-speed.png') no-repeat center center;}
+.icon-u-download {background:url('u-icons/download.png') no-repeat center center;}
+.icon-u-emoticon-sleep {background:url('u-icons/emoticon-sleep.png') no-repeat center center;}
+.icon-u-emoticon {background:url('u-icons/emoticon.png') no-repeat center center;}
+.icon-u-envelope-air-mail {background:url('u-icons/envelope-air-mail.png') no-repeat center center;}
+.icon-u-envelope {background:url('u-icons/envelope.png') no-repeat center center;}
+.icon-u-error {background:url('u-icons/error.png') no-repeat center center;}
+.icon-u-file {background:url('u-icons/file.png') no-repeat center center;}
+.icon-u-filetype-blueprint-under-construction {background:url('u-icons/filetype-blueprint-under-construction.png') no-repeat center center;}
+.icon-u-filetype-blueprint {background:url('u-icons/filetype-blueprint.png') no-repeat center center;}
+.icon-u-filetype-rss-orange {background:url('u-icons/filetype-rss-orange.png') no-repeat center center;}
+.icon-u-filetype-rss {background:url('u-icons/filetype-rss.png') no-repeat center center;}
+.icon-u-filetype-script {background:url('u-icons/filetype-script.png') no-repeat center center;}
+.icon-u-filetype-under-construction {background:url('u-icons/filetype-under-construction.png') no-repeat center center;}
+.icon-u-filetype-video {background:url('u-icons/filetype-video.png') no-repeat center center;}
+.icon-u-filetype {background:url('u-icons/filetype.png') no-repeat center center;}
+.icon-u-film-roll {background:url('u-icons/film-roll.png') no-repeat center center;}
+.icon-u-filmstrip {background:url('u-icons/filmstrip.png') no-repeat center center;}
+.icon-u-folder-blue {background:url('u-icons/folder-blue.png') no-repeat center center;}
+.icon-u-folder-classic-blue {background:url('u-icons/folder-classic-blue.png') no-repeat center center;}
+.icon-u-folder-classic-recycled {background:url('u-icons/folder-classic-recycled.png') no-repeat center center;}
+.icon-u-folder-classic-yellow {background:url('u-icons/folder-classic-yellow.png') no-repeat center center;}
+.icon-u-folder-recycled {background:url('u-icons/folder-recycled.png') no-repeat center center;}
+.icon-u-folder-yellow {background:url('u-icons/folder-yellow.png') no-repeat center center;}
+.icon-u-gear {background:url('u-icons/gear.png') no-repeat center center;}
+.icon-u-get-info {background:url('u-icons/get-info.png') no-repeat center center;}
+.icon-u-gift-box-blue {background:url('u-icons/gift-box-blue.png') no-repeat center center;}
+.icon-u-gift-box {background:url('u-icons/gift-box.png') no-repeat center center;}
+.icon-u-glass-cola-ice {background:url('u-icons/glass-cola-ice.png') no-repeat center center;}
+.icon-u-glass-cola {background:url('u-icons/glass-cola.png') no-repeat center center;}
+.icon-u-glass-empty {background:url('u-icons/glass-empty.png') no-repeat center center;}
+.icon-u-glass-water-ice {background:url('u-icons/glass-water-ice.png') no-repeat center center;}
+.icon-u-glass-water {background:url('u-icons/glass-water.png') no-repeat center center;}
+.icon-u-ical {background:url('u-icons/ical.png') no-repeat center center;}
+.icon-u-instant-messaging {background:url('u-icons/instant-messaging.png') no-repeat center center;}
+.icon-u-lock-unlocked {background:url('u-icons/lock-unlocked.png') no-repeat center center;}
+.icon-u-lock {background:url('u-icons/lock.png') no-repeat center center;}
+.icon-u-monitor-film {background:url('u-icons/monitor-film.png') no-repeat center center;}
+.icon-u-monitor-music-video {background:url('u-icons/monitor-music-video.png') no-repeat center center;}
+.icon-u-monitor-wallpaper {background:url('u-icons/monitor-wallpaper.png') no-repeat center center;}
+.icon-u-monitor {background:url('u-icons/monitor.png') no-repeat center center;}
+.icon-u-musical-note {background:url('u-icons/musical-note.png') no-repeat center center;}
+.icon-u-school-bell {background:url('u-icons/school-bell.png') no-repeat center center;}
+.icon-u-sign-post {background:url('u-icons/sign-post.png') no-repeat center center;}
+.icon-u-stoplight {background:url('u-icons/stoplight.png') no-repeat center center;}
+.icon-u-stopwatch-off {background:url('u-icons/stopwatch-off.png') no-repeat center center;}
+.icon-u-stopwatch-on {background:url('u-icons/stopwatch-on.png') no-repeat center center;}
+.icon-u-traffic-link {background:url('u-icons/traffic-link.png') no-repeat center center;}
+.icon-u-traffic-stop {background:url('u-icons/traffic-stop.png') no-repeat center center;}
+.icon-u-ui-appearance {background:url('u-icons/ui-appearance.png') no-repeat center center;}
+.icon-u-ui-finder {background:url('u-icons/ui-finder.png') no-repeat center center;}
+.icon-u-ui-list-window {background:url('u-icons/ui-list-window.png') no-repeat center center;}
+.icon-u-ui-text {background:url('u-icons/ui-text.png') no-repeat center center;}
+.icon-u-user {background:url('u-icons/user.png') no-repeat center center;}
+.icon-u-users {background:url('u-icons/users.png') no-repeat center center;}
+.icon-f-aac {background:url('f-icons/aac.gif') no-repeat center center;}
+.icon-f-ace {background:url('f-icons/ace.gif') no-repeat center center;}
+.icon-f-ai {background:url('f-icons/ai.gif') no-repeat center center;}
+.icon-f-ain {background:url('f-icons/ain.gif') no-repeat center center;}
+.icon-f-amr {background:url('f-icons/amr.gif') no-repeat center center;}
+.icon-f-app {background:url('f-icons/app.gif') no-repeat center center;}
+.icon-f-arj {background:url('f-icons/arj.gif') no-repeat center center;}
+.icon-f-asf {background:url('f-icons/asf.gif') no-repeat center center;}
+.icon-f-asp {background:url('f-icons/asp.gif') no-repeat center center;}
+.icon-f-aspx {background:url('f-icons/aspx.gif') no-repeat center center;}
+.icon-f-av {background:url('f-icons/av.gif') no-repeat center center;}
+.icon-f-avi {background:url('f-icons/avi.gif') no-repeat center center;}
+.icon-f-bin {background:url('f-icons/bin.gif') no-repeat center center;}
+.icon-f-bmp {background:url('f-icons/bmp.gif') no-repeat center center;}
+.icon-f-cab {background:url('f-icons/cab.gif') no-repeat center center;}
+.icon-f-cad {background:url('f-icons/cad.gif') no-repeat center center;}
+.icon-f-cat {background:url('f-icons/cat.gif') no-repeat center center;}
+.icon-f-cdr {background:url('f-icons/cdr.gif') no-repeat center center;}
+.icon-f-chm {background:url('f-icons/chm.gif') no-repeat center center;}
+.icon-f-com {background:url('f-icons/com.gif') no-repeat center center;}
+.icon-f-css {background:url('f-icons/css.gif') no-repeat center center;}
+.icon-f-cur {background:url('f-icons/cur.gif') no-repeat center center;}
+.icon-f-dat {background:url('f-icons/dat.gif') no-repeat center center;}
+.icon-f-db {background:url('f-icons/db.gif') no-repeat center center;}
+.icon-f-dll {background:url('f-icons/dll.gif') no-repeat center center;}
+.icon-f-dmv {background:url('f-icons/dmv.gif') no-repeat center center;}
+.icon-f-doc {background:url('f-icons/doc.gif') no-repeat center center;}
+.icon-f-dot {background:url('f-icons/dot.gif') no-repeat center center;}
+.icon-f-dps {background:url('f-icons/dps.gif') no-repeat center center;}
+.icon-f-dpt {background:url('f-icons/dpt.gif') no-repeat center center;}
+.icon-f-dwg {background:url('f-icons/dwg.gif') no-repeat center center;}
+.icon-f-dxf {background:url('f-icons/dxf.gif') no-repeat center center;}
+.icon-f-emf {background:url('f-icons/emf.gif') no-repeat center center;}
+.icon-f-eps {background:url('f-icons/eps.gif') no-repeat center center;}
+.icon-f-et {background:url('f-icons/et.gif') no-repeat center center;}
+.icon-f-ett {background:url('f-icons/ett.gif') no-repeat center center;}
+.icon-f-exe {background:url('f-icons/exe.gif') no-repeat center center;}
+.icon-f-fla {background:url('f-icons/fla.gif') no-repeat center center;}
+.icon-f-ftp {background:url('f-icons/ftp.gif') no-repeat center center;}
+.icon-f-gif {background:url('f-icons/gif.gif') no-repeat center center;}
+.icon-f-hlp {background:url('f-icons/hlp.gif') no-repeat center center;}
+.icon-f-htm {background:url('f-icons/htm.gif') no-repeat center center;}
+.icon-f-html {background:url('f-icons/html.gif') no-repeat center center;}
+.icon-f-icl {background:url('f-icons/icl.gif') no-repeat center center;}
+.icon-f-ico {background:url('f-icons/ico.gif') no-repeat center center;}
+.icon-f-img {background:url('f-icons/img.gif') no-repeat center center;}
+.icon-f-inf {background:url('f-icons/inf.gif') no-repeat center center;}
+.icon-f-ini {background:url('f-icons/ini.gif') no-repeat center center;}
+.icon-f-iso {background:url('f-icons/iso.gif') no-repeat center center;}
+.icon-f-jpeg {background:url('f-icons/jpeg.gif') no-repeat center center;}
+.icon-f-jpg {background:url('f-icons/jpg.gif') no-repeat center center;}
+.icon-f-js {background:url('f-icons/js.gif') no-repeat center center;}
+.icon-f-m3u {background:url('f-icons/m3u.gif') no-repeat center center;}
+.icon-f-max {background:url('f-icons/max.gif') no-repeat center center;}
+.icon-f-mdb {background:url('f-icons/mdb.gif') no-repeat center center;}
+.icon-f-mde {background:url('f-icons/mde.gif') no-repeat center center;}
+.icon-f-mht {background:url('f-icons/mht.gif') no-repeat center center;}
+.icon-f-mid {background:url('f-icons/mid.gif') no-repeat center center;}
+.icon-f-midi {background:url('f-icons/midi.gif') no-repeat center center;}
+.icon-f-mov {background:url('f-icons/mov.gif') no-repeat center center;}
+.icon-f-mp3 {background:url('f-icons/mp3.gif') no-repeat center center;}
+.icon-f-mp4 {background:url('f-icons/mp4.gif') no-repeat center center;}
+.icon-f-mpeg {background:url('f-icons/mpeg.gif') no-repeat center center;}
+.icon-f-mpg {background:url('f-icons/mpg.gif') no-repeat center center;}
+.icon-f-msi {background:url('f-icons/msi.gif') no-repeat center center;}
+.icon-f-nrg {background:url('f-icons/nrg.gif') no-repeat center center;}
+.icon-f-ocx {background:url('f-icons/ocx.gif') no-repeat center center;}
+.icon-f-ogg {background:url('f-icons/ogg.gif') no-repeat center center;}
+.icon-f-ogm {background:url('f-icons/ogm.gif') no-repeat center center;}
+.icon-f-pdf {background:url('f-icons/pdf.gif') no-repeat center center;}
+.icon-f-png {background:url('f-icons/png.gif') no-repeat center center;}
+.icon-f-pot {background:url('f-icons/pot.gif') no-repeat center center;}
+.icon-f-ppt {background:url('f-icons/ppt.gif') no-repeat center center;}
+.icon-f-psd {background:url('f-icons/psd.gif') no-repeat center center;}
+.icon-f-pub {background:url('f-icons/pub.gif') no-repeat center center;}
+.icon-f-qt {background:url('f-icons/qt.gif') no-repeat center center;}
+.icon-f-ra {background:url('f-icons/ra.gif') no-repeat center center;}
+.icon-f-ram {background:url('f-icons/ram.gif') no-repeat center center;}
+.icon-f-rar {background:url('f-icons/rar.gif') no-repeat center center;}
+.icon-f-rm {background:url('f-icons/rm.gif') no-repeat center center;}
+.icon-f-rmvb {background:url('f-icons/rmvb.gif') no-repeat center center;}
+.icon-f-rtf {background:url('f-icons/rtf.gif') no-repeat center center;}
+.icon-f-swf {background:url('f-icons/swf.gif') no-repeat center center;}
+.icon-f-tar {background:url('f-icons/tar.gif') no-repeat center center;}
+.icon-f-tif {background:url('f-icons/tif.gif') no-repeat center center;}
+.icon-f-tiff {background:url('f-icons/tiff.gif') no-repeat center center;}
+.icon-f-txt {background:url('f-icons/txt.gif') no-repeat center center;}
+.icon-f-unknown {background:url('f-icons/unknown.gif') no-repeat center center;}
+.icon-f-url {background:url('f-icons/url.gif') no-repeat center center;}
+.icon-f-vbs {background:url('f-icons/vbs.gif') no-repeat center center;}
+.icon-f-vsd {background:url('f-icons/vsd.gif') no-repeat center center;}
+.icon-f-vss {background:url('f-icons/vss.gif') no-repeat center center;}
+.icon-f-vst {background:url('f-icons/vst.gif') no-repeat center center;}
+.icon-f-wav {background:url('f-icons/wav.gif') no-repeat center center;}
+.icon-f-wave {background:url('f-icons/wave.gif') no-repeat center center;}
+.icon-f-wm {background:url('f-icons/wm.gif') no-repeat center center;}
+.icon-f-wma {background:url('f-icons/wma.gif') no-repeat center center;}
+.icon-f-wmd {background:url('f-icons/wmd.gif') no-repeat center center;}
+.icon-f-wmf {background:url('f-icons/wmf.gif') no-repeat center center;}
+.icon-f-wmv {background:url('f-icons/wmv.gif') no-repeat center center;}
+.icon-f-wps {background:url('f-icons/wps.gif') no-repeat center center;}
+.icon-f-wpt {background:url('f-icons/wpt.gif') no-repeat center center;}
+.icon-f-xls {background:url('f-icons/xls.gif') no-repeat center center;}
+.icon-f-xlt {background:url('f-icons/xlt.gif') no-repeat center center;}
+.icon-f-xml {background:url('f-icons/xml.gif') no-repeat center center;}
+.icon-f-zip {background:url('f-icons/zip.gif') no-repeat center center;}

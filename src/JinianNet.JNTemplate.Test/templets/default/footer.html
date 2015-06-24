@@ -1,0 +1,37 @@
+﻿<div class="help-mod wrapper">
+    <dl>
+        <dt>新手帮助</dt>
+        $foreach(row in func.GetArticleList(4))
+        <dd><a href="$func.GetArticleUrl(row)">$row.Title</a></dd>
+        $end
+        
+    </dl>
+    <dl>
+        <dt>极念网络</dt>
+        $foreach(row in func.GetArticleList(10016))
+        <dd><a href="$func.GetArticleUrl(row)">$row.Title</a></dd>
+        $end
+    </dl>
+    <dl>
+        <dt>免费应用</dt>
+        $foreach(row in func.GetArticleList(10017))
+        <dd><a href="$func.GetArticleUrl(row)">$row.Title</a></dd>
+        $end
+    </dl>
+    <dl>
+        <dt>其他服务</dt>
+        $foreach(row in func.GetArticleList(10018))
+        <dd><a href="$func.GetArticleUrl(row)">$row.Title</a></dd>
+        $end
+    </dl>
+    <dl>
+        <dt>关于我们</dt>
+        $foreach(row in func.GetArticleList(10019))
+        <dd><a href="$func.GetArticleUrl(row)">$row.Title</a></dd>
+        $end
+    </dl>
+</div>
+
+<div class="footer">
+    <p class="text-muted"> 极念网络 版权所有 ©2015</p>
+</div>
