@@ -15,9 +15,6 @@ namespace JinianNet.JNTemplate.Test.ViewModel
             get { return _children; }
             set { _children = value; }
         }
-        public string aaa {
-            get { return "哈"; }
-        }
 	}
 }
 
