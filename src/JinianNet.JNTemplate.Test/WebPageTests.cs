@@ -14,7 +14,6 @@ namespace JinianNet.JNTemplate.Test
     [TestClass]
     public class WebPageTests
     {
-        [Microsoft.VisualStudio.TestTools.UnitTesting.]
         [TestMethod]
         public void TestPage()
         {
@@ -58,6 +57,7 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestJuxtaposePage()
         {
+#if testnv
             SiteInfo site = new SiteInfo();
             site.Copyright = "&copy;2014 - 2015";
             site.Description = "";
@@ -105,6 +105,7 @@ namespace JinianNet.JNTemplate.Test
 
             //可直接查看项目录下的html/nv.html 文件效果
             System.IO.File.WriteAllText(basePath + "\\html\\nv.html", result);
+#endif
         }
     }
 }
