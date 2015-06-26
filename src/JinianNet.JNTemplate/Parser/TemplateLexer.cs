@@ -45,17 +45,45 @@ namespace JinianNet.JNTemplate.Parser
         /// 扫描器
         /// </summary>
         private CharScanner scanner;
-
+        /// <summary>
+        /// token集合
+        /// </summary>
         private List<Token> collection;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private Stack<String> pos;
+
+        /// <summary>
+        /// 简写标签标记
+        /// </summary>
+        private Char tagFlag;
+
+        /// <summary>
+        /// 完整标签前缀
+        /// </summary>
+        private String tagPrefix;
+
+        /// <summary>
+        /// 完整标签后缀
+        /// </summary>
+        private String tagSuffix;
+
         /// <summary>
         /// TemplateLexer
         /// </summary>
-        /// <param name="text">文本内容</param>
-        public TemplateLexer(String text)
+        /// <param name="text">待分析内容</param>
+        /// <param name="flag">简写标记</param>
+        /// <param name="prefix">标签前缀</param>
+        /// <param name="suffix">标签内容</param>
+        public TemplateLexer(String text, Char flag, String prefix, String suffix)
         {
             this.document = text;
+            this.tagFlag = flag;
+            this.tagPrefix = prefix;
+            this.tagSuffix = suffix;
+
             Reset();
         }
         /// <summary>
@@ -107,22 +135,28 @@ namespace JinianNet.JNTemplate.Parser
 
         private Boolean IsTagStart()
         {
-            if (this.scanner.Read() == '$')
+            if (this.scanner.IsEnd() || this.pos.Count > 0)
             {
-                if (!this.scanner.IsEnd())
+                return false;
+            }
+            Boolean find = true;
+            for (Int32 i = 0; i < this.tagPrefix.Length; i++)
+            {
+                if (this.tagPrefix[i] != this.scanner.Read(i))
                 {
-                    Char value = this.scanner.Read(1);
-                    if (value == '{')
-                    {
-                        this.pos.Push("${");
-                        return true;
-                    }
-                    if (Char.IsLetter(value))
-                    {
-                        this.pos.Push("$");
-                        return true;
-                    }
+                    find = false;
+                    break;
                 }
+            }
+            if (find)
+            {
+                this.pos.Push(this.tagPrefix);
+                return true;
+            }
+            if (this.scanner.Read() == this.tagFlag)
+            {
+                this.pos.Push(this.tagFlag.ToString());
+                return true;
             }
             return false;
         }
@@ -135,22 +169,31 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     return true;
                 }
-                Char value = this.scanner.Read();
-                if (this.pos.Peek().Length == 2)
+
+                if (this.scanner.Read() != '.')
                 {
-                    if (value == '}')
+                    if (this.pos.Peek() == this.tagPrefix)
                     {
+                        for (Int32 i = 0; i < this.tagSuffix.Length; i++)
+                        {
+                            if (this.tagSuffix[i] != this.scanner.Read(i))
+                            {
+                                return false;
+                            }
+                        }
+
                         return true;
                     }
-                }
-                else if (value != '.')
-                {
-                    if (((value == '(' || Common.ParserHelpers.IsWord(value)) && Common.ParserHelpers.IsWord(this.scanner.Read(-1)))
-                        || (Common.ParserHelpers.IsWord(value) && (this.scanner.Read(-1) == '.')))
+                    else
                     {
-                        return false;
+                        Char value = this.scanner.Read();
+                        if (((value == '(' || Common.ParserHelpers.IsWord(value)) && Common.ParserHelpers.IsWord(this.scanner.Read(-1)))
+                        || (Common.ParserHelpers.IsWord(value) && (this.scanner.Read(-1) == '.')))
+                        {
+                            return false;
+                        }
+                        return true;
                     }
-                    return true;
                 }
                 //else if (value != '.' && value != '(')
                 //{
@@ -304,7 +347,7 @@ namespace JinianNet.JNTemplate.Parser
                 TokenKind tk;
                 if (this.scanner.Read() == '+' || this.scanner.Read() == '-') //正负数符号识别
                 {
-                    if (Char.IsNumber(this.scanner.Read(1)) && 
+                    if (Char.IsNumber(this.scanner.Read(1)) &&
                         (this.kind == TokenKind.Operator || this.kind == TokenKind.LeftParentheses))
                     {
                         tk = TokenKind.Number;

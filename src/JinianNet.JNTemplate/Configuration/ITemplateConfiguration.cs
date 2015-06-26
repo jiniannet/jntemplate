@@ -19,12 +19,20 @@ namespace JinianNet.JNTemplate.Configuration
         /// 工作路径
         /// </summary>
         Collection<String> Paths { get; }
-        //String TagPrefix;
-        //String TagSuffix;
+
         /// <summary>
-        /// 标签标志
+        /// 标签前缀
         /// </summary>
-        Char TagFlag {get;}
+        String TagPrefix { get; }
+        /// <summary>
+        /// 标签后缀
+        /// </summary>
+        String TagSuffix{ get; }
+
+        /// <summary>
+        /// 简写标签前缀
+        /// </summary>
+        Char TagFlag { get;}
         /// <summary>
         /// 缓存提供器
         /// </summary>

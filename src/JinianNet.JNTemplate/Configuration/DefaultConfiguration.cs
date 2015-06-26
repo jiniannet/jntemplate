@@ -49,7 +49,7 @@ namespace JinianNet.JNTemplate.Configuration
             get { return paths; }
         }
         /// <summary>
-        /// 标签前缀
+        /// 简写标签标记
         /// </summary>
         public Char TagFlag
         {
@@ -84,6 +84,28 @@ namespace JinianNet.JNTemplate.Configuration
             get
             {
                 return resolver;
+            }
+        }
+
+        /// <summary>
+        /// 完整标签前缀
+        /// </summary>
+        public string TagPrefix
+        {
+            get
+            {
+                return "${";
+            }
+        }
+
+        /// <summary>
+        /// 完整标签后缀
+        /// </summary>
+        public string TagSuffix
+        {
+            get
+            {
+                return "}";
             }
         }
     }
