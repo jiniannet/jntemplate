@@ -346,6 +346,21 @@ namespace JinianNet.JNTemplate.Test
             }
         }
 
+        public string GetArticleUrl(Model.Article model)
+        {
+
+            if (!string.IsNullOrEmpty(model.EnglishName))
+            {
+                return string.Concat("/Article/", model.EnglishName, ".aspx");//Article/About.aspx
+            }
+            else
+            {
+                return string.Concat("/Article.aspx?id=", model.BasisId.ToString());
+            }
+        }
+
+
+
         public string GetHelpUrl(Model.Help model)
         {
 
