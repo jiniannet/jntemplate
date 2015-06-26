@@ -175,7 +175,7 @@ namespace JinianNet.JNTemplate.Parser
 
         private Boolean IsTagEnd()
         {
-            if (this.flagMode != FlagMode.None)
+            if (this.flagMode != FlagMode.None && this.pos.Count == 0)
             {
                 if (this.scanner.IsEnd())
                 {
@@ -347,7 +347,7 @@ namespace JinianNet.JNTemplate.Parser
 
                     if (this.flagMode == FlagMode.Full)
                     {
-                        Next(this.tagSuffix.Length - 1);
+                        Next(this.tagSuffix.Length);
                     }
 
                     this.flagMode = FlagMode.None;
