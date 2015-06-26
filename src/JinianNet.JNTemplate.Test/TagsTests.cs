@@ -15,6 +15,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestRun()
         {
             string message = "参考用";
+            var templateContent = "$message";
+            var template = new Template(templateContent);
+            template.Set("message", message);
+            var render = template.Render();
+
+            Assert.AreEqual("参考用", render);
         }
 
         /// <summary>

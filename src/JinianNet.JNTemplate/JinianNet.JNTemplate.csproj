@@ -124,6 +124,7 @@
     <Compile Include="Template.cs" />
     <Compile Include="TemplateContext.cs" />
     <Compile Include="TokenKind.cs" />
+    <Compile Include="FlagMode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
