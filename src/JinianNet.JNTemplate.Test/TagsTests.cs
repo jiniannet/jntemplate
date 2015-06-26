@@ -277,6 +277,23 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("你好，$name", render);
         }
 
+        /// <summary>
+        /// 自定义标签前后缀测试
+        /// </summary>
+        [TestMethod]
+        public void TestConfig()
+        {
+            var config = new Configuration.Config('@', "{$", "}");
+
+            var ctx = new TemplateContext(config, new Parser.VariableScope());
+            var templateContent = "你好，@name,欢迎来到{$name}的世界";
+            var template = new Template(ctx, templateContent);
+            template.Set("name", "jntemplate");
+            var render = template.Render();
+            Assert.AreEqual("你好，jntemplate,欢迎来到jntemplate的世界", render);
+
+        }
+
 
     }
 }
