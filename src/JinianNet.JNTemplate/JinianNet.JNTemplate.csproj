@@ -54,8 +54,8 @@
   <ItemGroup>
     <Compile Include="BuildManager.cs" />
     <Compile Include="Common\OperatorHelpers.cs" />
-    <Compile Include="Configuration\DefaultConfiguration.cs" />
-    <Compile Include="Configuration\ITemplateConfiguration.cs" />
+    <Compile Include="Configuration\Config.cs" />
+    <Compile Include="Configuration\ITemplateConfig.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
     <Compile Include="Exception\CompileException.cs" />

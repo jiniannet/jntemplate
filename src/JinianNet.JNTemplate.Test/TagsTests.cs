@@ -276,5 +276,7 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.AreEqual("你好，$name", render);
         }
+
+
     }
 }

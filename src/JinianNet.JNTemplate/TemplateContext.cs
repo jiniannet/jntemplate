@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate
     public class TemplateContext : ICloneable
     {
         private VariableScope variableScope;
-        private ITemplateConfiguration config;
+        private ITemplateConfig config;
         private String currentPath;
         private Encoding charset;
         private Boolean throwErrors;
@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate
         /// 模板上下文
         /// </summary>
         public TemplateContext()
-            : this(new DefaultConfiguration(),new VariableScope())
+            : this(new Config(),new VariableScope())
         {
 
         }
@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="config">模板配值</param>
         /// <param name="data">数据</param>
-        public TemplateContext(ITemplateConfiguration config,VariableScope data)
+        public TemplateContext(ITemplateConfig config,VariableScope data)
         {
             if (config == null)
             {
@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板配置数据
         /// </summary>
-        public ITemplateConfiguration Config
+        public ITemplateConfig Config
         {
             get { return config; }
             set { config = value; }

@@ -13,15 +13,20 @@ namespace JinianNet.JNTemplate.Configuration
     /// <summary>
     /// 默认配置
     /// </summary>
-    public class DefaultConfiguration : ITemplateConfiguration
+    public class Config : ITemplateConfig
     {
         private System.Collections.ObjectModel.Collection<String> paths;
         private Parser.TagTypeResolver resolver;
+        private ICache cachingProvider;
+        private Char tagFlag;
+        private String tagPrefix;
+        private String tagSuffix;
+        private Boolean throwExceptions;
 
         /// <summary>
-        /// 默认引擎配置
+        /// 默认配置
         /// </summary>
-        public DefaultConfiguration()
+        public Config(Char flag, String prefix, String suffix)
         {
             this.paths = new System.Collections.ObjectModel.Collection<String>();
             this.resolver = new Parser.TagTypeResolver();
@@ -40,20 +45,40 @@ namespace JinianNet.JNTemplate.Configuration
             this.resolver.Add(new IncludeParser());
             this.resolver.Add(new FunctionParser());
             this.resolver.Add(new ComplexParser());
+            this.cachingProvider = null;
+            this.tagFlag = flag;
+            this.tagSuffix = suffix;
+            this.tagPrefix = prefix;
+            this.throwExceptions = false;
+        }
+
+        /// <summary>
+        /// 默认配置
+        /// </summary>
+        public Config()
+            : this('$', "${", "}")
+        {
+
         }
         /// <summary>
         /// 模板文件搜寻路径
         /// </summary>
         public System.Collections.ObjectModel.Collection<String> Paths
         {
-            get { return paths; }
+            get
+            {
+                return paths;
+            }
         }
         /// <summary>
         /// 简写标签标记
         /// </summary>
         public Char TagFlag
         {
-            get { return '$'; }
+            get
+            {
+                return tagFlag;
+            }
         }
         /// <summary>
         /// 缓存提供器
@@ -62,7 +87,11 @@ namespace JinianNet.JNTemplate.Configuration
         {
             get
             {
-                return null;
+                return cachingProvider;
+            }
+            set
+            {
+                cachingProvider = value;
             }
         }
         /// <summary>
@@ -72,7 +101,11 @@ namespace JinianNet.JNTemplate.Configuration
         {
             get
             {
-                return false;
+                return throwExceptions;
+            }
+            set
+            {
+                throwExceptions = value;
             }
         }
 
@@ -94,7 +127,7 @@ namespace JinianNet.JNTemplate.Configuration
         {
             get
             {
-                return "${";
+                return tagPrefix;
             }
         }
 
@@ -105,7 +138,7 @@ namespace JinianNet.JNTemplate.Configuration
         {
             get
             {
-                return "}";
+                return tagSuffix;
             }
         }
     }
