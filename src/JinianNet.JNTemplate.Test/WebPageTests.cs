@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿//#define EQVER
+//#define TESTNV
+
+using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -55,9 +58,12 @@ namespace JinianNet.JNTemplate.Test
             System.IO.File.WriteAllText(basePath + "\\html\\jnt.html", result);
 
         }
-
+#if EQVER
+        /// <summary>
+        /// 多版本比较测试
+        /// </summary>
         [TestMethod]
-        public void TestPage100()
+        public void TestEqVersion()
         {
             var tm = new TemplateMethod();
             SiteInfo site = new SiteInfo();
@@ -105,22 +111,21 @@ namespace JinianNet.JNTemplate.Test
 
                     if (j == 99)
                     {
-                        System.IO.File.WriteAllText(basePath + "\\html\\jnt"+ assFlies[i].Name +".html", r.ToString());
+                        //System.IO.File.WriteAllText(basePath + "\\html\\jnt"+ assFlies[i].Name +".html", r.ToString());
                     }
                 }
                 s.Stop();
                 result += "\r\n:" + assFlies[i].Name + "耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒";
-              
+                System.Threading.Thread.Sleep(200);
             }
-
             System.IO.File.WriteAllText(basePath + "\\html\\TestResult.txt", result);
-            //System.Reflection.Assembly.LoadFile("").CreateInstance("");
         }
+#endif
 
+#if TESTNV
         [TestMethod]
         public void TestJuxtaposePage()
         {
-#if testnv
             SiteInfo site = new SiteInfo();
             site.Copyright = "&copy;2014 - 2015";
             site.Description = "";
@@ -168,7 +173,7 @@ namespace JinianNet.JNTemplate.Test
 
             //可直接查看项目录下的html/nv.html 文件效果
             System.IO.File.WriteAllText(basePath + "\\html\\nv.html", result);
-#endif
         }
+#endif
     }
 }

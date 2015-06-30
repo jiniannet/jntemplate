@@ -708,7 +708,9 @@
     <Content Include="templets\nv\questionlist.html" />
     <Content Include="templets\nv\sidebar.html" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="dll\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="html\Library\bootstrap\css\bootstrap-theme.css.map" />
     <None Include="html\Library\bootstrap\css\bootstrap.css.map" />

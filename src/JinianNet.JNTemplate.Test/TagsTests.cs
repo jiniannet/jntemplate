@@ -300,6 +300,24 @@ namespace JinianNet.JNTemplate.Test
 
         }
 
+        /// <summary>
+        /// 注释
+        /// </summary>
+        [TestMethod]
+        public void TestComent()
+        {
+            //var templateContent = "你好,$name!$*使用简写符加星号可对代码注释*$欢迎使用";
+            //var template = new Template(templateContent);
+            //template.Set("name", "jntemplate");
+            //var render = template.Render();
+            //Assert.AreEqual("你好，jntemplate!欢迎使用", render);
+
+            var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
+            var template = new Template(templateContent);
+            template.Set("name", "jntemplate");
+            var render = template.Render();
+            Assert.AreEqual("你好,欢迎使用", render);
+        }
 
     }
 }
