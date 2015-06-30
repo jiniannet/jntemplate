@@ -5,6 +5,7 @@ using System;
 using System.Data;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Test.Model;
+using System.Diagnostics;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -45,13 +46,75 @@ namespace JinianNet.JNTemplate.Test
             string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
             string path = basePath + "\\templets\\default";
 
-            JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path+"\\questionlist.html"));
+            JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
             t.Context.CurrentPath = path;
 
             string result = t.Render();
 
             //可直接查看项目录下的html/jnt.html 文件效果
             System.IO.File.WriteAllText(basePath + "\\html\\jnt.html", result);
+
+        }
+
+        [TestMethod]
+        public void TestPage100()
+        {
+            var tm = new TemplateMethod();
+            SiteInfo site = new SiteInfo();
+            site.Copyright = "&copy;2014 - 2015";
+            site.Description = "";
+            site.Host = "localhost";
+            site.KeyWords = "";
+            site.Logo = "";
+            site.Name = "xxx";
+            site.SiteDirectory = "";
+            site.Theme = "Blue";
+            site.ThemeDirectory = "theme";
+            site.Title = "jntemplate测试页";
+            site.Url = string.Concat("http://localhost");
+            if (!string.IsNullOrEmpty(site.SiteDirectory) && site.SiteDirectory != "/")
+            {
+                site.Url += "/" + site.SiteDirectory;
+            }
+            site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
+            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string path = basePath + "\\templets\\default";
+
+            string content = System.IO.File.ReadAllText(path + "\\questionlist.html");
+
+            FileInfo[] assFlies = new DirectoryInfo(basePath + "\\dll").GetFiles("JinianNet.JNTemplate*.dll");
+            string result = DateTime.Now.ToString();
+            Stopwatch s = new Stopwatch();
+            for (int i = 0; i < assFlies.Length; i++)
+            {
+                Assembly ass = System.Reflection.Assembly.LoadFile(assFlies[i].FullName);
+                object ctx = ass.CreateInstance("JinianNet.JNTemplate.TemplateContext");
+                object data = ctx.GetType().GetProperty("TempData").GetValue(ctx, null);
+                MethodInfo mi = data.GetType().GetMethod("Push");
+                mi.Invoke(data, new object[] { "func", tm });
+                mi.Invoke(data, new object[] { "Site", site });
+                ctx.GetType().GetProperty("CurrentPath").SetValue(ctx, path, null);
+
+                s.Restart();
+                for (int j = 0; j < 100; j++)
+                {
+                    object t = ass.CreateInstance("JinianNet.JNTemplate.Template"); ;
+                    t.GetType().GetProperty("Context").SetValue(t,ctx,null);
+                    t.GetType().GetProperty("TemplateContent").SetValue(t, content, null);
+                    object r = t.GetType().GetMethod("Render",new Type[0]).Invoke(t,new object[0]{});
+
+                    if (j == 99)
+                    {
+                        System.IO.File.WriteAllText(basePath + "\\html\\jnt"+ assFlies[i].Name +".html", r.ToString());
+                    }
+                }
+                s.Stop();
+                result += "\r\n:" + assFlies[i].Name + "耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒";
+              
+            }
+
+            System.IO.File.WriteAllText(basePath + "\\html\\TestResult.txt", result);
+            //System.Reflection.Assembly.LoadFile("").CreateInstance("");
         }
 
         [TestMethod]
