@@ -1,5 +1,7 @@
 @echo off
 echo 开始生成 JNTemplate ...
+if not exist ..\lib\2.0 md ..\lib\2.0
+if not exist ..\lib\4.0 md ..\lib\4.0
 set fdir=%WINDIR%\Microsoft.NET\Framework
 cd ../src/JinianNet.JNTemplate
 set /p input=是否需要支持字段取值(请填Y或者N,默认为N)： 
