@@ -306,12 +306,6 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestComent()
         {
-            //var templateContent = "你好,$name!$*使用简写符加星号可对代码注释*$欢迎使用";
-            //var template = new Template(templateContent);
-            //template.Set("name", "jntemplate");
-            //var render = template.Render();
-            //Assert.AreEqual("你好，jntemplate!欢迎使用", render);
-
             var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
             var template = new Template(templateContent);
             template.Set("name", "jntemplate");
@@ -319,5 +313,68 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("你好,欢迎使用", render);
         }
 
+
+        /// <summary>
+        /// 测试委托方法
+        /// </summary>
+        [TestMethod]
+        public void TestDelegateFunction()
+        {
+            var templateContent = "$test(\"字符串\",1,true)";
+            var template = new Template(templateContent);
+            template.Set("test", new JinianNet.JNTemplate.FuncHandler(args => {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("您输入的参数是有：");
+                foreach (var node in args)
+                {
+                    sb.Append(node);
+                    sb.Append(" ");
+                }
+                return sb.ToString();
+            }));
+
+            var render = template.Render();
+
+            Assert.AreEqual("您输入的参数是有：字符串 1 True ", render);
+        }
+
+        /// <summary>
+        /// 测试类方法
+        /// </summary>
+        [TestMethod]
+        public void TestClassFunction()
+        {
+            var templateContent = "$fun.Test(\"字符串\",1,true)";
+            var template = new Template(templateContent);
+            template.Set("fun", new TemplateMethod());
+            var render = template.Render();
+            Assert.AreEqual("您输入的参数是有：字符串 1 True ", render);
+        }
+
+        /// <summary>
+        /// 测试方法的params参数
+        /// </summary>
+        [TestMethod]
+        public void TestFunctionParams()
+        {
+            var templateContent = "$fun.TestParams(\"字符串\",1,true)";
+            var template = new Template(templateContent);
+            template.Set("fun", new TemplateMethod());
+            var render = template.Render();
+            Assert.AreEqual("您输入的参数是有：字符串 1 True ", render);
+        }
+
+        /// <summary>
+        /// 测试方法的params参数2
+        /// </summary>
+        [TestMethod]
+        public void TestFunctionParams2()
+        {
+            var templateContent = "$fun.TestParams2(\"您输入的参数是有：\",\"字符串\",1,true)";
+            var template = new Template(templateContent);
+            template.Set("fun", new TemplateMethod());
+            var render = template.Render();
+            Assert.AreEqual("您输入的参数是有：字符串 1 True ", render);
+        }
     }
 }

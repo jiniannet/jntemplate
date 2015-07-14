@@ -105,9 +105,9 @@ namespace JinianNet.JNTemplate.Test
                 for (int j = 0; j < 100; j++)
                 {
                     object t = ass.CreateInstance("JinianNet.JNTemplate.Template"); ;
-                    t.GetType().GetProperty("Context").SetValue(t,ctx,null);
+                    t.GetType().GetProperty("Context").SetValue(t, ctx, null);
                     t.GetType().GetProperty("TemplateContent").SetValue(t, content, null);
-                    object r = t.GetType().GetMethod("Render",new Type[0]).Invoke(t,new object[0]{});
+                    object r = t.GetType().GetMethod("Render", new Type[0]).Invoke(t, new object[0] { });
 
                     if (j == 99)
                     {
@@ -115,9 +115,17 @@ namespace JinianNet.JNTemplate.Test
                     }
                 }
                 s.Stop();
-                result += "\r\n:" + assFlies[i].Name + "耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒";
+                result += "\r\n:" + assFlies[i].Name + " 版本号：" + ass.GetName().Version + "耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒";
                 System.Threading.Thread.Sleep(200);
             }
+            if (System.IO.File.Exists(basePath + "\\html\\TestResult.txt"))
+            {
+                if (System.IO.File.GetLastWriteTime(basePath + "\\html\\TestResult.txt").Date == DateTime.Now.Date)
+                {
+                    result = System.IO.File.ReadAllText(basePath + "\\html\\TestResult.txt") + "\r\n" + result;
+                }
+            }
+
             System.IO.File.WriteAllText(basePath + "\\html\\TestResult.txt", result);
         }
 #endif

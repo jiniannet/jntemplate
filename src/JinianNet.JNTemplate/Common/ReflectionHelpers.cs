@@ -225,42 +225,96 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
         /// <param name="methodName">方法名</param>
         /// <param name="args">形参</param>
         /// <returns>MethodInfo</returns>
-        public static MethodInfo GetMethod(Type type, String methodName, Type[] args)
+        public static MethodInfo GetMethod(Type type, String methodName, ref Type[] args, out Boolean hasParam)
         {
-            if (args == null || Array.LastIndexOf(args, null) == -1) //
+            hasParam = false;
+
+            MethodInfo method;
+            //根据具体形参获取方法名，以处理重载
+            if (args == null || Array.LastIndexOf(args, null) == -1)
             {
-                return type.GetMethod(methodName,
+                method = type.GetMethod(methodName,
                     BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static,
                     null, args, null);
-            }
-            else
-            {
-                ParameterInfo[] pi;
-                Boolean accord;
-                foreach (MethodInfo m in type.GetMembers(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static))
+                if (method != null)
                 {
-                    if (m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
+                    return method;
+                }
+            }
+
+            //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
+
+            ParameterInfo[] pi;
+            Boolean accord;
+
+            MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+
+            foreach (MethodInfo m in ms)
+            {
+
+                if (m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
+                {
+                    pi = m.GetParameters();
+
+                    if (pi.Length < pi.Length - 1)
                     {
-                        pi = m.GetParameters();
-                        if (pi.Length == args.Length)
+                        continue;
+                    }
+
+                    hasParam = System.Attribute.IsDefined(pi[pi.Length - 1], typeof(ParamArrayAttribute));
+
+                    //参数个数一致或者形参中含有 param 参数
+                    if (pi.Length == args.Length || hasParam)
+                    {
+                        accord = true;
+                        for (Int32 i = 0; i < pi.Length - 1; i++)
                         {
-                            accord = true;
-                            for (Int32 i = 0; i < pi.Length; i++)
+                            if (args[i] != null && args[i] != pi[i].ParameterType && !args[i].IsSubclassOf(pi[i].ParameterType))
                             {
-                                if (args[i] != null && args[i] != pi[i].ParameterType)
+                                accord = false;
+                                break;
+                            }
+                        }
+                        if (accord)
+                        {
+                            if (hasParam)
+                            {
+                                if (args.Length != pi.Length - 1)
                                 {
-                                    accord = false;
-                                    break;
+                                    Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
+                                    for (Int32 j = pi.Length - 1; j < args.Length; j++)
+                                    {
+                                        if (args[j] != null && args[j] != arrType && !args[j].IsSubclassOf(arrType))
+                                        {
+                                            accord = false;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (accord)
+                                {
+                                    args = new Type[pi.Length];
+                                    for (Int32 i = 0; i < pi.Length; i++)
+                                    {
+                                        args[i] = pi[i].ParameterType;
+
+                                    }
+                                    return m;
                                 }
                             }
-                            if (accord)
+                            else
                             {
-                                return m;
+                                if (args[args.Length - 1] == pi[pi.Length - 1].ParameterType)
+                                {
+                                    return m;
+                                }
                             }
                         }
                     }
                 }
             }
+
             return null;
         }
         /// <summary>
@@ -274,13 +328,52 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
         {
             Type[] types = new Type[args.Length];
             for (Int32 i = 0; i < args.Length; i++)
-                types[i] = args[i].GetType();
-            Type t = container.GetType();
-            MethodInfo method = GetMethod(t, methodName, types);
-            if (method == null)
-                return null; //throw new Exception(String.Concat("在类型 ", t.Name, " 中未找到方法 ", methodName));
+            {
+                if (args[i] != null)
+                {
+                    types[i] = args[i].GetType();
+                }
+            }
 
-            return method.Invoke(container, args);
+            Type t = container.GetType();
+
+            Boolean hasParam;
+            MethodInfo method = GetMethod(t, methodName,ref types, out hasParam);
+            if (method != null)
+            {
+                if (hasParam)
+                {
+                    Array arr;
+                    if (types.Length - 1 == args.Length)
+                    {
+                        arr = null;
+                    }
+                    else
+                    {
+                        arr = Array.CreateInstance(types[types.Length-1].GetElementType(), args.Length - types.Length + 1);
+                        for (Int32 i = types.Length - 1; i < args.Length; i++)
+                        {
+                            arr.SetValue(args[i], i - (types.Length - 1));
+                        }
+
+                        Object[] newArgs = new Object[types.Length];
+
+                        for (Int32 i = 0; i < newArgs.Length - 1; i++)
+                        {
+                            newArgs[i] = args[i];
+                        }
+                        newArgs[newArgs.Length - 1] = arr;
+
+                        return method.Invoke(container, newArgs);
+                    }
+                }
+                else
+                {
+                    return method.Invoke(container, args);
+                }
+            }
+
+            return null;
         }
         #endregion
         #region ToIEnumerable

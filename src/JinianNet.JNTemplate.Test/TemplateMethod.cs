@@ -7,6 +7,43 @@ namespace JinianNet.JNTemplate.Test
 {
     public class TemplateMethod
     {
+        public string Test(string message, int id, bool result)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append("您输入的参数是有：");
+
+            sb.Append(message);
+            sb.Append(" ");
+            sb.Append(id);
+            sb.Append(" ");
+            sb.Append(result);
+            sb.Append(" ");
+            return sb.ToString();
+        }
+
+        public string TestParams(params object[] args)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append("您输入的参数是有：");
+            foreach (var node in args)
+            {
+                sb.Append(node);
+                sb.Append(" ");
+            }
+            return sb.ToString();
+        }
+
+        public string TestParams2(string message,params object[] args)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(message);
+            foreach (var node in args)
+            {
+                sb.Append(node);
+                sb.Append(" ");
+            }
+            return sb.ToString();
+        }
 
         public int RecordCount { get; set; }
 
