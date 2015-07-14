@@ -414,7 +414,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     this.pos.Push("(");
                 }
-                else if (this.scanner.Read() == ')' && this.pos.Peek() == "(")// && this.pos.Count > 2
+                else if (this.scanner.Read() == ')' && this.pos.Count>0 && this.pos.Peek() == "(")// && this.pos.Count > 2
                 {
                     this.pos.Pop();
                     if (this.pos.Count == 1)

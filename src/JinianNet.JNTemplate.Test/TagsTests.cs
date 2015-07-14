@@ -322,7 +322,8 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$test(\"字符串\",1,true)";
             var template = new Template(templateContent);
-            template.Set("test", new JinianNet.JNTemplate.FuncHandler(args => {
+            template.Set("test", new JinianNet.JNTemplate.FuncHandler(args =>
+            {
                 System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 sb.Append("您输入的参数是有：");
                 foreach (var node in args)
@@ -375,6 +376,20 @@ namespace JinianNet.JNTemplate.Test
             template.Set("fun", new TemplateMethod());
             var render = template.Render();
             Assert.AreEqual("您输入的参数是有：字符串 1 True ", render);
+        }
+
+        /// <summary>
+        /// 测试变量
+        /// </summary>
+        [TestMethod]
+        public void TestVariable()
+        {
+            var templateContent = "($a)人";
+            var template = new Template(templateContent);
+            template.Set("a", "1");
+            var render = template.Render();
+
+            Assert.AreEqual("(1)人", render);
         }
     }
 }
