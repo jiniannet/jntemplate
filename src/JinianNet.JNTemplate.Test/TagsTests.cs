@@ -391,5 +391,19 @@ namespace JinianNet.JNTemplate.Test
 
             Assert.AreEqual("(1)人", render);
         }
+
+
+        /// <summary>
+        /// 测试字符串转义
+        /// </summary>
+        [TestMethod]
+        public void TestString()
+        {
+            var templateContent ="$set(str=\"3845254\\\\\\\"3366845\\\\\")$str" ;
+            var template = new Template(templateContent);
+            var render = template.Render();
+            Assert.AreEqual("3845254\\\"3366845\\", render);
+            
+        }
     }
 }

@@ -133,24 +133,94 @@ namespace JinianNet.JNTemplate.Parser
             }
             return false;
         }
+
+        /// <summary>
+        /// 获取当前start到index的字符串(会处理转义符)
+        /// </summary>
+        /// <returns></returns>
+        public String GetEscapeString()
+        {
+            String value = GetEscapeString(this.start, this.index);
+            this.start = this.index;
+            return value;
+        }
+
         /// <summary>
         /// 截取start到index的字符串
         /// </summary>
         /// <returns></returns>
         public String GetString()
         {
-            String value = GetString(this.start);
+            String value = GetString(this.start,this.index);
             this.start = this.index;
             return value;
         }
         /// <summary>
-        /// 截取s到index的字符串
+        /// 截取x到y的转义字符串
         /// </summary>
         /// <param name="x">开始索引</param>
+        /// <param name="y">结束索引</param>
         /// <returns></returns>
-        public String GetString(Int32 x)
+        public String GetEscapeString(Int32 x, Int32 y)
         {
-            return GetString(x, this.index);
+            List<Char> cs = new List<Char>();
+            for (Int32 i = x; i < y; i++)
+            {
+                if (this.document[i] == '\\')
+                {
+                    switch (this.document[i + 1])
+                    {
+                        case '0':
+                            cs.Add('\0');
+                            i++;
+                            break;
+                        case '"':
+                            cs.Add('\"');
+                            i++;
+                            break;
+                        case '\\':
+                            cs.Add('\\');
+                            i++;
+                            break;
+                        case 'a':
+                            cs.Add('\a');
+                            i++;
+                            break;
+                        case 'b':
+                            cs.Add('\n');
+                            i++;
+                            break;
+                        case 'f':
+                            cs.Add('\f');
+                            i++;
+                            break;
+                        case 'n':
+                            cs.Add('\n');
+                            i++;
+                            break;
+                        case 'r':
+                            cs.Add('\r');
+                            i++;
+                            break;
+                        case 't':
+                            cs.Add('\t');
+                            i++;
+                            break;
+                        case 'v':
+                            cs.Add('\v');
+                            i++;
+                            break;
+                        default:
+                            cs.Add(this.document[i]);
+                            break;
+                    }
+                }
+                else
+                {
+                    cs.Add(this.document[i]);
+                }
+            }
+            return new String(cs.ToArray());
         }
         /// <summary>
         /// 截取x到y的字符串

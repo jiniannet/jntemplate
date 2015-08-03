@@ -106,7 +106,16 @@ namespace JinianNet.JNTemplate.Parser
 
         private Token GetToken(TokenKind tokenKind)
         {
-            Token token = new Token(this.kind, this.scanner.GetString());
+
+            Token token;
+            if (tokenKind == TokenKind.StringEnd)
+            {
+                token = new Token(this.kind, this.scanner.GetEscapeString());
+            }
+            else
+            {
+                token = new Token(this.kind, this.scanner.GetString());
+            }
             token.BeginLine = this.startLine;
             token.BeginColumn = this.startColumn;
             token.EndColumn = this.column;
@@ -125,7 +134,15 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (this.scanner.Next(i))
             {
-                this.column += i;
+                if (this.scanner.Read() == '\n')
+                {
+                    this.line++;
+                    this.column = 1;
+                }
+                else
+                {
+                    this.column++;
+                }
                 return true;
             }
 
@@ -160,13 +177,13 @@ namespace JinianNet.JNTemplate.Parser
                     this.flagMode = FlagMode.Comment;
                     return true;
                 }
-                else 
+                else
 #endif
                     if (Char.IsLetter(this.scanner.Read(1)))
-                {
-                    this.flagMode = FlagMode.Logogram;
-                    return true;
-                }
+                    {
+                        this.flagMode = FlagMode.Logogram;
+                        return true;
+                    }
             }
             return false;
         }
@@ -274,11 +291,6 @@ namespace JinianNet.JNTemplate.Parser
                     {
                         AddToken(TokenKind.TagStart);
                     }
-                    else if (this.scanner.Read() == '\n')
-                    {
-                        this.line++;
-                        this.column = 1;
-                    }
                 }
                 while (Next());
 
@@ -368,6 +380,16 @@ namespace JinianNet.JNTemplate.Parser
             }
         }
 
+        private int GetPrevCharCount(Char c)
+        {
+            int i = 1;
+            while (this.scanner.Read(-i) == c)
+            {
+                i++;
+            }
+            return --i;
+        }
+
         private void ReadToken()
         {
             while (Next())
@@ -376,12 +398,16 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (this.pos.Count > 0 && this.pos.Peek() == "\"")
                     {
-                        if (this.kind == TokenKind.StringStart)
+                        if (this.scanner.Read(-1) != '\\'
+                            || GetPrevCharCount('\\') % 2 == 0)
                         {
-                            AddToken(TokenKind.String);
+                            if (this.kind == TokenKind.StringStart)
+                            {
+                                AddToken(TokenKind.String);
+                            }
+                            AddToken(TokenKind.StringEnd);
+                            this.pos.Pop();
                         }
-                        AddToken(TokenKind.StringEnd);
-                        this.pos.Pop();
                         continue;
                     }
 
@@ -414,7 +440,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     this.pos.Push("(");
                 }
-                else if (this.scanner.Read() == ')' && this.pos.Count>0 && this.pos.Peek() == "(")// && this.pos.Count > 2
+                else if (this.scanner.Read() == ')' && this.pos.Count > 0 && this.pos.Peek() == "(")// && this.pos.Count > 2
                 {
                     this.pos.Pop();
                     if (this.pos.Count == 1)
