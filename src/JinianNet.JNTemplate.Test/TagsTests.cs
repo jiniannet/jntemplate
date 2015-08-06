@@ -142,6 +142,36 @@ namespace JinianNet.JNTemplate.Test
 
         }
 
+        [TestMethod]
+        public void TestIf3()
+        {
+            var templateContent = "$if(3>2 && 5<2)yes${else}no${end}"; 
+            var template = new Template(templateContent);;
+            var render = template.Render();
+            Assert.AreEqual("no", render);
+        }
+
+        [TestMethod]
+        public void TestIf4()
+        {
+            //v1 为空 false,5<2为false，整体结果 false || false 为false
+            var templateContent = "$if(v1 || 5<2)yes${else}no${end}"; 
+            var template = new Template(templateContent); ;
+            var render = template.Render();
+            Assert.AreEqual("no", render);
+        }
+
+        [TestMethod]
+        public void TestIf5()
+        {
+            //v1 为空 false,v2等于9，数字不等于0即为true,整体结果 false || true 为true
+            var templateContent = "$if(v1 || v2)yes${else}no${end}";
+            var template = new Template(templateContent);
+            template.Set("v2", 9);
+            var render = template.Render();
+            Assert.AreEqual("yes", render);
+        }
+
 
         /// <summary>
         /// 测试FOR

@@ -47,30 +47,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         public virtual Boolean ToBoolean(TemplateContext context)
         {
             Object value = Parse(context);
-            if (value == null)
-                return false;
-            switch (value.GetType().FullName)
-            {
-                case "System.Boolean":
-                    return (Boolean)value;
-                case "System.String":
-                    return !String.IsNullOrEmpty(value.ToString());
-                case "System.UInt16":
-                case "System.UInt32":
-                case "System.UInt64":
-                case "System.Int16":
-                case "System.Int32":
-                case "System.Int64":
-                    return value.ToString()!="0";
-                case "System.Decimal":
-                    return (Decimal)value != 0;
-                case "System.Double":
-                    return (Double)value != 0;
-                case "System.Single":
-                    return (Single)value != 0;
-                default:
-                    return value != null;
-            }
+            return Common.Calculator.CalculateBoolean(value);
         }
 
         /// <summary>

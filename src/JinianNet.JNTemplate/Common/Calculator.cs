@@ -446,6 +446,16 @@ namespace JinianNet.JNTemplate.Common
         /// <returns></returns>
         public static Object Calculate(Object x, Object y, String value)
         {
+            if (value == "||")
+            {
+                return CalculateOr(x, y, value);
+            }
+
+            if (value == "&&")
+            {
+                return CalculateAnd(x, y, value);
+            }
+
             Type tX = x.GetType();
             Type tY = y.GetType();
 
@@ -531,6 +541,60 @@ namespace JinianNet.JNTemplate.Common
                     return String.Concat(x.ToString(),y.ToString());
                 default:
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Object\" and \"Object\""));
+            }
+        }
+
+        private static Object CalculateAnd(Object x, Object y, String value)
+        {
+            if (!CalculateBoolean(x))
+            {
+                return false;
+            }
+            if (!CalculateBoolean(y))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private static Object CalculateOr(Object x, Object y, String value)
+        {
+            if(CalculateBoolean(x))
+            {
+                return true;
+            }
+            if (CalculateBoolean(y))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal static Boolean CalculateBoolean(Object value)
+        {
+            if (value == null)
+                return false;
+            switch (value.GetType().FullName)
+            {
+                case "System.Boolean":
+                    return (Boolean)value;
+                case "System.String":
+                    return !String.IsNullOrEmpty(value.ToString());
+                case "System.UInt16":
+                case "System.UInt32":
+                case "System.UInt64":
+                case "System.Int16":
+                case "System.Int32":
+                case "System.Int64":
+                    return value.ToString() != "0";
+                case "System.Decimal":
+                    return (Decimal)value != 0;
+                case "System.Double":
+                    return (Double)value != 0;
+                case "System.Single":
+                    return (Single)value != 0;
+                default:
+                    return value != null;
             }
         }
 
@@ -828,6 +892,11 @@ namespace JinianNet.JNTemplate.Common
                     return x == y;
                 case "!=":
                     return x != y;
+                case "|":
+                    return x | y;
+                case "&":
+                    return x & y;
+
                 default:
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int32\" and \"Int32\""));
             }
@@ -866,6 +935,11 @@ namespace JinianNet.JNTemplate.Common
                     return x == y;
                 case "!=":
                     return x != y;
+                case "|":
+                    return x | y;
+                case "&":
+                    return x & y;
+
                 default:
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int64\" and \"Int64\""));
             }
@@ -904,6 +978,11 @@ namespace JinianNet.JNTemplate.Common
                     return x == y;
                 case "!=":
                     return x != y;
+                case "|":
+                    return x | y;
+                case "&":
+                    return x & y;
+
                 default:
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
             }
