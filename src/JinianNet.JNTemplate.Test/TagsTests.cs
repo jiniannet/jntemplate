@@ -435,5 +435,28 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("3845254\\\"3366845\\", render);
             
         }
+
+
+
+        /// <summary>
+        /// 测试标签前后空白字符串处理
+        /// </summary>
+        [TestMethod]
+        public void TestStripWhiteSpace()
+        {
+            var templateContent = @"
+your data is:
+$set(key1=1)
+$set(key2=2)
+$set(key3=3)
+$set(key4=4)
+$set(key5=5)
+$set(key6=6)
+$key5";
+            var template = new Template(templateContent);
+            template.Context.Config.StripWhiteSpace = true;
+            var render = template.Render();
+            Assert.AreEqual("your data is:5", render);
+        }
     }
 }

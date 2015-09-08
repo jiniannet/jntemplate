@@ -19,6 +19,10 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
+            if(context.Config.StripWhiteSpace)
+            {
+                return (this.ToString() ?? string.Empty).Trim();
+            }
             return this.ToString();
         }
         /// <summary>
@@ -28,7 +32,12 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            write.Write(this.ToString());
+            String value = this.ToString();
+            if (context.Config.StripWhiteSpace && value!=null)
+            {
+                value = value.Trim();
+            }
+            write.Write(value);
         }
         /// <summary>
         /// 获取对象的字符串引用

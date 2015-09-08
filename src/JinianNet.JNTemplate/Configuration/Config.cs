@@ -22,6 +22,7 @@ namespace JinianNet.JNTemplate.Configuration
         private String tagPrefix;
         private String tagSuffix;
         private Boolean throwExceptions;
+        private Boolean stripWhiteSpace;
 
         /// <summary>
         /// 默认配置
@@ -50,6 +51,7 @@ namespace JinianNet.JNTemplate.Configuration
             this.tagSuffix = suffix;
             this.tagPrefix = prefix;
             this.throwExceptions = false;
+            this.stripWhiteSpace = false;
         }
 
         /// <summary>
@@ -106,6 +108,21 @@ namespace JinianNet.JNTemplate.Configuration
             set
             {
                 throwExceptions = value;
+            }
+        }
+
+        /// <summary>
+        /// 是否处理空白字符
+        /// </summary>
+        public Boolean StripWhiteSpace
+        {
+            get
+            {
+                return stripWhiteSpace;
+            }
+            set
+            {
+                stripWhiteSpace = value;
             }
         }
 

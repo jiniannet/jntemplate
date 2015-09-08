@@ -42,6 +42,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         Boolean ThrowExceptions { get; set; }
 
+        Boolean StripWhiteSpace { get; set; }
+
         /// <summary>
         /// 标签分析器
         /// </summary>
