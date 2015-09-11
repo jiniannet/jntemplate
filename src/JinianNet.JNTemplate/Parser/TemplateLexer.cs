@@ -57,33 +57,12 @@ namespace JinianNet.JNTemplate.Parser
         private Stack<String> pos;
 
         /// <summary>
-        /// 简写标签标记
-        /// </summary>
-        private Char tagFlag;
-
-        /// <summary>
-        /// 完整标签前缀
-        /// </summary>
-        private String tagPrefix;
-
-        /// <summary>
-        /// 完整标签后缀
-        /// </summary>
-        private String tagSuffix;
-
-        /// <summary>
         /// TemplateLexer
         /// </summary>
         /// <param name="text">待分析内容</param>
-        /// <param name="flag">简写标记</param>
-        /// <param name="prefix">标签前缀</param>
-        /// <param name="suffix">标签内容</param>
-        public TemplateLexer(String text, Char flag, String prefix, String suffix)
+        public TemplateLexer(String text)
         {
             this.document = text;
-            this.tagFlag = flag;
-            this.tagPrefix = prefix;
-            this.tagSuffix = suffix;
 
             Reset();
         }
@@ -156,9 +135,9 @@ namespace JinianNet.JNTemplate.Parser
                 return false;
             }
             Boolean find = true;
-            for (Int32 i = 0; i < this.tagPrefix.Length; i++)
+            for (Int32 i = 0; i <  Runtiome.TagPrefix.Length; i++)
             {
-                if (this.tagPrefix[i] != this.scanner.Read(i))
+                if (Runtiome.TagPrefix[i] != this.scanner.Read(i))
                 {
                     find = false;
                     break;
@@ -169,7 +148,7 @@ namespace JinianNet.JNTemplate.Parser
                 this.flagMode = FlagMode.Full;
                 return true;
             }
-            if (this.scanner.Read() == this.tagFlag)
+            if (this.scanner.Read() == Runtiome.TagFlag)
             {
 #if ALLOWCOMMENT
                 if (this.scanner.Read(1) == '*')
@@ -203,9 +182,9 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (this.flagMode == FlagMode.Full)
                     {
-                        for (Int32 i = 0; i < this.tagSuffix.Length; i++)
+                        for (Int32 i = 0; i < Runtiome.TagSuffix.Length; i++)
                         {
-                            if (this.tagSuffix[i] != this.scanner.Read(i))
+                            if (Runtiome.TagSuffix[i] != this.scanner.Read(i))
                             {
                                 return false;
                             }
@@ -216,7 +195,7 @@ namespace JinianNet.JNTemplate.Parser
 #if ALLOWCOMMENT
                     else if (this.flagMode == FlagMode.Comment)
                     {
-                        return this.scanner.Read() == '*' && this.scanner.Read(1) == this.tagFlag;
+                        return this.scanner.Read() == '*' && this.scanner.Read(1) == Runtiome.TagFlag;
                     }
 #endif
                     else
@@ -270,7 +249,7 @@ namespace JinianNet.JNTemplate.Parser
                         {
                             if (this.flagMode == FlagMode.Full)
                             {
-                                Next(this.tagPrefix.Length - 1);
+                                Next(Runtiome.TagPrefix.Length - 1);
                             }
 
                             AddToken(GetTokenKind(this.scanner.Read()));
@@ -333,7 +312,7 @@ namespace JinianNet.JNTemplate.Parser
                 if (this.flagMode == FlagMode.Full)
                 {
                     AddToken(TokenKind.TagEnd);
-                    Next(this.tagSuffix.Length);
+                    Next(Runtiome.TagSuffix.Length);
                 }
 #if ALLOWCOMMENT
                 else if (this.flagMode == FlagMode.Comment)

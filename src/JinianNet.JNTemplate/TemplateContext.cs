@@ -16,16 +16,16 @@ namespace JinianNet.JNTemplate
     public class TemplateContext : ICloneable
     {
         private VariableScope variableScope;
-        private ITemplateConfig config;
         private String currentPath;
         private Encoding charset;
         private Boolean throwErrors;
+        private Boolean stripWhiteSpace;
 
         /// <summary>
         /// 模板上下文
         /// </summary>
         public TemplateContext()
-            : this(new Config(),new VariableScope())
+            : this(new Config(), new VariableScope())
         {
 
         }
@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="config">模板配值</param>
         /// <param name="data">数据</param>
-        public TemplateContext(ITemplateConfig config,VariableScope data)
+        public TemplateContext(ITemplateConfig config, VariableScope data)
         {
             if (config == null)
             {
@@ -46,11 +46,29 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentException("data");
             }
-            this.Charset = System.Text.Encoding.Default;
-            this.ThrowExceptions = true;
-            this.config = config;
+
             this.variableScope = data;
+            Configure(config);
         }
+        /// <summary>
+        /// 配置模板
+        /// </summary>
+        /// <param name="config"></param>
+        protected void Configure(ITemplateConfig config)
+        {
+            this.ThrowExceptions = config.ThrowExceptions;
+            this.StripWhiteSpace = config.StripWhiteSpace;
+        }
+
+        /// <summary>
+        /// 处理标签前后空格
+        /// </summary>
+        public Boolean StripWhiteSpace
+        {
+            get { return stripWhiteSpace; }
+            set { stripWhiteSpace = value; }
+        }
+
 
         /// <summary>
         /// 模板数据
@@ -67,7 +85,18 @@ namespace JinianNet.JNTemplate
         public String CurrentPath
         {
             get { return currentPath; }
-            set { currentPath = value; }
+            set
+            {
+                if (!String.IsNullOrEmpty(this.CurrentPath))
+                {
+                    this.Paths.Remove(this.CurrentPath);
+                }
+                currentPath = value;
+                if (!this.Paths.Contains(value))
+                {
+                    this.Paths.Add(value);
+                }
+            }
         }
 
         /// <summary>
@@ -82,10 +111,9 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板资源路径
         /// </summary>
-        [Obsolete("请使用Config.Paths 来替代本对象")]
         public ICollection<String> Paths
         {
-            get { return Config.Paths; }
+            get { return null; }
         }
 
         /// <summary>
@@ -95,15 +123,6 @@ namespace JinianNet.JNTemplate
         {
             get { return throwErrors; }
             set { throwErrors = value; }
-        }
-
-        /// <summary>
-        /// 模板配置数据
-        /// </summary>
-        public ITemplateConfig Config
-        {
-            get { return config; }
-            set { config = value; }
         }
 
         //public virtual System.Exception[] AllErrors
@@ -163,7 +182,6 @@ namespace JinianNet.JNTemplate
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
-            ctx.Config = context.Config;
             return ctx;
         }
 

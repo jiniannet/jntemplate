@@ -224,6 +224,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
         /// <param name="type">目标TYPE</param>
         /// <param name="methodName">方法名</param>
         /// <param name="args">形参</param>
+        /// <param name="hasParam">是否有params参数</param>
         /// <returns>MethodInfo</returns>
         public static MethodInfo GetMethod(Type type, String methodName, ref Type[] args, out Boolean hasParam)
         {

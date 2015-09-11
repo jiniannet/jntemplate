@@ -25,7 +25,6 @@ namespace JinianNet.JNTemplate.Parser
         private Tag tag;//当前标签
         private Token[] tokens;//tokens列表
         private Int32 index;//当前索引
-        private ITagTypeResolver resolver;
         #endregion
 
         #region ctox
@@ -34,10 +33,9 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         /// <param name="ts">TOKEN集合</param>
         /// <param name="TagTypeResolver">标签类型分析器</param>
-        public TemplateParser(Token[] ts, ITagTypeResolver TagTypeResolver)
+        public TemplateParser(Token[] ts)
         {
             this.tokens = ts;
-            this.resolver = TagTypeResolver;
             Reset();
         }
         #endregion
@@ -152,7 +150,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (tc == null || tc.Count == 0)
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
-            return resolver.Resolver(this, tc);
+            return Runtiome.TagResolver.Resolver(this, tc);
         }
 
 

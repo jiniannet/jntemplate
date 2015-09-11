@@ -15,6 +15,19 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Resources
     {
+        private static Collection<String> paths = new Collection<String>();
+
+        /// <summary>
+        /// 资源默认搜索路径
+        /// </summary>
+        public static Collection<String> Paths
+        {
+            get
+            {
+                return paths;
+            }
+        }
+
         /// <summary>
         /// 合并集合
         /// </summary>
@@ -27,6 +40,17 @@ namespace JinianNet.JNTemplate
             list.AddRange(newPaths);
             list.AddRange(oldPaths);
             return list;
+        }
+
+        /// <summary>
+        /// 查找指定文件
+        /// </summary>
+        /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param>
+        /// <param name="fullPath">查找结果：完整路径</param>
+        /// <returns></returns>
+        public static Int32 FindPath(String filename, out String fullPath)
+        {
+            return FindPath(Paths, filename, out fullPath);
         }
 
         /// <summary>
@@ -81,6 +105,18 @@ namespace JinianNet.JNTemplate
                 return Load(full, encoding);
             }
             return null;
+        }
+
+
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        /// <param name="encoding">编码</param>
+        /// <returns></returns>
+        public static String LoadResource(String filename, Encoding encoding)
+        {
+            return LoadResource(Paths, filename, encoding);
         }
 
         /// <summary>

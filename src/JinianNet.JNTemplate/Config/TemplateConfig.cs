@@ -15,10 +15,11 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public interface ITemplateConfig
     {
+        
         /// <summary>
         /// 工作路径
         /// </summary>
-        Collection<String> Paths { get; }
+        String[] Paths { get; }
 
         /// <summary>
         /// 标签前缀
@@ -36,7 +37,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 缓存提供器
         /// </summary>
-        ICache CachingProvider { get; set; }
+        Type CachingProvider { get; set; }
         /// <summary>
         /// 是否抛出异常
         /// </summary>
@@ -48,6 +49,6 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签分析器
         /// </summary>
-        Parser.ITagTypeResolver Resolver { get; }
+        Type[] ResolverTypes { get; }
     }
 }

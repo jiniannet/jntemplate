@@ -15,21 +15,8 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 模板实例类
     /// </summary>
-    public class Template : BlockTag, ITemplate
+    public class Template : TemplateRender,ITemplate
     {
-        private TemplateContext context;
-        /// <summary>
-        /// 模板上下文
-        /// </summary>
-        public TemplateContext Context
-        {
-            get
-            {
-                return context;
-            }
-            set { context = value; }
-        }
-
         /// <summary>
         /// Template
         /// </summary>
@@ -60,7 +47,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new System.ArgumentNullException("ctx");
             }
-            this.context = ctx;
+            this.Context = ctx;
             this.TemplateContent = text;
         }
 
@@ -68,11 +55,11 @@ namespace JinianNet.JNTemplate
         /// 模板解析结果呈现
         /// </summary>
         /// <param name="writer"></param>
-        public virtual void Render(TextWriter writer)
+        public override void Render(TextWriter writer)
         {
             try
             {
-                base.Render(this.Context, writer);
+                base.Render(writer);
             }
             catch (System.Exception e)
             {

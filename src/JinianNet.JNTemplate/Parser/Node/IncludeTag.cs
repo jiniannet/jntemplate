@@ -29,12 +29,12 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 if (String.IsNullOrEmpty(context.CurrentPath))
                 {
-                    return Resources.LoadResource(context.Config.Paths, path.ToString(), context.Charset);
+                    return Resources.LoadResource(path.ToString(), context.Charset);
                 }
                 else
                 {
                     return Resources.LoadResource(
-                        Resources.MergerPaths(context.Config.Paths, context.CurrentPath),
+                        Resources.MergerPaths(Resources.Paths, context.CurrentPath),
                         path.ToString(),
                         context.Charset);
                 }

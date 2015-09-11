@@ -56,6 +56,8 @@
     <Compile Include="Common\OperatorHelpers.cs" />
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ITemplateConfig.cs" />
+    <Compile Include="Config\Configurator.cs" />
+    <Compile Include="Config\TemplateConfig.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineCollection.cs" />
     <Compile Include="Exception\CompileException.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Resources.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
+    <Compile Include="TemplateRender.cs" />
     <Compile Include="TemplateContext.cs" />
     <Compile Include="TokenKind.cs" />
     <Compile Include="FlagMode.cs" />
