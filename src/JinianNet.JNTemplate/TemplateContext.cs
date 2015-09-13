@@ -20,12 +20,13 @@ namespace JinianNet.JNTemplate
         private Encoding charset;
         private Boolean throwErrors;
         private Boolean stripWhiteSpace;
+        private List<System.Exception> errors;
 
         /// <summary>
         /// 模板上下文
         /// </summary>
         public TemplateContext()
-            : this(new Config(), new VariableScope())
+            : this(new VariableScope())
         {
 
         }
@@ -33,22 +34,13 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板上下文
         /// </summary>
-        /// <param name="config">模板配值</param>
         /// <param name="data">数据</param>
-        public TemplateContext(ITemplateConfig config, VariableScope data)
+        public TemplateContext(VariableScope data)
         {
-            if (config == null)
-            {
-                throw new ArgumentException("config");
-            }
-
             if (data == null)
             {
                 throw new ArgumentException("data");
-            }
-
-            this.variableScope = data;
-            Configure(config);
+            };
         }
         /// <summary>
         /// 配置模板
@@ -58,6 +50,7 @@ namespace JinianNet.JNTemplate
         {
             this.ThrowExceptions = config.ThrowExceptions;
             this.StripWhiteSpace = config.StripWhiteSpace;
+            this.errors = new List<System.Exception>();
         }
 
         /// <summary>
@@ -85,18 +78,7 @@ namespace JinianNet.JNTemplate
         public String CurrentPath
         {
             get { return currentPath; }
-            set
-            {
-                if (!String.IsNullOrEmpty(this.CurrentPath))
-                {
-                    this.Paths.Remove(this.CurrentPath);
-                }
-                currentPath = value;
-                if (!this.Paths.Contains(value))
-                {
-                    this.Paths.Add(value);
-                }
-            }
+            set { currentPath = value; }
         }
 
         /// <summary>
@@ -108,13 +90,6 @@ namespace JinianNet.JNTemplate
             set { charset = value; }
         }
 
-        /// <summary>
-        /// 模板资源路径
-        /// </summary>
-        public ICollection<String> Paths
-        {
-            get { return null; }
-        }
 
         /// <summary>
         /// 是否抛出异常(默认为true)
@@ -125,29 +100,26 @@ namespace JinianNet.JNTemplate
             set { throwErrors = value; }
         }
 
-        //public virtual System.Exception[] AllErrors
-        //{
-        //    get
-        //    {
-        //        return null;       //功能暂未实现
-        //    }
-        //}
+        public virtual System.Exception[] AllErrors
+        {
+            get { return errors.ToArray(); }
+        }
 
-        ///// <summary>
-        ///// 获取当前第一个异常信息
-        ///// </summary>
-        //public virtual System.Exception Error
-        //{
-        //    get
-        //    {
-        //        if (this.AllErrors.Length > 0)
-        //        {
-        //            return this.AllErrors[0];
-        //        }
+        /// <summary>
+        /// 获取当前第一个异常信息
+        /// </summary>
+        public virtual System.Exception Error
+        {
+            get
+            {
+                if (this.AllErrors.Length > 0)
+                {
+                    return this.AllErrors[0];
+                }
 
-        //        return null;
-        //    }
-        //}
+                return null;
+            }
+        }
 
         /// <summary>
         /// 将异常添加到当前 异常集合中。
@@ -155,7 +127,7 @@ namespace JinianNet.JNTemplate
         /// <param name="e">异常</param>
         public void AddError(System.Exception e)
         {
-            //功能暂未实现
+            this.errors.Add(e);
         }
 
         /// <summary>
@@ -163,7 +135,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void ClearError()
         {
-            //功能暂未实现
+            this.errors.Clear();
         }
 
         /// <summary>

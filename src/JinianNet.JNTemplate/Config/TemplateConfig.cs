@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace JinianNet.JNTemplate.Configuration
+namespace JinianNet.JNTemplate.Config
 {
     /// <summary>
     /// 模板配置

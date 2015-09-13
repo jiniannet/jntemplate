@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate
 
         static Runtiome()
         {
-            Configure(new Config());
+            //Configure(new Config());
             runing = false;
         }
 
