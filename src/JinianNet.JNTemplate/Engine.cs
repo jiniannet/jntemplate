@@ -28,8 +28,33 @@ namespace JinianNet.JNTemplate
             Configure(EngineConfig.CreateDefault());
         }
 
+        /// <summary>
+        /// 引擎配置
+        /// </summary>
+        /// <param name="conf">配置内容</param>
+        /// <param name="ctx">默认模板上下文</param>
         public static void Configure(EngineConfig conf, TemplateContext ctx)
         {
+            if (conf == null)
+            {
+                throw new ArgumentNullException("conf");
+            }
+            if (String.IsNullOrEmpty(conf.TagSuffix))
+            {
+                throw new ArgumentNullException("conf.TagSuffix");
+            }
+            if (String.IsNullOrEmpty(conf.TagPrefix))
+            {
+                throw new ArgumentNullException("conf.TagPrefix");
+            }
+            if (conf.TagParsers == null)
+            {
+                conf.TagParsers = new String[0];
+            }
+            if (conf.ResourceDirectories == null)
+            {
+                conf.ResourceDirectories = new String[0];
+            }
             _context = ctx;
             _config = conf;
 
@@ -44,6 +69,10 @@ namespace JinianNet.JNTemplate
 
         }
 
+        /// <summary>
+        /// 引擎配置
+        /// </summary>
+        /// <param name="conf">配置内容</param>
         public static void Configure(EngineConfig conf)
         {
             Configure(conf, null);
@@ -85,7 +114,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 完整标签前缀
         /// </summary>
-        public static string TagPrefix
+        internal static string TagPrefix
         {
             get { return _config.TagPrefix; }
         }
@@ -93,7 +122,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 完整标签后缀
         /// </summary>
-        public static string TagSuffix
+        internal static string TagSuffix
         {
             get { return _config.TagSuffix; }
         }

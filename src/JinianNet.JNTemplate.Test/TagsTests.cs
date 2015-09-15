@@ -319,19 +319,21 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestConfig()
         {
-            //var conf = Configuration.EngineConfig.CreateDefault();
-            //conf.TagFlag = '@';
-            //conf.TagSuffix = "}";
-            //conf.TagSuffix = "{$";
+            var conf = Configuration.EngineConfig.CreateDefault();
+            conf.TagFlag = '@';
+            conf.TagSuffix = "}";
+            conf.TagPrefix = "{$";
 
-            //Engine.Configure(conf);
+            Engine.Configure(conf);
 
-            //var templateContent = "你好，@name,欢迎来到{$name}的世界";
-            //var template = (Template)Engine.CreateTemplate(templateContent);
-            //template.Set("name", "jntemplate");
-            //var render = template.Render();
-            //Assert.AreEqual("你好，jntemplate,欢迎来到jntemplate的世界", render);
-            Assert.AreEqual("111", "111");
+            var templateContent = "你好，@name,欢迎来到{$name}的世界";
+            var template = (Template)Engine.CreateTemplate(templateContent);
+            template.Set("name", "jntemplate");
+            var render = template.Render();
+            Assert.AreEqual("你好，jntemplate,欢迎来到jntemplate的世界", render);
+
+            Engine.Configure(Configuration.EngineConfig.CreateDefault());
+            //Assert.AreEqual("111", "111");
         }
 
         /// <summary>
