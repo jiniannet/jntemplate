@@ -49,15 +49,5 @@
     </div>
 
       #parse("footer.html")
-    <script type="text/javascript">
-    (function(){
-        var id='$func.Get("1")';
-        if(id==="1"||id==="2"||id==="3"){
-            jQuery("#tblHead li").eq(parseInt(id)-1).addClass("activate");
-        }else{
-            jQuery("#tblHead li").eq(0).addClass("activate");
-        }
-    })();
-    </script>
   </body>
 </html>

@@ -114,14 +114,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="html\Library\bootstrap\css\bootstrap-theme.min.css" />
-    <Content Include="html\Library\bootstrap\css\bootstrap.min.css" />
-    <Content Include="html\Library\bootstrap\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="html\Library\bootstrap\js\bootstrap.min.js" />
-    <Content Include="html\Library\jquery.js" />
-    <Content Include="html\Library\system.js" />
-    <Content Include="html\Library\utility.js" />
-    <Content Include="templets\default\css\layout.css" />
+    <Content Include="html\css\layout.css" />
     <Content Include="templets\default\footer.html" />
     <Content Include="templets\default\header.html" />
     <Content Include="templets\default\meta.html" />
@@ -129,17 +122,17 @@
     <Content Include="templets\default\sidebar.html" />
     <Content Include="templets\nv\footer.html" />
     <Content Include="templets\nv\header.html" />
-    <Content Include="templets\default\images\cline.png" />
-    <Content Include="templets\default\images\csetp.png" />
-    <Content Include="templets\default\images\csetp1.png" />
-    <Content Include="templets\default\images\icon.png" />
-    <Content Include="templets\default\images\line.png" />
-    <Content Include="templets\default\images\no.gif" />
-    <Content Include="templets\default\images\right.gif" />
-    <Content Include="templets\default\images\setp-success.png" />
-    <Content Include="templets\default\images\setp.png" />
-    <Content Include="templets\default\images\top.png" />
-    <Content Include="templets\default\images\yes.gif" />
+    <Content Include="html\images\cline.png" />
+    <Content Include="html\images\csetp.png" />
+    <Content Include="html\images\csetp1.png" />
+    <Content Include="html\images\icon.png" />
+    <Content Include="html\images\line.png" />
+    <Content Include="html\images\no.gif" />
+    <Content Include="html\images\right.gif" />
+    <Content Include="html\images\setp-success.png" />
+    <Content Include="html\images\setp.png" />
+    <Content Include="html\images\top.png" />
+    <Content Include="html\images\yes.gif" />
     <Content Include="templets\default\include\header.txt" />
     <Content Include="templets\nv\meta.html" />
     <Content Include="templets\nv\questionlist.html" />
@@ -149,11 +142,6 @@
     <Folder Include="dll\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="html\Library\bootstrap\css\bootstrap-theme.css.map" />
-    <None Include="html\Library\bootstrap\css\bootstrap.css.map" />
-    <None Include="html\Library\bootstrap\fonts\glyphicons-halflings-regular.eot" />
-    <None Include="html\Library\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
-    <None Include="html\Library\bootstrap\fonts\glyphicons-halflings-regular.woff" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
