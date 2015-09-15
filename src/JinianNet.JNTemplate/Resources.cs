@@ -15,19 +15,6 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Resources
     {
-        private static Collection<String> paths = new Collection<String>();
-
-        /// <summary>
-        /// 资源默认搜索路径
-        /// </summary>
-        public static Collection<String> Paths
-        {
-            get
-            {
-                return paths;
-            }
-        }
-
         /// <summary>
         /// 合并集合
         /// </summary>
@@ -50,7 +37,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static Int32 FindPath(String filename, out String fullPath)
         {
-            return FindPath(Paths, filename, out fullPath);
+            return FindPath(Engine.ResourceDirectories, filename, out fullPath);
         }
 
         /// <summary>
@@ -116,7 +103,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static String LoadResource(String filename, Encoding encoding)
         {
-            return LoadResource(Paths, filename, encoding);
+            return LoadResource(Engine.ResourceDirectories, filename, encoding);
         }
 
         /// <summary>

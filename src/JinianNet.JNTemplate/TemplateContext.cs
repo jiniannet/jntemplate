@@ -15,12 +15,12 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class TemplateContext : ICloneable
     {
-        private VariableScope variableScope;
-        private String currentPath;
-        private Encoding charset;
-        private Boolean throwErrors;
-        private Boolean stripWhiteSpace;
-        private List<System.Exception> errors;
+        private VariableScope _variableScope;
+        private String _currentPath;
+        private Encoding _charset;
+        private Boolean _throwErrors;
+        private Boolean _stripWhiteSpace;
+        private List<System.Exception> _errors;
 
         /// <summary>
         /// 模板上下文
@@ -41,16 +41,12 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentException("data");
             };
-        }
-        /// <summary>
-        /// 配置模板
-        /// </summary>
-        /// <param name="config"></param>
-        protected void Configure(ITemplateConfig config)
-        {
-            this.ThrowExceptions = config.ThrowExceptions;
-            this.StripWhiteSpace = config.StripWhiteSpace;
-            this.errors = new List<System.Exception>();
+            this._variableScope = data;
+            this._errors = new List<System.Exception>();
+            this._currentPath = null;
+            this._charset = Encoding.Default;
+            this._throwErrors = true;
+            this._stripWhiteSpace = false;
         }
 
         /// <summary>
@@ -58,8 +54,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Boolean StripWhiteSpace
         {
-            get { return stripWhiteSpace; }
-            set { stripWhiteSpace = value; }
+            get { return _stripWhiteSpace; }
+            set { _stripWhiteSpace = value; }
         }
 
 
@@ -68,8 +64,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public VariableScope TempData
         {
-            get { return variableScope; }
-            set { variableScope = value; }
+            get { return _variableScope; }
+            set { _variableScope = value; }
         }
 
         /// <summary>
@@ -77,8 +73,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public String CurrentPath
         {
-            get { return currentPath; }
-            set { currentPath = value; }
+            get { return _currentPath; }
+            set { _currentPath = value; }
         }
 
         /// <summary>
@@ -86,8 +82,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Encoding Charset
         {
-            get { return charset; }
-            set { charset = value; }
+            get { return _charset; }
+            set { _charset = value; }
         }
 
 
@@ -96,17 +92,20 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Boolean ThrowExceptions
         {
-            get { return throwErrors; }
-            set { throwErrors = value; }
-        }
-
-        public virtual System.Exception[] AllErrors
-        {
-            get { return errors.ToArray(); }
+            get { return _throwErrors; }
+            set { _throwErrors = value; }
         }
 
         /// <summary>
-        /// 获取当前第一个异常信息
+        /// 当前异常集合（当ThrowExceptions为false时有效）
+        /// </summary>
+        public virtual System.Exception[] AllErrors
+        {
+            get { return _errors.ToArray(); }
+        }
+
+        /// <summary>
+        /// 获取当前第一个异常信息（当ThrowExceptions为false时有效）
         /// </summary>
         public virtual System.Exception Error
         {
@@ -127,7 +126,11 @@ namespace JinianNet.JNTemplate
         /// <param name="e">异常</param>
         public void AddError(System.Exception e)
         {
-            this.errors.Add(e);
+            if (this.ThrowExceptions)
+            {
+                throw e;
+            }
+            this._errors.Add(e);
         }
 
         /// <summary>
@@ -135,7 +138,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void ClearError()
         {
-            this.errors.Clear();
+            this._errors.Clear();
         }
 
         /// <summary>
@@ -154,6 +157,7 @@ namespace JinianNet.JNTemplate
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
+            ctx.StripWhiteSpace = context.StripWhiteSpace;
             return ctx;
         }
 

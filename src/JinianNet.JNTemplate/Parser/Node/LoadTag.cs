@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                 else
                 {
                     this.TemplateContent = Resources.LoadResource(
-                        Resources.MergerPaths(Resources.Paths, context.CurrentPath), 
+                        Resources.MergerPaths(Engine.ResourceDirectories, context.CurrentPath), 
                         path.ToString(), 
                         context.Charset);
                 }
