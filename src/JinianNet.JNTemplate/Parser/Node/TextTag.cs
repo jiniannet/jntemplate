@@ -19,10 +19,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
-            if(context.Config.StripWhiteSpace)
-            {
-                return (this.ToString() ?? string.Empty).Trim();
-            }
             return this.ToString();
         }
         /// <summary>
@@ -33,10 +29,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             String value = this.ToString();
-            if (context.Config.StripWhiteSpace && value!=null)
-            {
-                value = value.Trim();
-            }
             write.Write(value);
         }
         /// <summary>

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JinianNet.JNTemplate.Parser;
-using JinianNet.JNTemplate.Configuration;
 
 namespace JinianNet.JNTemplate
 {
@@ -16,7 +15,6 @@ namespace JinianNet.JNTemplate
     public class TemplateContext : ICloneable
     {
         private VariableScope variableScope;
-        private ITemplateConfig config;
         private String currentPath;
         private Encoding charset;
         private Boolean throwErrors;
@@ -25,7 +23,7 @@ namespace JinianNet.JNTemplate
         /// 模板上下文
         /// </summary>
         public TemplateContext()
-            : this(new Config(),new VariableScope())
+            : this(new VariableScope())
         {
 
         }
@@ -35,20 +33,14 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="config">模板配值</param>
         /// <param name="data">数据</param>
-        public TemplateContext(ITemplateConfig config,VariableScope data)
+        public TemplateContext(VariableScope data)
         {
-            if (config == null)
-            {
-                throw new ArgumentException("config");
-            }
-
             if (data == null)
             {
                 throw new ArgumentException("data");
             }
             this.Charset = System.Text.Encoding.Default;
             this.ThrowExceptions = true;
-            this.config = config;
             this.variableScope = data;
         }
 
@@ -82,10 +74,10 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板资源路径
         /// </summary>
-        [Obsolete("请使用Config.Paths 来替代本对象")]
+        [Obsolete("请使用Resources.Paths 来替代本对象")]
         public ICollection<String> Paths
         {
-            get { return Config.Paths; }
+            get { return Resources.Paths; }
         }
 
         /// <summary>
@@ -95,15 +87,6 @@ namespace JinianNet.JNTemplate
         {
             get { return throwErrors; }
             set { throwErrors = value; }
-        }
-
-        /// <summary>
-        /// 模板配置数据
-        /// </summary>
-        public ITemplateConfig Config
-        {
-            get { return config; }
-            set { config = value; }
         }
 
         //public virtual System.Exception[] AllErrors
@@ -163,7 +146,6 @@ namespace JinianNet.JNTemplate
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
-            ctx.Config = context.Config;
             return ctx;
         }
 

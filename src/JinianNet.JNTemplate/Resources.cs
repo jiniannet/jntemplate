@@ -15,6 +15,18 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Resources
     {
+        private readonly static Collection<String> collection = new Collection<string>();
+        /// <summary>
+        /// 资源路径
+        /// </summary>
+        public static Collection<String> Paths
+        {
+            get
+            {
+                return collection;
+            }
+        }
+
         /// <summary>
         /// 合并集合
         /// </summary>
