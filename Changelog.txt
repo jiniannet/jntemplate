@@ -1,20 +1,23 @@
 Version 1.3 - 待发布
 ==============================================
-- 以下写法不再支持：
+- 为了避免引擎使用复杂化，以下写法不再支持（统一到Engine静态类下）：
   1.从指定文件加载模板：Template.FromFile(String, Encoding)方法已删除！ 替代方法： Engine.LoadTemplate(String,TemplateContext) 
-  2.
+  2.配置入口：inianNet.JNTemplate.BuildManager 类已删除！ 替代方法：Engine.Configure() +2 重载
   3.模板查找目录：Resources.Paths/TemplateContext.Paths 属性已删除！替代属性：Engine.ResourceDirectories
 
-Version 1.2 (1.2.3.0) - 待发布
+- 功能性开发：
+- 增加引擎配置入口
+- 支持标签注释
+- 支持自定义标签前后缀
+- 增加标签空白字符处理开关
+
+Version 1.2 (1.2.3.0) - 109/16/2015
 ==============================================
 - 调整foreach循环体内，使用set标签时的作用域问题
 - 修正一个某特定情况下计算表达式时异常的BUG
-- 增加引擎统一配置
-- 支持标签注释
-- 支持自定义标签前后缀
 - 优化了方法标签解析时形参处理，增加params支持
 - 修复逻辑运算中的一个BUG
-- 增加标签空白字符处理开关
+- 1.2.x 版本除BUG修复外不再更新！
 
 Version 1.2 (1.2.2.0) - 12/23/2014
 ==============================================
