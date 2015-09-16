@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Parser
     /// <summary>
     /// 分析器
     /// </summary>
-    public class TagTypeResolver : ITagTypeResolver,ICollection<ITagParser>
+    public class TagTypeResolver : ITagTypeResolver, ICollection<ITagParser>
     {
         private readonly List<ITagParser> collection;
         /// <summary>
@@ -154,6 +154,41 @@ namespace JinianNet.JNTemplate.Parser
         {
             for (Int32 i = 0; i < Count; i++)
                 yield return this[i];
+        }
+
+        private static TagTypeResolver resolver;
+
+        /// <summary>
+        /// 创建默认分槔器
+        /// </summary>
+        /// <returns></returns>
+        public static TagTypeResolver CreateDefault()
+        {
+            if (resolver == null)
+            {
+                resolver = new TagTypeResolver();
+                lock (resolver)
+                {
+                    resolver = new TagTypeResolver();
+                    resolver.Add(new Parser.BooleanParser());
+                    resolver.Add(new Parser.NumberParser());
+                    resolver.Add(new Parser.EleseParser());
+                    resolver.Add(new Parser.EndParser());
+                    resolver.Add(new Parser.VariableParser());
+                    resolver.Add(new Parser.StringParser());
+                    resolver.Add(new Parser.ForeachParser());
+                    resolver.Add(new Parser.ForParser());
+                    resolver.Add(new Parser.SetParser());
+                    resolver.Add(new Parser.IfParser());
+                    resolver.Add(new Parser.ElseifParser());
+                    resolver.Add(new Parser.LoadParser());
+                    resolver.Add(new Parser.IncludeParser());
+                    resolver.Add(new Parser.FunctionParser());
+                    resolver.Add(new Parser.ComplexParser());
+                }
+
+            }
+            return resolver;
         }
     }
 }

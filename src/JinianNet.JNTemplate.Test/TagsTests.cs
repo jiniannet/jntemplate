@@ -313,35 +313,35 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("你好，$name", render);
         }
 
-        /// <summary>
-        /// 自定义标签前后缀测试
-        /// </summary>
-        [TestMethod]
-        public void TestConfig()
-        {
-            var config = new Configuration.Config('@', "{$", "}");
+        ///// <summary>
+        ///// 自定义标签前后缀测试
+        ///// </summary>
+        //[TestMethod]
+        //public void TestConfig()
+        //{
+        //    var config = new Configuration.Config('@', "{$", "}");
 
-            var ctx = new TemplateContext(config, new Parser.VariableScope());
-            var templateContent = "你好，@name,欢迎来到{$name}的世界";
-            var template = new Template(ctx, templateContent);
-            template.Set("name", "jntemplate");
-            var render = template.Render();
-            Assert.AreEqual("你好，jntemplate,欢迎来到jntemplate的世界", render);
+        //    var ctx = new TemplateContext(config, new Parser.VariableScope());
+        //    var templateContent = "你好，@name,欢迎来到{$name}的世界";
+        //    var template = new Template(ctx, templateContent);
+        //    template.Set("name", "jntemplate");
+        //    var render = template.Render();
+        //    Assert.AreEqual("你好，jntemplate,欢迎来到jntemplate的世界", render);
 
-        }
+        //}
 
-        /// <summary>
-        /// 注释
-        /// </summary>
-        [TestMethod]
-        public void TestComent()
-        {
-            var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
-            var template = new Template(templateContent);
-            template.Set("name", "jntemplate");
-            var render = template.Render();
-            Assert.AreEqual("你好,欢迎使用", render);
-        }
+        ///// <summary>
+        ///// 注释
+        ///// </summary>
+        //[TestMethod]
+        //public void TestComent()
+        //{
+        //    var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
+        //    var template = new Template(templateContent);
+        //    template.Set("name", "jntemplate");
+        //    var render = template.Render();
+        //    Assert.AreEqual("你好,欢迎使用", render);
+        //}
 
 
         /// <summary>
@@ -438,25 +438,25 @@ namespace JinianNet.JNTemplate.Test
 
 
 
-        /// <summary>
-        /// 测试标签前后空白字符串处理
-        /// </summary>
-        [TestMethod]
-        public void TestStripWhiteSpace()
-        {
-            var templateContent = @"
-your data is:
-$set(key1=1)
-$set(key2=2)
-$set(key3=3)
-$set(key4=4)
-$set(key5=5)
-$set(key6=6)
-$key5";
-            var template = new Template(templateContent);
-            template.Context.Config.StripWhiteSpace = true;
-            var render = template.Render();
-            Assert.AreEqual("your data is:5", render);
-        }
+//        /// <summary>
+//        /// 测试标签前后空白字符串处理
+//        /// </summary>
+//        [TestMethod]
+//        public void TestStripWhiteSpace()
+//        {
+//            var templateContent = @"
+//your data is:
+//$set(key1=1)
+//$set(key2=2)
+//$set(key3=3)
+//$set(key4=4)
+//$set(key5=5)
+//$set(key6=6)
+//$key5";
+//            var template = new Template(templateContent);
+//            template.Context.Config.StripWhiteSpace = true;
+//            var render = template.Render();
+//            Assert.AreEqual("your data is:5", render);
+//        }
     }
 }
