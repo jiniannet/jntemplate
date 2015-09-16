@@ -13,14 +13,14 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class LoadTag : BlockTag
     {
-        private Tag path;
+        private Tag _path;
         /// <summary>
         /// 路径
         /// </summary>
         public Tag Path
         {
-            get { return path; }
-            set { path = value; }
+            get { return this._path; }
+            set { this._path = value; }
         }
         /// <summary>
         /// 解析标签
@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
-            Object path = this.Path.Parse(context);
+            Object path = this._path.Parse(context);
             LoadResource(path, context);
             return base.Parse(context);
         }
@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, TextWriter write)
         {
-            Object path = this.Path.Parse(context);
+            Object path = this._path.Parse(context);
             LoadResource(path, context);
             base.Parse(context, write);
         }
@@ -50,11 +50,11 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 if (String.IsNullOrEmpty(context.CurrentPath))
                 {
-                    this.TemplateContent = Resources.LoadResource(path.ToString(),context.Charset);
+                    TemplateContent = Resources.LoadResource(path.ToString(),context.Charset);
                 }
                 else
                 {
-                    this.TemplateContent = Resources.LoadResource(
+                    TemplateContent = Resources.LoadResource(
                         Resources.MergerPaths(Engine.ResourceDirectories, context.CurrentPath), 
                         path.ToString(), 
                         context.Charset);

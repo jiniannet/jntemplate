@@ -18,17 +18,17 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
-            Object[] value = new Object[this.Children.Count];
+            Object[] value = new Object[Children.Count];
 
-            for (Int32 i = 0; i < this.Children.Count; i++)
+            for (Int32 i = 0; i < Children.Count; i++)
             {
-                if (this.Children[i] is TextTag)
+                if (Children[i] is TextTag)
                 {
-                    value[i] = Common.OperatorHelpers.Parse(this.Children[i].Parse(context).ToString());
+                    value[i] = Common.OperatorHelpers.Parse(Children[i].Parse(context).ToString());
                 }
                 else
                 {
-                    value[i] = this.Children[i].Parse(context);
+                    value[i] = Children[i].Parse(context);
                 }
             }
 

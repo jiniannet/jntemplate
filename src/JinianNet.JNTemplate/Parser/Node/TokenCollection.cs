@@ -14,13 +14,13 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class TokenCollection : IList<Token>
     {
-        private List<Token> list;
+        private List<Token> _list;
         /// <summary>
         /// TOKEN集合
         /// </summary>
         public TokenCollection()
         {
-            this.list = new List<Token>();
+            this._list = new List<Token>();
         }
         /// <summary>
         /// TOKEN集合
@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="capacity"></param>
         public TokenCollection(Int32 capacity)
         {
-            list = new List<Token>(capacity);
+            this._list = new List<Token>(capacity);
         }
         /// <summary>
         /// TOKEN集合
@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="collection">集合</param>
         public TokenCollection(IEnumerable<Token> collection)
         {
-            list = new List<Token>(collection);
+            this._list = new List<Token>(collection);
         }
         /// <summary>
         /// TOKEN集合
@@ -46,10 +46,10 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="end"></param>
         public TokenCollection(IList<Token> collection, Int32 start, Int32 end)
         {
-            list = new List<Token>(end + 1 - start);
+            this._list = new List<Token>(end + 1 - start);
             for (Int32 i = start; i <= end && i < collection.Count; i++)
             {
-                this.Add(collection[i]);
+                Add(collection[i]);
             }
         }
         /// <summary>
@@ -59,7 +59,11 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             get
             {
-                return this.Count == 0 ? null : this[0];
+                if (Count == 0)
+                {
+                    return null;
+                }
+                return this[0];
             }
         }
         /// <summary>
@@ -69,7 +73,11 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             get
             {
-                return this.Count == 0 ? null : this[this.Count - 1];
+                if (Count == 0)
+                {
+                    return null;
+                }
+                return this[Count - 1];
             }
         }
         /// <summary>
@@ -82,7 +90,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             for (Int32 i = start; i <= end && i < list.Count; i++)
             {
-                this.Add(list[i]);
+                Add(list[i]);
             }
         }
 
@@ -92,7 +100,6 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <returns></returns>
         public override String ToString()
         {
-            //return String.Concat<Token>(this.list); //不兼容2.0
             StringBuilder sb = new StringBuilder();
             for (Int32 i = 0; i < this.Count; i++)
             {
@@ -101,7 +108,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             return sb.ToString();
         }
 
-        #region IList<Token> 成员
+#region IList<Token> 成员
         /// <summary>
         /// 搜索指定的对象，并返回整个集合中第一个匹配项的从零开始的索引。
         /// </summary>
@@ -109,7 +116,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <returns>如果在整个集合中找到 item 的第一个匹配项，则为该项的从零开始的索引；否则为-1</returns>
         public Int32 IndexOf(Token item)
         {
-            return list.IndexOf(item);
+            return this._list.IndexOf(item);
         }
         /// <summary>
         /// 将元素插入集合的指定索引处。
@@ -120,7 +127,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             if (item.TokenKind != TokenKind.Space)
             {
-                list.Insert(index, item);
+                this._list.Insert(index, item);
             }
         }
         /// <summary>
@@ -129,7 +136,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="index">要移除的元素的从零开始的索引。</param>
         public void RemoveAt(Int32 index)
         {
-            list.RemoveAt(index);
+            this._list.RemoveAt(index);
         }
 
         /// <summary>
@@ -141,20 +148,20 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             get
             {
-                return list[index];
+                return this._list[index];
             }
             set
             {
                 if (value.TokenKind != TokenKind.Space)
                 {
-                    list[index] = value;
+                    this._list[index] = value;
                 }
             }
         }
 
-        #endregion
+#endregion
 
-        #region ICollection<Token> 成员
+#region ICollection<Token> 成员
         /// <summary>
         /// 将对象添加到集合的结尾处。
         /// </summary>
@@ -163,7 +170,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             if (item.TokenKind != TokenKind.Space)
             {
-                list.Add(item);
+                this._list.Add(item);
             }
         }
 
@@ -172,7 +179,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public void Clear()
         {
-            list.Clear();
+            this._list.Clear();
         }
 
         /// <summary>
@@ -182,7 +189,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <returns></returns>
         public Boolean Contains(Token item)
         {
-            return list.Contains(item);
+            return this._list.Contains(item);
         }
 
         /// <summary>
@@ -192,7 +199,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="arrayIndex">必须具有从零开始的索引。</param>
         public void CopyTo(Token[] array, Int32 arrayIndex)
         {
-            list.CopyTo(array, arrayIndex);
+            this._list.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -202,7 +209,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             get
             {
-                return list.Count;
+                return this._list.Count;
             }
         }
         /// <summary>
@@ -222,24 +229,24 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <returns></returns>
         public Boolean Remove(Token item)
         {
-            return list.Remove(item);
+            return this._list.Remove(item);
         }
 
-        #endregion
+#endregion
 
-        #region IEnumerable<Token> 成员
+#region IEnumerable<Token> 成员
         /// <summary>
         /// 返回循环访问集合的枚举器。
         /// </summary>
         /// <returns></returns>
         public IEnumerator<Token> GetEnumerator()
         {
-            return list.GetEnumerator();
+            return this._list.GetEnumerator();
         }
 
-        #endregion
+#endregion
 
-        #region IEnumerable 成员
+#region IEnumerable 成员
         /// <summary>
         /// 返回循环访问集合的枚举器。
         /// </summary>
@@ -249,6 +256,6 @@ namespace JinianNet.JNTemplate.Parser.Node
             return GetEnumerator();
         }
 
-        #endregion
+#endregion
     }
 }

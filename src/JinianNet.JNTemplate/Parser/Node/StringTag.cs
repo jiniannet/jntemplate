@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override Boolean ToBoolean(TemplateContext context)
         {
-            return !String.IsNullOrEmpty(this.Value);
+            return !String.IsNullOrEmpty(Value);
         }
     }
 }

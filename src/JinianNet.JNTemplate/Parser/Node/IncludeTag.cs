@@ -13,14 +13,14 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class IncludeTag : BaseTag
     {
-        private Tag path;
+        private Tag _path;
         /// <summary>
         /// 模板路径
         /// </summary>
         public Tag Path
         {
-            get { return path; }
-            set { path = value; }
+            get { return this._path; }
+            set { this._path = value; }
         }
         
         private String LoadResource(Object path, TemplateContext context)
@@ -47,8 +47,8 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
-            Object path = this.Path.Parse(context);
-            return LoadResource(path.ToString(), context);
+            Object path = this._path.Parse(context);
+            return LoadResource(path, context);
         }
 
     }

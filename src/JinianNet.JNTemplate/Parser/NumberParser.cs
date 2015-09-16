@@ -23,7 +23,9 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 1 && tc.First.TokenKind == TokenKind.Number)
+            if (tc != null
+                && tc.Count == 1 
+                && tc.First.TokenKind == TokenKind.Number)
             {
                 NumberTag tag = new NumberTag();
                 if (tc.First.Text.IndexOf('.') == -1)

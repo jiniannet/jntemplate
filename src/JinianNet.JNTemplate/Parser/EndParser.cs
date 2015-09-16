@@ -23,7 +23,8 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 1
+            if (tc != null
+                && tc.Count == 1
                 && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_END))
             {
                 return new EndTag();

@@ -33,12 +33,14 @@ namespace JinianNet.JNTemplate.Parser.Node
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
             String value = this.ToString();
-            if (context.StripWhiteSpace && value!=null)
+            if (context.StripWhiteSpace 
+                && value!=null)
             {
                 value = value.Trim();
             }
             write.Write(value);
         }
+
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>

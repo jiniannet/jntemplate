@@ -23,7 +23,8 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 1
+            if (tc!=null
+                && tc.Count == 1
                 && (tc.First.Text == "true" || tc.First.Text == "false"))
             {
                 BooleanTag tag = new BooleanTag();

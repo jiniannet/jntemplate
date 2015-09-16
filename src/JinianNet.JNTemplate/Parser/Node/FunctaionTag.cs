@@ -14,14 +14,14 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class FunctaionTag : SimpleTag
     {
-        private String name;
+        private String _name;
         /// <summary>
         /// 方法名
         /// </summary>
         public String Name
         {
-            get { return name; }
-            set { name = value; }
+            get { return this._name; }
+            set { this._name = value; }
         }
 
         /// <summary>
@@ -30,13 +30,13 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
-            Object[] args = new Object[this.Children.Count];
+            Object[] args = new Object[Children.Count];
             for (Int32 i = 0; i < this.Children.Count; i++)
             {
-                args[i] = this.Children[i].Parse(context);
+                args[i] = Children[i].Parse(context);
             }
 
-            Object result = context.TempData[this.Name];
+            Object result = context.TempData[this._name];
 
             if (result != null)
             {
@@ -57,20 +57,20 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             if (baseValue != null)
             {
-                Object[] args = new Object[this.Children.Count];
-                for (Int32 i = 0; i < this.Children.Count; i++)
+                Object[] args = new Object[Children.Count];
+                for (Int32 i = 0; i < Children.Count; i++)
                 {
-                    args[i] = this.Children[i].Parse(context);
+                    args[i] = Children[i].Parse(context);
                 }
 
-                Object result = Common.ReflectionHelpers.InvokeMethod(baseValue, this.Name, args);
+                Object result = Common.ReflectionHelpers.InvokeMethod(baseValue, this._name, args);
 
                 if (result != null)
                 {
                     return result;
                 }
 
-                result = Common.ReflectionHelpers.GetPropertyOrField(baseValue, this.Name);
+                result = Common.ReflectionHelpers.GetPropertyOrField(baseValue, this._name);
 
                 if (result != null && result is FuncHandler)
                 {

@@ -1,3 +1,10 @@
+Version 1.3 - 待发布
+==============================================
+- 以下写法不再支持：
+  1.从指定文件加载模板：Template.FromFile(String, Encoding)方法已删除！ 替代方法： Engine.LoadTemplate(String,TemplateContext) 
+  2.
+  3.模板查找目录：Resources.Paths/TemplateContext.Paths 属性已删除！替代属性：Engine.ResourceDirectories
+
 Version 1.2 (1.2.3.0) - 待发布
 ==============================================
 - 调整foreach循环体内，使用set标签时的作用域问题

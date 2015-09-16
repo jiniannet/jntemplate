@@ -47,37 +47,14 @@ namespace JinianNet.JNTemplate
             {
                 throw new System.ArgumentNullException("ctx");
             }
-            this.Context = ctx;
-            this.TemplateContent = text;
+            Context = ctx;
+            TemplateContent = text;
         }
 
         /// <summary>
         /// 模板解析结果呈现
         /// </summary>
-        /// <param name="writer"></param>
-        public override void Render(TextWriter writer)
-        {
-            try
-            {
-                base.Render(writer);
-            }
-            catch (System.Exception e)
-            {
-                if (this.Context.ThrowExceptions)
-                {
-                    throw e;
-                }
-                else
-                {
-                    this.Context.AddError(e);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 模板解析结果呈现
-        /// </summary>
-        /// <returns></returns>
+        /// <returns>String</returns>
         public String Render()
         {
             String document;
@@ -111,23 +88,6 @@ namespace JinianNet.JNTemplate
             {
                 Set(value.Key, value.Value);
             }
-        }
-
-        /// <summary>
-        /// 从指定的文件加载 Template
-        /// </summary>
-        /// <param name="filename">完整的本地文件路径</param>
-        /// <param name="encoding">编码</param>
-        /// <returns></returns>
-        public static Template FromFile(String filename, Encoding encoding)
-        {
-            TemplateContext ctx = new TemplateContext();
-            ctx.Charset = encoding;
-            ctx.CurrentPath = System.IO.Path.GetDirectoryName(filename);
-
-            Template template = new Template(ctx, Resources.Load(filename, encoding));
-
-            return template;
         }
 
     }

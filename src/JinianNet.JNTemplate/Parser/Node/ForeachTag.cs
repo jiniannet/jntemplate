@@ -14,24 +14,25 @@ namespace JinianNet.JNTemplate.Parser.Node
     public class ForeachTag : BaseTag
     {
 
-        private String name;
+        private String _name;
+        private Tag _source;
+
         /// <summary>
         /// 节点名
         /// </summary>
         public String Name
         {
-            get { return name; }
-            set { name = value; }
+            get { return this._name; }
+            set { this._name = value; }
         }
 
-        private Tag source;
         /// <summary>
         /// 源对象
         /// </summary>
         public Tag Source
         {
-            get { return source; }
-            set { source = value; }
+            get { return this._source; }
+            set { this._source = value; }
         }
 
         private void Excute(Object value, TemplateContext context, System.IO.TextWriter writer)
@@ -46,12 +47,12 @@ namespace JinianNet.JNTemplate.Parser.Node
                 while (ienum.MoveNext())
                 {
                     i++;
-                    ctx.TempData[this.Name] = ienum.Current;
+                    ctx.TempData[this._name] = ienum.Current;
                     //为了兼容以前的用户 foreachIndex 保留
                     ctx.TempData["foreachIndex"] = i;
-                    for (Int32 n = 0; n < this.Children.Count; n++)
+                    for (Int32 n = 0; n < Children.Count; n++)
                     {
-                        this.Children[n].Parse(ctx, writer);
+                        Children[n].Parse(ctx, writer);
                     }
                     
                 }
@@ -64,9 +65,9 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="writer">writer</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter writer)
         {
-            if (this.Source != null)
+            if (Source != null)
             {
-                Excute(this.Source.Parse(context), context, writer);
+                Excute(Source.Parse(context), context, writer);
             }
         }
         /// <summary>
@@ -77,7 +78,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {
-                Excute(this.Source.Parse(context), context, write);
+                Excute(Source.Parse(context), context, write);
                 return write.ToString();
             }
         }

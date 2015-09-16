@@ -14,14 +14,14 @@ namespace JinianNet.JNTemplate.Parser.Node
     public class VariableTag : SimpleTag
     {
 
-        private String name;
+        private String _name;
         /// <summary>
         /// 变量名
         /// </summary>
         public String Name
         {
-            get { return name; }
-            set { name = value; }
+            get { return this._name; }
+            set { this._name = value; }
         }
         /// <summary>
         /// 解析标签
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
-            return context.TempData[this.Name];
+            return context.TempData[this._name];
         }
         /// <summary>
         /// 解析标签
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="baseValue">baseValue</param>
         public override Object Parse(Object baseValue, TemplateContext context)
         {
-            return Common.ReflectionHelpers.Eval(baseValue, this.Name);
+            return Common.ReflectionHelpers.Eval(baseValue, this._name);
         }
 
     }

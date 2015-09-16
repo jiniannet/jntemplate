@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Common
     public class Calculator
     {
         #region Weights Array
-        private static readonly String[] numberWeights = new String[] {
+        private static readonly String[] _numberWeights = new String[] {
                 "System.Int16",
                  "System.Int32",
                  "System.Int64",
@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Common
                  "System.Double",
                  "System.Decimal"};
 
-        private static readonly String[] uintWeights = new String[] {
+        private static readonly String[] _uintWeights = new String[] {
                 "System.UInt16",
                  "System.UInt32",
                  "System.UInt64"};
@@ -63,66 +63,6 @@ namespace JinianNet.JNTemplate.Common
         #endregion
 
         #region common function
-        //private static Boolean IsOperator(Char c)
-        //{
-        //    if ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '(') || (c == ')') || (c == '%'))
-        //        return true;
-        //    return false;
-        //}
-
-        //private static Boolean IsOperator(LetterType letterType)
-        //{
-        //    if (letterType == LetterType.LeftParentheses || letterType == LetterType.RightParentheses || letterType == LetterType.Operator)
-        //        return true;
-        //    return false;
-        //}
-
-        //private LetterType GetLetterType(String value, Int32 index)
-        //{
-        //    switch (value[index])
-        //    {
-        //        case '+':
-        //        case '-':
-        //            if (index == 0 || IsOperator(value[index - 1]))
-        //            {
-        //                if (index < value.Length - 1 && Char.IsNumber(value[index + 1]))
-        //                    return LetterType.Number;
-        //                return LetterType.Other;
-        //            }
-        //            return LetterType.Operator;
-        //        case '*':
-        //        case '/':
-        //        case '%':
-        //            return LetterType.Operator;
-        //        case '(':
-        //            return LetterType.LeftParentheses;
-        //        case ')':
-        //            return LetterType.RightParentheses;
-        //        case '0':
-        //        case '1':
-        //        case '2':
-        //        case '3':
-        //        case '4':
-        //        case '5':
-        //        case '6':
-        //        case '7':
-        //        case '8':
-        //        case '9':
-        //            return LetterType.Number;
-        //        case '.':
-        //            if (index > 0 && Char.IsNumber(value[index - 1]) && index < value.Length - 1 && Char.IsNumber(value[index + 1]))
-        //                return LetterType.Number;
-        //            return LetterType.Other;
-        //        default:
-        //            return LetterType.Other;
-        //    }
-        //}
-
-        //private static Int32 GetPriority(Char c)
-        //{
-        //    return GetPriority(c.ToString());
-        //}
-
         private static Boolean IsOperator(String value)
         {
             switch (value)
@@ -196,48 +136,6 @@ namespace JinianNet.JNTemplate.Common
                     return 9;
             }
         }
-
-        //private static Boolean GetBoolean(Double n)
-        //{
-        //    return !(n == 0);
-        //}
-
-        //private static Int32 GetInt(Boolean b)
-        //{
-        //    return b ? 1 : 0;
-        //}
-
-        //private static LetterType GetLetterType(Char c)
-        //{
-        //    switch (c)
-        //    {
-        //        case '+':
-        //        case '-':
-        //        case '*':
-        //        case '/':
-        //        case '%':
-        //            return LetterType.Operator;
-        //        case '(':
-        //            return LetterType.LeftParentheses;
-        //        case ')':
-        //            return LetterType.RightParentheses;
-        //        case '0':
-        //        case '1':
-        //        case '2':
-        //        case '3':
-        //        case '4':
-        //        case '5':
-        //        case '6':
-        //        case '7':
-        //        case '8':
-        //        case '9':
-        //            return LetterType.Number;
-        //        default:
-        //            return LetterType.Other;
-        //    }
-
-        //}
-
 
         private static Boolean IsNumber(String fullName)
         {
@@ -471,8 +369,8 @@ namespace JinianNet.JNTemplate.Common
                     Int32 i, j;
                     if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
                     {
-                        i = Array.IndexOf<String>(uintWeights, tX.FullName);
-                        j = Array.IndexOf<String>(uintWeights, tY.FullName);
+                        i = Array.IndexOf<String>(_uintWeights, tX.FullName);
+                        j = Array.IndexOf<String>(_uintWeights, tY.FullName);
                     }
                     else
                     {
@@ -486,8 +384,8 @@ namespace JinianNet.JNTemplate.Common
                             tY = Type.GetType(String.Concat("System.", tY.Name.Remove(0, 1)));
                         }
 
-                        i = Array.IndexOf<String>(numberWeights, tX.FullName);
-                        j = Array.IndexOf<String>(numberWeights, tY.FullName);
+                        i = Array.IndexOf<String>(_numberWeights, tX.FullName);
+                        j = Array.IndexOf<String>(_numberWeights, tY.FullName);
                     }
                     if (i > j)
                     {

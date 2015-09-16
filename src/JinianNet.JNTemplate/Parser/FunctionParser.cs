@@ -24,7 +24,9 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.First.TokenKind == TokenKind.TextData
+            if (tc != null
+                && parser != null
+                && tc.First.TokenKind == TokenKind.TextData
                 && tc.Count > 2
                 && (tc[1].TokenKind == TokenKind.LeftParentheses)
                 && tc.Last.TokenKind == TokenKind.RightParentheses)

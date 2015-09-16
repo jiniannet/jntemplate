@@ -23,7 +23,8 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 3
+            if (tc!=null
+                && tc.Count == 3
                 && tc.First.TokenKind == TokenKind.StringStart
                 && tc[1].TokenKind == TokenKind.String
                 && tc.Last.TokenKind == TokenKind.StringEnd

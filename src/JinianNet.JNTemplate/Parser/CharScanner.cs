@@ -16,24 +16,24 @@ namespace JinianNet.JNTemplate.Parser
         /// <summary>
         /// 结束字符
         /// </summary>
-        const Char EOF = '\0';
-        private Int32 index;
-        private Int32 start;
-        private String document;
+        private const Char EOF = '\0';
+        private Int32 _index;
+        private Int32 _start;
+        private String _document;
         /// <summary>
         /// CharScanner
         /// </summary>
         /// <param name="text">扫描内容</param>
         public CharScanner(String text)
         {
-            this.document = (text ?? String.Empty);
+            this._document = (text ?? String.Empty);
         }
         /// <summary>
         /// 当前索引
         /// </summary>
         public Int32 Index
         {
-            get { return this.index; }
+            get { return this._index; }
         }
         /// <summary>
         /// 前进1个字符
@@ -50,9 +50,11 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean Next(Int32 i)
         {
-            if (this.index + i > this.document.Length)
+            if (this._index + i > this._document.Length)
+            {
                 return false;
-            this.index += i;
+            }
+            this._index += i;
             return true;
         }
         /// <summary>
@@ -70,9 +72,11 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean Back(Int32 i)
         {
-            if (this.index < i)
+            if (this._index < i)
+            {
                 return false;
-            this.index -= i;
+            }
+            this._index -= i;
             return true;
         }
         /// <summary>
@@ -90,9 +94,11 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Char Read(Int32 i)
         {
-            if (this.index + i >= this.document.Length)
+            if (this._index + i >= this._document.Length)
+            {
                 return EOF;
-            return this.document[this.index + i];
+            }
+            return this._document[this._index + i];
         }
         /// <summary>
         /// 当前是否匹配指定对象
@@ -109,7 +115,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean IsEnd()
         {
-            return this.index >= this.document.Length;
+            return this._index >= this._document.Length;
         }
         /// <summary>
         /// 是否匹配指定对象
@@ -119,12 +125,12 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean IsMatch(Char[] list, Int32 n)
         {
-            n = this.index + n;
-            if (this.document.Length >= n + list.Length)
+            n = this._index + n;
+            if (this._document.Length >= n + list.Length)
             {
                 for (Int32 i = 0; i < list.Length; i++)
                 {
-                    if (this.document[n + i] != list[i])
+                    if (this._document[n + i] != list[i])
                     {
                         return false;
                     }
@@ -140,8 +146,8 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public String GetEscapeString()
         {
-            String value = GetEscapeString(this.start, this.index);
-            this.start = this.index;
+            String value = GetEscapeString(this._start, this._index);
+            this._start = this._index;
             return value;
         }
 
@@ -151,8 +157,8 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public String GetString()
         {
-            String value = GetString(this.start,this.index);
-            this.start = this.index;
+            String value = GetString(this._start,this._index);
+            this._start = this._index;
             return value;
         }
         /// <summary>
@@ -166,9 +172,9 @@ namespace JinianNet.JNTemplate.Parser
             List<Char> cs = new List<Char>();
             for (Int32 i = x; i < y; i++)
             {
-                if (this.document[i] == '\\')
+                if (this._document[i] == '\\')
                 {
-                    switch (this.document[i + 1])
+                    switch (this._document[i + 1])
                     {
                         case '0':
                             cs.Add('\0');
@@ -187,7 +193,7 @@ namespace JinianNet.JNTemplate.Parser
                             i++;
                             break;
                         case 'b':
-                            cs.Add('\n');
+                            cs.Add('\b');
                             i++;
                             break;
                         case 'f':
@@ -211,13 +217,13 @@ namespace JinianNet.JNTemplate.Parser
                             i++;
                             break;
                         default:
-                            cs.Add(this.document[i]);
+                            cs.Add(this._document[i]);
                             break;
                     }
                 }
                 else
                 {
-                    cs.Add(this.document[i]);
+                    cs.Add(this._document[i]);
                 }
             }
             return new String(cs.ToArray());
@@ -230,7 +236,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public String GetString(Int32 x, Int32 y)
         {
-            return this.document.Substring(x, y - x);
+            return this._document.Substring(x, y - x);
         }
     }
 }

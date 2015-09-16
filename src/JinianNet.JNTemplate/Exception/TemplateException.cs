@@ -15,32 +15,32 @@ namespace JinianNet.JNTemplate.Exception
     /// </summary>
     public class TemplateException : System.Exception
     {
-        private Int32 errorLine;
-        private Int32 errorColumn;
-        private String errorCode;
+        private Int32 _errorLine;
+        private Int32 _errorColumn;
+        private String _errorCode;
         /// <summary>
         /// 所在行
         /// </summary>
         public Int32 Line
         {
-            get { return errorLine; }
-            set { errorLine = value; }
+            get { return this._errorLine; }
+            set { this._errorLine = value; }
         }
         /// <summary>
         /// 所在字符
         /// </summary>
         public Int32 Column
         {
-            get { return errorColumn; }
-            set { errorColumn = value; }
+            get { return this._errorColumn; }
+            set { this._errorColumn = value; }
         }
         /// <summary>
         /// 错误代码
         /// </summary>
         public String Code
         {
-            get { return errorCode; }
-            set { errorCode = value; }
+            get { return this._errorCode; }
+            set { this._errorCode = value; }
         }
         /// <summary>
         /// 模板错误
@@ -50,18 +50,6 @@ namespace JinianNet.JNTemplate.Exception
         {
 
         }
-
-        ///// <summary>
-        ///// 常规性错误
-        ///// </summary>
-        ///// <param name="tag">错误标签</param>
-        ///// <param name="innerException"></param>
-        //public TemplateException(Tag tag, System.Exception innerException)
-        //    : base(tag.ToString(), innerException)
-        //{
-        //    this.errorLine = tag.FirstToken.BeginLine;
-        //    this.errorColumn = tag.FirstToken.BeginColumn;
-        //}
 
         /// <summary>
         /// 模板错误
@@ -77,8 +65,8 @@ namespace JinianNet.JNTemplate.Exception
                 "\r\n",
                 message))
         {
-            this.errorColumn = column;
-            this.errorLine = line;
+            this._errorColumn = column;
+            this._errorLine = line;
         }
 
         /// <summary>

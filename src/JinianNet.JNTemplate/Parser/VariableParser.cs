@@ -21,17 +21,17 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
-        /// <returns></returns>
+        /// <returns>标签</returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count == 1 &&
-                tc.First.TokenKind == TokenKind.TextData)
+            if (tc != null
+                && tc.Count == 1
+                && tc.First.TokenKind == TokenKind.TextData)
             {
                 VariableTag tag = new VariableTag();
                 tag.Name = tc.First.Text;
                 return tag;
             }
-
             return null;
         }
 

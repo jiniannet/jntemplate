@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate
         public Boolean StripWhiteSpace
         {
             get { return _stripWhiteSpace; }
-            set { _stripWhiteSpace = value; }
+            set { this._stripWhiteSpace = value; }
         }
 
 
@@ -64,8 +64,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public VariableScope TempData
         {
-            get { return _variableScope; }
-            set { _variableScope = value; }
+            get { return this._variableScope; }
+            set { this._variableScope = value; }
         }
 
         /// <summary>
@@ -73,8 +73,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public String CurrentPath
         {
-            get { return _currentPath; }
-            set { _currentPath = value; }
+            get { return this._currentPath; }
+            set { this._currentPath = value; }
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Encoding Charset
         {
-            get { return _charset; }
-            set { _charset = value; }
+            get { return this._charset; }
+            set { this._charset = value; }
         }
 
 
@@ -92,8 +92,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Boolean ThrowExceptions
         {
-            get { return _throwErrors; }
-            set { _throwErrors = value; }
+            get { return this._throwErrors; }
+            set { this._throwErrors = value; }
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public virtual System.Exception[] AllErrors
         {
-            get { return _errors.ToArray(); }
+            get { return this._errors.ToArray(); }
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace JinianNet.JNTemplate
         /// 从指定TemplateContext创建一个类似的实例
         /// </summary>
         /// <param name="context"></param>
-        /// <returns></returns>
+        /// <returns>TemplateContext</returns>
         public static TemplateContext CreateContext(TemplateContext context)
         {
             if (context == null)

@@ -13,23 +13,24 @@ namespace JinianNet.JNTemplate.Parser.Node
     public class SetTag : BaseTag
     {
         private String _name;
+        private Tag _value;
+
         /// <summary>
         /// 变量名
         /// </summary>
         public String Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return this._name; }
+            set { this._name = value; }
         }
 
-        private Tag _value;
         /// <summary>
         /// 值
         /// </summary>
         public Tag Value
         {
-            get { return _value; }
-            set { _value = value; }
+            get { return this._value; }
+            set { this._value = value; }
         }
 
         /// <summary>

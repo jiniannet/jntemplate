@@ -23,7 +23,10 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count > 0 && Common.ParserHelpers.IsEqual(Field.KEY_FOREACH, tc.First.Text))
+            if (tc != null
+                && parser != null
+                && tc.Count > 0 
+                && Common.ParserHelpers.IsEqual(Field.KEY_FOREACH, tc.First.Text))
             {
                 if (tc.Count > 5
                     && tc[1].TokenKind == TokenKind.LeftParentheses

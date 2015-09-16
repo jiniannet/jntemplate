@@ -13,17 +13,17 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class ForTag : BaseTag
     {
-        private Tag initial;
-        private Tag test;
-        private Tag dothing;
+        private Tag _initial;
+        private Tag _test;
+        private Tag _dothing;
 
         /// <summary>
         /// 初始标签 
         /// </summary>
         public Tag Initial
         {
-            get { return initial; }
-            set { initial = value; }
+            get { return this._initial; }
+            set { this._initial = value; }
         }
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public Tag Test
         {
-            get { return test; }
-            set { test = value; }
+            get { return this._test; }
+            set { this._test = value; }
         }
 
         /// <summary>
@@ -40,36 +40,36 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public Tag Do
         {
-            get { return dothing; }
-            set { dothing = value; }
+            get { return this._dothing; }
+            set { this._dothing = value; }
         }
 
         private void Excute(TemplateContext context, System.IO.TextWriter writer)
         {
-            this.Initial.Parse(context);
+            this._initial.Parse(context);
             //如果标签为空，则直接为false,避免死循环以内存溢出
             Boolean run;
 
-            if (this.Test == null)
+            if (this._test == null)
             {
                 run = false;
             }
             else
             {
-                run = this.Test.ToBoolean(context);
+                run = this._test.ToBoolean(context);
             }
 
             while (run)
             {
-                for (Int32 i = 0; i < this.Children.Count; i++)
+                for (Int32 i = 0; i < Children.Count; i++)
                 {
-                    this.Children[i].Parse(context, writer);
+                    Children[i].Parse(context, writer);
                 }
-                if (this.Do != null)
+                if (this._dothing != null)
                 {
-                    this.Do.Parse(context);
+                    this._dothing.Parse(context);
                 }
-                run = this.Test == null ? true : this.Test.ToBoolean(context);
+                run = this._test == null ? true : this._test.ToBoolean(context);
             }
         }
         /// <summary>

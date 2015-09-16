@@ -23,7 +23,9 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(JinianNet.JNTemplate.Parser.TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count > 2)
+            if (tc != null
+                && parser != null
+                && tc.Count > 2)
             {
                 Int32 start, end, pos;
                 start = end = pos = 0;
@@ -109,12 +111,6 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (data[i] == null)
                     {
-                        //TokenCollection coll = queue.Dequeue();
-                        //if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
-                        //{
-                        //    coll.Remove(coll.First);
-                        //    coll.Remove(coll.Last);
-                        //}
                         tags.Add(parser.Read(queue.Dequeue()));
                     }
                     else if (data[i].TokenKind == TokenKind.Dot)
@@ -123,12 +119,6 @@ namespace JinianNet.JNTemplate.Parser
                         {
                             throw new Exception.ParseException(String.Concat("syntax error near .:", tc), data[i].BeginLine, data[i].BeginColumn);
                         }
-                        //TokenCollection coll = queue.Dequeue();
-                        //if (coll.First.TokenKind == TokenKind.LeftParentheses && (coll.Last.TokenKind == TokenKind.RightParentheses))
-                        //{
-                        //    coll.Remove(coll.First);
-                        //    coll.Remove(coll.Last);
-                        //}
                         if (tags[tags.Count - 1] is ReferenceTag)
                         {
                             tags[tags.Count - 1].AddChild(parser.Read(queue.Dequeue()));

@@ -23,6 +23,12 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
+            if (tc == null
+                || parser == null)
+            {
+                return null;
+            }
+
             //支持写法：简写格式：
             //常规格式：
             if (tc.Count > 5
@@ -41,7 +47,8 @@ namespace JinianNet.JNTemplate.Parser
                 return tag;
 
             }
-            else if (tc.Count == 2
+
+            if (tc.Count == 2
                 && tc.First.TokenKind == TokenKind.TextData
                 && tc.Last.TokenKind == TokenKind.Operator
                 && (tc.Last.Text == "++" || tc.Last.Text == "--"))
@@ -68,7 +75,8 @@ namespace JinianNet.JNTemplate.Parser
                 tag.Value = c;
                 return tag;
             }
-            else if (tc.Count > 2
+
+            if (tc.Count > 2
                 && tc.First.TokenKind == TokenKind.TextData
                 && tc[1].Text == "=")
             {

@@ -19,11 +19,11 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="context">上下文</param>
         public override Object Parse(TemplateContext context)
         {
-            for (Int32 i = 0; i < this.Children.Count-1; i++) //最后面一个子对象为EndTag
+            for (Int32 i = 0; i < Children.Count-1; i++) //最后面一个子对象为EndTag
             {
-                if (this.Children[i].ToBoolean(context))
+                if (Children[i].ToBoolean(context))
                 {
-                    return this.Children[i].Parse(context);
+                    return Children[i].Parse(context);
                 }
             }
             return null;

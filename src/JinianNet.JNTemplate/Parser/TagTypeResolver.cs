@@ -14,14 +14,14 @@ namespace JinianNet.JNTemplate.Parser
     /// </summary>
     public class TagTypeResolver : ITagTypeResolver,ICollection<ITagParser>
     {
-        private readonly List<ITagParser> collection;
+        private readonly List<ITagParser> _collection;
         /// <summary>
         /// 标签类型分析器
         /// </summary>
         public TagTypeResolver()
             : this(new ITagParser[0])
         {
-            this.collection = new List<ITagParser>();
+            this._collection = new List<ITagParser>();
         }
         /// <summary>
         /// 标签类型分析器
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="parsers">各类标签分析器集合</param>
         public TagTypeResolver(IEnumerable<ITagParser> parsers)
         {
-            this.collection = new List<ITagParser>(parsers);
+            this._collection = new List<ITagParser>(parsers);
         }
         /// <summary>
         /// 解析标签
@@ -40,14 +40,16 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Resolver(TemplateParser parser, TokenCollection tc)
         {
             Tag t;
-            for (Int32 i = 0; i < collection.Count; i++)
+            for (Int32 i = 0; i < this._collection.Count; i++)
             {
-                t = collection[i].Parse(parser, tc);
+                t = this._collection[i].Parse(parser, tc);
                 if (t != null)
                 {
                     t.FirstToken = tc.First;
 
-                    if (t.Children.Count == 0 || (t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) == null || tc.Last.CompareTo(t.LastToken) > 0)
+                    if (t.Children.Count == 0 
+                        || (t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) == null 
+                        || tc.Last.CompareTo(t.LastToken) > 0)
                     {
                         t.LastToken = tc.Last;
                     }
@@ -62,7 +64,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="item">标签分析器</param>
         public void Add(ITagParser item)
         {
-            collection.Add(item);
+            this._collection.Add(item);
         }
         /// <summary>
         /// 插入一个标签分析器
@@ -71,14 +73,14 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="item">标签分析器</param>
         public void Insert(Int32 index, ITagParser item)
         {
-            collection.Insert(index, item);
+            this._collection.Insert(index, item);
         }
         /// <summary>
         /// 清除所有分析器
         /// </summary>
         public void Clear()
         {
-            collection.Clear();
+            this._collection.Clear();
         }
 
         /// <summary>
@@ -88,7 +90,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean Contains(ITagParser item)
         {
-            return this.collection.Contains(item);
+            return this._collection.Contains(item);
         }
         /// <summary>
         /// 将整个 ITagParser[] 复制到兼容的一维数组中，从目标数组的指定索引位置开始放置。
@@ -97,7 +99,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="arrayIndex">开始位置</param>
         public void CopyTo(ITagParser[] array, Int32 arrayIndex)
         {
-            this.collection.CopyTo(array, arrayIndex);
+            this._collection.CopyTo(array, arrayIndex);
         }
         /// <summary>
         /// 返回集合个数
@@ -106,7 +108,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             get
             {
-                return this.collection.Count;
+                return this._collection.Count;
             }
         }
         /// <summary>
@@ -126,8 +128,8 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns>ITagParser</returns>
         public ITagParser this[Int32 index]
         {
-            set { this.collection[index] = value; }
-            get { return this.collection[index]; }
+            set { this._collection[index] = value; }
+            get { return this._collection[index]; }
         }
         /// <summary>
         /// 从 分析器中 中移除特定对象的第一个匹配项。
@@ -136,7 +138,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean Remove(ITagParser item)
         {
-            return this.collection.Remove(item);
+            return this._collection.Remove(item);
         }
         /// <summary>
         /// 返回循环访问 ITagParser的枚举器。
@@ -144,7 +146,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public IEnumerator<ITagParser> GetEnumerator()
         {
-            return this.collection.GetEnumerator();
+            return this._collection.GetEnumerator();
         }
         /// <summary>
         /// 返回循环访问 ITagParser的枚举器。
@@ -153,7 +155,9 @@ namespace JinianNet.JNTemplate.Parser
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             for (Int32 i = 0; i < Count; i++)
+            {
                 yield return this[i];
+            }
         }
     }
 }

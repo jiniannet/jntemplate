@@ -12,18 +12,18 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 标签基类
     /// </summary>
-    public abstract class Tag 
+    public abstract class Tag
     {
-        private Token first, last;
+        private Token _first, _last;
         //private Tag parent;
-        private Collection<Tag> children = new Collection<Tag>();
+        private Collection<Tag> _children = new Collection<Tag>();
 
         /// <summary>
         /// 子标签
         /// </summary>
         public Collection<Tag> Children
-        { 
-            get { return this.children; }
+        {
+            get { return this._children; }
         }
         /// <summary>
         /// 解析结果
@@ -55,16 +55,16 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public Token FirstToken
         {
-            get { return first; }
-            set { first = value; }
+            get { return this._first; }
+            set { this._first = value; }
         }
         /// <summary>
         /// 结束Token
         /// </summary>
         public Token LastToken
         {
-            set {  last = value; }
-            get { return last;}
+            set { this._last = value; }
+            get { return this._last; }
         }
 
         /// <summary>
@@ -73,10 +73,10 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="node"></param>
         public void AddChild(Tag node)
         {
-            //node.Parent = this;
-            Children.Add(node);
+            if (node != null)
+            {
+                Children.Add(node);
+            }
         }
-
-
     }
 }

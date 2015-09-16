@@ -17,9 +17,9 @@ namespace JinianNet.JNTemplate.Parser
     /// </summary>
     public class VariableScope
     {
-        private VariableScope parent;
+        private VariableScope _parent;
+        private Dictionary<String, Object> _dic;
 
-        private Dictionary<String, Object> dic;
 
         /// <summary>
         /// VariableScope
@@ -35,8 +35,8 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public VariableScope(VariableScope parent)
         {
-            this.parent = parent;
-            this.dic = new Dictionary<String, Object>(StringComparer.InvariantCultureIgnoreCase);
+            this._parent = parent;
+            this._dic = new Dictionary<String, Object>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         /// <summary>
@@ -45,13 +45,11 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="all">是否清空父数据</param>
         public void Clear(Boolean all)
         {
-            this.dic.Clear();
-            if (all)
+            this._dic.Clear();
+            if (all 
+                && this._parent != null)
             {
-                if (this.parent != null)
-                {
-                    this.parent.Clear(all);
-                }
+                this._parent.Clear(all);
             }
         }
 
@@ -68,45 +66,34 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public VariableScope Parent
         {
-            get { return this.parent; }
+            get { return this._parent; }
         }
 
         /// <summary>
         /// 获取索引值
         /// </summary>
         /// <param name="name">索引名称</param>
-        /// <returns></returns>
+        /// <returns>Object</returns>
         public Object this[String name]
         {
             get
             {
                 Object val;
-                if (this.dic.TryGetValue(name, out val))
+                if (this._dic.TryGetValue(name, out val))
+                {
                     return val;
-                if (this.parent != null)
-                    return this.parent[name];
+                }
+                if (this._parent != null)
+                {
+                    return this._parent[name];
+                }
                 return null;
             }
             set
             {
-                this.dic[name] = value;
+                this._dic[name] = value;
             }
         }
-
-
-        ///// <summary>
-        ///// 复制数据
-        ///// </summary>
-        ///// <returns></returns>
-        //public VariableScope Copy()
-        //{
-        //    VariableScope owen = new VariableScope(this.Parent);
-        //    foreach (KeyValuePair<String, Object> value in this.dic)
-        //    {
-        //        owen[value.Key] = value.Value;
-        //    }
-        //    return owen;
-        //}
 
         /// <summary>
         /// 为已有键设置新的值(本方法供set标签做特殊处理使用)
@@ -115,15 +102,15 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="value">值</param>
         internal Boolean SetValue(String key, Object value)
         {
-            
-            if (this.dic.ContainsKey(key))
+
+            if (this._dic.ContainsKey(key))
             {
                 this[key] = value;
                 return true;
             }
-            if (this.parent != null)
+            if (this._parent != null)
             {
-                return this.parent.SetValue(key, value);
+                return this._parent.SetValue(key, value);
             }
             return false;
         }
@@ -135,23 +122,23 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="value">值</param>
         public void Push(String key, Object value)
         {
-            this.dic.Add(key, value);
+            this._dic.Add(key, value);
         }
 
         /// <summary>
         /// 是否包含指定键
         /// </summary>
         /// <param name="key">键</param>
-        /// <returns></returns>
+        /// <returns>Boolean</returns>
         public Boolean ContainsKey(String key)
         {
-            if (this.dic.ContainsKey(key))
+            if (this._dic.ContainsKey(key))
             {
                 return true;
             }
-            if (parent != null)
+            if (_parent != null)
             {
-                return this.parent.ContainsKey(key);
+                return this._parent.ContainsKey(key);
             }
 
             return false;
@@ -161,10 +148,10 @@ namespace JinianNet.JNTemplate.Parser
         /// 移除指定对象
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
+        /// <returns>是否移除成功</returns>
         public Boolean Remove(String key)
         {
-            return this.dic.Remove(key);
+            return this._dic.Remove(key);
         }
 
     }

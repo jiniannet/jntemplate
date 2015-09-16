@@ -23,7 +23,9 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc.Count > 3
+            if (tc != null
+                && parser != null
+                && tc.Count > 3
                 && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_ELSEIF))
             {
 

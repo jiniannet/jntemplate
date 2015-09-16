@@ -14,15 +14,15 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// </summary>
     public class BlockTag : BaseTag
     {
-        private TemplateRender render;
+        private TemplateRender _render;
 
         /// <summary>
         /// 模板内容
         /// </summary>
         public String TemplateContent
         {
-            get { return render.TemplateContent; }
-            set { render.TemplateContent = value; }
+            get { return this._render.TemplateContent; }
+            set { this._render.TemplateContent = value; }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public BlockTag()
         {
-            render = new TemplateRender();
+            this._render = new TemplateRender();
         }
 
 
@@ -63,8 +63,8 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="writer">writer</param>
         protected void Render(TemplateContext context, TextWriter writer)
         {
-            render.Context = context;
-            render.Render(writer);
+            this._render.Context = context;
+            this._render.Render(writer);
         }
     }
 }

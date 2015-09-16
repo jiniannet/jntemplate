@@ -11,16 +11,16 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class TemplateRender
     {
-        private TemplateContext context;
-        private String content;
+        private TemplateContext _context;
+        private String _content;
 
         /// <summary>
         /// 模板上下文
         /// </summary>
         public TemplateContext Context
         {
-            get { return context; }
-            set { context = value; }
+            get { return this._context; }
+            set { this._context = value; }
         }
 
         /// <summary>
@@ -28,32 +28,33 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public String TemplateContent
         {
-            get { return content; }
-            set { content = value; }
+            get { return this._content; }
+            set { this._content = value; }
         }
 
         /// <summary>
-        /// 吴现内容
+        /// 呈现内容
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">TextWriter</param>
         public virtual void Render(System.IO.TextWriter writer)
         {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            Tag[] collection;
             //缓存功能，待添加
-            if (this.Context == null)
+            if (this._content == null)
             {
                 writer.Write(this.TemplateContent);
                 return;
             }
 
-            Tag[] collection;
-
-            if (!String.IsNullOrEmpty(this.TemplateContent))
+            if (!String.IsNullOrEmpty(this._content))
             {
-
-                TemplateLexer lexer = new TemplateLexer(this.TemplateContent);
-
+                TemplateLexer lexer = new TemplateLexer(this._content);
                 TemplateParser parser = new TemplateParser(lexer.Parse());
-
                 collection = parser.ToArray();
             }
             else
@@ -67,36 +68,38 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        collection[i].Parse(context, writer);
+                        collection[i].Parse(this._context, writer);
                     }
                     catch (Exception.TemplateException e)
                     {
-                        if (context.ThrowExceptions)
-                        {
-                            throw e;
-                        }
-                        else
-                        {
-                            context.AddError(e);
-                            writer.Write(collection[i].ToString());
-                        }
+                        ThrowException(e, collection[i],writer);
                     }
                     catch (System.Exception e)
                     {
                         System.Exception baseException = e.GetBaseException();
-
                         Exception.ParseException ex = new Exception.ParseException(baseException.Message, baseException);
-                        if (context.ThrowExceptions)
-                        {
-                            throw ex;
-                        }
-                        else
-                        {
-                            context.AddError(ex);
-                            writer.Write(collection[i].ToString());
-                        }
+                        ThrowException(ex, collection[i], writer);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 异常处理
+        /// </summary>
+        /// <param name="e">异常信息</param>
+        /// <param name="tag">影响标签</param>
+        /// <param name="writer">TextWriter</param>
+        private void ThrowException(Exception.TemplateException e, Tag tag, System.IO.TextWriter writer)
+        {
+            if (this._context.ThrowExceptions)
+            {
+                throw e;
+            }
+            else
+            {
+                this._context.AddError(e);
+                writer.Write(tag.ToString());
             }
         }
     }

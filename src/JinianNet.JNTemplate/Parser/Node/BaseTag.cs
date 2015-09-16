@@ -19,21 +19,21 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <returns></returns>
         public override String ToString()
         {
-            if (this.LastToken != null && this.FirstToken != this.LastToken)
+            if (LastToken != null && FirstToken != LastToken)
             {
                 StringBuilder sb = new StringBuilder();
-                Token t = this.FirstToken;
+                Token t = FirstToken;
                 sb.Append(t.ToString());
-                while ((t = t.Next) != null && t != this.LastToken)
+                while ((t = t.Next) != null && t != LastToken)
                 {
                     sb.Append(t.ToString());
                 }
-                sb.Append(this.LastToken.ToString());
+                sb.Append(LastToken.ToString());
                 return sb.ToString();
             }
             else
             {
-                return this.FirstToken.ToString();
+                return FirstToken.ToString();
             }
         }
 

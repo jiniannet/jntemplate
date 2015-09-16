@@ -32,8 +32,8 @@ namespace JinianNet.JNTemplate.Exception
         public ParseException(String message, Int32 line, Int32 column)
             : base(message, line,column)
         {
-            this.Column = column;
-            this.Line = line;
+            Column = column;
+            Line = line;
         }
 
         /// <summary>

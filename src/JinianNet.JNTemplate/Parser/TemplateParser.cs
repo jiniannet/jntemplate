@@ -19,12 +19,12 @@ namespace JinianNet.JNTemplate.Parser
         /// 大小写规则
         /// 注意：虽然本引擎为了尽量方便用户使用与兼容，个别地方对大小写未做限制，但是使用中应尽量严格按照大小写来使用。
         /// </summary>
-        const StringComparison stringComparer = StringComparison.OrdinalIgnoreCase;
+        private const StringComparison stringComparer = StringComparison.OrdinalIgnoreCase;
 
         #region private field
-        private Tag tag;//当前标签
-        private Token[] tokens;//tokens列表
-        private Int32 index;//当前索引
+        private Tag _tag;//当前标签
+        private Token[] _tokens;//tokens列表
+        private Int32 _index;//当前索引
         #endregion
 
         #region ctox
@@ -35,7 +35,11 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="TagTypeResolver">标签类型分析器</param>
         public TemplateParser(Token[] ts)
         {
-            this.tokens = ts;
+            if (ts == null)
+            {
+                throw new ArgumentNullException("ts");
+            }
+            this._tokens = ts;
             Reset();
         }
         #endregion
@@ -46,10 +50,7 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public Tag Current
         {
-            get
-            {
-                return tag;
-            }
+            get { return this._tag; }
         }
 
         #endregion
@@ -62,12 +63,12 @@ namespace JinianNet.JNTemplate.Parser
         /// <returns></returns>
         public Boolean MoveNext()
         {
-            if (this.index < this.tokens.Length)
+            if (this._index < this._tokens.Length)
             {
                 Tag t = Read();
                 if (t != null)
                 {
-                    this.tag = t;
+                    this._tag = t;
                     return true;
                 }
             }
@@ -78,8 +79,8 @@ namespace JinianNet.JNTemplate.Parser
         /// </summary>
         public void Reset()
         {
-            this.index = 0;
-            this.tag = null;
+            this._index = 0;
+            this._tag = null;
         }
 
         private Tag Read()
@@ -93,7 +94,7 @@ namespace JinianNet.JNTemplate.Parser
 
                 do
                 {
-                    this.index++;
+                    this._index++;
                     t2.Next = GetToken();
                     t2 = t2.Next;
 
@@ -104,7 +105,7 @@ namespace JinianNet.JNTemplate.Parser
 
                 tc.Remove(tc.Last);
 
-                this.index++;
+                this._index++;
 
                 try
                 {
@@ -137,7 +138,7 @@ namespace JinianNet.JNTemplate.Parser
                 t = new TextTag();
                 t.FirstToken = GetToken();
                 t.LastToken = null;
-                this.index++;
+                this._index++;
             }
             return t;
         }
@@ -149,7 +150,9 @@ namespace JinianNet.JNTemplate.Parser
         public Tag Read(TokenCollection tc)
         {
             if (tc == null || tc.Count == 0)
+            {
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
+            }
             return Engine.TagResolver.Resolver(this, tc);
         }
 
@@ -176,7 +179,7 @@ namespace JinianNet.JNTemplate.Parser
 
         private Token GetToken()
         {
-            return tokens[this.index];
+            return this._tokens[this._index];
         }
 
         //private Token GetToken(Int32 i)
@@ -190,10 +193,7 @@ namespace JinianNet.JNTemplate.Parser
 
         Object System.Collections.IEnumerator.Current
         {
-            get
-            {
-                return this.Current;
-            }
+            get{ return Current;}
         }
 
         #endregion

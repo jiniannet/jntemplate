@@ -23,32 +23,32 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public Int32 BeginLine
         {
-            get { return _beginline; }
-            set { _beginline = value; }
+            get { return this._beginline; }
+            set { this._beginline = value; }
         }
         /// <summary>
         /// 开始列
         /// </summary>
         public Int32 BeginColumn
         {
-            get { return _begincolumn; }
-            set { _begincolumn = value; }
+            get { return this._begincolumn; }
+            set { this._begincolumn = value; }
         }
         /// <summary>
         /// 结束行
         /// </summary>
         public Int32 EndLine
         {
-            get { return _endline; }
-            set { _endline = value; }
+            get { return this._endline; }
+            set { this._endline = value; }
         }
         /// <summary>
         /// 结束列
         /// </summary>
         public Int32 EndColumn
         {
-            get { return _endcolumn; }
-            set { _endcolumn = value; }
+            get { return this._endcolumn; }
+            set { this._endcolumn = value; }
         }
 
         /// <summary>
@@ -56,14 +56,14 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public String Text
         {
-            get { return _text; }
+            get { return this._text; }
         }
         /// <summary>
         /// TOKEN标记
         /// </summary>
         public TokenKind TokenKind
         {
-            get { return _tokenkind; }
+            get { return this._tokenkind; }
         }
         /// <summary>
         /// TOKEN
@@ -80,8 +80,8 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// </summary>
         public Token Next
         {
-            get { return _next; }
-            set { _next = value; }
+            get { return this._next; }
+            set { this._next = value; }
         }
         /// <summary>
         /// 获取文本值
@@ -101,13 +101,21 @@ namespace JinianNet.JNTemplate.Parser.Node
         public Int32 CompareTo(Token other)
         {
             if (this.BeginLine > other.BeginLine)
+            {
                 return 1;
+            }
             if (this.BeginLine < other.BeginLine)
+            {
                 return -1;
+            }
             if (this.BeginColumn > other.BeginColumn)
+            {
                 return 1;
+            }
             if (this.BeginColumn < other.BeginColumn)
+            {
                 return -1;
+            }
             return 0;
         }
 

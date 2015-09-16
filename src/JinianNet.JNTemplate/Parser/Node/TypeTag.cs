@@ -14,14 +14,14 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <typeparam name="T">类型</typeparam>
     public abstract class TypeTag<T> : Tag
     {
-        private T baseValue;
+        private T _baseValue;
         /// <summary>
         /// 值
         /// </summary>
         public T Value
         {
-            get { return this.baseValue; }
-            set { this.baseValue = value; }
+            get { return this._baseValue; }
+            set { this._baseValue = value; }
         }
         /// <summary>
         /// 解析结果
@@ -30,7 +30,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <returns></returns>
         public override object Parse(TemplateContext context)
         {
-            return this.Value;
+            return this._baseValue;
         }
 
         /// <summary>
@@ -40,20 +40,10 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="write">TextWriter</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            write.Write(this.Value.ToString());
+            if (this._baseValue != null)
+            {
+                write.Write(this._baseValue.ToString());
+            }
         }
-
-        ///// <summary>
-        ///// 输出STRING
-        ///// </summary>
-        ///// <returns></returns>
-        //public override String ToString()
-        //{
-        //    if (this.Value != null)
-        //    {
-        //        return this.Value.ToString();
-        //    }
-        //    return String.Empty;
-        //}
     }
 }
