@@ -319,6 +319,8 @@ namespace JinianNet.JNTemplate.Test
         //[TestMethod]
         //public void TestConfig()
         //{
+
+        //    //引擎配置将以更加简便的的方式在V1.3版本放出，在此版本将注释掉，请勿再使用
         //    var config = new Configuration.Config('@', "{$", "}");
 
         //    var ctx = new TemplateContext(config, new Parser.VariableScope());
@@ -330,18 +332,18 @@ namespace JinianNet.JNTemplate.Test
 
         //}
 
-        ///// <summary>
-        ///// 注释
-        ///// </summary>
-        //[TestMethod]
-        //public void TestComent()
-        //{
-        //    var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
-        //    var template = new Template(templateContent);
-        //    template.Set("name", "jntemplate");
-        //    var render = template.Render();
-        //    Assert.AreEqual("你好,欢迎使用", render);
-        //}
+        /// <summary>
+        /// 注释
+        /// </summary>
+        [TestMethod]
+        public void TestComent()
+        {
+            var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
+            var template = new Template(templateContent);
+            template.Set("name", "jntemplate");
+            var render = template.Render();
+            Assert.AreEqual("你好,欢迎使用", render);
+        }
 
 
         /// <summary>
@@ -435,28 +437,5 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("3845254\\\"3366845\\", render);
             
         }
-
-
-
-//        /// <summary>
-//        /// 测试标签前后空白字符串处理
-//        /// </summary>
-//        [TestMethod]
-//        public void TestStripWhiteSpace()
-//        {
-//            var templateContent = @"
-//your data is:
-//$set(key1=1)
-//$set(key2=2)
-//$set(key3=3)
-//$set(key4=4)
-//$set(key5=5)
-//$set(key6=6)
-//$key5";
-//            var template = new Template(templateContent);
-//            template.Context.Config.StripWhiteSpace = true;
-//            var render = template.Render();
-//            Assert.AreEqual("your data is:5", render);
-//        }
     }
 }

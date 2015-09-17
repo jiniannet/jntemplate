@@ -1,4 +1,4 @@
-﻿[JNTemplate](http://www.jiniannet.com/) — Open source templating engine for .net/mono!
+﻿[JNTemplate](http://www.jiniannet.com/) — Open source templating engine for .net!
 ==================================================
 
 JNTemplate 是什么

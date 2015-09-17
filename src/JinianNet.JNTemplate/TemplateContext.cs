@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using JinianNet.JNTemplate.Parser;
+using JinianNet.JNTemplate.Configuration;
 
 namespace JinianNet.JNTemplate
 {
@@ -15,6 +16,7 @@ namespace JinianNet.JNTemplate
     public class TemplateContext : ICloneable
     {
         private VariableScope variableScope;
+        private ITemplateConfig config;
         private String currentPath;
         private Encoding charset;
         private Boolean throwErrors;
@@ -41,6 +43,7 @@ namespace JinianNet.JNTemplate
             }
             this.Charset = System.Text.Encoding.Default;
             this.ThrowExceptions = true;
+            this.config = new Config();
             this.variableScope = data;
         }
 
@@ -74,10 +77,9 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板资源路径
         /// </summary>
-        [Obsolete("请使用Resources.Paths 来替代本对象")]
         public ICollection<String> Paths
         {
-            get { return Resources.Paths; }
+            get { return Config.Paths; }
         }
 
         /// <summary>
@@ -87,6 +89,15 @@ namespace JinianNet.JNTemplate
         {
             get { return throwErrors; }
             set { throwErrors = value; }
+        }
+
+        /// <summary>
+        /// 模板配置数据(因此配置入口将在V1.3版本中修改，请勿使用)
+        /// </summary>
+        internal ITemplateConfig Config
+        {
+            get { return config; }
+            set { config = value; }
         }
 
         //public virtual System.Exception[] AllErrors
@@ -146,6 +157,7 @@ namespace JinianNet.JNTemplate
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
+            ctx.Config = context.Config;
             return ctx;
         }
 

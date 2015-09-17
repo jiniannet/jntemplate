@@ -28,8 +28,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            String value = this.ToString();
-            write.Write(value);
+            write.Write(this.ToString());
         }
         /// <summary>
         /// 获取对象的字符串引用

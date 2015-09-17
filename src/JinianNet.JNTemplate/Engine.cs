@@ -37,9 +37,9 @@ namespace JinianNet.JNTemplate
         public Engine(String path, Encoding encoding)
             : this(new TemplateContext())
         {
-            if (!String.IsNullOrEmpty(path) && !Resources.Paths.Contains(path))
+            if (!String.IsNullOrEmpty(path) && !context.Paths.Contains(path))
             {
-                Resources.Paths.Add(path);
+                context.Paths.Add(path);
             }
             context.Charset = encoding;
         }
@@ -95,11 +95,11 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
-                    Int32 index = Resources.FindPath(Resources.Paths, path, out fullPath); //如果是相对路径，则进行路径搜索
-                    if (Resources.FindPath(Resources.Paths, path, out fullPath) != -1)
+                    Int32 index = Resources.FindPath(context.Config.Paths, path, out fullPath); //如果是相对路径，则进行路径搜索
+                    if (Resources.FindPath(context.Config.Paths, path, out fullPath) != -1)
                     {
                         //设定当前工作目录 如果模板中存在Inclub或load标签，它们的处理路径会以CurrentPath 设定的路径为基准
-                        ctx.CurrentPath = Resources.Paths[index];
+                        ctx.CurrentPath = context.Config.Paths[index];
                         template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
                     }
                 }

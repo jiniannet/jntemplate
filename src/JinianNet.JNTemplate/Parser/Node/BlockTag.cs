@@ -63,9 +63,9 @@ namespace JinianNet.JNTemplate.Parser.Node
 
             if (!String.IsNullOrEmpty(this.TemplateContent))
             {
-                TemplateLexer lexer = new TemplateLexer(this.TemplateContent, '$', "${", "}");
+                TemplateLexer lexer = new TemplateLexer(this.TemplateContent, context.Config.TagFlag, context.Config.TagPrefix, context.Config.TagSuffix);
 
-                TemplateParser parser = new TemplateParser(lexer.Parse(), TagTypeResolver.CreateDefault());
+                TemplateParser parser = new TemplateParser(lexer.Parse(), context.Config.Resolver);
 
                 collection = parser.ToArray();
             }
