@@ -32,7 +32,6 @@ namespace JinianNet.JNTemplate.Parser
         /// 模板分模器
         /// </summary>
         /// <param name="ts">TOKEN集合</param>
-        /// <param name="TagTypeResolver">标签类型分析器</param>
         public TemplateParser(Token[] ts)
         {
             if (ts == null)
