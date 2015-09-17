@@ -2,13 +2,10 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
-
 using System;
 using System.Text;
-using System.Collections.Generic;
 using JinianNet.JNTemplate.Parser;
 using JinianNet.JNTemplate.Configuration;
-using System.Collections.ObjectModel;
 
 namespace JinianNet.JNTemplate
 {
@@ -19,8 +16,7 @@ namespace JinianNet.JNTemplate
     {
 
         private static TemplateContext _context;
-        //private static Collection<String> _resourceDirectories;
-        private static Parser.ITagTypeResolver _tagResolver;
+        private static ITagTypeResolver _tagResolver;
         private static EngineConfig _config;
 
         static Engine()
@@ -62,7 +58,7 @@ namespace JinianNet.JNTemplate
 
             for (Int32 i = 0; i < conf.TagParsers.Length; i++)
             {
-                parsers[i] = (ITagParser)System.Activator.CreateInstance(Type.GetType(conf.TagParsers[i])); ;
+                parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i])); ;
             }
 
             _tagResolver = new Parser.TagTypeResolver(parsers);
