@@ -3,12 +3,8 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.IO;
-using JinianNet.JNTemplate.Parser;
-using JinianNet.JNTemplate.Parser.Node;
 
 namespace JinianNet.JNTemplate
 {

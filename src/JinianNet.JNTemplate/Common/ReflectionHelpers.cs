@@ -4,11 +4,8 @@
  ********************************************************************************/
 //#define NEEDFIELD  //如果需要支持字段取值，请取消本行最开始的// 使用BUILD.bat执行生成时忽略本项
 using System;
-using System.Collections.Generic;
-using JinianNet.JNTemplate.Parser.Node;
 using System.ComponentModel;
 using System.Reflection;
-using System.Globalization;
 using System.Collections;
 
 namespace JinianNet.JNTemplate.Common

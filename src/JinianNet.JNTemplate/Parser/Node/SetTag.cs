@@ -4,7 +4,6 @@
  ********************************************************************************/
 using System;
 
-
 namespace JinianNet.JNTemplate.Parser.Node
 {
     /// <summary>

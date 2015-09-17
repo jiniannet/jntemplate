@@ -3,7 +3,6 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 using System;
-using System.Text;
 
 namespace JinianNet.JNTemplate.Caching
 {
@@ -21,7 +20,7 @@ namespace JinianNet.JNTemplate.Caching
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        void Add(String key, Object value);
+        void Insert(String key, Object value);
         /// <summary>
         /// 获取键为key的缓存
         /// </summary>
