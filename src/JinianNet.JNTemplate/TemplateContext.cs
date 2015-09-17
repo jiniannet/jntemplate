@@ -33,7 +33,6 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板上下文
         /// </summary>
-        /// <param name="config">模板配值</param>
         /// <param name="data">数据</param>
         public TemplateContext(VariableScope data)
         {
