@@ -11,9 +11,18 @@ namespace JinianNet.JNTemplate.Test
     [TestClass]
     public class TagsTests
     {
+        public TagsTests()
+        {
+            var conf = Configuration.EngineConfig.CreateDefault();
+            //开始严格大小写模式 默认忽略大小写
+            conf.IgnoreCase = false;
+            Engine.Configure(conf);
+        }
+
         [TestMethod]
         public void TestRun()
         {
+
             string message = "参考用";
             var templateContent = "$message";
             var template = new Template(templateContent);
@@ -231,7 +240,7 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestIndexValue()
         {
-            var templateContent = "$data.get(0)"; //数组取值用get即可取到 List<Int32>用get_Item  原因见.NET的索引实现原理
+            var templateContent = "$data.Get(0)"; //数组取值用get即可取到 List<Int32>用get_Item  原因见.NET的索引实现原理
             var template = new Template(templateContent);
 
             template.Set("data", new int[] { 7, 0, 2, 0, 6 });
@@ -277,7 +286,7 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestIndexValue3()
         {
-            var templateContent = "$data.get_item(0)"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
+            var templateContent = "$data.get_Item(0)"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
             var template = new Template(templateContent);
 
             template.Set("data", new System.Collections.Generic.List<int>(new int[] { 7, 0, 2, 0, 6 }));
@@ -428,7 +437,6 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("(1)人", render);
         }
 
-
         /// <summary>
         /// 测试字符串转义
         /// </summary>
@@ -441,8 +449,6 @@ namespace JinianNet.JNTemplate.Test
             Assert.AreEqual("3845254\\\"3366845\\", render);
 
         }
-
-
 
         /// <summary>
         /// 测试标签前后空白字符串处理
@@ -464,5 +470,18 @@ $key5";
             var render = template.Render();
             Assert.AreEqual("your data is:5", render);
         }
+
+        ///// <summary>
+        ///// 测试标签大小写
+        ///// </summary>
+        //[TestMethod]
+        //public void TestIgnoreCase()
+        //{
+        //    var templateContent  = "$date.Year";
+        //    var template = new Template(templateContent);
+        //    template.Set("date",DateTime.Now);
+        //    var render = template.Render();
+        //    Assert.AreEqual(DateTime.Now.Year.ToString(), render);
+        //}
     }
 }
