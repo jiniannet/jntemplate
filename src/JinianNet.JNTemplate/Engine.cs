@@ -6,6 +6,7 @@ using System;
 using System.Text;
 using JinianNet.JNTemplate.Parser;
 using JinianNet.JNTemplate.Configuration;
+using System.Reflection;
 
 namespace JinianNet.JNTemplate
 {
@@ -18,6 +19,9 @@ namespace JinianNet.JNTemplate
         private static TemplateContext _context;
         private static ITagTypeResolver _tagResolver;
         private static EngineConfig _config;
+        private static StringComparison _stringComparison;
+        private static BindingFlags _bindingFlags;
+        private static StringComparer _stringComparer;
 
         static Engine()
         {
@@ -61,6 +65,18 @@ namespace JinianNet.JNTemplate
                 parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i])); ;
             }
 
+            if (conf.IgnoreCase)
+            {
+                _stringComparison = StringComparison.OrdinalIgnoreCase;
+                _bindingFlags = BindingFlags.IgnoreCase;
+                _stringComparer = StringComparer.OrdinalIgnoreCase;
+            }
+            else
+            {
+                _stringComparison = StringComparison.Ordinal;
+                _bindingFlags = BindingFlags.Default;
+                _stringComparer = StringComparer.Ordinal;
+            }
             _tagResolver = new Parser.TagTypeResolver(parsers);
 
         }
@@ -80,7 +96,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static String[] ResourceDirectories
         {
-            get { return _config.ResourceDirectories;}
+            get { return _config.ResourceDirectories; }
         }
 
         /// <summary>
@@ -123,6 +139,34 @@ namespace JinianNet.JNTemplate
             get { return _config.TagSuffix; }
         }
 
+        /// <summary>
+        /// 字符串大小写排序配置
+        /// </summary>
+        internal static StringComparison StringIgnoreCase
+        {
+            get { return _stringComparison; }
+        }
+
+        /// <summary>
+        /// 绑定大小写配置
+        /// </summary>
+        internal static BindingFlags BindIgnoreCase
+        {
+            get { return _bindingFlags; }
+        }
+
+        /// <summary>
+        /// 字符串比较大小写配置
+        /// </summary>
+        internal static StringComparer IgnoreCase
+        {
+            get { return _stringComparer; }
+        }
+
+        /// <summary>
+        /// 创建模板上下文
+        /// </summary>
+        /// <returns></returns>
         public static TemplateContext CreateContext()
         {
             TemplateContext ctx;
@@ -148,7 +192,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static ITemplate CreateTemplate(String text)
         {
-            return new Template(CreateContext(),text);
+            return new Template(CreateContext(), text);
         }
 
         /// <summary>

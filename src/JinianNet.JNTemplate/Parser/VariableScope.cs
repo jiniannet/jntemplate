@@ -31,7 +31,7 @@ namespace JinianNet.JNTemplate.Parser
         public VariableScope(VariableScope parent)
         {
             this._parent = parent;
-            this._dic = new Dictionary<String, Object>(StringComparer.InvariantCultureIgnoreCase);
+            this._dic = new Dictionary<String, Object>(Engine.IgnoreCase);
         }
 
         /// <summary>

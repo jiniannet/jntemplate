@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Common
         {
             if (x == null || y == null)
                 return x == y;
-            return String.Equals(x, y, StringComparison.OrdinalIgnoreCase);
+            return String.Equals(x, y, Engine.StringIgnoreCase);
         }
     }
 }

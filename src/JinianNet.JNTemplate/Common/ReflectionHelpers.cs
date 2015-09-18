@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate.Common
             if (propName.IndexOfAny(indexExprStartChars) < 0)
             {
                 Type t = container.GetType();
-                PropertyInfo p = t.GetProperty(propName);
+                PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
                 //取属性
                 if (p != null)
                 {
@@ -72,7 +72,7 @@ namespace JinianNet.JNTemplate.Common
                 }
 #if NEEDFIELD
                 //取字段
-                FieldInfo f = t.GetField(propName);
+                FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
                 if (f != null)
                 {
                     return f.GetValue(container);
@@ -232,7 +232,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             if (args == null || Array.LastIndexOf(args, null) == -1)
             {
                 method = type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static,
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase,
                     null, args, null);
                 if (method != null)
                 {
@@ -245,12 +245,12 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             ParameterInfo[] pi;
             Boolean accord;
 
-            MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo[] ms = type.GetMethods(BindingFlags.Public  | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
 
             foreach (MethodInfo m in ms)
             {
 
-                if (m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase))
+                if (m.Name.Equals(methodName, Engine.StringIgnoreCase ))
                 {
                     pi = m.GetParameters();
 

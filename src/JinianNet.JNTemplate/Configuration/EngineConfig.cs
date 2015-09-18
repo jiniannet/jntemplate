@@ -19,6 +19,7 @@ namespace JinianNet.JNTemplate.Configuration
         private Boolean _throwExceptions;
         private Boolean _stripWhiteSpace;
         private String[] _tagParsers;
+        private Boolean _ignoreCase;
 
         /// <summary>
         /// 资源路径
@@ -91,6 +92,19 @@ namespace JinianNet.JNTemplate.Configuration
             set { this._tagParsers = value; }
         }
 
+        /// <summary>
+        /// 是否忽略大小写
+        /// </summary>
+        public Boolean IgnoreCase
+        {
+            get { return this._ignoreCase; }
+            set { this._ignoreCase = value; }
+        }
+
+        /// <summary>
+        /// 创建默认配置
+        /// </summary>
+        /// <returns></returns>
         public static EngineConfig CreateDefault()
         {
             EngineConfig conf = new EngineConfig();
@@ -101,6 +115,7 @@ namespace JinianNet.JNTemplate.Configuration
             conf.TagPrefix = "${";
             conf.TagSuffix = "}";
             conf.ThrowExceptions = true;
+            conf.IgnoreCase = true;
             conf.TagParsers = new String[] {
                 "JinianNet.JNTemplate.Parser.BooleanParser",
                 "JinianNet.JNTemplate.Parser.NumberParser",
