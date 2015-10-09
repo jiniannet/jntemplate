@@ -134,9 +134,9 @@ namespace JinianNet.JNTemplate.Parser
                 return false;
             }
             Boolean find = true;
-            for (Int32 i = 0; i <  Engine.TagPrefix.Length; i++)
+            for (Int32 i = 0; i <  Engine.Runtime.TagPrefix.Length; i++)
             {
-                if (Engine.TagPrefix[i] != this._scanner.Read(i))
+                if (Engine.Runtime.TagPrefix[i] != this._scanner.Read(i))
                 {
                     find = false;
                     break;
@@ -147,7 +147,7 @@ namespace JinianNet.JNTemplate.Parser
                 this._flagMode = FlagMode.Full;
                 return true;
             }
-            if (this._scanner.Read() == Engine.TagFlag)
+            if (this._scanner.Read() == Engine.Runtime.TagFlag)
             {
 #if ALLOWCOMMENT
                 if (this._scanner.Read(1) == '*')
@@ -181,9 +181,9 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (this._flagMode == FlagMode.Full)
                     {
-                        for (Int32 i = 0; i < Engine.TagSuffix.Length; i++)
+                        for (Int32 i = 0; i < Engine.Runtime.TagSuffix.Length; i++)
                         {
-                            if (Engine.TagSuffix[i] != this._scanner.Read(i))
+                            if (Engine.Runtime.TagSuffix[i] != this._scanner.Read(i))
                             {
                                 return false;
                             }
@@ -194,7 +194,7 @@ namespace JinianNet.JNTemplate.Parser
 #if ALLOWCOMMENT
                     else if (this._flagMode == FlagMode.Comment)
                     {
-                        return this._scanner.Read() == '*' && this._scanner.Read(1) == Engine.TagFlag;
+                        return this._scanner.Read() == '*' && this._scanner.Read(1) == Engine.Runtime.TagFlag;
                     }
 #endif
                     else
@@ -248,7 +248,7 @@ namespace JinianNet.JNTemplate.Parser
                         {
                             if (this._flagMode == FlagMode.Full)
                             {
-                                Next(Engine.TagPrefix.Length - 1);
+                                Next(Engine.Runtime.TagPrefix.Length - 1);
                             }
 
                             AddToken(GetTokenKind(this._scanner.Read()));
@@ -311,7 +311,7 @@ namespace JinianNet.JNTemplate.Parser
                 if (this._flagMode == FlagMode.Full)
                 {
                     AddToken(TokenKind.TagEnd);
-                    Next(Engine.TagSuffix.Length);
+                    Next(Engine.Runtime.TagSuffix.Length);
                 }
 #if ALLOWCOMMENT
                 else if (this._flagMode == FlagMode.Comment)

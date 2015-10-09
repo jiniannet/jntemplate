@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// Foreach标签
     /// </summary>
-    public class ForeachTag : BaseTag
+    public class ForeachTag : TagBase
     {
 
         private String _name;

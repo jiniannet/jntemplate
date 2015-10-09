@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Parser
     /// <summary>
     /// 分析器
     /// </summary>
-    public class TagTypeResolver : ITagTypeResolver,ICollection<ITagParser>
+    public class TagTypeResolver : ITagTypeResolver, ICollection<ITagParser>
     {
         private readonly List<ITagParser> _collection;
         /// <summary>
@@ -46,8 +46,8 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     t.FirstToken = tc.First;
 
-                    if (t.Children.Count == 0 
-                        || (t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) == null 
+                    if (t.Children.Count == 0
+                        || (t.LastToken = t.Children[t.Children.Count - 1].LastToken ?? t.Children[t.Children.Count - 1].FirstToken) == null
                         || tc.Last.CompareTo(t.LastToken) > 0)
                     {
                         t.LastToken = tc.Last;

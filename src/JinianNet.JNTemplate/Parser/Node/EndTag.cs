@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 结束标签，用于if for等复合标签的结束
     /// </summary>
-    public class EndTag:BaseTag
+    public class EndTag:TagBase
     {
         /// <summary>
         /// 解析标签

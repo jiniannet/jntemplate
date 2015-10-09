@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 标签块
     /// </summary>
-    public class BlockTag : BaseTag
+    public class BlockTag : TagBase
     {
         private TemplateRender _render;
 

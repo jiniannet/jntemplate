@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate.Common
             if (propName.IndexOfAny(indexExprStartChars) < 0)
             {
                 Type t = container.GetType();
-                PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
+                PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
                 //取属性
                 if (p != null)
                 {
@@ -232,7 +232,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             if (args == null || Array.LastIndexOf(args, null) == -1)
             {
                 method = type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase,
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
                     null, args, null);
                 if (method != null)
                 {
@@ -245,12 +245,12 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             ParameterInfo[] pi;
             Boolean accord;
 
-            MethodInfo[] ms = type.GetMethods(BindingFlags.Public  | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
+            MethodInfo[] ms = type.GetMethods(BindingFlags.Public  | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 
             foreach (MethodInfo m in ms)
             {
 
-                if (m.Name.Equals(methodName, Engine.StringIgnoreCase ))
+                if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
                 {
                     pi = m.GetParameters();
 

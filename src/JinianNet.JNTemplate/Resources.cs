@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate
         /// <returns>路径索引</returns>
         public static Int32 FindPath(String filename, out String fullPath)
         {
-            return FindPath(Engine.ResourceDirectories, filename, out fullPath);
+            return FindPath(Engine.Runtime.ResourceDirectories, filename, out fullPath);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace JinianNet.JNTemplate
         /// <returns>文本内容</returns>
         public static String LoadResource(String filename, Encoding encoding)
         {
-            return LoadResource(Engine.ResourceDirectories, filename, encoding);
+            return LoadResource(Engine.Runtime.ResourceDirectories, filename, encoding);
         }
 
         /// <summary>

@@ -25,6 +25,25 @@ namespace JinianNet.JNTemplate
         internal const String KEY_END = "end";
         internal const String KEY_FOR = "for";
         internal const String KEY_IN = "in";
+        /// <summary>
+        /// 默认标签解析器
+        /// </summary>
+        internal static readonly String[] RSEOLVER_TYPES = new String[] {
+                "JinianNet.JNTemplate.Parser.BooleanParser",
+                "JinianNet.JNTemplate.Parser.NumberParser",
+                "JinianNet.JNTemplate.Parser.EleseParser",
+                "JinianNet.JNTemplate.Parser.EndParser",
+                "JinianNet.JNTemplate.Parser.VariableParser",
+                "JinianNet.JNTemplate.Parser.StringParser",
+                "JinianNet.JNTemplate.Parser.ForeachParser",
+                "JinianNet.JNTemplate.Parser.ForParser",
+                "JinianNet.JNTemplate.Parser.SetParser",
+                "JinianNet.JNTemplate.Parser.IfParser",
+                "JinianNet.JNTemplate.Parser.ElseifParser",
+                "JinianNet.JNTemplate.Parser.LoadParser",
+                "JinianNet.JNTemplate.Parser.IncludeParser",
+                "JinianNet.JNTemplate.Parser.FunctionParser",
+                "JinianNet.JNTemplate.Parser.ComplexParser" };
     }
 
 

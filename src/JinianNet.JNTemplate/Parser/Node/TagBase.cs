@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 基本标签
     /// </summary>
-    public abstract class BaseTag : Tag
+    public abstract class TagBase : Tag
     {
         /// <summary>
         /// 获取标签内容的字符串引用

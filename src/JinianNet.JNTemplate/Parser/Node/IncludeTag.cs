@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// INCLUDE标签
     /// </summary>
-    public class IncludeTag : BaseTag
+    public class IncludeTag : TagBase
     {
         private Tag _path;
         /// <summary>
@@ -32,7 +32,7 @@ namespace JinianNet.JNTemplate.Parser.Node
                 else
                 {
                     return Resources.LoadResource(
-                        Resources.MergerPaths(Engine.ResourceDirectories, context.CurrentPath),
+                        Resources.MergerPaths(Engine.Runtime.ResourceDirectories, context.CurrentPath),
                         path.ToString(),
                         context.Charset);
                 }

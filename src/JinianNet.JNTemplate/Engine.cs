@@ -15,17 +15,29 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Engine
     {
-
+        private static Runtime _engineRuntime;
+        private static Object _lockObject = new Object();
         private static TemplateContext _context;
-        private static ITagTypeResolver _tagResolver;
-        private static EngineConfig _config;
-        private static StringComparison _stringComparison;
-        private static BindingFlags _bindingFlags;
-        private static StringComparer _stringComparer;
 
-        static Engine()
+        /// <summary>
+        /// 引擎运行时
+        /// </summary>
+        public static Runtime Runtime
         {
-            Configure(EngineConfig.CreateDefault());
+            get
+            {
+                if (_engineRuntime == null)
+                {
+                    lock (_lockObject)
+                    {
+                        if (_engineRuntime == null)
+                        {
+                            Configure(EngineConfig.CreateDefault());
+                        }
+                    }
+                }
+                return _engineRuntime;
+            }
         }
 
         /// <summary>
@@ -39,25 +51,12 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("conf");
             }
-            if (String.IsNullOrEmpty(conf.TagSuffix))
-            {
-                throw new ArgumentNullException("conf.TagSuffix");
-            }
-            if (String.IsNullOrEmpty(conf.TagPrefix))
-            {
-                throw new ArgumentNullException("conf.TagPrefix");
-            }
+
             if (conf.TagParsers == null)
             {
-                conf.TagParsers = new String[0];
-            }
-            if (conf.ResourceDirectories == null)
-            {
-                conf.ResourceDirectories = new String[0];
+                conf.TagParsers = conf.TagParsers = Field.RSEOLVER_TYPES;
             }
             _context = ctx;
-            _config = conf;
-
             ITagParser[] parsers = new ITagParser[conf.TagParsers.Length];
 
             for (Int32 i = 0; i < conf.TagParsers.Length; i++)
@@ -65,19 +64,10 @@ namespace JinianNet.JNTemplate
                 parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i])); ;
             }
 
-            if (conf.IgnoreCase)
-            {
-                _stringComparison = StringComparison.OrdinalIgnoreCase;
-                _bindingFlags = BindingFlags.IgnoreCase;
-                _stringComparer = StringComparer.OrdinalIgnoreCase;
-            }
-            else
-            {
-                _stringComparison = StringComparison.Ordinal;
-                _bindingFlags = BindingFlags.Default;
-                _stringComparer = StringComparer.Ordinal;
-            }
-            _tagResolver = new Parser.TagTypeResolver(parsers);
+
+            Parser.TagTypeResolver resolver = new Parser.TagTypeResolver(parsers);
+            _engineRuntime = new Runtime(resolver,
+                conf);
 
         }
 
@@ -91,79 +81,6 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 资源目录
-        /// </summary>
-        /// <returns></returns>
-        public static String[] ResourceDirectories
-        {
-            get { return _config.ResourceDirectories; }
-        }
-
-        /// <summary>
-        /// 简写标签标记
-        /// </summary>
-        public static Char TagFlag
-        {
-            get { return _config.TagFlag; }
-        }
-        ///// <summary>
-        ///// 缓存
-        ///// </summary>
-        //public static JinianNet.JNTemplate.Caching.ICache Cache
-        //{
-        //    get { return _config.CachingProvider; }
-        //}
-
-        /// <summary>
-        /// 标签类型解析器
-        /// </summary>
-        public static Parser.ITagTypeResolver TagResolver
-        {
-            get { return _tagResolver; }
-        }
-
-
-        /// <summary>
-        /// 完整标签前缀
-        /// </summary>
-        internal static string TagPrefix
-        {
-            get { return _config.TagPrefix; }
-        }
-
-        /// <summary>
-        /// 完整标签后缀
-        /// </summary>
-        internal static string TagSuffix
-        {
-            get { return _config.TagSuffix; }
-        }
-
-        /// <summary>
-        /// 字符串大小写排序配置
-        /// </summary>
-        internal static StringComparison StringIgnoreCase
-        {
-            get { return _stringComparison; }
-        }
-
-        /// <summary>
-        /// 绑定大小写配置
-        /// </summary>
-        internal static BindingFlags BindIgnoreCase
-        {
-            get { return _bindingFlags; }
-        }
-
-        /// <summary>
-        /// 字符串比较大小写配置
-        /// </summary>
-        internal static StringComparer IgnoreCase
-        {
-            get { return _stringComparer; }
-        }
-
-        /// <summary>
         /// 创建模板上下文
         /// </summary>
         /// <returns></returns>
@@ -174,8 +91,8 @@ namespace JinianNet.JNTemplate
             {
                 ctx = new TemplateContext();
                 ctx.Charset = Encoding.Default;
-                ctx.StripWhiteSpace = _config.StripWhiteSpace;
-                ctx.ThrowExceptions = true;
+                ctx.StripWhiteSpace = Runtime.StripWhiteSpace;
+                ctx.ThrowExceptions = Runtime.ThrowExceptions;
             }
             else
             {
@@ -231,7 +148,7 @@ namespace JinianNet.JNTemplate
                     if (index != -1)
                     {
                         //设定当前工作目录 如果模板中存在Inclub或load标签，它们的处理路径会以CurrentPath 设定的路径为基准
-                        ctx.CurrentPath = ResourceDirectories[index];
+                        ctx.CurrentPath = Runtime.ResourceDirectories[index];
                         template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
                     }
                 }

@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 赋值标签
     /// </summary>
-    public class SetTag : BaseTag
+    public class SetTag : TagBase
     {
         private String _name;
         private Tag _value;

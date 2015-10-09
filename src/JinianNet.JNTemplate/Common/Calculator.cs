@@ -604,9 +604,9 @@ namespace JinianNet.JNTemplate.Common
             switch (value)
             {
                 case "==":
-                    return x.Equals(y, Engine.StringIgnoreCase);
+                    return x.Equals(y, Engine.Runtime.ComparisonIgnoreCase);
                 case "!=":
-                    return !x.Equals(y, Engine.StringIgnoreCase);
+                    return !x.Equals(y, Engine.Runtime.ComparisonIgnoreCase);
                 case "+":
                     return String.Concat(x, y);
                 default:

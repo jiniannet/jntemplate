@@ -144,7 +144,7 @@ namespace JinianNet.JNTemplate.Parser
             {
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
             }
-            return Engine.TagResolver.Resolver(this, tc);
+            return Engine.Runtime.TagResolver.Resolver(this, tc);
         }
 
 

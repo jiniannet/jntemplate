@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// IF标签
     /// </summary>
-    public class IfTag : BaseTag
+    public class IfTag : TagBase
     {
         /// <summary>
         /// 解析标签

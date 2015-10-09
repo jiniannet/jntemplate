@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// ELSE if 标签
     /// </summary>
-    public class ElseifTag : BaseTag
+    public class ElseifTag : TagBase
     {
 
         private Tag _test;

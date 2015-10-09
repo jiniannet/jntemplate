@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\OperatorHelpers.cs" />
+    <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Exception\CompileException.cs" />
@@ -97,7 +98,7 @@
     <Compile Include="Parser\Node\NumberTag.cs" />
     <Compile Include="Parser\Node\ReferenceTag.cs" />
     <Compile Include="Parser\Node\SetTag.cs" />
-    <Compile Include="Parser\Node\BaseTag.cs" />
+    <Compile Include="Parser\Node\TagBase.cs" />
     <Compile Include="Parser\Node\StringTag.cs" />
     <Compile Include="Parser\Node\Tag.cs" />
     <Compile Include="Parser\Node\TextTag.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Parser\VariableScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateRender.cs" />
     <Compile Include="TemplateContext.cs" />

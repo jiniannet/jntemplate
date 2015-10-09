@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 空标签
     /// </summary>
-    public class NullTag : BaseTag
+    public class NullTag : TagBase
     {        /// <summary>
         /// 解析标签
         /// </summary>

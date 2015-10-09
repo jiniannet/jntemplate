@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// 表达式
     /// </summary>
-    public class ExpressionTag : BaseTag
+    public class ExpressionTag : TagBase
     {
         /// <summary>
         /// 解析标签

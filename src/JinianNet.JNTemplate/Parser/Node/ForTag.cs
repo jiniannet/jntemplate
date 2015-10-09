@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// FOR标签
     /// </summary>
-    public class ForTag : BaseTag
+    public class ForTag : TagBase
     {
         private Tag _initial;
         private Tag _test;
