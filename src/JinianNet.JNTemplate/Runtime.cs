@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Reflection;
+using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Parser;
 
 namespace JinianNet.JNTemplate
@@ -18,13 +19,16 @@ namespace JinianNet.JNTemplate
         private StringComparison _stringComparison;
         private BindingFlags _bindingFlags;
         private StringComparer _stringComparer;
+        private ICache _cache;
 
         /// <summary>
         /// 运行时构造函数
         /// </summary>
         /// <param name="tagResolver">标签解析器</param>
+        /// <param name="cache">缓存</param>
         /// <param name="conf">配置信息</param>
         internal Runtime(ITagTypeResolver tagResolver,
+            ICache cache,
             Configuration.ConfigBase conf)
         {
             if (tagResolver == null)
@@ -52,6 +56,7 @@ namespace JinianNet.JNTemplate
                 ResourceDirectories = conf.ResourceDirectories;
             }
             this._tagResolver = tagResolver;
+            this._cache = cache;
             TagFlag = conf.TagFlag;
             TagPrefix = conf.TagPrefix; ;
             TagSuffix = conf.TagSuffix;
@@ -72,13 +77,13 @@ namespace JinianNet.JNTemplate
             }
         }
 
-        ///// <summary>
-        ///// 缓存
-        ///// </summary>
-        //public JinianNet.JNTemplate.Caching.ICache Cache
-        //{
-        //    get { return _config.CachingProvider; }
-        //}
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        public ICache Cache
+        {
+            get { return _cache; }
+        }
 
         /// <summary>
         /// 标签类型解析器

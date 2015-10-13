@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\OperatorHelpers.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Engine.cs" />
@@ -61,7 +62,7 @@
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="FuncHandler.cs" />
-    <Compile Include="Caching\ICachingProvider.cs" />
+    <Compile Include="Caching\ICache.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="Common\Calculator.cs" />
     <Compile Include="LexerMode.cs" />

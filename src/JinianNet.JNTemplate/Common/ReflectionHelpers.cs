@@ -3,6 +3,7 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 //#define NEEDFIELD  //如果需要支持字段取值，请取消本行最开始的// 使用BUILD.bat执行生成时忽略本项
+//#define USECACHE
 using System;
 using System.ComponentModel;
 using System.Reflection;
@@ -41,10 +42,19 @@ namespace JinianNet.JNTemplate.Common
             {
                 return dic[propIndex];
             }
-            PropertyInfo info = container.GetType().GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
+            Type t = container.GetType();
+            string cacheKey = String.Concat(t.FullName, "[", propIndex.ToString(), "]");
+            PropertyInfo info = Utils.GetCacheItem<PropertyInfo>(cacheKey);
             if (info == null)
             {
-                return null;
+                info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
+                if (info == null)
+                {
+                    return null;
+                }
+#if USECACHE
+                Utils.InsertCache(cacheKey, info);
+#endif
             }
             return info.GetValue(container, new Object[] { propIndex });
         }
@@ -60,14 +70,38 @@ namespace JinianNet.JNTemplate.Common
         /// <returns></returns>
         public static Object GetPropertyOrField(Object container, String propName)
         {
+            Type t = container.GetType();
+#if USECACHE
+            //是否有缓存
+            String cacheKey = String.Concat(t.FullName, ".", propName);
+            MemberInfo mi = Utils.GetCacheItem<MemberInfo>(cacheKey);
+            if (mi != null)
+            {
+                switch (mi.MemberType.ToString())
+                {
+                    case "Property":
+                        return ((PropertyInfo)mi).GetValue(container, null);
+                    case "Field":
+                        return ((FieldInfo)mi).GetValue(container);
+                }
+
+            }
+
+            if ((mi = Utils.GetCacheItem<MemberInfo>(String.Concat(t.FullName, "[", propName, "]"))) != null)
+            {
+                return ((PropertyInfo)mi).GetValue(container, null);
+            }
+#endif
             //此处的属性包括有参属性（索引）与无参属性（属性）
             if (propName.IndexOfAny(indexExprStartChars) < 0)
             {
-                Type t = container.GetType();
                 PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
                 //取属性
                 if (p != null)
                 {
+#if USECACHE
+                    Utils.InsertCache(cacheKey, p);
+#endif
                     return p.GetValue(container, null);
                 }
 #if NEEDFIELD
@@ -75,6 +109,9 @@ namespace JinianNet.JNTemplate.Common
                 FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
                 if (f != null)
                 {
+#if USECACHE
+                    Utils.InsertCache(cacheKey, p);
+#endif
                     return f.GetValue(container);
                 }
 #endif
@@ -245,7 +282,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             ParameterInfo[] pi;
             Boolean accord;
 
-            MethodInfo[] ms = type.GetMethods(BindingFlags.Public  | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+            MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 
             foreach (MethodInfo m in ms)
             {
@@ -336,7 +373,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             Type t = container.GetType();
 
             Boolean hasParam;
-            MethodInfo method = GetMethod(t, methodName,ref types, out hasParam);
+            MethodInfo method = GetMethod(t, methodName, ref types, out hasParam);
             if (method != null)
             {
                 if (hasParam)
@@ -348,7 +385,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
                     }
                     else
                     {
-                        arr = Array.CreateInstance(types[types.Length-1].GetElementType(), args.Length - types.Length + 1);
+                        arr = Array.CreateInstance(types[types.Length - 1].GetElementType(), args.Length - types.Length + 1);
                         for (Int32 i = types.Length - 1; i < args.Length; i++)
                         {
                             arr.SetValue(args[i], i - (types.Length - 1));

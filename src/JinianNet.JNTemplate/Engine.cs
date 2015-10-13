@@ -7,6 +7,7 @@ using System.Text;
 using JinianNet.JNTemplate.Parser;
 using JinianNet.JNTemplate.Configuration;
 using System.Reflection;
+using JinianNet.JNTemplate.Caching;
 
 namespace JinianNet.JNTemplate
 {
@@ -61,14 +62,19 @@ namespace JinianNet.JNTemplate
 
             for (Int32 i = 0; i < conf.TagParsers.Length; i++)
             {
-                parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i])); ;
+                parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i]));
             }
 
+            ICache cache = null;
+            if (!string.IsNullOrEmpty(conf.CachingProvider))
+            {
+                cache = (ICache)Activator.CreateInstance(Type.GetType(conf.CachingProvider));
+            }
 
             Parser.TagTypeResolver resolver = new Parser.TagTypeResolver(parsers);
             _engineRuntime = new Runtime(resolver,
+                cache,
                 conf);
-
         }
 
         /// <summary>
