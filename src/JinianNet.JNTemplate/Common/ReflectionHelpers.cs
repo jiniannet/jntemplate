@@ -43,8 +43,8 @@ namespace JinianNet.JNTemplate.Common
                 return dic[propIndex];
             }
             Type t = container.GetType();
-            string cacheKey = String.Concat(t.FullName, "[", propIndex.ToString(), "]");
-            PropertyInfo info = Utils.GetCacheItem<PropertyInfo>(cacheKey);
+            //string cacheKey = String.Concat(t.FullName, "[", propIndex.ToString(), "]");
+            PropertyInfo info = null;// Utils.GetCacheItem<PropertyInfo>(cacheKey);
             if (info == null)
             {
                 info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);

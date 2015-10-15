@@ -53,7 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\OperatorHelpers.cs" />
-    <Compile Include="Common\Utils.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Engine.cs" />
