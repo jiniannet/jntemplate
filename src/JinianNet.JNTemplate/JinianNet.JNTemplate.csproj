@@ -52,6 +52,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\CacheHelprs.cs" />
+    <Compile Include="Common\ILHelpers.cs" />
     <Compile Include="Common\OperatorHelpers.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
