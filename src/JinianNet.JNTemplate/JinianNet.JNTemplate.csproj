@@ -52,11 +52,15 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Common\CacheHelprs.cs" />
-    <Compile Include="Common\ILHelpers.cs" />
     <Compile Include="Common\OperatorHelpers.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
+    <Compile Include="Dynamic\DynamicHelpers.cs" />
+    <Compile Include="Dynamic\IDynamicHelpers.cs" />
+    <Compile Include="Dynamic\ILHelpers.cs" />
+    <Compile Include="Dynamic\ReflectionHelpers.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />
@@ -109,7 +113,6 @@
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\NumberParser.cs" />
     <Compile Include="Parser\TagTypeResolver.cs" />
-    <Compile Include="Common\ReflectionHelpers.cs" />
     <Compile Include="Common\ParserHelpers.cs" />
     <Compile Include="Parser\SetParser.cs" />
     <Compile Include="Parser\StringParser.cs" />

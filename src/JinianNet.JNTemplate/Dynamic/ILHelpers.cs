@@ -5,24 +5,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using System.Text.RegularExpressions;
+using JinianNet.JNTemplate.Common;
 
-namespace JinianNet.JNTemplate.Common
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
     /// IL帮助类
     /// </summary>
-    public class ILHelpers
+    public class ILHelpers : IDynamicHelpers
     {
 
         private delegate Object GetPropertyOrFieldDelegate(Object model, String propertyName);
         private delegate Object ExcuteMethodDelegate(Object container, Object[] args);
-        private static Regex isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
+        private Regex isNumberRegex;
 
+        /// <summary>
+        /// IL构造函数
+        /// </summary>
+        public ILHelpers()
+        {
+            isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
+        }
 
         #region 获取属性或索引
         /// <summary>
@@ -31,7 +37,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="value"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public static Object GetPropertyOrField(Object value, String propertyName)
+        public Object GetPropertyOrField(Object value, String propertyName)
         {
             if (value != null)
             {
@@ -40,19 +46,36 @@ namespace JinianNet.JNTemplate.Common
             }
             return null;
         }
-        private static GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Object value, String propertyName)
+
+        private GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Object value, String propertyName)
         {
-            Type type = value.GetType(); ;
+            Type type = value.GetType();
+            String key;
+            if (isNumberRegex.Match(propertyName).Success)
+            {
+                key = String.Concat("Dynamic.IL.GetPropertyOrField.", type.FullName, ".get_Item");
+            }
+            else
+            {
+                key = String.Concat("Dynamic.IL.GetPropertyOrField.", type.FullName, ".", propertyName);
+            }
+            Object result;
+            if ((result = CacheHelprs.Get(key)) != null)
+            {
+                return (GetPropertyOrFieldDelegate)result;
+            }
             GetPropertyOrFieldDelegate gpf = CreateGetPropertyOrFieldProxy(type, value, propertyName);
+            CacheHelprs.Set(key, gpf);
             return gpf;
         }
-
-        private static GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
+        private GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
         {
             Type objectType = typeof(Object);
-            Type stringType= typeof(String);
+            Type stringType = typeof(String);
             MethodInfo mi;
+#if NEEDFIELD
             FieldInfo fi;
+#endif
             Type returnType;
             Type[] parameterTypes = {
                 objectType,
@@ -100,7 +123,7 @@ namespace JinianNet.JNTemplate.Common
                 il.Emit(OpCodes.Callvirt, mi);
                 returnType = mi.ReturnType;
             }
-            #if NEEDFIELD
+#if NEEDFIELD
             else if ((fi = type.GetField(propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) != null)
             {
                 //Type t;
@@ -113,7 +136,7 @@ namespace JinianNet.JNTemplate.Common
                 returnType = fi.FieldType;
 
             }
-            #endif
+#endif
             else
             {
                 il.Emit(OpCodes.Ldnull);
@@ -137,60 +160,90 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="methodName">方法名</param>
         /// <param name="args">实参</param>
         /// <returns></returns>
-        public static Object ExcuteMethod(Object container, String methodName, Object[] args)
+        public Object ExcuteMethod(Object container, String methodName, Object[] args)
         {
             if (container != null)
             {
                 ExcuteMethodDelegate d = CreateExcuteMethodProxy(container, methodName, args);
-                return d(container, args);
+                if (d != null)
+                {
+                    return d(container, args);
+                }
             }
             return null;
         }
-        private static ExcuteMethodDelegate CreateExcuteMethodProxy(Object container, String methodName, Object[] args)
+        private ExcuteMethodDelegate CreateExcuteMethodProxy(Object container, String methodName, Object[] args)
         {
             Type type = container.GetType();
             String key = String.Concat("Dynamic.IL.ExcuteMethod.", type.FullName);
             Object value;
-            Dictionary<int, Dictionary<string,MemberInfo>> dic;
-            Dictionary<string, MemberInfo> itemDic;
+            String itemKey;
+            Dictionary<Int32, Dictionary<String, ExcuteMethodDelegate>> dic;
+            Dictionary<String, ExcuteMethodDelegate> itemDic = null;
+            ExcuteMethodDelegate d;
+
             if ((value = CacheHelprs.Get(key)) != null)
             {
-                dic = (Dictionary<int, Dictionary<string, MemberInfo>>)value;
+                dic = (Dictionary<Int32, Dictionary<String, ExcuteMethodDelegate>>)value;
             }
             else
             {
-                dic = new Dictionary<int, Dictionary<string, MemberInfo>>();
+                dic = new Dictionary<Int32, Dictionary<String, ExcuteMethodDelegate>>();
+                MethodInfo[] mis = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                Type[] types;
+                ParameterInfo[] pis;
+
+                for (Int32 i = 0; i < mis.Length; i++)
+                {
+                    if (!mis[i].Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
+                    {
+                        continue;
+                    }
+                    pis = mis[i].GetParameters();
+                    types = new Type[pis.Length];
+                    for (Int32 j = 0; j < pis.Length; j++)
+                    {
+                        types[j] = pis[j].ParameterType;
+                    }
+                    itemKey = GetArgsTypeKey(types);
+                    if (!dic.TryGetValue(types.Length, out itemDic))
+                    {
+                        itemDic = new Dictionary<string, ExcuteMethodDelegate>();
+                        dic[types.Length] = itemDic;
+                    }
+                    //if (!itemDic.TryGetValue(itemKey,out d))
+                    itemDic[itemKey] = CreateExcuteMethodProxy(type, mis[i]);
+                }
                 CacheHelprs.Set(key, dic);
             }
 
-            if(!dic.TryGetValue(args.Length,out itemDic))
+            if (!dic.TryGetValue(args.Length, out itemDic))
             {
-                dic[args.Length] = new Dictionary<string, MemberInfo>();
+                return null;
             }
 
+            itemKey = GetArgsTypeKey(args);
 
-            //ReflectionHelpers.GetMethod(type,methodName,ref )
-
-            //String key1 = String.Concat(key,".", args.Length);
-
-
-            //Object value;
-            //if ((value = CacheHelprs.Get(key)) != null)
-            //{
-            //    return (CreateEntityDelegate<T>)value;
-            //}
-            //CreateEntityDelegate<T> ce = CreateEntityProxy<T>(type);
-            //CacheHelprs.Set(key, ce);
-            //return ce;
-
-            //ExcuteMethodDelegate gpf = CreateExcuteMethodProxy(type, container, methodName, args);
-            //return gpf;
-
+            if (itemKey != null)
+            {
+                if (itemDic.TryGetValue(itemKey, out d))
+                {
+                    return d;
+                }
+            }
+            else
+            {
+                if (itemDic.Count > 0)
+                {
+                    System.Collections.IEnumerator enumerator = itemDic.Values.GetEnumerator();
+                    enumerator.MoveNext();
+                    return (ExcuteMethodDelegate)enumerator.Current;
+                }
+            }
             return null;
-                ;
         }
 
-        private static ExcuteMethodDelegate CreateExcuteMethodProxy(Type type, MethodInfo mi)
+        private ExcuteMethodDelegate CreateExcuteMethodProxy(Type type, MethodInfo mi)
         {
             Type objectType = typeof(Object);
             Type[] parameterTypes = {
@@ -263,6 +316,78 @@ namespace JinianNet.JNTemplate.Common
         #endregion
 
         #region 共用方法
+        private Boolean HasNull(Object[] args)
+        {
+            if (args != null)
+            {
+                for (Int32 i = 0; i < args.Length; i++)
+                {
+                    if (args[i] == null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private String GetArgsTypeKey(Object[] args)
+        {
+            if (args != null)
+            {
+                if (args.Length == 0)
+                {
+                    return "N";
+                }
+                String[] values = new String[args.Length];
+                for (Int32 i = 0; i < args.Length; i++)
+                {
+                    if (args[i] == null)
+                    {
+                        return null;
+                    }
+                    values[i] = GetTypeKeyName(args[i].GetType().FullName);
+                }
+                return String.Join(".", values);
+            }
+            return null;
+        }
+
+        private String GetArgsTypeKey(Type[] types)
+        {
+            if (types.Length == 0)
+            {
+                return "N";
+            }
+            String[] values = new String[types.Length];
+            for (Int32 i = 0; i < types.Length; i++)
+            {
+                values[i] = GetTypeKeyName(types[i].FullName);
+            }
+            return String.Join(".", values);
+        }
+
+        private String GetTypeKeyName(string fullName)
+        {
+            switch (fullName)
+            {
+                case "System.String":
+                    return "S";
+                case "System.Int16":
+                    return "I";
+                case "System.Int32":
+                    return "I4";
+                case "System.Int64":
+                    return "I8";
+                case "System.Single":
+                    return "F";
+                case "System.Double":
+                    return "D";
+                default:
+                    return fullName;
+            }
+        }
+
         #endregion
 
     }

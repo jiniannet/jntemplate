@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Configuration
         public static EngineConfig CreateDefault()
         {
             EngineConfig conf = new EngineConfig();
-            conf.CachingProvider = null;
+            //conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
             conf.ResourceDirectories = new String[0];
             conf.StripWhiteSpace = true;
             conf.TagFlag = '$';

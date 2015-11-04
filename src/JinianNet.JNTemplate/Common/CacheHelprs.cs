@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Common
         {
             if (Engine.Runtime.Cache != null)
             {
-                Engine.Runtime.Cache.Get(key);
+                return Engine.Runtime.Cache.Get(key);
             }
             return null;
         }
