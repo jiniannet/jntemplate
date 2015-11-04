@@ -1,4 +1,9 @@
-﻿using System;
+﻿/********************************************************************************
+ Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
+ Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+ ********************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
@@ -13,257 +18,19 @@ namespace JinianNet.JNTemplate.Common
     /// </summary>
     public class ILHelpers
     {
-        //public delegate void GetProperty<T>(T model, String propertyName);
-        public delegate Object GetPropertyOrFieldDelegate(Object model, String propertyName);
-        public delegate T CreateEntityDelegate<T>(NameValueCollection nv);
-        public delegate Object ExcuteMethodDelegate(Object container, String methodName, Object[] args);
-        private static Dictionary<Type, MethodInfo> tryParseMethods;
-        private static MethodInfo getItemValue;
-        private static Type stringType;
-        private static Type nvType;
-        private static Type voidType;
-        private static Type objectType;
-        private static MethodInfo getObjectArrayValue;
-        private static Regex isNumberRegex;
 
-        static ILHelpers()
-        {
-            Type[] types = {
-                typeof(Boolean),
-                typeof(Byte),
-                typeof(Char),
-                typeof(DateTime),
-                typeof(Decimal),
-                typeof(Double),
-                typeof(Guid),
-                typeof(Int16),
-                typeof(Int32),
-                typeof(Int64),
-                typeof(SByte),
-                typeof(Single),
-                typeof(TimeSpan),
-                typeof(UInt16),
-                typeof(UInt32),
-                typeof(UInt64)};
+        private delegate Object GetPropertyOrFieldDelegate(Object model, String propertyName);
+        private delegate Object ExcuteMethodDelegate(Object container, Object[] args);
+        private static Regex isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
 
-            stringType = typeof(String);
-            nvType = typeof(NameValueCollection);
-            voidType = typeof(void);
-            objectType = typeof(Object);
-            isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
-            tryParseMethods = new Dictionary<Type, MethodInfo>();
-
-            getItemValue = nvType.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase, null,
-                new Type[] {
-                    stringType
-                },
-                null);
-
-            for (int i = 0; i < types.Length; i++)
-            {
-                tryParseMethods[types[i]] = types[i].GetMethod("TryParse", new[] {
-                        stringType, types[i].MakeByRefType()
-                });
-            }
-        }
-
-        #region 创建实体
-        public static T CreateEntity<T>(NameValueCollection nv)
-        {
-            if (nv != null)
-            {
-                CreateEntityDelegate<T> d = CreateEntityProxy<T>();
-                return d(nv);
-            }
-            return default(T);
-        }
-        private static CreateEntityDelegate<T> CreateEntityProxy<T>()
-        {
-            Type type = typeof(T);
-            String key = String.Concat("Dynamic.IL.CreateEntity.", type.FullName);
-            Object value;
-            if ((value = CacheHelprs.Get(key)) != null)
-            {
-                return (CreateEntityDelegate<T>)value;
-            }
-            CreateEntityDelegate<T> ce = CreateEntityProxy<T>(type);
-            CacheHelprs.Set(key, ce);
-            return ce;
-        }
-
-        private static CreateEntityDelegate<T> CreateEntityProxy<T>(Type type)
-        {
-            MethodInfo mi;
-            Type[] parameterTypes = {
-                nvType
-            };
-            DynamicMethod dynamicMethod = new DynamicMethod(
-                String.Concat("DynamicMethod.CreateEntity.", type.FullName),
-                type,
-                parameterTypes);
-
-            Int32 index = 0;
-
-            List<String> typeIndex = new List<String>();
-
-            ILGenerator il = dynamicMethod.GetILGenerator();
-            il.DeclareLocal(type);//0
-            il.DeclareLocal(stringType);//1
-            typeIndex.Add(type.FullName);
-            typeIndex.Add(stringType.FullName);
-
-            il.Emit(OpCodes.Newobj, type.GetConstructor(Type.EmptyTypes));
-            il.Emit(OpCodes.Stloc_0);
-
-            foreach (PropertyInfo property in type.GetProperties())
-            {
-                Label retLabel = il.DefineLabel();
-
-                il.Emit(OpCodes.Ldarg_0);
-                il.Emit(OpCodes.Ldstr, property.Name);
-                il.Emit(OpCodes.Callvirt, getItemValue);
-                il.Emit(OpCodes.Stloc_1);
-                il.Emit(OpCodes.Ldloc_1);
-                il.Emit(OpCodes.Ldnull);
-                il.Emit(OpCodes.Ceq);
-                il.Emit(OpCodes.Stloc_2);
-                il.Emit(OpCodes.Ldloc_2);
-                il.Emit(OpCodes.Brtrue_S, retLabel);
-
-                if (property.PropertyType.FullName != "System.String")
-                {
-                    if (!tryParseMethods.TryGetValue(property.PropertyType, out mi))
-                    {
-                        continue;
-                    }
-                    if ((index = typeIndex.IndexOf(property.PropertyType.FullName)) == -1)
-                    {
-                        il.DeclareLocal(property.PropertyType);//index
-                        typeIndex.Add(property.PropertyType.FullName);
-                        index = typeIndex.IndexOf(property.PropertyType.FullName);
-                    }
-
-                    il.Emit(OpCodes.Ldloc_1);
-                    il.Emit(OpCodes.Ldloca_S, (Byte)index);
-                    il.Emit(OpCodes.Call, mi);
-                    il.Emit(OpCodes.Brfalse, retLabel);
-                    il.Emit(OpCodes.Ldloc_0);
-                    il.Emit(OpCodes.Ldloc, index);
-                    il.Emit(OpCodes.Callvirt, property.GetSetMethod());
-                }
-                else
-                {
-                    il.Emit(OpCodes.Ldloc_0);
-                    il.Emit(OpCodes.Ldloc_1);
-                    il.Emit(OpCodes.Callvirt, property.GetSetMethod());
-                }
-
-                il.MarkLabel(retLabel);
-            }
-            il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Ret);
-
-            return dynamicMethod.CreateDelegate(typeof(CreateEntityDelegate<T>)) as CreateEntityDelegate<T>;
-        }
-
-        #endregion
-
-        #region 获取属性
-        //public static GetProperty<T> CreateGetPropertyProxy<T>(String propertyName)
-        //{
-        //    Type type = typeof(T);
-        //    String key = String.Concat("Dynamic.IL.GetProperty.", type.FullName, ".", propertyName);
-        //    Object value;
-        //    if ((value = CacheHelprs.Get(key)) != null)
-        //    {
-        //        return (GetProperty<T>)value;
-        //    }
-        //    GetProperty<T> cgp = CreateGetPropertyProxy<T>(type, propertyName);
-        //    CacheHelprs.Set(key, cgp);
-        //    return cgp;
-        //}
-
-        //private static GetProperty<T> CreateGetPropertyProxy<T>(Type type, String propertyName)
-        //{
-        //    MethodInfo mi;
-        //    Type[] parameterTypes = {
-        //        type,
-        //        stringType,
-        //        objectType
-        //    };
-        //    DynamicMethod dynamicMethod = new DynamicMethod(
-        //        String.Concat("DynamicMethod.GetProperty.", nvType.Name, ".", propertyName),
-        //        typeof(void),
-        //        parameterTypes);
-
-        //    ILGenerator il = dynamicMethod.GetILGenerator();
-        //    il.DeclareLocal(objectType);//0
-
-        //    PropertyInfo pi = ReflectionHelpers.GetPropertyOrField();
-
-
-        //    il.Emit(OpCodes.Newobj, type.GetConstructor(Type.EmptyTypes));
-        //    il.Emit(OpCodes.Stloc_0);
-
-        //    foreach (PropertyInfo property in type.GetProperties())
-        //    {
-        //        Label retLabel = il.DefineLabel();
-
-        //        il.Emit(OpCodes.Ldarg_0);
-        //        il.Emit(OpCodes.Ldstr, property.Name);
-        //        il.Emit(OpCodes.Callvirt, getItemValue);
-        //        il.Emit(OpCodes.Stloc_1);
-        //        il.Emit(OpCodes.Ldloc_1);
-        //        il.Emit(OpCodes.Ldnull);
-        //        il.Emit(OpCodes.Ceq);
-        //        il.Emit(OpCodes.Stloc_2);
-        //        il.Emit(OpCodes.Ldloc_2);
-        //        il.Emit(OpCodes.Brtrue_S, retLabel);
-
-        //        if (property.PropertyType.FullName != "System.String")
-        //        {
-        //            if (!tryParseMethods.TryGetValue(property.PropertyType, out mi))
-        //            {
-        //                continue;
-        //            }
-        //            if ((index = typeIndex.IndexOf(property.PropertyType.FullName)) == -1)
-        //            {
-        //                il.DeclareLocal(property.PropertyType);//index
-        //                typeIndex.Add(property.PropertyType.FullName);
-        //                index = typeIndex.IndexOf(property.PropertyType.FullName);
-        //            }
-
-        //            il.Emit(OpCodes.Ldloc_1);
-        //            il.Emit(OpCodes.Ldloca_S, (Byte)index);
-        //            il.Emit(OpCodes.Call, mi);
-        //            il.Emit(OpCodes.Brfalse, retLabel);
-        //            il.Emit(OpCodes.Ldloc_0);
-        //            il.Emit(OpCodes.Ldloc, index);
-        //            il.Emit(OpCodes.Callvirt, property.GetSetMethod());
-        //        }
-        //        else
-        //        {
-        //            il.Emit(OpCodes.Ldloc_0);
-        //            il.Emit(OpCodes.Ldloc_1);
-        //            il.Emit(OpCodes.Callvirt, property.GetSetMethod());
-        //        }
-
-        //        il.MarkLabel(retLabel);
-        //    }
-        //    il.Emit(OpCodes.Ldloc_0);
-        //    il.Emit(OpCodes.Ret);
-
-        //    return dynamicMethod.CreateDelegate(typeof(CreateEntity<T>)) as CreateEntity<T>;
-        //}
-        #endregion
-
-        #region 获取字段
-        #endregion
-
-        #region 获取索引
-        #endregion
 
         #region 获取属性或索引
+        /// <summary>
+        /// 获取属性或字段
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         public static Object GetPropertyOrField(Object value, String propertyName)
         {
             if (value != null)
@@ -282,6 +49,8 @@ namespace JinianNet.JNTemplate.Common
 
         private static GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
         {
+            Type objectType = typeof(Object);
+            Type stringType= typeof(String);
             MethodInfo mi;
             FieldInfo fi;
             Type returnType;
@@ -335,7 +104,8 @@ namespace JinianNet.JNTemplate.Common
             else if ((fi = type.GetField(propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) != null)
             {
                 //Type t;
-                //if ((fi.FieldType.IsArray && (fi.FieldType.GetArrayRank() > 1 || (!(t = fi.FieldType.GetElementType()).IsValueType && t != typeof(String) && t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))) ||                //                          (!fi.FieldType.IsArray && fi.FieldType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))
+                //if ((fi.FieldType.IsArray && (fi.FieldType.GetArrayRank() > 1 || (!(t = fi.FieldType.GetElementType()).IsValueType && t != typeof(String) && t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))) ||
+                //                          (!fi.FieldType.IsArray && fi.FieldType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))
                 //    return null
                 //        ;
                 il.Emit(OpCodes.Ldloc_1);
@@ -360,12 +130,19 @@ namespace JinianNet.JNTemplate.Common
 
 
         #region 执行方法
+        /// <summary>
+        /// 执行方法
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="methodName">方法名</param>
+        /// <param name="args">实参</param>
+        /// <returns></returns>
         public static Object ExcuteMethod(Object container, String methodName, Object[] args)
         {
             if (container != null)
             {
                 ExcuteMethodDelegate d = CreateExcuteMethodProxy(container, methodName, args);
-                return d(container, methodName, args);
+                return d(container, args);
             }
             return null;
         }
@@ -413,43 +190,79 @@ namespace JinianNet.JNTemplate.Common
                 ;
         }
 
-        private static ExcuteMethodDelegate CreateExcuteMethodProxy(Type type, MethodInfo mi, String methodName)
+        private static ExcuteMethodDelegate CreateExcuteMethodProxy(Type type, MethodInfo mi)
         {
+            Type objectType = typeof(Object);
             Type[] parameterTypes = {
+                objectType,
                 typeof(Object[])
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                String.Concat("DynamicMethod.ExcuteMethod.", type.FullName, ".", methodName),
+                String.Concat("DynamicMethod.ExcuteMethod.", type.FullName, ".", mi.Name),
                 objectType,
                 parameterTypes);
 
             ILGenerator il = dynamicMethod.GetILGenerator();
-            il.DeclareLocal(objectType);//0
+            il.DeclareLocal(type);//0
+
+            ParameterInfo[] pis = mi.GetParameters();
+            Int32 index = pis.Length;
 
 
-            Int32 index = 1;
-            //il.Emit(OpCodes.Ldloc_1);
-            foreach (ParameterInfo pi in mi.GetParameters())
+            for (Int32 i = 0; i < index; i++)
             {
-                index++;
-                il.DeclareLocal(pi.ParameterType);
-                
-                //il.Emit(OpCodes.Ldloca_S, (Byte)index);
-                if (pi.ParameterType.IsValueType)
+                il.DeclareLocal(pis[i].ParameterType);
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Ldc_I4, i);
+                il.Emit(OpCodes.Ldelem_Ref);
+                if (pis[i].ParameterType.IsValueType)
                 {
-
+                    //此处不需要考虑TryParse,因为实参类型必须与形参一致
+                    il.Emit(OpCodes.Unbox_Any, pis[i].ParameterType);
                 }
                 else
                 {
-
+                    if (pis[i].ParameterType.FullName != "System.Object")
+                    {
+                        il.Emit(OpCodes.Castclass, pis[i].ParameterType);
+                    }
                 }
-
-                //此处遍历转换类型
+                il.Emit(OpCodes.Stloc, i + 1);
+            }
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Castclass, type);
+            il.Emit(OpCodes.Stloc_0);
+            il.Emit(OpCodes.Ldloc_0);
+            for (Int32 i = 0; i < index; i++)
+            {
+                il.Emit(OpCodes.Ldloc, i + 1);
+            }
+            il.Emit(OpCodes.Callvirt, mi);
+            switch (mi.ReturnType.FullName)
+            {
+                case "System.Void":
+                    il.Emit(OpCodes.Ldnull);
+                    break;
+                case "System.Object":
+                    break;
+                default:
+                    if (mi.ReturnType.IsValueType)
+                    {
+                        il.Emit(OpCodes.Box, mi.ReturnType);
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Castclass, objectType);
+                    }
+                    break;
             }
             il.Emit(OpCodes.Ret);
-            // return dynamicMethod.CreateDelegate(typeof(GetPropertyOrFieldDelegate)) as GetPropertyOrFieldDelegate;
-            return null;
+            return dynamicMethod.CreateDelegate(typeof(ExcuteMethodDelegate)) as ExcuteMethodDelegate;
+
         }
+        #endregion
+
+        #region 共用方法
         #endregion
 
     }
