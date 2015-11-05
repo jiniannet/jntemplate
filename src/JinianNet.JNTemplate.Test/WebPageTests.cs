@@ -18,78 +18,94 @@ namespace JinianNet.JNTemplate.Test
     [TestClass]
     public class WebPageTests
     {
-        //[TestMethod]
-        //public void TestILVsReflectionPage()
-        //{
+        [TestMethod]
+        public void TestILVsReflectionPage()
+        {
 
-        //    JinianNet.JNTemplate.TemplateContext ctx = new JinianNet.JNTemplate.TemplateContext();
-        //    ctx.TempData.Push("func", new TemplateMethod());
-        //    SiteInfo site = new SiteInfo();
-        //    site.Copyright = "&copy;2014 - 2015";
-        //    site.Description = "";
-        //    site.Host = "localhost";
-        //    site.KeyWords = "";
-        //    site.Logo = "";
-        //    site.Name = "xxx";
-        //    site.SiteDirectory = "";
-        //    site.Theme = "Blue";
-        //    site.ThemeDirectory = "theme";
-        //    site.Title = "jntemplate测试页";
-        //    site.Url = string.Concat("http://localhost");
+            JinianNet.JNTemplate.TemplateContext ctx = new JinianNet.JNTemplate.TemplateContext();
+            ctx.TempData.Push("func", new TemplateMethod());
+            SiteInfo site = new SiteInfo();
+            site.Copyright = "&copy;2014 - 2015";
+            site.Description = "";
+            site.Host = "localhost";
+            site.KeyWords = "";
+            site.Logo = "";
+            site.Name = "xxx";
+            site.SiteDirectory = "";
+            site.Theme = "Blue";
+            site.ThemeDirectory = "theme";
+            site.Title = "jntemplate测试页";
+            site.Url = string.Concat("http://localhost");
 
-        //    if (!string.IsNullOrEmpty(site.SiteDirectory) && site.SiteDirectory != "/")
-        //    {
-        //        site.Url += "/" + site.SiteDirectory;
-        //    }
-        //    site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
-        //    //ctx.TempData.Push("Model", );
-        //    ctx.TempData.Push("Site", site);
+            if (!string.IsNullOrEmpty(site.SiteDirectory) && site.SiteDirectory != "/")
+            {
+                site.Url += "/" + site.SiteDirectory;
+            }
+            site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
+            //ctx.TempData.Push("Model", );
+            ctx.TempData.Push("Site", site);
 
-        //    string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
-        //    string path = basePath + "\\templets\\default";
+            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string path = basePath + "\\templets\\default";
+            JinianNet.JNTemplate.Dynamic.IDynamicHelpers h;
+            Configuration.EngineConfig conf;
+ 
+            string text1 = null, text2 = null;
+            string result="";
+            Stopwatch s = new Stopwatch();
+            s.Start();
+            s.Stop();
+            ////////////////////////////////////////////////////////////////////////////////////
+            h = new JinianNet.JNTemplate.Dynamic.ILHelpers();
+            conf = Configuration.EngineConfig.CreateDefault();
+            //conf.CachingProvider = "JinianNet.JNTemplate.Test.UserCache,JinianNet.JNTemplate.Test";
+            conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
+            Engine.Configure(conf);
+            s.Restart();
 
-        //    var conf = Configuration.EngineConfig.CreateDefault();
-        //    conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
-        //    Engine.Configure(conf);
-        //    string text1 = null, text2 = null;
-        //    string result;
-        //    Stopwatch s = new Stopwatch();
-        //    s.Start();
-        //    s.Stop();
-        //    s.Restart();
-        //    for (var i = 0; i < 100; i++)
-        //    {
-        //        JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
-        //        t.Context.CurrentPath = path;
+            for (var i = 0; i < 1000; i++)
+            {
+                JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
 
-        //        text1 = t.Render();
+                t.Context.CurrentPath = path;
+                text1 = t.Render();
 
-        //    }
-        //    s.Stop();
-        //    result = "IL　１００次运行 耗时　：" + s.ElapsedMilliseconds + "毫秒";
+            }
+            s.Stop();
+            result += "IL　１０００次运行 耗时　：" + s.ElapsedMilliseconds + "毫秒";
+            ////////////////////////////////////////////////////////////////////////////////////
 
-        //    conf.CachingProvider = null;
-        //    Engine.Configure(conf);
-        //    s.Restart();
-        //    for (var i = 0; i < 100; i++)
-        //    {
-        //        JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
-        //        t.Context.CurrentPath = path;
+            GC.Collect();
+ 
 
-        //        text2 = t.Render();
-
-        //    }
-        //    s.Stop();
-        //    result += ": Reflection　１００次运行 耗时　：" + s.ElapsedMilliseconds + "毫秒";
-        //    System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection.txt", result);
-        //    System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection1.txt", text1);
-        //    System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection2.txt", text2);
-        //    Assert.AreEqual(text1, text2);
-
-        //}
+            ////////////////////////////////////////////////////////////////////////////////////
+            h = new JinianNet.JNTemplate.Dynamic.ReflectionHelpers();
+            conf = Configuration.EngineConfig.CreateDefault();
+            conf.CachingProvider = null;
+            Engine.Configure(conf);
+            s.Restart();
+            for (var i = 0; i < 1000; i++)
+            {
+                JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
+       
+                t.Context.CurrentPath = path;
+                text2 = t.Render();
+                //h.ExcuteMethod(DateTime.Now, "AddDays", new object[] { 30 });
+            }
+            s.Stop();
+            result += ": Reflection　１０００次运行 耗时　：" + s.ElapsedMilliseconds + "毫秒";
+            ////////////////////////////////////////////////////////////////////////////////////
 
 
-           [TestMethod]
+            System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection.txt", result);
+            System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection1.txt", text1);
+            System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection2.txt", text2);
+            Assert.AreEqual(text1, text2);
+
+        }
+
+
+        [TestMethod]
         public void TestILage()
         {
 
@@ -123,7 +139,7 @@ namespace JinianNet.JNTemplate.Test
             conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
             Engine.Configure(conf);
 
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 20000; i++)
             {
                 JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
                 t.Context.CurrentPath = path;
@@ -166,7 +182,7 @@ namespace JinianNet.JNTemplate.Test
             conf.CachingProvider = null;
             Engine.Configure(conf);
 
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 20000; i++)
             {
                 JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
                 t.Context.CurrentPath = path;
