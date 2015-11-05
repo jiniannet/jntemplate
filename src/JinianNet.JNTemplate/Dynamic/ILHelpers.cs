@@ -189,7 +189,7 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             parameterTypes = null;
             Type type = container.GetType();
-            String key = String.Concat("Dynamic.IL.ExcuteMethod.", type.FullName);
+            String key = String.Concat("Dynamic.IL.ExcuteMethod.", type.FullName, ".", methodName);
             Object value;
             String itemKey;
             ParameterInfo[] pis;
