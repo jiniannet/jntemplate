@@ -3,6 +3,7 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace JinianNet.JNTemplate.Parser.Node
@@ -47,17 +48,16 @@ namespace JinianNet.JNTemplate.Parser.Node
         {
             if (path != null)
             {
+                IEnumerable<String> paths;
                 if (String.IsNullOrEmpty(context.CurrentPath))
                 {
-                    TemplateContent = Resources.LoadResource(path.ToString(),context.Charset);
+                    paths = Engine.Runtime.ResourceDirectories;
                 }
                 else
                 {
-                    TemplateContent = Resources.LoadResource(
-                        Resources.MergerPaths(Engine.Runtime.ResourceDirectories, context.CurrentPath), 
-                        path.ToString(), 
-                        context.Charset);
+                    paths = Resources.MergerPaths(Engine.Runtime.ResourceDirectories, context.CurrentPath);
                 }
+                TemplateContent = Resources.Load(paths, path.ToString(), context.Charset);
             }
         }
     }

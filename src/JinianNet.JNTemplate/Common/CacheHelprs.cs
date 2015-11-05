@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Common
         {
             if (Engine.Runtime.Cache != null)
             {
-                Engine.Runtime.Cache.Insert(key, value);
+                Engine.Runtime.Cache.Set(key, value);
             }
         }
         /// <summary>

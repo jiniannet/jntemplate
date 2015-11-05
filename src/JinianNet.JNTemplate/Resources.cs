@@ -92,9 +92,9 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名</param>
         /// <param name="encoding">编码</param>
         /// <returns>文本内容</returns>
-        public static String LoadResource(IEnumerable<String> paths, String filename, Encoding encoding)
+        public static String Load(IEnumerable<String> paths, String filename, Encoding encoding)
         {
-            if(paths==null && String.IsNullOrEmpty(filename))
+            if (paths == null && String.IsNullOrEmpty(filename))
             {
                 return null;
             }
@@ -105,7 +105,7 @@ namespace JinianNet.JNTemplate
             String full;
             if (FindPath(paths, filename, out full) != -1)
             {
-                return Load(full, encoding);
+                return LoadResource(full, encoding);
             }
             return null;
         }
@@ -117,20 +117,20 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名</param>
         /// <param name="encoding">编码</param>
         /// <returns>文本内容</returns>
-        public static String LoadResource(String filename, Encoding encoding)
+        public static String Load(String filename, Encoding encoding)
         {
-            return LoadResource(Engine.Runtime.ResourceDirectories, filename, encoding);
+            return Load(Engine.Runtime.ResourceDirectories, filename, encoding);
         }
 
         /// <summary>
         /// 载入文件
         /// </summary>
-        /// <param name="filename">完整文件路径</param>
+        /// <param name="fullPath">完整文件路径</param>
         /// <param name="encoding">编码</param>
         /// <returns>文本内容</returns>
-        public static String Load(String filename, Encoding encoding)
+        public static String LoadResource(String fullPath, Encoding encoding)
         {
-            if (!System.IO.File.Exists(filename))
+            if (!System.IO.File.Exists(fullPath))
             {
                 return null;
             }
@@ -138,7 +138,44 @@ namespace JinianNet.JNTemplate
             {
                 encoding = Encoding.Default;
             }
-            return System.IO.File.ReadAllText(filename, encoding);
+            return System.IO.File.ReadAllText(fullPath, encoding);
+        }
+
+        /// <summary>
+        /// 根据文件名(允许有相对路径)查找并读取文件
+        /// </summary>
+        /// <param name="paths">检索目录</param>
+        /// <param name="filename">文件名</param>
+        /// <param name="encoding">编码</param>
+        /// <param name="fullName">完整路径</param>
+        /// <returns></returns>
+        public static String Load(IEnumerable<String> paths, String filename, Encoding encoding, out String fullName)
+        {
+            if (IsLocalPath(filename))
+            {
+                fullName = filename;
+            }
+            else
+            {
+                Int32 index = Resources.FindPath(paths,filename, out fullName); //如果是相对路径，则进行路径搜索
+                if (index == -1)
+                {
+                    return null;
+                }
+            }
+            return LoadResource(fullName, encoding);
+        }
+
+        /// <summary>
+        /// 是否本地路径表达形式
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <returns></returns>
+        public static Boolean IsLocalPath(String path)
+        {
+            return !String.IsNullOrEmpty(path) &&
+                (path.IndexOf(System.IO.Path.VolumeSeparatorChar) != -1 //win下判断是否包含卷分隔符（即：） c:\user\Administrator\default.html
+                    || path[0] == '/');
         }
 
         /// <summary>

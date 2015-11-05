@@ -137,29 +137,13 @@ namespace JinianNet.JNTemplate
         public static ITemplate LoadTemplate(String path, TemplateContext ctx)
         {
             Template template = new Template(ctx, null);
-
-            if (!String.IsNullOrEmpty(path))
+            String fullPath;
+            template.TemplateContent = Resources.Load(Runtime.ResourceDirectories, path, template.Context.Charset, out fullPath);
+            if (fullPath != null)
             {
-                String fullPath = path;
-                //判断是否本地路径的绝对形式
-                if (fullPath.IndexOf(System.IO.Path.VolumeSeparatorChar) != -1 //win下判断是否包含卷分隔符（即：） c:\user\Administrator\default.html
-                    || fullPath[0] == '/') //liunx判断是否为/开头，/usr/share/doc/default.html  win下请不要使用/开头的路径
-                {
-                    ctx.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
-                    template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
-                }
-                else
-                {
-                    Int32 index = Resources.FindPath(path, out fullPath); //如果是相对路径，则进行路径搜索
-                    if (index != -1)
-                    {
-                        //设定当前工作目录 如果模板中存在Inclub或load标签，它们的处理路径会以CurrentPath 设定的路径为基准
-                        ctx.CurrentPath = Runtime.ResourceDirectories[index];
-                        template.TemplateContent = Resources.Load(fullPath, template.Context.Charset);
-                    }
-                }
+                template.TemplateKey = fullPath;
+                ctx.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
             }
-
             return template;
         }
     }

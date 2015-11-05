@@ -21,6 +21,10 @@ namespace JinianNet.JNTemplate.Test
         [TestMethod]
         public void TestPage()
         {
+            var conf = Configuration.EngineConfig.CreateDefault();
+            conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
+            Engine.Configure(conf);
+
             JinianNet.JNTemplate.TemplateContext ctx = new JinianNet.JNTemplate.TemplateContext();
 
             ctx.TempData.Push("func", new TemplateMethod());

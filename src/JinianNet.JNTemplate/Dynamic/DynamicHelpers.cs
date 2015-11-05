@@ -18,7 +18,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <summary>
         /// DynamicHelpers
         /// </summary>
-        public static IDynamicHelpers Helper
+        protected static IDynamicHelpers Instance 
         {
             get
             {
@@ -51,7 +51,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>执行结果（Void返回NULL）</returns>
         public static Object ExcuteMethod(Object container, String methodName, Object[] args)
         {
-            return Helper.ExcuteMethod(container, methodName, args);
+            return Instance.ExcuteMethod(container, methodName, args);
         }
         /// <summary>
         /// 动态获取属性或字段
@@ -61,7 +61,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>返回结果</returns>
         public static Object GetPropertyOrField(Object value, String propertyName)
         {
-            return Helper.GetPropertyOrField(value, propertyName);
+            return Instance.GetPropertyOrField(value, propertyName);
         }
 
         #region ToIEnumerable

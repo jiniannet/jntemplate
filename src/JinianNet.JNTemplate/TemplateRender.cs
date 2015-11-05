@@ -9,12 +9,22 @@ using JinianNet.JNTemplate.Parser.Node;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 基本模板
+    /// 基本模板呈现
     /// </summary>
     public class TemplateRender
     {
         private TemplateContext _context;
         private String _content;
+        private String _key;
+
+        /// <summary>
+        /// 模板KEY(用于缓存，默认为文路径)
+        /// </summary>
+        public String TemplateKey
+        {
+            get { return this._key; }
+            set { this._key = value; }
+        }
 
         /// <summary>
         /// 模板上下文
@@ -45,19 +55,32 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentNullException("writer");
             }
 
-            Tag[] collection;
             //缓存功能，待添加
             if (this._content == null)
             {
-                writer.Write(this.TemplateContent);
                 return;
             }
 
+            Tag[] collection = null;
             if (!String.IsNullOrEmpty(this._content))
             {
-                TemplateLexer lexer = new TemplateLexer(this._content);
-                TemplateParser parser = new TemplateParser(lexer.Parse());
-                collection = parser.ToArray();
+                Object value;
+                if (!String.IsNullOrEmpty(this._key))
+                {
+                    if ((value = Common.CacheHelprs.Get(this._key)) != null)
+                    {
+                        collection = (Tag[])value;
+                    }
+                    else
+                    {
+                        collection = ParseTag();
+                        Common.CacheHelprs.Set(this._key, collection);
+                    }
+                }
+                else
+                {
+                    collection = ParseTag();
+                }
             }
             else
             {
@@ -84,6 +107,17 @@ namespace JinianNet.JNTemplate
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Tag[] ParseTag()
+        {
+            TemplateLexer lexer = new TemplateLexer(this._content);
+            TemplateParser parser = new TemplateParser(lexer.Parse());
+            return parser.ToArray();
         }
 
         /// <summary>

@@ -3,13 +3,14 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 using System;
+using System.Collections;
 
 namespace JinianNet.JNTemplate.Caching
 {
     /// <summary>
     /// 缓存
     /// </summary>
-    public interface ICache
+    public interface ICache : IEnumerable, IDisposable
     {
         /// <summary>
         /// 当前缓存数量
@@ -20,7 +21,7 @@ namespace JinianNet.JNTemplate.Caching
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        void Insert(String key, Object value);
+        void Set(String key, Object value);
         /// <summary>
         /// 获取键为key的缓存
         /// </summary>

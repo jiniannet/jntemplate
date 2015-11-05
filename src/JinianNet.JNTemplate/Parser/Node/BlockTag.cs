@@ -15,6 +15,15 @@ namespace JinianNet.JNTemplate.Parser.Node
         private TemplateRender _render;
 
         /// <summary>
+        /// 模板KEY(用于缓存，默认为文路径)
+        /// </summary>
+        public String TemplateKey
+        {
+            get { return this._render.TemplateKey; }
+            set { this._render.TemplateKey = value; }
+        }
+
+        /// <summary>
         /// 模板内容
         /// </summary>
         public String TemplateContent

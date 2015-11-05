@@ -1,8 +1,9 @@
-﻿using System;
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
+
+using System;
 using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Caching
@@ -32,7 +33,7 @@ namespace JinianNet.JNTemplate.Caching
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void Insert(String key, Object value)
+        public void Set(String key, Object value)
         {
             this.dictionary[key] = value;
         }
@@ -60,6 +61,23 @@ namespace JinianNet.JNTemplate.Caching
             Object value = Get(key);
             this.dictionary.Remove(key);
             return value;
+        }
+
+        /// <summary>
+        /// Enumerator
+        /// </summary>
+        /// <returns></returns>
+        public System.Collections.IEnumerator GetEnumerator()
+        {
+            return this.dictionary.GetEnumerator();
+        }
+
+        /// <summary>
+        /// 释放非托管资源
+        /// </summary>
+        public void Dispose()
+        {
+            
         }
     }
 }
