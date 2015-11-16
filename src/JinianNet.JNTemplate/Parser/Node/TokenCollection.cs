@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Parser.Node
     /// <summary>
     /// TOKEN集合
     /// </summary>
-    public class TokenCollection : IList<Token>
+    public class TokenCollection : IList<Token>, IEquatable<TokenCollection>
     {
         private List<Token> _list;
         /// <summary>
@@ -108,7 +108,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             return sb.ToString();
         }
 
-#region IList<Token> 成员
+        #region IList<Token> 成员
         /// <summary>
         /// 搜索指定的对象，并返回整个集合中第一个匹配项的从零开始的索引。
         /// </summary>
@@ -159,9 +159,9 @@ namespace JinianNet.JNTemplate.Parser.Node
             }
         }
 
-#endregion
+        #endregion
 
-#region ICollection<Token> 成员
+        #region ICollection<Token> 成员
         /// <summary>
         /// 将对象添加到集合的结尾处。
         /// </summary>
@@ -232,9 +232,9 @@ namespace JinianNet.JNTemplate.Parser.Node
             return this._list.Remove(item);
         }
 
-#endregion
+        #endregion
 
-#region IEnumerable<Token> 成员
+        #region IEnumerable<Token> 成员
         /// <summary>
         /// 返回循环访问集合的枚举器。
         /// </summary>
@@ -244,9 +244,9 @@ namespace JinianNet.JNTemplate.Parser.Node
             return this._list.GetEnumerator();
         }
 
-#endregion
+        #endregion
 
-#region IEnumerable 成员
+        #region IEnumerable 成员
         /// <summary>
         /// 返回循环访问集合的枚举器。
         /// </summary>
@@ -256,6 +256,57 @@ namespace JinianNet.JNTemplate.Parser.Node
             return GetEnumerator();
         }
 
-#endregion
+        #endregion
+        /// <summary>
+        /// 比列二个集合是否相同
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(TokenCollection other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            if (this.Count != other.Count)
+            {
+                return false;
+            }
+            for (Int32 i = 0; i < other.Count; i++)
+            {
+                if (this[i] != other[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 重载Equals
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            if (obj is TokenCollection)
+            {
+                return this.Equals((TokenCollection)obj);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 计算HASH CODE
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

@@ -24,14 +24,15 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 if (helper == null)
                 {
-                    if (Engine.Runtime.Cache == null)
-                    {
-                        helper = new ReflectionHelpers();
-                    }
-                    else
-                    {
-                        helper = new ILHelpers();
-                    }
+                    helper = new ReflectionHelpers();
+                    //if (Engine.Runtime.Cache == null)
+                    //{
+                    //    helper = new ReflectionHelpers();
+                    //}
+                    //else
+                    //{
+                    //    helper = new ILHelpers();
+                    //}
                 }
 
                 return helper;
