@@ -5,7 +5,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 动态帮助类
     /// </summary>
-    public interface IDynamicHelpers
+    public interface IDynamicOperation
     {
         /// <summary>
         /// 动态执行方法

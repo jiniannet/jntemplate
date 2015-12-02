@@ -14,17 +14,17 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public class DynamicHelpers
     {
-        private static IDynamicHelpers helper;
+        private static IDynamicOperation helper;
         /// <summary>
         /// DynamicHelpers
         /// </summary>
-        protected static IDynamicHelpers Instance 
+        protected static IDynamicOperation Instance 
         {
             get
             {
                 if (helper == null)
                 {
-                    helper = new ReflectionHelpers();
+                    helper = new ReflectionOperation();
                     //if (Engine.Runtime.Cache == null)
                     //{
                     //    helper = new ReflectionHelpers();

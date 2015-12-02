@@ -13,15 +13,16 @@ using JinianNet.JNTemplate.Common;
 namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
-    /// IL帮助类
+    /// IL操作类
+    /// 注：本类并非最终版本，请勿使用本类
     /// </summary>
-    public class ILHelpers : IDynamicHelpers
+    public class ILOperation : IDynamicOperation
     {
         private Regex isNumberRegex;
         /// <summary>
         /// IL构造函数
         /// </summary>
-        public ILHelpers()
+        public ILOperation()
         {
             isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
         }

@@ -15,20 +15,20 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 反射辅助类
     /// </summary>
-    public class ReflectionHelpers : IDynamicHelpers
+    public class ReflectionOperation : IDynamicOperation
     {
         private readonly Char[] expressionPartSeparator;
-        private readonly Char[] indexExprEndChars;
-        private readonly Char[] indexExprStartChars;
+        //private readonly Char[] indexExprEndChars;
+        //private readonly Char[] indexExprStartChars;
 
         /// <summary>
         /// 反射构造函数
         /// </summary>
-        public ReflectionHelpers()
+        public ReflectionOperation()
         {
             expressionPartSeparator = new Char[] { '.' };
-            indexExprEndChars = new Char[] { ']', ')' };
-            indexExprStartChars = new Char[] { '[', '(' };
+            //indexExprEndChars = new Char[] { ']', ')' };
+            //indexExprStartChars = new Char[] { '[', '(' };
         }
         #region EVAL解析
         #region 4.0版本
@@ -103,8 +103,12 @@ namespace JinianNet.JNTemplate.Dynamic
             }
 #endif
             //此处的属性包括有参属性（索引）与无参属性（属性）
-            if (propName.IndexOfAny(indexExprStartChars) < 0)
+            //if (propName.IndexOfAny(indexExprStartChars) < 0)
+            //因属性与字段均不可能以数字开头，如第一个字符为数字则直接跳过属性判断以加快处理速度
+            if (!Char.IsDigit(propName[0])) 
             {
+
+
                 PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
                 //取属性
                 if (p != null)
@@ -163,7 +167,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
              */
 
             Int32 index;
-            if (Char.IsDigit(propName[0]) && Int32.TryParse(propName, out index))
+            if (Int32.TryParse(propName, out index))
             {
                 return GetIndexedProperty(container, true, index);
             }
