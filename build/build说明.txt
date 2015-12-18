@@ -1,0 +1,8 @@
+windows操作系统：
+	1.双击 build.win.bat,执行完成后，在根目录下的lib目录中，即为生成成功的dll文件！
+	2.如果执行异常，请用VS打开build.win.bat，将\n替换成\r\n保存即可（GIT上传时自动将换行符进行了替换）
+
+linux系统：
+	1.进行build目录，为build.mono.sh赋予执行权限 chmod u+x build.mono.sh
+	2.执行 ./build.mono.sh 完成后 在根目录下的lib目录中，即为生成成功的dll文件！
+	3.必须已经d成功安装mono

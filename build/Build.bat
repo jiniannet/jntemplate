@@ -1,4 +1,4 @@
-@echo off
+echo off
 echo 开始生成 JNTemplate ...
 if not exist ..\lib\2.0 md ..\lib\2.0
 if not exist ..\lib\4.0 md ..\lib\4.0
