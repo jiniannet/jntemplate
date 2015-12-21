@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate
 
             if (conf.TagParsers == null)
             {
-                conf.TagParsers = conf.TagParsers = Field.RSEOLVER_TYPES;
+                conf.TagParsers = Field.RSEOLVER_TYPES;
             }
             _context = ctx;
             ITagParser[] parsers = new ITagParser[conf.TagParsers.Length];
