@@ -7,13 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate", "src
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272-B7F5-4A30-8DCD-C8EB022BCD09}"
 	ProjectSection(SolutionItems) = preProject
-		build\Build.bat = build\Build.bat
-		build\Build.by.key.bat = build\Build.by.key.bat
+		build\build.mono.sh = build\build.mono.sh
+		build\build.win.bat = build\build.win.bat
+		build\build说明.txt = build\build说明.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7A-4ECC-A4C3-F9EB6928E472}"
 	ProjectSection(SolutionItems) = preProject
 		Changelog.txt = Changelog.txt
+		Developer-ReadMe.txt = Developer-ReadMe.txt
 		License.txt = License.txt
 		README.md = README.md
 	EndProjectSection

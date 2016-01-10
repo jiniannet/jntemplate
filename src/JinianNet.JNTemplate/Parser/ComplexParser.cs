@@ -104,6 +104,10 @@ namespace JinianNet.JNTemplate.Parser
                     }
                 }
 
+                if (queue.Count == 1 && queue.Peek().Equals(tc))
+                {
+                    return null;
+                }
                 List<Tag> tags = new List<Tag>();
 
                 for (Int32 i = 0; i < data.Count; i++)

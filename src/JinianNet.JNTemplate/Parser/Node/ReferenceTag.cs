@@ -24,12 +24,8 @@ namespace JinianNet.JNTemplate.Parser.Node
             if (Children.Count > 0)
             {
                 Object result = Children[0].Parse(context);
-                for (Int32 i = 1; i < Children.Count; i++)
+                for (Int32 i = 1; i < Children.Count && result!=null; i++)
                 {
-                    if(result==null)
-                    {
-                        return null;
-                    }
                     result = ((SimpleTag)Children[i]).Parse(result, context);
                 }
                 return result;
@@ -44,7 +40,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         public override Object Parse(Object baseValue, TemplateContext context)
         {
             Object result = baseValue;
-            for (Int32 i = 0; i < Children.Count; i++)
+            for (Int32 i = 0; i < Children.Count && result!=null; i++)
             {
                 result = ((SimpleTag)Children[i]).Parse(result, context);
             }

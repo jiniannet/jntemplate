@@ -36,6 +36,10 @@ namespace JinianNet.JNTemplate.Parser.Node
         /// <param name="baseValue">baseValue</param>
         public override Object Parse(Object baseValue, TemplateContext context)
         {
+            if (baseValue == null)
+            {
+                return null;
+            }
             return Dynamic.DynamicHelpers.GetPropertyOrField(baseValue, this._name);
         }
 

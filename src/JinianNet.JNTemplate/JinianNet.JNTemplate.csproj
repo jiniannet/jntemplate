@@ -61,9 +61,9 @@
     <Compile Include="Dynamic\DynamicMethodInfo.cs" />
     <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
     <Compile Include="Dynamic\GetPropertyOrFieldDelegate.cs" />
-    <Compile Include="Dynamic\IDynamicHelpers.cs" />
-    <Compile Include="Dynamic\ILHelpers.cs" />
-    <Compile Include="Dynamic\ReflectionHelpers.cs" />
+    <Compile Include="Dynamic\IDynamicOperation.cs" />
+    <Compile Include="Dynamic\ILOperation.cs" />
+    <Compile Include="Dynamic\ReflectionOperation.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />
