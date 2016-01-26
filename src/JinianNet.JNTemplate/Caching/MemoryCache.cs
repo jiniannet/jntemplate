@@ -77,7 +77,7 @@ namespace JinianNet.JNTemplate.Caching
         /// </summary>
         public void Dispose()
         {
-            
+            this.dictionary.Clear();
         }
     }
 }

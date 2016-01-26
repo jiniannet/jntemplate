@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate
 
             if (conf.TagParsers == null)
             {
-                conf.TagParsers = Field.RSEOLVER_TYPES;
+                conf.TagParsers = conf.TagParsers = Field.RSEOLVER_TYPES;
             }
             _context = ctx;
             ITagParser[] parsers = new ITagParser[conf.TagParsers.Length];
@@ -66,12 +66,16 @@ namespace JinianNet.JNTemplate
             }
 
             ICache cache = null;
-            if (!string.IsNullOrEmpty(conf.CachingProvider))
+            if (!String.IsNullOrEmpty(conf.CachingProvider))
             {
                 cache = (ICache)Activator.CreateInstance(Type.GetType(conf.CachingProvider));
             }
 
             Parser.TagTypeResolver resolver = new Parser.TagTypeResolver(parsers);
+            if(_engineRuntime!=null&& _engineRuntime.Cache != null)
+            {
+                _engineRuntime.Cache.Dispose();
+            }
             _engineRuntime = new Runtime(resolver,
                 cache,
                 conf);
