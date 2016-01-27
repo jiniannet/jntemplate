@@ -1,12 +1,12 @@
-﻿#define EQVER
+﻿//#define EQVER
 //#define TESTNV
-
+#if WIN
 using System.IO;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using JinianNet.JNTemplate.Test.Model;
 using System.Diagnostics;
+
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -103,7 +103,7 @@ namespace JinianNet.JNTemplate.Test
         }
 
 
-        [TestMethod]
+        [Test]
         public void TestILage()
         {
 
@@ -361,3 +361,4 @@ namespace JinianNet.JNTemplate.Test
 #endif
     }
 }
+#endif
