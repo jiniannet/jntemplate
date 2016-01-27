@@ -109,7 +109,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
 
 
-                PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+                PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
                 //取属性
                 if (p != null)
                 {
@@ -283,7 +283,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             if (args == null || Array.LastIndexOf(args, null) == -1)
             {
                 method = type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase,
                     null, args, null);
                 if (method != null)
                 {
@@ -296,12 +296,12 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
             ParameterInfo[] pi;
             Boolean accord;
 
-            MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+            MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
 
             foreach (MethodInfo m in ms)
             {
 
-                if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
+                if (m.Name.Equals(methodName, Engine.ComparisonIgnoreCase))
                 {
                     pi = m.GetParameters();
 

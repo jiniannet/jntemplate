@@ -14,9 +14,9 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="value">值</param>
         public static void Set(String key,Object value)
         {
-            if (Engine.Runtime.Cache != null)
+            if (Engine.Cache != null)
             {
-                Engine.Runtime.Cache.Set(key, value);
+                Engine.Cache.Set(key, value);
             }
         }
         /// <summary>
@@ -26,9 +26,9 @@ namespace JinianNet.JNTemplate.Common
         /// <returns></returns>
         public static Object Get(String key)
         {
-            if (Engine.Runtime.Cache != null)
+            if (Engine.Cache != null)
             {
-                return Engine.Runtime.Cache.Get(key);
+                return Engine.Cache.Get(key);
             }
             return null;
         }

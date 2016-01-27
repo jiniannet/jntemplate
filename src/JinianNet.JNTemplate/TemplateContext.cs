@@ -43,9 +43,24 @@ namespace JinianNet.JNTemplate
             this._variableScope = data;
             this._errors = new List<System.Exception>();
             this._currentPath = null;
-            this._charset = Encoding.Default;
-            this._throwErrors = true;
-            this._stripWhiteSpace = false;
+            this._charset = Encoding.GetEncoding(Engine.GetEnvironmentVariable("Charset"));
+            if (Engine.GetEnvironmentVariable("ThrowErrors") == "True")
+            {
+                this._throwErrors = true;
+            }
+            else
+            {
+                this._throwErrors = false;
+            }
+            if (Engine.GetEnvironmentVariable("StripWhiteSpace") == "True")
+            {
+                this._stripWhiteSpace = true;
+            }
+            else
+            {
+                this._stripWhiteSpace = false;
+            }
+
         }
 
         /// <summary>

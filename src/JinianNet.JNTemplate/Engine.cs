@@ -8,6 +8,8 @@ using JinianNet.JNTemplate.Parser;
 using JinianNet.JNTemplate.Configuration;
 using System.Reflection;
 using JinianNet.JNTemplate.Caching;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace JinianNet.JNTemplate
 {
@@ -16,30 +18,15 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Engine
     {
-        private static Runtime _engineRuntime;
+        private static Dictionary<String, String> _variable;
+        private static String[] _resourceDirectories;
         private static Object _lockObject = new Object();
         private static TemplateContext _context;
-
-        /// <summary>
-        /// 引擎运行时
-        /// </summary>
-        public static Runtime Runtime
-        {
-            get
-            {
-                if (_engineRuntime == null)
-                {
-                    lock (_lockObject)
-                    {
-                        if (_engineRuntime == null)
-                        {
-                            Configure(EngineConfig.CreateDefault());
-                        }
-                    }
-                }
-                return _engineRuntime;
-            }
-        }
+        private static ITagTypeResolver _tagResolver;
+        private static StringComparison _stringComparison;
+        private static BindingFlags _bindingFlags;
+        private static StringComparer _stringComparer;
+        private static ICache _cache;
 
         /// <summary>
         /// 引擎配置
@@ -55,7 +42,7 @@ namespace JinianNet.JNTemplate
 
             if (conf.TagParsers == null)
             {
-                conf.TagParsers = conf.TagParsers = Field.RSEOLVER_TYPES;
+                conf.TagParsers = Field.RSEOLVER_TYPES;
             }
             _context = ctx;
             ITagParser[] parsers = new ITagParser[conf.TagParsers.Length];
@@ -64,21 +51,51 @@ namespace JinianNet.JNTemplate
             {
                 parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i]));
             }
-
-            ICache cache = null;
+            if (_cache != null)
+            {
+                _cache.Dispose();
+            }
             if (!String.IsNullOrEmpty(conf.CachingProvider))
             {
-                cache = (ICache)Activator.CreateInstance(Type.GetType(conf.CachingProvider));
+                _cache = (ICache)Activator.CreateInstance(Type.GetType(conf.CachingProvider));
             }
 
-            Parser.TagTypeResolver resolver = new Parser.TagTypeResolver(parsers);
-            if(_engineRuntime!=null&& _engineRuntime.Cache != null)
+            _tagResolver = new Parser.TagTypeResolver(parsers);
+
+
+            if (conf.IgnoreCase)
             {
-                _engineRuntime.Cache.Dispose();
+                _bindingFlags = BindingFlags.IgnoreCase;
+                _stringComparer = StringComparer.OrdinalIgnoreCase;
+                _stringComparison = StringComparison.OrdinalIgnoreCase;
             }
-            _engineRuntime = new Runtime(resolver,
-                cache,
-                conf);
+            else
+            {
+                _stringComparison = StringComparison.Ordinal;
+                _bindingFlags = BindingFlags.Default;
+                _stringComparer = StringComparer.Ordinal;
+            }
+            if (conf.ResourceDirectories == null)
+            {
+                _resourceDirectories = new String[0];
+            }
+            else
+            {
+                _resourceDirectories = conf.ResourceDirectories;
+            }
+            _variable = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// 初始化环境变量配置
+        /// </summary>
+        /// <param name="conf">配置内容</param>
+        private static void InitializationEnvironment(IDictionary<String, String> conf)
+        {
+            foreach (KeyValuePair<String, String> node in conf)
+            {
+                SetEnvironmentVariable(node.Key, node.Value);
+            }
         }
 
         /// <summary>
@@ -101,8 +118,6 @@ namespace JinianNet.JNTemplate
             {
                 ctx = new TemplateContext();
                 ctx.Charset = Encoding.Default;
-                ctx.StripWhiteSpace = Runtime.StripWhiteSpace;
-                ctx.ThrowExceptions = Runtime.ThrowExceptions;
             }
             else
             {
@@ -142,13 +157,106 @@ namespace JinianNet.JNTemplate
         {
             Template template = new Template(ctx, null);
             String fullPath;
-            template.TemplateContent = Resources.Load(Runtime.ResourceDirectories, path, template.Context.Charset, out fullPath);
+            template.TemplateContent = Resources.Load(ResourceDirectories, path, template.Context.Charset, out fullPath);
             if (fullPath != null)
             {
                 template.TemplateKey = fullPath;
                 ctx.CurrentPath = System.IO.Path.GetDirectoryName(fullPath);
             }
             return template;
+        }
+
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        public static ICache Cache
+        {
+            get { return _cache; }
+        }
+
+        /// <summary>
+        /// 标签类型解析器
+        /// </summary>
+        public static Parser.ITagTypeResolver TagResolver
+        {
+            get { return _tagResolver; }
+        }
+
+        /// <summary>
+        /// 字符串大小写排序配置
+        /// </summary>
+        internal static StringComparison ComparisonIgnoreCase
+        {
+            get { return _stringComparison; }
+        }
+
+        /// <summary>
+        /// 绑定大小写配置
+        /// </summary>
+        internal static BindingFlags BindIgnoreCase
+        {
+            get { return _bindingFlags; }
+        }
+
+        /// <summary>
+        /// 字符串大小写比较配置
+        /// </summary>
+        internal static StringComparer ComparerIgnoreCase
+        {
+            get { return _stringComparer; }
+        }
+        /// <summary>
+        /// 资源路径
+        /// </summary>
+        public static String[] ResourceDirectories
+        {
+            get { return _resourceDirectories; }
+        }
+
+        /// <summary>
+        /// 获取环境变量
+        /// </summary>
+        /// <param name="variable">变量名称</param>
+        /// <returns></returns>
+        public static String GetEnvironmentVariable(String variable)
+        {
+            String value;
+            Dictionary<String, String> dic = (Dictionary<String, String>)GetEnvironmentVariables();
+
+            if (dic.TryGetValue(variable, out value))
+            {
+                return value;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取所有环境变量
+        /// </summary>
+        /// <returns></returns>
+        public static IDictionary GetEnvironmentVariables()
+        {
+            if (_variable == null)
+            {
+                lock (_lockObject)
+                {
+                    if (_variable == null)
+                    {
+                        Configure(EngineConfig.CreateDefault());
+                    }
+                }
+            }
+            return _variable;
+        }
+
+        /// <summary>
+        /// 设置环境变量
+        /// </summary>
+        /// <param name="variable">变量名</param>
+        /// <param name="value">值</param>
+        public static void SetEnvironmentVariable(String variable, String value)
+        {
+            GetEnvironmentVariables()[variable] = value;
         }
     }
 }

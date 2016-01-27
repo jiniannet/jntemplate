@@ -96,7 +96,7 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             il.Emit(OpCodes.Stloc_0);
 
-            if ((mi = type.GetMethod(String.Concat("get_", propertyName), BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase, null,
+            if ((mi = type.GetMethod(String.Concat("get_", propertyName), BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase, null,
                 Type.EmptyTypes,
                 null)) != null)
             {
@@ -104,7 +104,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            else if (isNumberRegex.Match(propertyName).Success && (mi = type.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase, null,
+            else if (isNumberRegex.Match(propertyName).Success && (mi = type.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase, null,
                new Type[] {
                     typeof(int)
                },
@@ -115,7 +115,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            else if ((mi = type.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase, null,
+            else if ((mi = type.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase, null,
                new Type[] {
                                 stringType
                },
@@ -209,7 +209,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 Type[] types;
                 for (Int32 i = 0; i < mis.Length; i++)
                 {
-                    if (!mis[i].Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
+                    if (!mis[i].Name.Equals(methodName, Engine.ComparisonIgnoreCase))
                     {
                         continue;
                     }

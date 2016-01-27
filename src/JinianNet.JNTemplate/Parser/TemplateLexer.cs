@@ -55,6 +55,9 @@ namespace JinianNet.JNTemplate.Parser
         /// 
         /// </summary>
         private Stack<String> _pos;
+        private String _prefix;
+        private Char _flag;
+        private String _suffix;
 
         /// <summary>
         /// TemplateLexer
@@ -63,6 +66,10 @@ namespace JinianNet.JNTemplate.Parser
         public TemplateLexer(String text)
         {
             this._document = text;
+            this._prefix = Engine.GetEnvironmentVariable("TagPrefix");
+            this._flag = Engine.GetEnvironmentVariable("TagFlag")[0];
+            this._suffix = Engine.GetEnvironmentVariable("TagSuffix");
+
             Reset();
         }
         /// <summary>
@@ -134,9 +141,9 @@ namespace JinianNet.JNTemplate.Parser
                 return false;
             }
             Boolean find = true;
-            for (Int32 i = 0; i <  Engine.Runtime.TagPrefix.Length; i++)
+            for (Int32 i = 0; i < this._prefix.Length; i++)
             {
-                if (Engine.Runtime.TagPrefix[i] != this._scanner.Read(i))
+                if (this._prefix[i] != this._scanner.Read(i))
                 {
                     find = false;
                     break;
@@ -147,7 +154,7 @@ namespace JinianNet.JNTemplate.Parser
                 this._flagMode = FlagMode.Full;
                 return true;
             }
-            if (this._scanner.Read() == Engine.Runtime.TagFlag)
+            if (this._scanner.Read() == this._flag)
             {
 #if ALLOWCOMMENT
                 if (this._scanner.Read(1) == '*')
@@ -181,9 +188,9 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     if (this._flagMode == FlagMode.Full)
                     {
-                        for (Int32 i = 0; i < Engine.Runtime.TagSuffix.Length; i++)
+                        for (Int32 i = 0; i < this._suffix.Length; i++)
                         {
-                            if (Engine.Runtime.TagSuffix[i] != this._scanner.Read(i))
+                            if (this._suffix[i] != this._scanner.Read(i))
                             {
                                 return false;
                             }
@@ -194,7 +201,7 @@ namespace JinianNet.JNTemplate.Parser
 #if ALLOWCOMMENT
                     else if (this._flagMode == FlagMode.Comment)
                     {
-                        return this._scanner.Read() == '*' && this._scanner.Read(1) == Engine.Runtime.TagFlag;
+                        return this._scanner.Read() == '*' && this._scanner.Read(1) == this._flag;
                     }
 #endif
                     else
@@ -248,7 +255,7 @@ namespace JinianNet.JNTemplate.Parser
                         {
                             if (this._flagMode == FlagMode.Full)
                             {
-                                Next(Engine.Runtime.TagPrefix.Length - 1);
+                                Next(this._prefix.Length - 1);
                             }
 
                             AddToken(GetTokenKind(this._scanner.Read()));
@@ -311,7 +318,7 @@ namespace JinianNet.JNTemplate.Parser
                 if (this._flagMode == FlagMode.Full)
                 {
                     AddToken(TokenKind.TagEnd);
-                    Next(Engine.Runtime.TagSuffix.Length);
+                    Next(this._suffix.Length);
                 }
 #if ALLOWCOMMENT
                 else if (this._flagMode == FlagMode.Comment)

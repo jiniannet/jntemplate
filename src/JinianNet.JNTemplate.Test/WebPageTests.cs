@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate.Test
 
             string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
             string path = basePath + "\\templets\\default";
-            JinianNet.JNTemplate.Dynamic.IDynamicHelpers h;
+           // JinianNet.JNTemplate.Dynamic.IDynamicHelpers h;
             Configuration.EngineConfig conf;
  
             string text1 = null, text2 = null;
@@ -56,7 +56,7 @@ namespace JinianNet.JNTemplate.Test
             s.Start();
             s.Stop();
             ////////////////////////////////////////////////////////////////////////////////////
-            h = new JinianNet.JNTemplate.Dynamic.ILHelpers();
+            //h = new JinianNet.JNTemplate.Dynamic.ILHelpers();
             conf = Configuration.EngineConfig.CreateDefault();
             //conf.CachingProvider = "JinianNet.JNTemplate.Test.UserCache,JinianNet.JNTemplate.Test";
             conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
@@ -79,7 +79,7 @@ namespace JinianNet.JNTemplate.Test
  
 
             ////////////////////////////////////////////////////////////////////////////////////
-            h = new JinianNet.JNTemplate.Dynamic.ReflectionHelpers();
+            //h = new JinianNet.JNTemplate.Dynamic.ReflectionHelpers();
             conf = Configuration.EngineConfig.CreateDefault();
             conf.CachingProvider = null;
             Engine.Configure(conf);

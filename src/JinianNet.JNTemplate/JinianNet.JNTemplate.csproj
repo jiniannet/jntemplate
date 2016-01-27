@@ -57,6 +57,7 @@
     <Compile Include="Common\OperatorHelpers.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
+    <Compile Include="Configuration\VariableAttribute.cs" />
     <Compile Include="Dynamic\DynamicHelpers.cs" />
     <Compile Include="Dynamic\DynamicMethodInfo.cs" />
     <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
@@ -125,7 +126,6 @@
     <Compile Include="Parser\VariableScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.cs" />
-    <Compile Include="Runtime.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateRender.cs" />
     <Compile Include="TemplateContext.cs" />

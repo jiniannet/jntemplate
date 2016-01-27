@@ -1,3 +1,4 @@
 language: csharp
 script:
   - ./build/build.mono.sh
+  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner

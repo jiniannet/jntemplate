@@ -29,11 +29,11 @@ namespace JinianNet.JNTemplate.Parser.Node
                 IEnumerable<String> paths;
                 if (String.IsNullOrEmpty(context.CurrentPath))
                 {
-                    paths = Engine.Runtime.ResourceDirectories;
+                    paths = Engine.ResourceDirectories;
                 }
                 else
                 {
-                    paths = Resources.MergerPaths(Engine.Runtime.ResourceDirectories, context.CurrentPath);
+                    paths = Resources.MergerPaths(Engine.ResourceDirectories, context.CurrentPath);
                 }
                 return Resources.Load(paths, path.ToString(), context.Charset);
             }
