@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace JinianNet.JNTemplate.Test.Model
+﻿namespace JinianNet.JNTemplate.Test.Model
 {
     public class Help : Basis
     {

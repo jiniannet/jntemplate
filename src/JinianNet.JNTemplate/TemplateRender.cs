@@ -52,7 +52,7 @@ namespace JinianNet.JNTemplate
         {
             if (writer == null)
             {
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException("\"writer\" cannot be null.");
             }
 
             //缓存功能，待添加

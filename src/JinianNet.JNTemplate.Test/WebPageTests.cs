@@ -1,12 +1,10 @@
-﻿//#define EQVER
+﻿#define EQVER
 //#define TESTNV
 
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Data;
-using System.Collections.Generic;
 using JinianNet.JNTemplate.Test.Model;
 using System.Diagnostics;
 

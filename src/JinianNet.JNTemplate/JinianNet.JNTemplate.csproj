@@ -55,6 +55,7 @@
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Common\CacheHelprs.cs" />
     <Compile Include="Common\OperatorHelpers.cs" />
+    <Compile Include="Common\Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Configuration\VariableAttribute.cs" />

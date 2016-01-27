@@ -18,7 +18,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <summary>
         /// DynamicHelpers
         /// </summary>
-        protected static IDynamicOperation Instance 
+        internal static IDynamicOperation Instance
         {
             get
             {
@@ -77,8 +77,15 @@ namespace JinianNet.JNTemplate.Dynamic
             IEnumerable result;
 
             if (dataSource == null)
+            {
                 return null;
-            source = dataSource as IListSource;
+            }
+
+            if ((result = dataSource as IEnumerable) != null)
+            {
+                return result;
+            }
+
             if ((source = dataSource as IListSource) != null)
             {
                 IList list = source.GetList();
@@ -106,10 +113,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     return null;
                 }
             }
-            if ((result = dataSource as IEnumerable) != null)
-            {
-                return result;
-            }
+
             return null;
 
         }

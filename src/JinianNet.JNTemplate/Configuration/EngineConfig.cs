@@ -11,27 +11,6 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public class EngineConfig : ConfigBase
     {
-        private String _cachingProvider;
-        private String[] _tagParsers;
-
-        /// <summary>
-        /// 缓存提供器
-        /// </summary>
-        public String CachingProvider
-        {
-            get { return this._cachingProvider; }
-            set { this._cachingProvider = value; }
-        }
-
-        /// <summary>
-        /// 标签分析器
-        /// </summary>
-        public String[] TagParsers
-        {
-            get { return this._tagParsers; }
-            set { this._tagParsers = value; }
-        }
-
         /// <summary>
         /// 创建默认配置
         /// </summary>
@@ -48,6 +27,7 @@ namespace JinianNet.JNTemplate.Configuration
             conf.ThrowExceptions = true;
             conf.IgnoreCase = true;
             conf.TagParsers = Field.RSEOLVER_TYPES;
+            conf.Charset = "utf-8";
             return conf;
         }
     }

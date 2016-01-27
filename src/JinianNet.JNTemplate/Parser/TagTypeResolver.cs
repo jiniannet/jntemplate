@@ -18,9 +18,9 @@ namespace JinianNet.JNTemplate.Parser
         /// 标签类型分析器
         /// </summary>
         public TagTypeResolver()
-            : this(new ITagParser[0])
+            : this(null)
         {
-            this._collection = new List<ITagParser>();
+
         }
         /// <summary>
         /// 标签类型分析器
@@ -28,7 +28,15 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="parsers">各类标签分析器集合</param>
         public TagTypeResolver(IEnumerable<ITagParser> parsers)
         {
-            this._collection = new List<ITagParser>(parsers);
+            if (parsers != null)
+            {
+                this._collection = new List<ITagParser>(parsers);
+            }
+            else
+            {
+                this._collection = new List<ITagParser>();
+            }
+
         }
         /// <summary>
         /// 解析标签
@@ -41,6 +49,10 @@ namespace JinianNet.JNTemplate.Parser
             Tag t;
             for (Int32 i = 0; i < this._collection.Count; i++)
             {
+                if (this._collection[i] == null)
+                {
+                    continue;
+                }
                 t = this._collection[i].Parse(parser, tc);
                 if (t != null)
                 {

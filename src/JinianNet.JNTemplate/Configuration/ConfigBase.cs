@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace JinianNet.JNTemplate.Configuration
 {
@@ -20,6 +21,8 @@ namespace JinianNet.JNTemplate.Configuration
         private Boolean _stripWhiteSpace;
         private Boolean _ignoreCase;
         private String _charset;
+        private String _cachingProvider;
+        private String[] _tagParsers;
 
         /// <summary>
         /// 字符编码
@@ -103,10 +106,38 @@ namespace JinianNet.JNTemplate.Configuration
             set { this._ignoreCase = value; }
         }
 
+        /// <summary>
+        /// 缓存提供器
+        /// </summary>
+        [Variable]
+        public String CachingProvider
+        {
+            get { return this._cachingProvider; }
+            set { this._cachingProvider = value; }
+        }
+
+        /// <summary>
+        /// 标签分析器
+        /// </summary>
+        public String[] TagParsers
+        {
+            get { return this._tagParsers; }
+            set { this._tagParsers = value; }
+        }
+
+
         public virtual Dictionary<String, String> ToDictionary()
         {
             Dictionary<String, String> dic = new Dictionary<String, String>();
-
+            PropertyInfo[] pis = this.GetType().GetProperties();
+            Type type = typeof(VariableAttribute);
+            for(Int32 i = 0; i < pis.Length; i++)
+            {
+                if( Attribute.IsDefined(pis[i], type))
+                {
+                    dic[pis[i].Name] = (pis[i].GetValue(this, null) ?? string.Empty).ToString();
+                }
+            }
             return dic;
         }
     }

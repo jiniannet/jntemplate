@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate
         {
             if (ctx == null)
             {
-                throw new System.ArgumentNullException("ctx");
+                throw new ArgumentNullException("\"ctx\" cannot be null.");
             }
             Context = ctx;
             TemplateContent = text;

@@ -21,7 +21,7 @@ namespace JinianNet.JNTemplate
         private static Dictionary<String, String> _variable;
         private static String[] _resourceDirectories;
         private static Object _lockObject = new Object();
-        private static TemplateContext _context;
+        private static VariableScope _scope;
         private static ITagTypeResolver _tagResolver;
         private static StringComparison _stringComparison;
         private static BindingFlags _bindingFlags;
@@ -32,38 +32,53 @@ namespace JinianNet.JNTemplate
         /// 引擎配置
         /// </summary>
         /// <param name="conf">配置内容</param>
-        /// <param name="ctx">默认模板上下文</param>
-        public static void Configure(EngineConfig conf, TemplateContext ctx)
+        /// <param name="scope">初始化全局数据</param>
+        public static void Configure(ConfigBase conf, VariableScope scope)
         {
             if (conf == null)
             {
-                throw new ArgumentNullException("conf");
+                throw new ArgumentNullException("\"conf\" cannot be null.");
+            }
+            Configure(conf.ToDictionary(),
+                conf.ResourceDirectories,
+                conf.TagParsers, scope);
+        }
+
+        /// <summary>
+        /// 引擎配置
+        /// </summary>
+        /// <param name="directories">模板目录，默认为当前程序目录</param>
+        /// <param name="parsers">解析器，可空</param>
+        /// <param name="conf">配置参数</param>
+        /// <param name="scope">全局数据，可空</param>
+        public static void Configure(
+            IDictionary<String, String> conf,
+            String[] directories,
+            String[] parsers,
+            VariableScope scope)
+        {
+            if (conf == null)
+            {
+                throw new ArgumentNullException("\"conf\" cannot be null.");
             }
 
-            if (conf.TagParsers == null)
-            {
-                conf.TagParsers = Field.RSEOLVER_TYPES;
-            }
-            _context = ctx;
-            ITagParser[] parsers = new ITagParser[conf.TagParsers.Length];
+            _scope = scope;
 
-            for (Int32 i = 0; i < conf.TagParsers.Length; i++)
-            {
-                parsers[i] = (ITagParser)Activator.CreateInstance(Type.GetType(conf.TagParsers[i]));
-            }
+            InitializationEnvironment(conf);
+
             if (_cache != null)
             {
                 _cache.Dispose();
             }
-            if (!String.IsNullOrEmpty(conf.CachingProvider))
+            _cache = null;
+            if (!String.IsNullOrEmpty(GetEnvironmentVariable("CachingProvider")))
             {
-                _cache = (ICache)Activator.CreateInstance(Type.GetType(conf.CachingProvider));
+                Type cacheType = Type.GetType(GetEnvironmentVariable("CachingProvider"));
+                _cache = (ICache)Activator.CreateInstance(cacheType);
             }
 
-            _tagResolver = new Parser.TagTypeResolver(parsers);
 
-
-            if (conf.IgnoreCase)
+            if (Common.Utility.ToBoolean(GetEnvironmentVariable("IgnoreCase")))
             {
                 _bindingFlags = BindingFlags.IgnoreCase;
                 _stringComparer = StringComparer.OrdinalIgnoreCase;
@@ -75,15 +90,17 @@ namespace JinianNet.JNTemplate
                 _bindingFlags = BindingFlags.Default;
                 _stringComparer = StringComparer.Ordinal;
             }
-            if (conf.ResourceDirectories == null)
+            if (directories == null)
             {
-                _resourceDirectories = new String[0];
+                _resourceDirectories = new String[] {
+                    Environment.CurrentDirectory
+                };
             }
             else
             {
-                _resourceDirectories = conf.ResourceDirectories;
+                _resourceDirectories = directories;
             }
-            _variable = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+            InitializationParser(parsers);
         }
 
         /// <summary>
@@ -92,10 +109,30 @@ namespace JinianNet.JNTemplate
         /// <param name="conf">配置内容</param>
         private static void InitializationEnvironment(IDictionary<String, String> conf)
         {
+            _variable = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
             foreach (KeyValuePair<String, String> node in conf)
             {
                 SetEnvironmentVariable(node.Key, node.Value);
             }
+        }
+
+        /// <summary>
+        /// 初始化标签分析器
+        /// </summary>
+        /// <param name="parsers">解析器类型</param>
+        private static void InitializationParser(String[] parsers)
+        {
+            if (parsers == null)
+            {
+                parsers = Field.RSEOLVER_TYPES;
+            }
+            ITagParser[] tps = new ITagParser[parsers.Length];
+
+            for (Int32 i = 0; i < tps.Length; i++)
+            {
+                tps[i] = (ITagParser)Activator.CreateInstance(Type.GetType(parsers[i]));
+            }
+            _tagResolver = new Parser.TagTypeResolver(tps);
         }
 
         /// <summary>
@@ -113,22 +150,15 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext()
         {
-            TemplateContext ctx;
-            if (_context == null)
+            if (_scope == null)
             {
-                ctx = new TemplateContext();
-                ctx.Charset = Encoding.Default;
+                return new TemplateContext();
             }
-            else
-            {
-                ctx = TemplateContext.CreateContext(_context);
-            }
-
-            return ctx;
+            return new TemplateContext(_scope);
         }
 
         /// <summary>
-        /// 根据指定路模板建Template实例
+        /// 从指定模板内容创建Template实例
         /// </summary>
         /// <param name="text">文本</param>
         /// <returns></returns>
@@ -155,9 +185,10 @@ namespace JinianNet.JNTemplate
         /// <returns>ITemplate</returns>
         public static ITemplate LoadTemplate(String path, TemplateContext ctx)
         {
-            Template template = new Template(ctx, null);
+
             String fullPath;
-            template.TemplateContent = Resources.Load(ResourceDirectories, path, template.Context.Charset, out fullPath);
+            String text = Resources.Load(ResourceDirectories, path, ctx.Charset, out fullPath);
+            Template template = new Template(ctx, text);
             if (fullPath != null)
             {
                 template.TemplateKey = fullPath;

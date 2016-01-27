@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (ts == null)
             {
-                throw new ArgumentNullException("ts");
+                throw new ArgumentNullException("\"ts\" cannot be null.");
             }
             this._tokens = ts;
             Reset();

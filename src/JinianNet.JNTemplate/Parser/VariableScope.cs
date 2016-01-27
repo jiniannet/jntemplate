@@ -13,25 +13,47 @@ namespace JinianNet.JNTemplate.Parser
     public class VariableScope
     {
         private VariableScope _parent;
-        private Dictionary<String, Object> _dic;
+        private IDictionary<String, Object> _dic;
 
 
         /// <summary>
-        /// VariableScope
+        /// 无参构造函数
         /// </summary>
         public VariableScope()
-            : this(null)
+            : this(null, null)
         {
 
         }
 
         /// <summary>
-        /// VariableScope
+        /// 以字典来初始化对象
         /// </summary>
-        public VariableScope(VariableScope parent)
+        /// <param name="dictionary">初始化字典</param>
+        public VariableScope(IDictionary<String, Object> dictionary)
+            : this(null, dictionary)
+        {
+
+        }
+
+        /// <summary>
+        /// 以父VariableScope与字典来初始化对象
+        /// </summary>
+        /// <param name="parent">父VariableScope</param>
+        /// <param name="dictionary">初始化字典</param>
+        public VariableScope(VariableScope parent, IDictionary<String, Object> dictionary)
         {
             this._parent = parent;
-            this._dic = new Dictionary<String, Object>(Engine.ComparerIgnoreCase);
+            this._dic = dictionary ?? new Dictionary<String, Object>(Engine.ComparerIgnoreCase);
+        }
+
+        /// <summary>
+        /// 以父VariableScope来初始化对象
+        /// </summary>
+        /// <param name="parent">父VariableScope</param>
+        public VariableScope(VariableScope parent) :
+            this(parent, null)
+        {
+
         }
 
         /// <summary>
@@ -41,7 +63,7 @@ namespace JinianNet.JNTemplate.Parser
         public void Clear(Boolean all)
         {
             this._dic.Clear();
-            if (all 
+            if (all
                 && this._parent != null)
             {
                 this._parent.Clear(all);

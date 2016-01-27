@@ -1,7 +1,5 @@
 ﻿
 using System;
-using JinianNet.JNTemplate.Test.Model;
-using System.Collections.Generic;
 namespace JinianNet.JNTemplate.Test.ViewModel
 {
     /// <summary>
