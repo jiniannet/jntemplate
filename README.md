@@ -1,4 +1,6 @@
-﻿## JNTemplate 是什么
+﻿# JNTemplate  [![Build Status](https://travis-ci.org/jiniannet/jntemplate.svg?branch=master)](https://travis-ci.org/jiniannet/jntemplate)
+
+## JNTemplate 是什么
 
 极念模板引擎(JNTemplate)是一款C#语言开发的跨平台的文本解析引擎（模板引擎），它能生成任何基于文本的内容，包括且不限于html,xml,css等,让前端展示与后端代码逻辑分离。同时，它也提供了一个在WebForm与Razor之外的选择！
 
