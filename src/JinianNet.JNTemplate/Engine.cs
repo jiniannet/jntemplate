@@ -139,7 +139,7 @@ namespace JinianNet.JNTemplate
         /// 引擎配置
         /// </summary>
         /// <param name="conf">配置内容</param>
-        public static void Configure(EngineConfig conf)
+        public static void Configure(ConfigBase conf)
         {
             Configure(conf, null);
         }

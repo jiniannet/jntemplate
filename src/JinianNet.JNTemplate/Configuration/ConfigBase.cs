@@ -125,7 +125,10 @@ namespace JinianNet.JNTemplate.Configuration
             set { this._tagParsers = value; }
         }
 
-
+        /// <summary>
+        /// 将配置转换成字典形式
+        /// </summary>
+        /// <returns></returns>
         public virtual Dictionary<String, String> ToDictionary()
         {
             Dictionary<String, String> dic = new Dictionary<String, String>();

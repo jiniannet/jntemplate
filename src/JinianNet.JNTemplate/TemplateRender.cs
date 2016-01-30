@@ -65,16 +65,16 @@ namespace JinianNet.JNTemplate
             if (!String.IsNullOrEmpty(this._content))
             {
                 Object value;
-                if (!String.IsNullOrEmpty(this._key))
+                if (Engine.Cache != null && !String.IsNullOrEmpty(this._key))
                 {
-                    if ((value = Common.CacheHelprs.Get(this._key)) != null)
+                    if ((value = Engine.Cache.Get(this._key)) != null)
                     {
                         collection = (Tag[])value;
                     }
                     else
                     {
                         collection = ParseTag();
-                        Common.CacheHelprs.Set(this._key, collection);
+                        Engine.Cache.Set(this._key, collection);
                     }
                 }
                 else
@@ -97,7 +97,7 @@ namespace JinianNet.JNTemplate
                     }
                     catch (Exception.TemplateException e)
                     {
-                        ThrowException(e, collection[i],writer);
+                        ThrowException(e, collection[i], writer);
                     }
                     catch (System.Exception e)
                     {

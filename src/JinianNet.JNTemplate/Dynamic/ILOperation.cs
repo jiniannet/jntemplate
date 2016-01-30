@@ -57,12 +57,12 @@ namespace JinianNet.JNTemplate.Dynamic
                 key = String.Concat("Dynamic.IL.GetPropertyOrField.", type.FullName, ".", propertyName);
             }
             Object result;
-            if ((result = CacheHelprs.Get(key)) != null)
+            if ((result = Engine.Cache.Get(key)) != null)
             {
                 return (GetPropertyOrFieldDelegate)result;
             }
             GetPropertyOrFieldDelegate gpf = CreateGetPropertyOrFieldProxy(type, value, propertyName);
-            CacheHelprs.Set(key, gpf);
+            Engine.Cache.Set(key, gpf);
             return gpf;
         }
         private GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
@@ -198,7 +198,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Dictionary<String, DynamicMethodInfo> itemDic = null;
             DynamicMethodInfo d;
 
-            if ((value = CacheHelprs.Get(key)) != null)
+            if ((value = Engine.Cache.Get(key)) != null)
             {
                 dic = (Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>)value;
             }
@@ -228,7 +228,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     //if (!itemDic.TryGetValue(itemKey,out d))
                     itemDic[itemKey] = CreateExcuteMethodProxy(type, mis[i]);
                 }
-                CacheHelprs.Set(key, dic);
+                Engine.Cache.Set(key, dic);
             }
 
             if (!dic.TryGetValue(args.Length, out itemDic))
