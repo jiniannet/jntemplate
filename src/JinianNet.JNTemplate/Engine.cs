@@ -287,7 +287,18 @@ namespace JinianNet.JNTemplate
         /// <param name="value">值</param>
         public static void SetEnvironmentVariable(String variable, String value)
         {
-            GetEnvironmentVariables()[variable] = value;
+            if (variable == null)
+            {
+                throw new ArgumentNullException("\"variable\" cannot be null.");
+            }
+            if (value == null)
+            {
+                GetEnvironmentVariables().Remove(variable);
+            }
+            else
+            {
+                GetEnvironmentVariables()[variable] = value;
+            }
         }
     }
 }
