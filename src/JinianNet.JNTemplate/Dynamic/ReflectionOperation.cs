@@ -61,9 +61,6 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     return null;
                 }
-#if USECACHE
-                Utils.InsertCache(cacheKey, info);
-#endif
             }
             return info.GetValue(container, new Object[] { propIndex });
         }
@@ -80,70 +77,21 @@ namespace JinianNet.JNTemplate.Dynamic
         public Object GetPropertyOrField(Object container, String propName)
         {
             Type t = container.GetType();
-#if USECACHE
-            //是否有缓存
-            String cacheKey = String.Concat(t.FullName, ".", propName);
-            MemberInfo mi = Utils.GetCacheItem<MemberInfo>(cacheKey);
-            if (mi != null)
-            {
-                switch (mi.MemberType.ToString())
-                {
-                    case "Property":
-                        return ((PropertyInfo)mi).GetValue(container, null);
-                    case "Field":
-                        return ((FieldInfo)mi).GetValue(container);
-                }
-
-            }
-
-            if ((mi = Utils.GetCacheItem<MemberInfo>(String.Concat(t.FullName, "[", propName, "]"))) != null)
-            {
-                return ((PropertyInfo)mi).GetValue(container, null);
-            }
-#endif
             //此处的属性包括有参属性（索引）与无参属性（属性）
             //if (propName.IndexOfAny(indexExprStartChars) < 0)
             //因属性与字段均不可能以数字开头，如第一个字符为数字则直接跳过属性判断以加快处理速度
-            if (!Char.IsDigit(propName[0])) 
+            if (!Char.IsDigit(propName[0]))
             {
-
-
+#if !NET20_NOTUSER
                 PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
                 //取属性
                 if (p != null)
                 {
-#if USECACHE
-                    Utils.InsertCache(cacheKey, p);
-#endif
                     return p.GetValue(container, null);
                 }
 #if NEEDFIELD
                 //取字段
                 FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
-                if (f != null)
-                {
-#if USECACHE
-                    Utils.InsertCache(cacheKey, p);
-#endif
-                    return f.GetValue(container);
-                }
-#endif
-            }
-
-            /*
-if (propName.IndexOfAny(indexExprStartChars) < 0)
-            {
-#if NET20
-                Type t = container.GetType();
-                PropertyInfo p = t.GetProperty(propName);
-                //取属性
-                if (p != null)
-                {
-                    return p.GetValue(container, null);
-                }
-#if NEEDFIELD
-                //取字段
-                FieldInfo f = t.GetField(propName);
                 if (f != null)
                 {
                     return f.GetValue(container);
@@ -161,9 +109,7 @@ if (propName.IndexOfAny(indexExprStartChars) < 0)
                     return System.Linq.Expressions.Expression.Lambda(exp).Compile().DynamicInvoke();
                 }
 #endif
-
             }
-             */
 
             Int32 index;
             if (Int32.TryParse(propName, out index))
