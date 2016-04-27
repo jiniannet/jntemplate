@@ -52,17 +52,20 @@ namespace JinianNet.JNTemplate.Dynamic
                 return dic[propIndex];
             }
             Type t = container.GetType();
-            //string cacheKey = String.Concat(t.FullName, "[", propIndex.ToString(), "]");
-            PropertyInfo info = null;// Utils.GetCacheItem<PropertyInfo>(cacheKey);
-            if (info == null)
+#if NOTDNX
+            PropertyInfo info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
+            if (info != null)
             {
-                info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
-                if (info == null)
-                {
-                    return null;
-                }
+                return info.GetValue(container, new Object[] { propIndex });
             }
-            return info.GetValue(container, new Object[] { propIndex });
+#else
+            var info = t.GetMethod("get_Item", new Type[] { propIndex.GetType() });
+            if (info != null)
+            {
+                return info.Invoke(container, new Object[] { propIndex });
+            }
+#endif
+            return null;
         }
 
         #endregion
@@ -227,20 +230,24 @@ namespace JinianNet.JNTemplate.Dynamic
             //根据具体形参获取方法名，以处理重载
             if (args == null || Array.LastIndexOf(args, null) == -1)
             {
+#if NOTDNX
                 method = type.GetMethod(methodName,
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase,
                     null, args, null);
+#else
+                method = type.GetMethod(methodName, args);
+#endif
                 if (method != null)
                 {
                     return method;
                 }
-            }
+            } 
+
 
             //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
 
             ParameterInfo[] pi;
             Boolean accord;
-
             MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
 
             foreach (MethodInfo m in ms)
@@ -254,16 +261,20 @@ namespace JinianNet.JNTemplate.Dynamic
                     {
                         continue;
                     }
-
+#if NOTDNX
                     hasParam = System.Attribute.IsDefined(pi[pi.Length - 1], typeof(ParamArrayAttribute));
-
+#endif
                     //参数个数一致或者形参中含有 param 参数
                     if (pi.Length == args.Length || hasParam)
                     {
                         accord = true;
                         for (Int32 i = 0; i < pi.Length - 1; i++)
                         {
-                            if (args[i] != null && args[i] != pi[i].ParameterType && !args[i].IsSubclassOf(pi[i].ParameterType))
+                            if (args[i] != null 
+                                && args[i] != pi[i].ParameterType 
+                                && !args[i].IsSubclassOf(pi[i].ParameterType)
+                                && !args[i].IsAssignableFrom
+                                )
                             {
                                 accord = false;
                                 break;
@@ -369,7 +380,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return null;
         }
-        #endregion
+#endregion
 
     }
 }

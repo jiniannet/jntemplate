@@ -87,13 +87,13 @@ namespace JinianNet.JNTemplate
             else
             {
                 _stringComparison = StringComparison.Ordinal;
-                _bindingFlags = BindingFlags.Default;
+                _bindingFlags = BindingFlags.DeclaredOnly;
                 _stringComparer = StringComparer.Ordinal;
             }
             if (directories == null)
             {
                 _resourceDirectories = new String[] {
-                    Environment.CurrentDirectory
+                    //Environment.CurrentDirectory
                 };
             }
             else

@@ -12,7 +12,10 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Context
     /// </summary>
-    public class TemplateContext : ICloneable
+    public class TemplateContext
+#if NOTDNX
+        : ICloneable
+#endif
     {
         private VariableScope _variableScope;
         private String _currentPath;
@@ -48,7 +51,7 @@ namespace JinianNet.JNTemplate
             this._stripWhiteSpace = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
             if (String.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
             {
-                this._charset = Encoding.Default;
+                this._charset = Encoding.UTF8;
             }
             else
             {
@@ -169,7 +172,7 @@ namespace JinianNet.JNTemplate
             return ctx;
         }
 
-        #region ICloneable 成员
+#region ICloneable 成员
         /// <summary>
         /// 浅克隆当前实例
         /// </summary>
@@ -179,6 +182,6 @@ namespace JinianNet.JNTemplate
             return this.MemberwiseClone();
         }
 
-        #endregion
+#endregion
     }
 }

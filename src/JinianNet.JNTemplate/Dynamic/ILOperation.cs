@@ -2,7 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
-
+#if NOTDNX
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -27,7 +27,7 @@ namespace JinianNet.JNTemplate.Dynamic
             isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
         }
 
-        #region 获取属性或索引
+#region 获取属性或索引
         /// <summary>
         /// 获取属性或字段
         /// </summary>
@@ -152,10 +152,10 @@ namespace JinianNet.JNTemplate.Dynamic
             il.Emit(OpCodes.Ret);
             return dynamicMethod.CreateDelegate(typeof(GetPropertyOrFieldDelegate)) as GetPropertyOrFieldDelegate;
         }
-        #endregion
+#endregion
 
 
-        #region 执行方法
+#region 执行方法
         /// <summary>
         /// 执行方法
         /// </summary>
@@ -349,9 +349,9 @@ namespace JinianNet.JNTemplate.Dynamic
             return model;
 
         }
-        #endregion
+#endregion
 
-        #region 共用方法
+#region 共用方法
         private Boolean HasNull(Object[] args)
         {
             if (args != null)
@@ -458,7 +458,8 @@ namespace JinianNet.JNTemplate.Dynamic
             }
         }
 
-        #endregion
+#endregion
 
     }
 }
+#endif

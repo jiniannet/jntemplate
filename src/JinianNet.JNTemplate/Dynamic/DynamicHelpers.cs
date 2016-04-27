@@ -73,9 +73,10 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>IEnumerable</returns>
         public static IEnumerable ToIEnumerable(Object dataSource)
         {
+#if NOTDNX
             IListSource source;
+#endif
             IEnumerable result;
-
             if (dataSource == null)
             {
                 return null;
@@ -85,7 +86,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return result;
             }
-
+#if NOTDNX
             if ((source = dataSource as IListSource) != null)
             {
                 IList list = source.GetList();
@@ -113,10 +114,10 @@ namespace JinianNet.JNTemplate.Dynamic
                     return null;
                 }
             }
-
+#endif
             return null;
 
         }
-        #endregion
+#endregion
     }
 }

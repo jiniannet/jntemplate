@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate
             }
             if (encoding == null)
             {
-                encoding = Encoding.Default;
+                encoding = Encoding.UTF8;
             }
             String full;
             if (FindPath(paths, filename, out full) != -1)
@@ -136,7 +136,7 @@ namespace JinianNet.JNTemplate
             }
             if (encoding == null)
             {
-                encoding = Encoding.Default;
+                encoding = Encoding.UTF8;
             }
             return System.IO.File.ReadAllText(fullPath, encoding);
         }

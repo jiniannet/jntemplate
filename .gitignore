@@ -110,3 +110,7 @@ UpgradeLog*.XML
 /tool/JinianNet.JNTemplate.1.2.2.17.nupkg
 /tool/jiniannet.jntemplate.1.2.2.nupkg
 /tool/jiniannet.snk
+/lib/2.0/JinianNet.JNTemplate.xml
+/lib/4.0/JinianNet.JNTemplate.xml
+/src/JinianNet.JNTemplate.rar
+/UpgradeLog.htm

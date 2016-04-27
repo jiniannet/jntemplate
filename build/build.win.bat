@@ -14,12 +14,12 @@ goto SUCCESS
 
 :BUILD20
 if not exist ..\..\lib\2.0 md ..\..\lib\2.0
-%fdir%\v3.5\csc.exe /target:library /out:../../lib/2.0/JinianNet.JNTemplate.dll /doc:../../lib/2.0/JinianNet.JNTemplate.xml %key_param% /define:NET20
+%fdir%\v3.5\csc.exe /target:library /out:../../lib/2.0/JinianNet.JNTemplate.dll /doc:../../lib/2.0/JinianNet.JNTemplate.xml %key_param% /define:NET20,NOTDNX
 echo jntemplate for .net v2.0 生成完毕
 
 :BUILD40
 if not exist ..\..\lib\4.0 md ..\..\lib\4.0
-%fdir%\v4.0.30319\csc.exe /target:library /out:../../lib/4.0/JinianNet.JNTemplate.dll /doc:../../lib/4.0/JinianNet.JNTemplate.xml %key_param% /define:NET40
+%fdir%\v4.0.30319\csc.exe /target:library /out:../../lib/4.0/JinianNet.JNTemplate.dll /doc:../../lib/4.0/JinianNet.JNTemplate.xml %key_param% /define:NET40,NOTDNX
 echo jntemplate for .net v4.0 生成完毕
 
 :SUCCESS

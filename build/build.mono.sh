@@ -12,9 +12,9 @@ fi
 cd ../src/JinianNet.JNTemplate
 
 if [ ! -f "../../tool/jiniannet.snk" ]; then 
-	mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /warn:3 /nologo /o /define:NET20 /recurse:*.cs
+	mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /warn:3 /nologo /o /define:NET40,NOTDNX /recurse:*.cs
 else
-	mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /keyfile:../../tool/jiniannet.snk /warn:3 /nologo /o /define:NET20 /recurse:*.cs
+	mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /keyfile:../../tool/jiniannet.snk /warn:3 /nologo /o /define:NET40,NOTDNX /recurse:*.cs
 fi
 
 echo "build complete..."
