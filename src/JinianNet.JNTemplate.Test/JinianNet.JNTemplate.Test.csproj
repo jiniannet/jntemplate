@@ -109,12 +109,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj">
-      <Project>{3744dd16-5a83-4c50-b711-74ea11da6b27}</Project>
-      <Name>JinianNet.JNTemplate</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="html\css\layout.css" />
     <Content Include="templets\default\footer.html" />
     <Content Include="templets\default\header.html" />
@@ -144,6 +138,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj">
+      <Project>{3744dd16-5a83-4c50-b711-74ea11da6b27}</Project>
+      <Name>JinianNet.JNTemplate</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -273,7 +273,6 @@ namespace JinianNet.JNTemplate.Dynamic
                             if (args[i] != null 
                                 && args[i] != pi[i].ParameterType 
                                 && !args[i].IsSubclassOf(pi[i].ParameterType)
-                                && !args[i].IsAssignableFrom
                                 )
                             {
                                 accord = false;
