@@ -9,7 +9,9 @@ if [ ! -d "$build_path" ]; then
 mkdir "$build_path"
 fi
 
-cd ../src/JinianNet.JNTemplate
+cur_path=$(cd "$(dirname "$0")"; pwd)
+
+cd $cur_path/../src/JinianNet.JNTemplate
 
 if [ ! -f "../../tool/jiniannet.snk" ]; then 
 	mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /warn:3 /nologo /o /define:NET40,NOTDNX /recurse:*.cs
@@ -19,8 +21,6 @@ fi
 
 echo "build complete..."
 
-cd ..
-cd ..
-cd build
+cd $cur_path
 
 echo "success..."
