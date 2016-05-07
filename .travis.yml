@@ -1,7 +1,5 @@
 language: csharp
 before_install:
  - chmod +x build/build.mono.sh
-install:
-  - nuget restore JinianNet.JNTemplate.sln
 script:
   - ./build/build.mono.sh
