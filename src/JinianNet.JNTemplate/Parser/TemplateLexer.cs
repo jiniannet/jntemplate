@@ -181,9 +181,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     return true;
                 }
-
-                Char t = this._scanner.Read();
-
+                
                 if (this._scanner.Read() != '.')
                 {
                     if (this._flagMode == FlagMode.Full)

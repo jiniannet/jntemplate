@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1A18DEF-5DB0-48CD-876B-2EB28343FAC2}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7A-4ECC-A4C3-F9EB6928E472}"
 	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
 		Changelog.txt = Changelog.txt
 		Developer-ReadMe.txt = Developer-ReadMe.txt
 		License.txt = License.txt

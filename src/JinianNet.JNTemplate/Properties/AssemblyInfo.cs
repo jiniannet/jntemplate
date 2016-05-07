@@ -1,4 +1,4 @@
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
@@ -16,5 +16,5 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(true)]
 [assembly: CLSCompliant(true)]
 [assembly: Guid("de260545-c1e6-4349-bfd2-da6ce96393dd")]
-[assembly: AssemblyVersion("1.3.1.0")] //20151202
+[assembly: AssemblyVersion("1.3.1.1")] //20151202
 [assembly: AssemblyFileVersion("1.3.1")]

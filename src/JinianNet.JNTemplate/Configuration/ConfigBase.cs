@@ -133,13 +133,19 @@ namespace JinianNet.JNTemplate.Configuration
         {
             Dictionary<String, String> dic = new Dictionary<String, String>();
             PropertyInfo[] pis = this.GetType().GetProperties();
+#if NOTDNX
             Type type = typeof(VariableAttribute);
-            for(Int32 i = 0; i < pis.Length; i++)
+#endif
+            for (Int32 i = 0; i < pis.Length; i++)
             {
+#if NOTDNX
                 if( Attribute.IsDefined(pis[i], type))
                 {
                     dic[pis[i].Name] = (pis[i].GetValue(this, null) ?? string.Empty).ToString();
                 }
+#else
+                dic[pis[i].Name] = (pis[i].GetValue(this, null) ?? string.Empty).ToString();
+#endif
             }
             return dic;
         }

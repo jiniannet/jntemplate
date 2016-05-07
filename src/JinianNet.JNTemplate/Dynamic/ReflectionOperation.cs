@@ -140,7 +140,11 @@ namespace JinianNet.JNTemplate.Dynamic
         public String Eval(Object container, String expression, String format)
         {
             Object obj = Eval(container, expression);
-            if ((obj == null) || (obj == DBNull.Value))
+            if ((obj == null)
+#if NOTDNX
+                || (obj == DBNull.Value)
+#endif
+                )
             {
                 return String.Empty;
             }
@@ -177,7 +181,7 @@ namespace JinianNet.JNTemplate.Dynamic
             String[] expressionParts = expression.Split(expressionPartSeparator);
             return Eval(container, expressionParts);
         }
-        #region
+#region
         /// <summary>
         /// 执行表达式
         /// </summary>
@@ -210,10 +214,10 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             return property;
         }
-        #endregion
+#endregion
 
-        #endregion
-        #region Method
+#endregion
+#region Method
         /// <summary>
         /// 根据形参与方法名获取MethodInfo
         /// </summary>
@@ -272,7 +276,7 @@ namespace JinianNet.JNTemplate.Dynamic
                         {
                             if (args[i] != null 
                                 && args[i] != pi[i].ParameterType 
-                                && !args[i].IsSubclassOf(pi[i].ParameterType)
+                                && !args[i].GetTypeInfo().IsSubclassOf(pi[i].ParameterType)
                                 )
                             {
                                 accord = false;
@@ -288,7 +292,7 @@ namespace JinianNet.JNTemplate.Dynamic
                                     Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
                                     for (Int32 j = pi.Length - 1; j < args.Length; j++)
                                     {
-                                        if (args[j] != null && args[j] != arrType && !args[j].IsSubclassOf(arrType))
+                                        if (args[j] != null && args[j] != arrType && !args[j].GetTypeInfo().IsSubclassOf(arrType))
                                         {
                                             accord = false;
                                             break;
