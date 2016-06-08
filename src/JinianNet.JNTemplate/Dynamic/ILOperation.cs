@@ -402,7 +402,11 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             return String.Join(".", values);
         }
-
+        /// <summary>
+        /// 获取类型简写
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <returns></returns>
         private String GetTypeKeyName(string fullName)
         {
             switch (fullName)
@@ -423,7 +427,12 @@ namespace JinianNet.JNTemplate.Dynamic
                     return fullName;
             }
         }
-
+        /// <summary>
+        /// 加载局部变量
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="il"></param>
+        /// <param name="index"></param>
         private void Ldloc(Type type, ILGenerator il, Int32 index)
         {
             if (type.IsValueType)
@@ -435,6 +444,12 @@ namespace JinianNet.JNTemplate.Dynamic
                 il.Emit(OpCodes.Ldloc, index);
             }
         }
+        /// <summary>
+        /// 加载参数
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="il"></param>
+        /// <param name="index"></param>
         private void Ldarg(Type type, ILGenerator il, Int32 index)
         {
             if (type.IsValueType)
@@ -446,6 +461,12 @@ namespace JinianNet.JNTemplate.Dynamic
                 il.Emit(OpCodes.Ldarg, index);
             }
         }
+        /// <summary>
+        /// 调用方法
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="il"></param>
+        /// <param name="mi"></param>
         private void Call(Type type, ILGenerator il, MethodInfo mi)
         {
             if (mi.IsStatic || (!mi.IsAbstract && !mi.IsVirtual) || type.IsValueType)

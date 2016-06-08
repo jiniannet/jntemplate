@@ -181,7 +181,7 @@ namespace JinianNet.JNTemplate.Dynamic
             String[] expressionParts = expression.Split(expressionPartSeparator);
             return Eval(container, expressionParts);
         }
-#region
+        #region
         /// <summary>
         /// 执行表达式
         /// </summary>
@@ -214,10 +214,10 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             return property;
         }
-#endregion
+        #endregion
 
-#endregion
-#region Method
+        #endregion
+        #region Method
         /// <summary>
         /// 根据形参与方法名获取MethodInfo
         /// </summary>
@@ -245,7 +245,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     return method;
                 }
-            } 
+            }
 
 
             //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
@@ -274,9 +274,13 @@ namespace JinianNet.JNTemplate.Dynamic
                         accord = true;
                         for (Int32 i = 0; i < pi.Length - 1; i++)
                         {
-                            if (args[i] != null 
-                                && args[i] != pi[i].ParameterType 
+                            if (args[i] != null
+                                && args[i] != pi[i].ParameterType
+#if NOTDNX
+                                && !args[i].IsSubclassOf(pi[i].ParameterType)
+#else
                                 && !args[i].GetTypeInfo().IsSubclassOf(pi[i].ParameterType)
+#endif
                                 )
                             {
                                 accord = false;
@@ -292,7 +296,13 @@ namespace JinianNet.JNTemplate.Dynamic
                                     Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
                                     for (Int32 j = pi.Length - 1; j < args.Length; j++)
                                     {
-                                        if (args[j] != null && args[j] != arrType && !args[j].GetTypeInfo().IsSubclassOf(arrType))
+                                        if (args[j] != null && args[j] != arrType
+#if NOTDNX
+                                 && !args[j].IsSubclassOf(arrType)
+#else
+                                 &&!args[j].GetTypeInfo().IsSubclassOf(arrType)
+#endif
+                                            )
                                         {
                                             accord = false;
                                             break;
@@ -383,7 +393,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return null;
         }
-#endregion
+        #endregion
 
     }
 }
