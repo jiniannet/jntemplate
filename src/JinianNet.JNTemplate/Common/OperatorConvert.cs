@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Common
     /// <summary>
     /// 操作符处理类
     /// </summary>
-    public class OperatorHelpers
+    public class OperatorConvert
     {
         /// <summary>
         /// 将枚举的操作符转换为字符串形式

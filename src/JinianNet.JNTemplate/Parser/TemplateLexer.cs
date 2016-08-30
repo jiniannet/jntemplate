@@ -205,8 +205,8 @@ namespace JinianNet.JNTemplate.Parser
                     else
                     {
                         Char value = this._scanner.Read();
-                        if (((value == '(' || Common.ParserHelpers.IsWord(value)) && Common.ParserHelpers.IsWord(this._scanner.Read(-1)))
-                        || (Common.ParserHelpers.IsWord(value) && (this._scanner.Read(-1) == '.')))
+                        if (((value == '(' || Common.Utility.IsWord(value)) && Common.Utility.IsWord(this._scanner.Read(-1)))
+                        || (Common.Utility.IsWord(value) && (this._scanner.Read(-1) == '.')))
                         {
                             return false;
                         }

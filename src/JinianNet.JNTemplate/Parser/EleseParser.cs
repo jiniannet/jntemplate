@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Parser
             if (tc != null
                 && parser != null
                 && tc.Count == 1
-                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_ELSE))
+                && Common.Utility.IsEqual(tc.First.Text, Field.KEY_ELSE))
             {
                 return new ElseTag();
             }

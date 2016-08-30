@@ -24,12 +24,12 @@ namespace JinianNet.JNTemplate.Parser
             if (tc != null
                 && parser != null
                 && tc.Count > 0 
-                && Common.ParserHelpers.IsEqual(Field.KEY_FOREACH, tc.First.Text))
+                && Common.Utility.IsEqual(Field.KEY_FOREACH, tc.First.Text))
             {
                 if (tc.Count > 5
                     && tc[1].TokenKind == TokenKind.LeftParentheses
                     && tc[2].TokenKind == TokenKind.TextData
-                    && Common.ParserHelpers.IsEqual(tc[3].Text, Field.KEY_IN)
+                    && Common.Utility.IsEqual(tc[3].Text, Field.KEY_IN)
                     && tc.Last.TokenKind == TokenKind.RightParentheses)
                 {
                     ForeachTag tag = new ForeachTag();

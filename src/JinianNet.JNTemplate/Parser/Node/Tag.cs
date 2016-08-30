@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Parser.Node
         public virtual Boolean ToBoolean(TemplateContext context)
         {
             Object value = Parse(context);
-            return Common.Calculator.CalculateBoolean(value);
+            return Common.ExpressionEvaluator.CalculateBoolean(value);
         }
 
         /// <summary>

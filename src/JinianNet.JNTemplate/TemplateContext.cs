@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate
         {
             if (data == null)
             {
-                throw new ArgumentException("data");
+                throw new ArgumentException("\"data\" cannot be null.");
             };
             String charset;
             this._variableScope = data;
@@ -161,7 +161,7 @@ namespace JinianNet.JNTemplate
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException("\"context\" cannot be null.");
             }
             TemplateContext ctx = new TemplateContext();
             ctx.TempData = new VariableScope(context.TempData);

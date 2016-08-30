@@ -12,19 +12,19 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 动态辅助类
     /// </summary>
-    public class DynamicHelpers
+    public class DynamicHelper
     {
-        private static IDynamicOperation helper;
+        private static IProvider provider;
         /// <summary>
         /// DynamicHelpers
         /// </summary>
-        internal static IDynamicOperation Instance
+        internal static IProvider Instance
         {
             get
             {
-                if (helper == null)
+                if (provider == null)
                 {
-                    helper = new ReflectionOperation();
+                    provider = new ReflectionProvider();
                     //if (Engine.Runtime.Cache == null)
                     //{
                     //    helper = new ReflectionHelpers();
@@ -35,11 +35,11 @@ namespace JinianNet.JNTemplate.Dynamic
                     //}
                 }
 
-                return helper;
+                return provider;
             }
             set
             {
-                helper = value;
+                provider = value;
             }
         }
 
@@ -118,6 +118,6 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
 
         }
-#endregion
+        #endregion
     }
 }

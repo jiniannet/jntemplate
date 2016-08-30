@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 反射辅助类
     /// </summary>
-    public class ReflectionOperation : IDynamicOperation
+    public class ReflectionProvider : IProvider
     {
         private readonly Char[] expressionPartSeparator;
         //private readonly Char[] indexExprEndChars;
@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <summary>
         /// 反射构造函数
         /// </summary>
-        public ReflectionOperation()
+        public ReflectionProvider()
         {
             expressionPartSeparator = new Char[] { '.' };
             //indexExprEndChars = new Char[] { ']', ')' };

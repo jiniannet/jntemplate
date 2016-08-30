@@ -40,7 +40,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 return null;
             }
-            return Dynamic.DynamicHelpers.GetPropertyOrField(baseValue, this._name);
+            return Dynamic.DynamicHelper.GetPropertyOrField(baseValue, this._name);
         }
 
     }

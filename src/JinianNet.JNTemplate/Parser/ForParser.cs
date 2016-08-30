@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Parser
             if (tc != null
                 && parser != null
                 && tc.Count > 3 
-                && Common.ParserHelpers.IsEqual(Field.KEY_FOR, tc.First.Text))
+                && Common.Utility.IsEqual(Field.KEY_FOR, tc.First.Text))
             {
 
                 if (tc[1].TokenKind == TokenKind.LeftParentheses

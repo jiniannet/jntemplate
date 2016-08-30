@@ -16,13 +16,13 @@ namespace JinianNet.JNTemplate.Dynamic
     /// IL操作类
     /// 注：本类并非最终版本，请勿使用本类
     /// </summary>
-    public class ILOperation : IDynamicOperation
+    public class ILProvider : IProvider
     {
         private Regex isNumberRegex;
         /// <summary>
         /// IL构造函数
         /// </summary>
-        public ILOperation()
+        public ILProvider()
         {
             isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
         }

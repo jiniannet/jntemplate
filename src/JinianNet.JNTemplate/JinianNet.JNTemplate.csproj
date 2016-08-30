@@ -53,18 +53,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caching\MemoryCache.cs" />
-    <Compile Include="Common\OperatorHelpers.cs" />
+    <Compile Include="Common\OperatorConvert.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Configuration\VariableAttribute.cs" />
-    <Compile Include="Dynamic\DynamicHelpers.cs" />
+    <Compile Include="Dynamic\DynamicHelper.cs" />
     <Compile Include="Dynamic\DynamicMethodInfo.cs" />
     <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
     <Compile Include="Dynamic\GetPropertyOrFieldDelegate.cs" />
-    <Compile Include="Dynamic\IDynamicOperation.cs" />
-    <Compile Include="Dynamic\ILOperation.cs" />
-    <Compile Include="Dynamic\ReflectionOperation.cs" />
+    <Compile Include="Dynamic\IProvider.cs" />
+    <Compile Include="Dynamic\ILProvider.cs" />
+    <Compile Include="Dynamic\ReflectionProvider.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />
@@ -73,7 +73,7 @@
     <Compile Include="FuncHandler.cs" />
     <Compile Include="Caching\ICache.cs" />
     <Compile Include="ITemplate.cs" />
-    <Compile Include="Common\Calculator.cs" />
+    <Compile Include="Common\ExpressionEvaluator.cs" />
     <Compile Include="LexerMode.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="Parser\BooleanParser.cs" />
@@ -117,7 +117,6 @@
     <Compile Include="Parser\Node\VariableTag.cs" />
     <Compile Include="Parser\NumberParser.cs" />
     <Compile Include="Parser\TagTypeResolver.cs" />
-    <Compile Include="Common\ParserHelpers.cs" />
     <Compile Include="Parser\SetParser.cs" />
     <Compile Include="Parser\StringParser.cs" />
     <Compile Include="Parser\TemplateLexer.cs" />

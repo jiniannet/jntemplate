@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Parser.Node
             {
                 if (Children[i] is TextTag)
                 {
-                    value[i] = Common.OperatorHelpers.Parse(Children[i].Parse(context).ToString());
+                    value[i] = Common.OperatorConvert.Parse(Children[i].Parse(context).ToString());
                 }
                 else
                 {
@@ -32,9 +32,9 @@ namespace JinianNet.JNTemplate.Parser.Node
                 }
             }
 
-            Stack<Object> stack = Common.Calculator.ProcessExpression(value);
+            Stack<Object> stack = Common.ExpressionEvaluator.ProcessExpression(value);
 
-            return Common.Calculator.Calculate(stack);
+            return Common.ExpressionEvaluator.Calculate(stack);
         }
 
     }

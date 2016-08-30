@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Parser
             //支持写法：简写格式：
             //常规格式：
             if (tc.Count > 5
-                && Common.ParserHelpers.IsEqual(tc.First.Text, Field.KEY_SET)
+                && Common.Utility.IsEqual(tc.First.Text, Field.KEY_SET)
                 && tc[1].TokenKind == TokenKind.LeftParentheses
                 && tc[3].Text == "="
                 && tc.Last.TokenKind == TokenKind.RightParentheses)

@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Common
     /// <summary>
     /// 计算器
     /// </summary>
-    public class Calculator
+    public class ExpressionEvaluator
     {
         #region Weights Array
         private static readonly String[] _numberWeights = new String[] {
@@ -194,7 +194,7 @@ namespace JinianNet.JNTemplate.Common
                             }
                             j = i;
                         }
-                        result.Add(OperatorHelpers.Parse(value[i].ToString()));
+                        result.Add(OperatorConvert.Parse(value[i].ToString()));
                         j++;
                         break;
                 }
@@ -227,8 +227,8 @@ namespace JinianNet.JNTemplate.Common
                 }
                 else
                 {
-                    fullName = "System.String";
-                    value[i] = String.Empty;
+                    fullName = "System.Object";
+                    value[i] = null;
                 }
                 switch (fullName)
                 {
@@ -335,6 +335,19 @@ namespace JinianNet.JNTemplate.Common
 
         #region Calculate
         /// <summary>
+        /// 获取类型
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static Type GetType(Object value)
+        {
+            if (value == null)
+            {
+                return typeof(Object);
+            }
+            return value.GetType();
+        }
+        /// <summary>
         /// 计算结果
         /// </summary>
         /// <param name="x">值一</param>
@@ -353,8 +366,8 @@ namespace JinianNet.JNTemplate.Common
                 return CalculateAnd(x, y, value);
             }
 
-            Type tX = x.GetType();
-            Type tY = y.GetType();
+            Type tX = GetType(x);
+            Type tY = GetType(y); ;
 
             if (IsNumber(tX.FullName) && IsNumber(tY.FullName))
             {
@@ -428,6 +441,7 @@ namespace JinianNet.JNTemplate.Common
                 return Calculate(x.ToString(), y.ToString(), value);
             if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
                 return Calculate((DateTime)x, (DateTime)y, value);
+
             switch (value)
             {
                 case "==":
@@ -436,6 +450,27 @@ namespace JinianNet.JNTemplate.Common
                     return !Equals(x, y, tX, tY);
                 case "+":
                     return String.Concat(x.ToString(),y.ToString());
+                case ">=":
+                case ">":
+                case "<=":
+                case "<":
+                    if(x!=null && y != null)
+                    {
+                        string strX, strY;
+                        Single fx, fy;
+                        if(!String.IsNullOrEmpty(strX=x.ToString()) 
+                            && !String.IsNullOrEmpty(strY = y.ToString())
+                            && Single.TryParse(strX,out fx)
+                            && Single.TryParse(strY, out fy))
+                        {
+                            return Calculate(fx,fy,value);
+                        }
+                    }
+                    if (value.Length > 1)
+                    {
+                        return Equals(x, y, tX, tY);
+                    }
+                    return false;
                 default:
                     throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Object\" and \"Object\""));
             }
@@ -530,7 +565,7 @@ namespace JinianNet.JNTemplate.Common
                 {
                     Object y = stack.Pop();
                     Object x = stack.Pop();
-                    stack.Push(Calculate(x, y, OperatorHelpers.ToString((Operator)obj)));
+                    stack.Push(Calculate(x, y, OperatorConvert.ToString((Operator)obj)));
                 }
                 else
                 {
