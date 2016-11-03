@@ -44,7 +44,20 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("Begin30", render);
         }
 
+        /// <summary>
+        /// Dynamic定义
+        /// </summary>
+        public void TestDynamic()
+        {
+            var templateContent = "$ViewBag.test";
+            dynamic viewBag = new JinianNet.JNTemplate.DynamicObject();
+            viewBag.test = "来吧！一起狂欢吧！";
+            var template = new Template(templateContent);
+            template.Set("ViewBag", viewBag);
 
+            var render = template.Render();
+        }
+        
         /// <summary>
         /// 测试计算表达式
         /// </summary>
