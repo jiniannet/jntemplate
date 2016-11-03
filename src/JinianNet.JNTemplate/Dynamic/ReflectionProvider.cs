@@ -86,6 +86,10 @@ namespace JinianNet.JNTemplate.Dynamic
             if (!Char.IsDigit(propName[0]))
             {
 #if !NET20_NOTUSER
+                if (t == typeof(JinianNet.JNTemplate.DynamicObject))
+                {
+                    return (container as DynamicObject)?.GetPropertyValue(propName);
+                }
                 PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
                 //取属性
                 if (p != null)
