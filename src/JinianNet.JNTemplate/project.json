@@ -2,25 +2,21 @@
   "version": "1.3.1.1",
   "description": "Open source templating engine",
   "authors": [ "JinianNet.Com" ],
-  "tags": [ "templating engine","template","template engine"],
+  "tags": [ "templating engine", "template", "template engine" ],
   "projectUrl": "http://www.jiniannet.com",
   "licenseUrl": "https://github.com/jiniannet/jntemplate/blob/master/License.txt",
-
-  "dependencies": {
-  },
 
   "commands": {
     "JinianNet.JNTemplate": "JinianNet.JNTemplate"
   },
 
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": {
-      "dependencies": {
-        "System.Collections": "4.0.10-beta-23019",
-        "Microsoft.CSharp": "4.0.0-beta-23019",
-        "System.IO.FileSystem": "4.0.0"
-      }
+    "netstandard1.6": {
+      "imports": "dnxcore50"
     }
   }
 }
