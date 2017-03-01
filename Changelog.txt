@@ -1,8 +1,8 @@
 Version 1.3(1.3.2) - 待发布
 ==============================================
-- 增加.net core支持
-- 修复一个表达式计算错误
-
+- 增加.net core支持(JinianNet.JNTemplate-core.sln,原有JinianNet.JNTemplate.sln解决方案，如果生成报错，请手动删除src/JinianNet.JNTemplate/project.json文件)
+- 修复计算表达式时有可能超出预期 的问题
+ 
 Version 1.3(1.3.1) - 12/01/2016
 ==============================================
 - 修复一处BUG
