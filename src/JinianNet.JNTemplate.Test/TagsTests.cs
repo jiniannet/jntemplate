@@ -59,6 +59,48 @@ namespace JinianNet.JNTemplate.Test
         }
 
         /// <summary>
+        /// 测试计算表达式1
+        /// </summary>
+        [Fact]
+        public void TestExpression1()
+        {
+            var templateContent = "${3000-0-1000-0}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("2000", render);
+        }
+
+
+        /// <summary>
+        /// 测试计算表达式1
+        /// </summary>
+        [Fact]
+        public void TestExpressio3()
+        {
+            var templateContent = "${3000-1000+200-20}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("2180", render);
+        }
+
+
+        /// <summary>
+        /// 测试计算表达式1
+        /// </summary>
+        [Fact]
+        public void TestExpressio4()
+        {
+            var templateContent = "${3000-1000+8-8+8-8}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("2000", render);
+        }
+
+
+        /// <summary>
         /// 测试复杂的计算表达式
         /// </summary>
         [Fact]

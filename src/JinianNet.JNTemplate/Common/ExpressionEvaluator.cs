@@ -246,13 +246,15 @@ namespace JinianNet.JNTemplate.Common
                             case "RightParentheses":
                                 while (stack.Count > 0)
                                 {
-                                    if (stack.Peek().ToString() == "(")
+                                    object op;
+                                    if ((op = stack.Pop()).ToString() == "(")
                                     {
-                                        stack.Pop();
                                         break;
                                     }
                                     else
-                                        post.Push(stack.Pop());
+                                    {
+                                        post.Push(op);
+                                    }
                                 }
                                 break;
                             case "+":
@@ -293,7 +295,7 @@ namespace JinianNet.JNTemplate.Common
                                 {
                                     Object eX = stack.Peek();
                                     Object eY = value[i];
-                                    if (GetPriority(eY.ToString()) >= GetPriority(eX.ToString()))
+                                    if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
                                     {
                                         stack.Push(eY);
                                     }
@@ -301,7 +303,7 @@ namespace JinianNet.JNTemplate.Common
                                     {
                                         while (stack.Count > 0)
                                         {
-                                            if (GetPriority(eX.ToString()) > GetPriority(eY.ToString()) && stack.Peek().ToString() != "(")// && stack.Peek() != '('
+                                            if (GetPriority(eX.ToString()) >= GetPriority(eY.ToString()) && stack.Peek().ToString() != "(")// && stack.Peek() != '('
                                             {
                                                 post.Push(stack.Pop());
                                             }
@@ -449,21 +451,21 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return !Equals(x, y, tX, tY);
                 case "+":
-                    return String.Concat(x.ToString(),y.ToString());
+                    return String.Concat(x.ToString(), y.ToString());
                 case ">=":
                 case ">":
                 case "<=":
                 case "<":
-                    if(x!=null && y != null)
+                    if (x != null && y != null)
                     {
                         string strX, strY;
                         Single fx, fy;
-                        if(!String.IsNullOrEmpty(strX=x.ToString()) 
+                        if (!String.IsNullOrEmpty(strX = x.ToString())
                             && !String.IsNullOrEmpty(strY = y.ToString())
-                            && Single.TryParse(strX,out fx)
+                            && Single.TryParse(strX, out fx)
                             && Single.TryParse(strY, out fy))
                         {
-                            return Calculate(fx,fy,value);
+                            return Calculate(fx, fy, value);
                         }
                     }
                     if (value.Length > 1)
@@ -491,7 +493,7 @@ namespace JinianNet.JNTemplate.Common
 
         private static Object CalculateOr(Object x, Object y, String value)
         {
-            if(CalculateBoolean(x))
+            if (CalculateBoolean(x))
             {
                 return true;
             }

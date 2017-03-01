@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate
         /// 模板上下文
         /// </summary>
         public TemplateContext()
-            : this(new VariableScope())
+            : this(null)
         {
 
         }
@@ -39,12 +39,8 @@ namespace JinianNet.JNTemplate
         /// <param name="data">数据</param>
         public TemplateContext(VariableScope data)
         {
-            if (data == null)
-            {
-                throw new ArgumentException("\"data\" cannot be null.");
-            };
             String charset;
-            this._variableScope = data;
+            this._variableScope = data ?? new VariableScope();
             this._errors = new List<System.Exception>();
             this._currentPath = null;
             this._throwErrors = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("ThrowErrors"));
