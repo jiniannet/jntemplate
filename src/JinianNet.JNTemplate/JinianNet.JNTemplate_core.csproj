@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>JinianNet.JNTemplate</AssemblyName>
+    <RootNamespace>JinianNet.JNTemplate</RootNamespace>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.3.2.0</Version>
+    <Authors>JinianNet.com</Authors>
+    <Company>JinianNet.com</Company>
+    <Product>JNTemplate</Product>
+    <Description>Open source templating engine for .net/mono!</Description>
+    <Copyright>© JinianNet.com. All rights reserved.</Copyright>
+    <PackageIconUrl>http://www.jiniannet.com/logo_nuget.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/jiniannet/jntemplate/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.jiniannet.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jiniannet/jntemplate</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>templating engine template 模板引擎</PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <NeutralLanguage />
+    <SignAssembly>False</SignAssembly>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp1.1\JinianNet.JNTemplate.xml</DocumentationFile>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
+    <NoWarn>1701;1702;1705</NoWarn>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+</Project>
+ 

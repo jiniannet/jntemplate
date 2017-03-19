@@ -184,7 +184,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if(dd)}yes${else}no$end";
             var template = new Template(templateContent);
-            template.Set("dd", new System.Data.DataTable());
+            template.Set("dd", new object());
 
             var render = template.Render();
             Assert.Equal("yes", render);
@@ -343,7 +343,11 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$load(\"include/header.txt\")";
             var template = new Template(templateContent);
             template.Set("name", "jntemplate");
+#if NETCOREAPP1_1
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
+#else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
+#endif
             var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
         }
@@ -357,7 +361,11 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$include(\"include/header.txt\")";
             var template = new Template(templateContent);
             template.Set("name", "jntemplate");
-            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets"+ System.IO.Path.DirectorySeparatorChar.ToString() + "default";
+#if NETCOREAPP1_1
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
+#else
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default"; 
+#endif
             var render = template.Render();
             Assert.Equal("你好，$name", render);
         }
@@ -437,8 +445,9 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
 
+#if !NETCOREAPP1_1
         /// <summary>
-        /// 测试方法的params参数
+        /// 测试方法的params参数  .NET core中不支持
         /// </summary>
         [Fact]
         public void TestFunctionParams()
@@ -451,7 +460,7 @@ namespace JinianNet.JNTemplate.Test
         }
 
         /// <summary>
-        /// 测试方法的params参数2
+        /// 测试方法的params参数2 .NET core中不支持
         /// </summary>
         [Fact]
         public void TestFunctionParams2()
@@ -462,6 +471,8 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
+
+#endif
 
         /// <summary>
         /// 测试变量

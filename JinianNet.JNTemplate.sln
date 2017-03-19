@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate", "src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj", "{3744DD16-5A83-4C50-B711-74EA11DA6B27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272-B7F5-4A30-8DCD-C8EB022BCD09}"
 	ProjectSection(SolutionItems) = preProject
+		build\build.core.bat = build\build.core.bat
 		build\build.mono.sh = build\build.mono.sh
 		build\build.win.bat = build\build.win.bat
 		build\build.win.field.bat = build\build.win.field.bat
@@ -60,7 +61,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7F607362-0680-4751-B1DC-621219294AE3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 		{3744DD16-5A83-4C50-B711-74EA11DA6B27} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+		{7F607362-0680-4751-B1DC-621219294AE3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 	EndGlobalSection
 EndGlobal

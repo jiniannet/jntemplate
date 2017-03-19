@@ -5,7 +5,6 @@ namespace JinianNet.JNTemplate.Test.ViewModel
 	/// <summary>
 	/// Category:实体类(属性说明自动提取数据库字段的描述信息)
 	/// </summary>
-	[Serializable]
 	public partial class Category : Model.Category
 	{
         private List<Category> _children = new List<Category>();

@@ -2,6 +2,9 @@ version: 1.0.{build}
 image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
+install:
+  ren C:\projects\jntemplate\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
+  ren C:\projects\jntemplate\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
 build:
   project: JinianNet.JNTemplate-core.sln
   verbosity: minimal
