@@ -3,7 +3,7 @@ image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
 install:
-  C:\projects\jntemplate\tool\.netcore_env_config.bat
+  appveyor_core_conf.bat
 build:
   project: JinianNet.JNTemplate-core.sln
   verbosity: minimal
