@@ -3,8 +3,7 @@ image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
 install:
-  ren C:\projects\jntemplate\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
-  ren C:\projects\jntemplate\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
+  C:\projects\jntemplate\tool\.NETCOREª∑æ≥≈‰÷√.bat
 build:
   project: JinianNet.JNTemplate-core.sln
   verbosity: minimal
