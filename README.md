@@ -1,4 +1,7 @@
 ﻿# JNTemplate  [![Build Status](https://travis-ci.org/jiniannet/jntemplate.svg?branch=master)](https://travis-ci.org/jiniannet/jntemplate)
+## 说明
+JNTemplate已经支持.net core(NETCOREAPP1.1),使用方法，运行tool目录下的.netcore_env_config.bat文件，然后用vs2017打开JinianNet.JNTemplate_core.sln即可。
+VS2015/2013/2012直接使用解决案JinianNet.JNTemplate.sln
 
 ## JNTemplate 是什么
 
