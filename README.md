@@ -26,7 +26,7 @@ template.Render(Response.Output);//呈现解析结果
 
 ### 如何下载JNTemplate
 
-1. 官网下载:[http://bbs.jiniannet.com/forum.php?mod=viewthread&tid=2&extra=page%3D1](http://bbs.jiniannet.com/forum.php?mod=viewthread&tid=2&extra=page%3D1)
+1. NUGET:[http://www.nuget.org/packages/JinianNet.JNTemplate/](http://www.nuget.org/packages/JinianNet.JNTemplate/)
 2. 源代码克隆:[https://github.com/jiniannet/jntemplate.git](https://github.com/jiniannet/jntemplate.git)
 
 
@@ -39,9 +39,8 @@ git clone https://github.com/jiniannet/jntemplate.git
 
 1. 开源协议：[https://github.com/jiniannet/jntemplate/blob/master/License.txt](https://github.com/jiniannet/jntemplate/blob/master/License.txt)
 2. 开源主页：[https://github.com/jiniannet/jntemplate/](https://github.com/jiniannet/jntemplate/)
-3. 官方网站：[http://www.jiniannet.com](http://www.jiniannet.com)
-4. 交流社区：[http://bbs.jiniannet.com](http://bbs.jiniannet.com)
-5. 国内代码库：[http://git.oschina.net/jiniannet/jntemplate](http://git.oschina.net/jiniannet/jntemplate)
+3. 官方网站：[http://www.jiniannet.com](http://www.jiniannet.com) 
+4. 国内代码库：[http://git.oschina.net/jiniannet/jntemplate](http://git.oschina.net/jiniannet/jntemplate)
 
 ### 联系方式：
 1. Email:i@jiniannet.com
