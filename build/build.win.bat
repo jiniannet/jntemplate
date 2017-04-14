@@ -5,6 +5,9 @@ set fdir=%WINDIR%\Microsoft.NET\Framework
 set key_param=/warn:3 /nologo /o /recurse:*.cs
 
 cd ../src/JinianNet.JNTemplate
+rd obj\Debug /s /q
+rd obj\Release /s /q
+del obj\*.* /q
 
 if exist ../../tool/jiniannet.snk set key_param=/keyfile:../../tool/jiniannet.snk %key_param%
 
