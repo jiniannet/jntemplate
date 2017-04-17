@@ -261,6 +261,9 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("70206", render);
         }
 
+
+
+
         /// <summary>
         /// 测试复合标签
         /// </summary>
@@ -407,6 +410,78 @@ namespace JinianNet.JNTemplate.Test
         }
 
 
+
+
+        /// <summary>
+        /// 测试DataTable
+        /// </summary>
+        [Fact]
+        public void TestTable1()
+        {
+            var dt = new System.Data.DataTable();
+            dt.Columns.Add("name", typeof(string)); 
+            var dr = dt.NewRow();
+            dr["name"] = "Han Meimei"; 
+
+            dt.Rows.Add(dr);
+
+
+            var templateContent = "$dt.Rows.get_Item(0).get_Item(\"name\")";
+            var template = new Template(templateContent);
+            template.Set("dt", dt);
+            var render = template.Render();
+            Assert.Equal("Han Meimei", render);
+        }
+
+        /// <summary>
+        /// 测试DataTable
+        /// </summary>
+        [Fact]
+        public void TestTable2()
+        {
+            var dt = new System.Data.DataTable();
+            dt.Columns.Add("name", typeof(string));
+            var dr = dt.NewRow();
+            dr["name"] = "Han Meimei";
+
+            dt.Rows.Add(dr);
+
+
+            var templateContent = @"
+$foreach(dr in dt.Rows) 
+    $dr.get_Item(""name"")
+$end 
+";
+            var template = new Template(templateContent);
+            template.Set("dt", dt);
+            var render = template.Render();
+            Assert.Equal("Han Meimei", render);
+        }
+
+        /// <summary>
+        /// 测试DataTable
+        /// </summary>
+        [Fact]
+        public void TestTable3()
+        {
+            var dt = new System.Data.DataTable();
+            dt.Columns.Add("name", typeof(string));
+            var dr = dt.NewRow();
+            dr["name"] = "Han Meimei";
+
+            dt.Rows.Add(dr); 
+            var templateContent = @" 
+$foreach(dr in dt.Rows) 
+    $foreach(data in dr.ItemArray)
+        值:$data
+    $end 
+$end
+";
+            var template = new Template(templateContent);
+            template.Set("dt", dt);
+            var render = template.Render();
+            Assert.Equal("值:Han Meimei", render);
+        }
         /// <summary>
         /// 测试委托方法
         /// </summary>
