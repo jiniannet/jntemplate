@@ -165,10 +165,10 @@ namespace JinianNet.JNTemplate.Parser
                 else
 #endif
                     if (Char.IsLetter(this._scanner.Read(1)))
-                    {
-                        this._flagMode = FlagMode.Logogram;
-                        return true;
-                    }
+                {
+                    this._flagMode = FlagMode.Logogram;
+                    return true;
+                }
             }
             return false;
         }
@@ -181,7 +181,7 @@ namespace JinianNet.JNTemplate.Parser
                 {
                     return true;
                 }
-                
+
                 if (this._scanner.Read() != '.')
                 {
                     if (this._flagMode == FlagMode.Full)
@@ -440,7 +440,12 @@ namespace JinianNet.JNTemplate.Parser
                 if (this._scanner.Read() == '+' || this._scanner.Read() == '-') //正负数符号识别
                 {
                     if (Char.IsNumber(this._scanner.Read(1)) &&
-                        (this._kind == TokenKind.Operator || this._kind == TokenKind.LeftParentheses))
+                        (this._kind != TokenKind.Number
+                        && this._kind != TokenKind.RightBracket
+                        && this._kind != TokenKind.RightParentheses
+                        && this._kind != TokenKind.String 
+                        && this._kind != TokenKind.Tag
+                        && this._kind != TokenKind.TextData))
                     {
                         tk = TokenKind.Number;
                     }
