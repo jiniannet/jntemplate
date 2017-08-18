@@ -9,6 +9,7 @@ if not exist ..\..\lib\netcoreapp1.1 md ..\..\lib\netcoreapp1.1
 ren .\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
 echo ¿ªÊ¼build
 dotnet build JinianNet.JNTemplate_core.csproj --configuration Release --output ..\..\lib\netcoreapp1.1 --framework netcoreapp1.1 
+dotnet build JinianNet.JNTemplate_core.csproj --configuration Release --output ..\..\lib\netcoreapp2.0 --framework netcoreapp2.0 
 ren .\Properties\AssemblyInfo.cs.build.tmp AssemblyInfo.cs
 cd ..
 cd ..
