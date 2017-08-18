@@ -18,16 +18,25 @@ namespace JinianNet.JNTemplate.Test
             Engine.Configure(conf);
         }
 
-        public void Constructor()
+
+        /// <summary>
+        /// 测试负数
+        /// </summary>
+        [Fact]
+        public void TestNegative()
         {
 
-            string message = "参考用";
-            var templateContent = "$message";
+            var templateContent = "$test(8,-2)";
             var template = new Template(templateContent);
-            template.Set("message", message);
+            template.Set("test", new JinianNet.JNTemplate.FuncHandler(args =>
+            {
+                var r = int.Parse(args[0].ToString()) + int.Parse(args[1].ToString());
+                return r.ToString();
+            }));
             var render = template.Render();
 
-            Assert.Equal("参考用", render);
+            Assert.Equal("6", render);
+
         }
 
         /// <summary>
@@ -364,7 +373,7 @@ namespace JinianNet.JNTemplate.Test
 #if NETCOREAPP1_1
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
-            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default"; 
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #endif
             var render = template.Render();
             Assert.Equal("你好，$name", render);
