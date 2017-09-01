@@ -24,7 +24,9 @@ namespace JinianNet.JNTemplate
         private static VariableScope _scope;
         private static ITagTypeResolver _tagResolver;
         private static StringComparison _stringComparison;
+#if !NETSTANDARD
         private static BindingFlags _bindingFlags;
+#endif
         private static StringComparer _stringComparer;
         private static ICache _cache;
 
@@ -229,20 +231,15 @@ namespace JinianNet.JNTemplate
             get { return _stringComparison; }
         }
 
+#if !NETSTANDARD
         /// <summary>
         /// 绑定大小写配置
         /// </summary>
-        internal static
-#if NETSTANDARD
-            Boolean
-#else
-            BindingFlags
-#endif
-            BindIgnoreCase
+        internal static  BindingFlags BindIgnoreCase
         {
             get { return _bindingFlags; }
         }
-
+#endif
         /// <summary>
         /// 字符串大小写比较配置
         /// </summary>

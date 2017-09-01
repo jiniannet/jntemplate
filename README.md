@@ -1,4 +1,4 @@
-﻿# JNTemplate  
+﻿# JNTemplate
 
 [![Build Status](https://travis-ci.org/jiniannet/jntemplate.svg?branch=master)](https://travis-ci.org/jiniannet/jntemplate)
 [![GitHub stars](https://img.shields.io/nuget/v/JinianNet.JNTemplate.svg)](https://www.nuget.org/packages/JinianNet.JNTemplate/)
@@ -7,12 +7,13 @@
 [![GitHub issues](https://img.shields.io/github/issues/jiniannet/jntemplate.svg)](https://github.com/jiniannet/jntemplate/issues)
 
 ## 说明
-| 目标框架                   | 对应解决方案
-| ------------------------   |
+
+| 目标框架                               | 对应解决方案
+| ------------------------         |------------------------ 
 | .net framework 2.X/3.X/4.X | JinianNet.JNTemplate.sln
-| mono                       | JinianNet.JNTemplate.sln
-| .net core 1.1+             | JinianNet.JNTemplate_core.sln
-| .net                       | JinianNet.JNTemplate_Standard.sln
+| mono                                   | JinianNet.JNTemplate.sln
+| .net core 1.1+                      | JinianNet.JNTemplate_core.sln
+| .net Standard 1.3+                                     | JinianNet.JNTemplate_Standard.sln
 
 ## JNTemplate 是什么
 
