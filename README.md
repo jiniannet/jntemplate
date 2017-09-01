@@ -1,7 +1,18 @@
-﻿# JNTemplate  [![Build Status](https://travis-ci.org/jiniannet/jntemplate.svg?branch=master)](https://travis-ci.org/jiniannet/jntemplate)
+﻿# JNTemplate  
+
+[![Build Status](https://travis-ci.org/jiniannet/jntemplate.svg?branch=master)](https://travis-ci.org/jiniannet/jntemplate)
+[![GitHub stars](https://img.shields.io/nuget/v/JinianNet.JNTemplate.svg)](https://www.nuget.org/packages/JinianNet.JNTemplate/)
+[![GitHub stars](https://img.shields.io/github/stars/jiniannet/jntemplate.svg)](https://github.com/jiniannet/jntemplate/stargazers)
+[![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/jiniannet/jntemplate/master/License.txt)
+[![GitHub issues](https://img.shields.io/github/issues/jiniannet/jntemplate.svg)](https://github.com/jiniannet/jntemplate/issues)
+
 ## 说明
-JNTemplate已经支持.net core(NETCOREAPP1.1),使用方法，运行tool目录下的.netcore_env_config.bat文件，然后用vs2017打开JinianNet.JNTemplate_core.sln即可。
-VS2015/2013/2012直接使用解决案JinianNet.JNTemplate.sln
+| 目标框架                   | 对应解决方案
+| ------------------------   |
+| .net framework 2.X/3.X/4.X | JinianNet.JNTemplate.sln
+| mono                       | JinianNet.JNTemplate.sln
+| .net core 1.1+             | JinianNet.JNTemplate_core.sln
+| .net                       | JinianNet.JNTemplate_Standard.sln
 
 ## JNTemplate 是什么
 

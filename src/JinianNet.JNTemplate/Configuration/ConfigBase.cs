@@ -132,19 +132,23 @@ namespace JinianNet.JNTemplate.Configuration
         public virtual Dictionary<String, String> ToDictionary()
         {
             Dictionary<String, String> dic = new Dictionary<String, String>();
-            PropertyInfo[] pis = this.GetType().GetProperties();
+#if NETSTANDARD
+            IEnumerable<PropertyInfo> pis = this.GetType().GetRuntimeProperties();
+#else
+            IEnumerable<PropertyInfo> pis = this.GetType().GetProperties();
+#endif
 #if NOTDNX
             Type type = typeof(VariableAttribute);
 #endif
-            for (Int32 i = 0; i < pis.Length; i++)
+            foreach (PropertyInfo pi in pis)
             {
 #if NOTDNX
-                if( Attribute.IsDefined(pis[i], type))
+                if( Attribute.IsDefined(pi, type))
                 {
-                    dic[pis[i].Name] = (pis[i].GetValue(this, null) ?? string.Empty).ToString();
+                    dic[pi.Name] = (pi.GetValue(this, null) ?? string.Empty).ToString();
                 }
 #else
-                dic[pis[i].Name] = (pis[i].GetValue(this, null) ?? string.Empty).ToString();
+                dic[pi.Name] = (pi.GetValue(this, null) ?? string.Empty).ToString();
 #endif
             }
             return dic;

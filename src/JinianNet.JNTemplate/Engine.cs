@@ -80,14 +80,22 @@ namespace JinianNet.JNTemplate
 
             if (Common.Utility.ToBoolean(GetEnvironmentVariable("IgnoreCase")))
             {
+#if NETSTANDARD
+                //_bindingFlags = true;
+#else
                 _bindingFlags = BindingFlags.IgnoreCase;
+#endif
                 _stringComparer = StringComparer.OrdinalIgnoreCase;
                 _stringComparison = StringComparison.OrdinalIgnoreCase;
             }
             else
             {
                 _stringComparison = StringComparison.Ordinal;
+#if NETSTANDARD
+                //_bindingFlags = false;
+#else
                 _bindingFlags = BindingFlags.DeclaredOnly;
+#endif
                 _stringComparer = StringComparer.Ordinal;
             }
             if (directories == null)
@@ -224,7 +232,13 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 绑定大小写配置
         /// </summary>
-        internal static BindingFlags BindIgnoreCase
+        internal static
+#if NETSTANDARD
+            Boolean
+#else
+            BindingFlags
+#endif
+            BindIgnoreCase
         {
             get { return _bindingFlags; }
         }

@@ -58,6 +58,12 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return info.GetValue(container, new Object[] { propIndex });
             }
+#elif NETSTANDARD
+            var info = t.GetRuntimeMethod("get_Item", new Type[] { propIndex.GetType() });
+            if (info != null)
+            {
+                return info.Invoke(container, new Object[] { propIndex });
+            }
 #else
             var info = t.GetMethod("get_Item", new Type[] { propIndex.GetType() });
             if (info != null)
@@ -86,7 +92,12 @@ namespace JinianNet.JNTemplate.Dynamic
             if (!Char.IsDigit(propName[0]))
             {
 #if !NET20_NOTUSER
-                PropertyInfo p = t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
+                PropertyInfo p =
+#if NETSTANDARD
+                    t.GetRuntimeProperty(propName);
+#else
+                    t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
+#endif
                 //取属性
                 if (p != null)
                 {
@@ -238,7 +249,10 @@ namespace JinianNet.JNTemplate.Dynamic
                 method = type.GetMethod(methodName,
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase,
                     null, args, null);
+#elif NETSTANDARD
+                method = type.GetRuntimeMethod(methodName, args);
 #else
+
                 method = type.GetMethod(methodName, args);
 #endif
                 if (method != null)
@@ -252,8 +266,12 @@ namespace JinianNet.JNTemplate.Dynamic
 
             ParameterInfo[] pi;
             Boolean accord;
-            MethodInfo[] ms = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
-
+            System.Collections.Generic.IEnumerable<MethodInfo> ms =
+#if NETSTANDARD
+                type.GetRuntimeMethods();
+#else
+                type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
+#endif
             foreach (MethodInfo m in ms)
             {
 
@@ -393,7 +411,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return null;
         }
-        #endregion
+#endregion
 
     }
 }
