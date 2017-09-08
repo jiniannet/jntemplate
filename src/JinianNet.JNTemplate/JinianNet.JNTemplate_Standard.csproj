@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <SignAssembly>True</SignAssembly> 
+    <RootNamespace>JinianNet.JNTemplate</RootNamespace>
+    <AssemblyName>JinianNet.JNTemplate</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

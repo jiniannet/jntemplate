@@ -6,4 +6,4 @@ windows操作系统：
 linux系统：
 	1.进行build目录，为build.mono.sh赋予执行权限 chmod u+x build.mono.sh
 	2.执行 ./build.mono.sh 完成后 在根目录下的lib目录中，即为生成成功的dll文件！
-	3.必须已经d成功安装mono
+	3.必须已经成功安装mono
