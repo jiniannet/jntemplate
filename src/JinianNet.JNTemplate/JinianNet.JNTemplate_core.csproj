@@ -22,7 +22,8 @@
     <NeutralLanguage />
     <SignAssembly>True</SignAssembly>
     <PreBuildEvent></PreBuildEvent>
-    <PostBuildEvent></PostBuildEvent> 
+    <PostBuildEvent></PostBuildEvent>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
