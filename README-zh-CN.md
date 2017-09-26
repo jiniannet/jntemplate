@@ -8,55 +8,55 @@
 
 [Englist](https://github.com/jiniannet/jntemplate/blob/master/README.md) | [中文](https://github.com/jiniannet/jntemplate/blob/master/README-zh-CN.md)
 
-### What is JNTemplate?
+### JNTemplate 是什么
 
-JNTemplate is a .net template engine for generating html, xml, sql, or any other formatted text output.
+极念模板引擎(JNTemplate)是一款C#语言开发的跨平台的文本解析引擎（模板引擎），它能生成任何基于文本的内容，包括且不限于html,xml,css等,让前端展示与后端代码逻辑分离。同时，它也提供了一个在WebForm与Razor之外的选择！
 
-### Features:
-- Easy to learn
-- Easy to use
-- Easy to expand
-- 100% free
+JNTemplate所有代码全部开源，且具有最小的依赖关系，能轻松实现迁移与跨平台。同时，在满足我们开源协议的前提下，大家可以自由使用，分发，和用于商业目的（具体见License.txt）。
 
-### Quickstart
+### 特点:
+- 易于学习
+- 易于使用
+- 易于扩展
+- 100%免费
 
-**Get it on NuGet!**
+### 快速开始
+
+**您可以从NuGet获取我们的发行版本**
 ```
 PM> Install-Package JinianNet.JNTemplate
 
 ```
-or
+或者（NET CORE）
 ```
 > dotnet add package JinianNet.JNTemplate
 ```
 
 
-
-
-**Building the source**
+**也可以克隆源代码自行构建**
 ```
 
 git clone https://github.com/jiniannet/jntemplate.git
 ```
 
-Windows:After cloning the repository, run build/build.win.bat
+Windows:克隆完成后,运行 build/build.win.bat
 
-Mono:After cloning the repository, run build/build.mono.sh
+Mono:克隆完成后,运行 build/build.mono.sh
 
   
   
-**Configuration**
+**配置**
 
-You can configure JNTemplate with the EngineConfig class.
+您可以使用EngineConfig类来对 JNTemplate进行配置.可配置项包括是否区分大小写，标签符号，模板工作目录等：
 ```
 var conf = Configuration.EngineConfig.CreateDefault();
-// .. configure your instance
+// .. 配置你的具体参数
 Engine.Configure(conf);
 ```
 
-**Basic Example**
+**简单示例**
 
-template code(index.html):
+模板代码(index.html):
 ```
 <!DOCTYPE html>
 <html>
@@ -72,16 +72,17 @@ template code(index.html):
 
 ```
 
-c# code:
+c# 代码:
 
 ```
 var template = (Template)Engine.LoadTemplate("C:\\wwwwroot\index.html");
-\\(Template)Engine.CreateTemplate("hello,$name!");
+\\在配置中配置了模板目录的情况下，可以省略目录，如：Engine.LoadTemplate("index.html");
+\\也可以这么写 (Template)Engine.CreateTemplate("hello,$name!");
 template.Set("name", "JNTemplate");
 var result = template.Render(); 
 ```
 
-output:
+输出结果:
 ```
 <!DOCTYPE html>
 <html>
@@ -97,10 +98,13 @@ output:
 
 ```
 
-### API
-see: www.jiniannet.com
+### API文档
+请查看: www.jiniannet.com 
 
 
-### Licenses
-Apache License 2.0
-
+### 授权
+Apache License 2.0  详细内容，请查看 License.txt
+  
+### 联系方式：
+- Email:i@jiniannet.com
+- 交流Q群:5089240 欢迎加入
