@@ -116,3 +116,7 @@ UpgradeLog*.XML
 /tool/JinianNet.JNTemplate.1.2.2.4.nupkg
 /src/JinianNet.JNTemplate/JinianNet.JNTemplate.nuget.targets
 /lib/
+/.vs/JinianNet.JNTemplate/v15/Server/sqlite3
+/src/JinianNet.JNTemplate/public.snk
+/src/JinianNet.JNTemplate/jiniannet.snk
+/tool/public.snk

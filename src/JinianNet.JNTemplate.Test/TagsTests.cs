@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Xunit;
 
 namespace JinianNet.JNTemplate.Test
@@ -17,6 +16,7 @@ namespace JinianNet.JNTemplate.Test
             conf.IgnoreCase = false;
             Engine.Configure(conf);
         }
+
 
 
         /// <summary>
@@ -37,7 +37,9 @@ namespace JinianNet.JNTemplate.Test
 
             Assert.Equal("6", render);
 
+
         }
+
 
         /// <summary>
         /// 测试SET与字符串相加
@@ -109,6 +111,55 @@ namespace JinianNet.JNTemplate.Test
         }
 
 
+        /// <summary>
+        /// 测试计算表达式
+        /// </summary>
+        [Fact]
+        public void TestExpressio5()
+        {
+
+            //var templateContent = @"${10000 != 0 +  0 + 10000}";
+            var templateContent = @"${10000 + 2 *  4 * 10}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("10080", render);
+
+        }
+
+        /// <summary>
+        /// 测试计算表达式
+        /// </summary>
+        [Fact]
+        public void TestExpressio6()
+        {
+
+            var templateContent = @"${10000 != 0 +  0 + 10000}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("False", render);
+
+        }
+
+
+
+
+        /// <summary>
+        /// 测试计算表达式
+        /// </summary>
+        [Fact]
+        public void TestExpressio7()
+        {
+
+            //var templateContent = @"${10000 != 0 +  0 + 10000}";
+            var templateContent = @"${10000 * 2 + 2 *  4 * 10 / 8 - 24 + 0 + 0 + 0 + 0 * 1 * 2 * 3 * 4}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("19986", render);
+
+        }
         /// <summary>
         /// 测试复杂的计算表达式
         /// </summary>
@@ -428,9 +479,9 @@ namespace JinianNet.JNTemplate.Test
         public void TestTable1()
         {
             var dt = new System.Data.DataTable();
-            dt.Columns.Add("name", typeof(string)); 
+            dt.Columns.Add("name", typeof(string));
             var dr = dt.NewRow();
-            dr["name"] = "Han Meimei"; 
+            dr["name"] = "Han Meimei";
 
             dt.Rows.Add(dr);
 
@@ -478,7 +529,7 @@ $end
             var dr = dt.NewRow();
             dr["name"] = "Han Meimei";
 
-            dt.Rows.Add(dr); 
+            dt.Rows.Add(dr);
             var templateContent = @" 
 $foreach(dr in dt.Rows) 
     $foreach(data in dr.ItemArray)

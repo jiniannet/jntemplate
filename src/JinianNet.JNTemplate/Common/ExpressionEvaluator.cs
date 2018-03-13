@@ -124,13 +124,11 @@ namespace JinianNet.JNTemplate.Common
                     return 7;
                 case "%":
                 case "*":
-
                 case "Percent":
                 case "Times":
-                    return 8;
                 case "/":
                 case "Divided":
-                    return 9;
+                    return 8;
                 default:
                     return 9;
             }
@@ -217,7 +215,6 @@ namespace JinianNet.JNTemplate.Common
             Stack<Object> post = new Stack<Object>();
             Stack<Object> stack = new Stack<Object>();
 
-
             for (Int32 i = 0; i < value.Length; i++)
             {
                 String fullName;
@@ -230,98 +227,88 @@ namespace JinianNet.JNTemplate.Common
                     fullName = "System.Object";
                     value[i] = null;
                 }
-                switch (fullName)
+                if (fullName != "JinianNet.JNTemplate.Operator")
                 {
+                    post.Push(value[i]);
+                    continue;
+                }
+                switch (value[i].ToString())
+                {
+                    case "(":
+                    case "LeftParentheses":
+                        stack.Push("(");
+                        break;
+                    case ")":
+                    case "RightParentheses":
+                        while (stack.Count > 0)
+                        {
+                            object op;
+                            if ((op = stack.Pop()).ToString() == "(")
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                post.Push(op);
+                            }
+                        }
+                        break;
+                    case "+":
+                    case "-":
+                    case "*":
+                    case "%":
+                    case "/":
+                    case "||":
+                    case "|":
+                    case "&&":
+                    case "&":
+                    case ">":
+                    case ">=":
+                    case "<":
+                    case "<=":
+                    case "==":
+                    case "!=":
+                    case "Plus":
+                    case "Minus":
+                    case "Times":
+                    case "Percent":
+                    case "Divided":
+                    case "LogicalOr":
+                    case "Or":
+                    case "LogicAnd":
+                    case "And":
+                    case "GreaterThan":
+                    case "GreaterThanOrEqual":
+                    case "LessThan":
+                    case "LessThanOrEqual":
+                    case "Equal":
+                    case "NotEqual":
+                        if (stack.Count == 0)
+                        {
+                            stack.Push(value[i]);
+                        }
+                        else
+                        {
+                            Object eX = stack.Peek();
+                            Object eY = value[i];
+                            if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
+                            {
+                                stack.Push(eY);
+                            }
+                            else
+                            {
+
+                                if (eX.ToString() != "(")
+                                {
+                                    post.Push(stack.Pop());
+                                }
+                                stack.Push(eY);
+                            }
+                        }
+                        break;
                     default:
                         post.Push(value[i]);
                         break;
-                    case "JinianNet.JNTemplate.Operator":
-                        switch (value[i].ToString())
-                        {
-                            case "(":
-                            case "LeftParentheses":
-                                stack.Push("(");
-                                break;
-                            case ")":
-                            case "RightParentheses":
-                                while (stack.Count > 0)
-                                {
-                                    object op;
-                                    if ((op = stack.Pop()).ToString() == "(")
-                                    {
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        post.Push(op);
-                                    }
-                                }
-                                break;
-                            case "+":
-                            case "-":
-                            case "*":
-                            case "%":
-                            case "/":
-                            case "||":
-                            case "|":
-                            case "&&":
-                            case "&":
-                            case ">":
-                            case ">=":
-                            case "<":
-                            case "<=":
-                            case "==":
-                            case "!=":
-                            case "Plus":
-                            case "Minus":
-                            case "Times":
-                            case "Percent":
-                            case "Divided":
-                            case "LogicalOr":
-                            case "Or":
-                            case "LogicAnd":
-                            case "And":
-                            case "GreaterThan":
-                            case "GreaterThanOrEqual":
-                            case "LessThan":
-                            case "LessThanOrEqual":
-                            case "Equal":
-                            case "NotEqual":
-                                if (stack.Count == 0)
-                                {
-                                    stack.Push(value[i]);
-                                }
-                                else
-                                {
-                                    Object eX = stack.Peek();
-                                    Object eY = value[i];
-                                    if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
-                                    {
-                                        stack.Push(eY);
-                                    }
-                                    else
-                                    {
-                                        while (stack.Count > 0)
-                                        {
-                                            if (GetPriority(eX.ToString()) >= GetPriority(eY.ToString()) && stack.Peek().ToString() != "(")// && stack.Peek() != '('
-                                            {
-                                                post.Push(stack.Pop());
-                                            }
-                                            else
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        stack.Push(eY);
-                                    }
-                                }
-                                break;
-                            default:
-                                post.Push(value[i]);
-                                break;
-                        }
-                        break;
-
                 }
             }
 
