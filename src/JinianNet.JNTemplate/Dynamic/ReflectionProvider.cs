@@ -19,7 +19,10 @@ namespace JinianNet.JNTemplate.Dynamic
         private readonly Char[] expressionPartSeparator;
         //private readonly Char[] indexExprEndChars;
         //private readonly Char[] indexExprStartChars;
-
+#if NET20 || NET40
+        private BindingFlags _bindingIgnoreCase;
+        private StringComparison _stringIgnoreCase;
+#endif
         /// <summary>
         /// 反射构造函数
         /// </summary>
@@ -28,6 +31,18 @@ namespace JinianNet.JNTemplate.Dynamic
             expressionPartSeparator = new Char[] { '.' };
             //indexExprEndChars = new Char[] { ']', ')' };
             //indexExprStartChars = new Char[] { '[', '(' };
+#if NET20 || NET40
+            if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
+            {
+                _bindingIgnoreCase = BindingFlags.IgnoreCase;
+                _stringIgnoreCase = StringComparison.OrdinalIgnoreCase;
+            }
+            else
+            {
+                _bindingIgnoreCase = BindingFlags.Default;
+                _stringIgnoreCase = StringComparison.Ordinal;
+            }
+#endif
         }
         #region EVAL解析
         #region 4.0版本
@@ -96,7 +111,7 @@ namespace JinianNet.JNTemplate.Dynamic
 #if NETSTANDARD
                     t.GetRuntimeProperty(propName);
 #else
-                    t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
+                    t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
 #endif
                 //取属性
                 if (p != null)
@@ -105,7 +120,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
 #if NEEDFIELD
                 //取字段
-                FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase);
+                FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
                 if (f != null)
                 {
                     return f.GetValue(container);
@@ -247,7 +262,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
 #if NOTDNX
                 method = type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase,
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | _bindingIgnoreCase,
                     null, args, null);
 #elif NETSTANDARD
                 method = type.GetRuntimeMethod(methodName, args);
@@ -270,12 +285,12 @@ namespace JinianNet.JNTemplate.Dynamic
 #if NETSTANDARD
                 type.GetRuntimeMethods();
 #else
-                type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.BindIgnoreCase);
+                type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | _bindingIgnoreCase);
 #endif
             foreach (MethodInfo m in ms)
             {
 
-                if (m.Name.Equals(methodName, Engine.ComparisonIgnoreCase))
+                if (m.Name.Equals(methodName, _stringIgnoreCase))
                 {
                     pi = m.GetParameters();
 
@@ -411,7 +426,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return null;
         }
-#endregion
+        #endregion
 
     }
 }

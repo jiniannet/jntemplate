@@ -27,7 +27,7 @@ namespace JinianNet.JNTemplate.Dynamic
             isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
         }
 
-#region 获取属性或索引
+        #region 获取属性或索引
         /// <summary>
         /// 获取属性或字段
         /// </summary>
@@ -56,13 +56,13 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 key = String.Concat("Dynamic.IL.GetPropertyOrField.", type.FullName, ".", propertyName);
             }
-            Object result;
-            if ((result = Engine.Cache.Get(key)) != null)
-            {
-                return (GetPropertyOrFieldDelegate)result;
-            }
+            //Object result;
+            //if ((result = Engine.Cache.Get(key)) != null)
+            //{
+            //    return (GetPropertyOrFieldDelegate)result;
+            //}
             GetPropertyOrFieldDelegate gpf = CreateGetPropertyOrFieldProxy(type, value, propertyName);
-            Engine.Cache.Set(key, gpf);
+            //Engine.Cache.Set(key, gpf);
             return gpf;
         }
         private GetPropertyOrFieldDelegate CreateGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
@@ -96,7 +96,14 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             il.Emit(OpCodes.Stloc_0);
 
-            if ((mi = type.GetMethod(String.Concat("get_", propertyName), BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase, null,
+            BindingFlags bind = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
+
+            if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
+            {
+                bind = bind | BindingFlags.IgnoreCase;
+            }
+
+            if ((mi = type.GetMethod(String.Concat("get_", propertyName), bind, null,
                 Type.EmptyTypes,
                 null)) != null)
             {
@@ -104,7 +111,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            else if (isNumberRegex.Match(propertyName).Success && (mi = type.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase, null,
+            else if (isNumberRegex.Match(propertyName).Success && (mi = type.GetMethod("get_Item", bind, null,
                new Type[] {
                     typeof(int)
                },
@@ -115,7 +122,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            else if ((mi = type.GetMethod("get_Item", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.BindIgnoreCase, null,
+            else if ((mi = type.GetMethod("get_Item", bind, null,
                new Type[] {
                                 stringType
                },
@@ -152,10 +159,10 @@ namespace JinianNet.JNTemplate.Dynamic
             il.Emit(OpCodes.Ret);
             return dynamicMethod.CreateDelegate(typeof(GetPropertyOrFieldDelegate)) as GetPropertyOrFieldDelegate;
         }
-#endregion
+        #endregion
 
 
-#region 执行方法
+        #region 执行方法
         /// <summary>
         /// 执行方法
         /// </summary>
@@ -198,38 +205,47 @@ namespace JinianNet.JNTemplate.Dynamic
             Dictionary<String, DynamicMethodInfo> itemDic = null;
             DynamicMethodInfo d;
 
-            if ((value = Engine.Cache.Get(key)) != null)
+            //if ((value = Engine.Cache.Get(key)) != null)
+            //{
+            //    dic = (Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>)value;
+            //}
+            //else
+            //{
+            dic = new Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>();
+            MethodInfo[] mis = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            Type[] types;
+            StringComparison sc;
+            if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
             {
-                dic = (Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>)value;
+                sc = StringComparison.OrdinalIgnoreCase;
             }
             else
             {
-                dic = new Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>();
-                MethodInfo[] mis = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                Type[] types;
-                for (Int32 i = 0; i < mis.Length; i++)
-                {
-                    if (!mis[i].Name.Equals(methodName, Engine.ComparisonIgnoreCase))
-                    {
-                        continue;
-                    }
-                    pis = mis[i].GetParameters();
-                    types = new Type[pis.Length];
-                    for (Int32 j = 0; j < pis.Length; j++)
-                    {
-                        types[j] = pis[j].ParameterType;
-                    }
-                    itemKey = GetArgsTypeKey(types);
-                    if (!dic.TryGetValue(types.Length, out itemDic))
-                    {
-                        itemDic = new Dictionary<string, DynamicMethodInfo>();
-                        dic[types.Length] = itemDic;
-                    }
-                    //if (!itemDic.TryGetValue(itemKey,out d))
-                    itemDic[itemKey] = CreateExcuteMethodProxy(type, mis[i]);
-                }
-                Engine.Cache.Set(key, dic);
+                sc = StringComparison.Ordinal;
             }
+            for (Int32 i = 0; i < mis.Length; i++)
+            {
+                if (!mis[i].Name.Equals(methodName, sc))
+                {
+                    continue;
+                }
+                pis = mis[i].GetParameters();
+                types = new Type[pis.Length];
+                for (Int32 j = 0; j < pis.Length; j++)
+                {
+                    types[j] = pis[j].ParameterType;
+                }
+                itemKey = GetArgsTypeKey(types);
+                if (!dic.TryGetValue(types.Length, out itemDic))
+                {
+                    itemDic = new Dictionary<string, DynamicMethodInfo>();
+                    dic[types.Length] = itemDic;
+                }
+                //if (!itemDic.TryGetValue(itemKey,out d))
+                itemDic[itemKey] = CreateExcuteMethodProxy(type, mis[i]);
+            }
+            //Engine.Cache.Set(key, dic);
+            //}
 
             if (!dic.TryGetValue(args.Length, out itemDic))
             {
@@ -349,9 +365,9 @@ namespace JinianNet.JNTemplate.Dynamic
             return model;
 
         }
-#endregion
+        #endregion
 
-#region 共用方法
+        #region 共用方法
         private Boolean HasNull(Object[] args)
         {
             if (args != null)
@@ -479,7 +495,7 @@ namespace JinianNet.JNTemplate.Dynamic
             }
         }
 
-#endregion
+        #endregion
 
     }
 }

@@ -19,7 +19,6 @@ namespace JinianNet.JNTemplate.Configuration
         {
             EngineConfig conf = new EngineConfig();
             //conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
-            conf.ResourceDirectories = new String[0];
             conf.StripWhiteSpace = true;
             conf.TagFlag = '$';
             conf.TagPrefix = "${";

@@ -4,7 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Parser.Node;
+using JinianNet.JNTemplate.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {

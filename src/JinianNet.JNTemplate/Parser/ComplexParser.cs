@@ -4,7 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Parser.Node;
+using JinianNet.JNTemplate.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Parser
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns></returns>
-        public Tag Parse(JinianNet.JNTemplate.Parser.TemplateParser parser, TokenCollection tc)
+        public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc != null
                 && parser != null

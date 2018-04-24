@@ -625,12 +625,22 @@ namespace JinianNet.JNTemplate.Common
         /// <returns></returns>
         public static Object Calculate(String x, String y, String value)
         {
+
+            StringComparison sc;
+            if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
+            {
+                sc = StringComparison.OrdinalIgnoreCase;
+            }
+            else
+            {
+                sc = StringComparison.Ordinal;
+            }
             switch (value)
             {
                 case "==":
-                    return x.Equals(y, Engine.ComparisonIgnoreCase);
+                    return x.Equals(y, sc);
                 case "!=":
-                    return !x.Equals(y, Engine.ComparisonIgnoreCase);
+                    return !x.Equals(y, sc);
                 case "+":
                     return String.Concat(x, y);
                 default:

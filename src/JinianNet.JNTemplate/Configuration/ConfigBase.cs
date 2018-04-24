@@ -13,7 +13,6 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public class ConfigBase
     {
-        private String[] _resourceDirectories;
         private Char _tagFlag;
         private String _tagPrefix;
         private String _tagSuffix;
@@ -33,16 +32,6 @@ namespace JinianNet.JNTemplate.Configuration
             get { return this._charset; }
             set { this._charset = value; }
         }
-
-        /// <summary>
-        /// 资源路径
-        /// </summary>
-        public String[] ResourceDirectories
-        {
-            get { return this._resourceDirectories; }
-            set { this._resourceDirectories = value; }
-        }
-
         /// <summary>
         /// 标签前缀
         /// </summary>
@@ -137,13 +126,13 @@ namespace JinianNet.JNTemplate.Configuration
 #else
             IEnumerable<PropertyInfo> pis = this.GetType().GetProperties();
 #endif
-#if NOTDNX
+#if NET20 || NET40
             Type type = typeof(VariableAttribute);
 #endif
             foreach (PropertyInfo pi in pis)
             {
-#if NOTDNX
-                if( Attribute.IsDefined(pi, type))
+#if NET20 || NET40
+                if (Attribute.IsDefined(pi, type))
                 {
                     dic[pi.Name] = (pi.GetValue(this, null) ?? string.Empty).ToString();
                 }

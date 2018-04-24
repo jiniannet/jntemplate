@@ -14,10 +14,11 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前程序版本
         /// </summary>
-        public const String Version = "1.3";
+        public const String Version = "1.4";
         internal const String KEY_FOREACH = "foreach";
         internal const String KEY_IF = "if";
         internal const String KEY_ELSEIF = "elseif";
+        internal const String KEY_ELIF = "elif";
         internal const String KEY_ELSE = "else";
         internal const String KEY_SET = "set";
         internal const String KEY_LOAD = "load";

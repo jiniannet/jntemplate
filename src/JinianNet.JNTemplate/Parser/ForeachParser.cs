@@ -3,7 +3,7 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 using System;
-using JinianNet.JNTemplate.Parser.Node;
+using JinianNet.JNTemplate.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
@@ -23,39 +23,36 @@ namespace JinianNet.JNTemplate.Parser
         {
             if (tc != null
                 && parser != null
-                && tc.Count > 0 
-                && Common.Utility.IsEqual(Field.KEY_FOREACH, tc.First.Text))
+                && tc.Count > 5
+                && (Common.Utility.IsEqual(Field.KEY_FOREACH, tc.First.Text) || Common.Utility.IsEqual(Field.KEY_FOR, tc.First.Text))
+                && tc[1].TokenKind == TokenKind.LeftParentheses
+                && tc[2].TokenKind == TokenKind.TextData
+                && Common.Utility.IsEqual(tc[3].Text, Field.KEY_IN)
+                && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
-                if (tc.Count > 5
-                    && tc[1].TokenKind == TokenKind.LeftParentheses
-                    && tc[2].TokenKind == TokenKind.TextData
-                    && Common.Utility.IsEqual(tc[3].Text, Field.KEY_IN)
-                    && tc.Last.TokenKind == TokenKind.RightParentheses)
-                {
-                    ForeachTag tag = new ForeachTag();
-                    tag.Name = tc[2].Text;
-                    TokenCollection coll = new TokenCollection();
-                    coll.Add(tc, 4, tc.Count - 2);
-                    tag.Source = parser.Read(coll);
 
-                    while (parser.MoveNext())
+                ForeachTag tag = new ForeachTag();
+                tag.Name = tc[2].Text;
+                TokenCollection coll = new TokenCollection();
+                coll.Add(tc, 4, tc.Count - 2);
+                tag.Source = parser.Read(coll);
+
+                while (parser.MoveNext())
+                {
+                    tag.Children.Add(parser.Current);
+                    if (parser.Current is EndTag)
                     {
-                        tag.Children.Add(parser.Current);
-                        if (parser.Current is EndTag)
-                        {
-                            return tag;
-                        }
+                        return tag;
                     }
-
-                    throw new Exception.ParseException(String.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
-                }
-                else
-                {
-                    throw new Exception.ParseException(String.Concat("syntax error near foreach:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                 }
 
+                throw new Exception.ParseException(String.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+
+                //else
+                //{
+                //    throw new Exception.ParseException(String.Concat("syntax error near foreach:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                //}
             }
-
             return null;
         }
 

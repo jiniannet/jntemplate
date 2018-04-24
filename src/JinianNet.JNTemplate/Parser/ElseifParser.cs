@@ -3,7 +3,7 @@
  Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  ********************************************************************************/
 using System;
-using JinianNet.JNTemplate.Parser.Node;
+using JinianNet.JNTemplate.Node;
 
 namespace JinianNet.JNTemplate.Parser
 {
@@ -24,24 +24,22 @@ namespace JinianNet.JNTemplate.Parser
             if (tc != null
                 && parser != null
                 && tc.Count > 3
-                && Common.Utility.IsEqual(tc.First.Text, Field.KEY_ELSEIF))
+                && (Common.Utility.IsEqual(tc.First.Text, Field.KEY_ELSEIF) || Common.Utility.IsEqual(tc.First.Text, Field.KEY_ELIF))
+                && tc[1].TokenKind == TokenKind.LeftParentheses
+                && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
+                ElseifTag tag = new ElseifTag();
 
-                if (tc[1].TokenKind == TokenKind.LeftParentheses
-                   && tc.Last.TokenKind == TokenKind.RightParentheses)
-                {
-                    ElseifTag tag = new ElseifTag();
+                TokenCollection coll = new TokenCollection();
+                coll.Add(tc, 2, tc.Count - 2);
+                tag.Test = parser.Read(coll);
 
-                    TokenCollection coll = new TokenCollection();
-                    coll.Add(tc, 2, tc.Count - 2);
-                    tag.Test = parser.Read(coll);
-
-                    return tag;
-                }
-                else
-                {
-                    throw new Exception.ParseException(String.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
-                }
+                return tag;
+                //}
+                //else
+                //{
+                //    throw new Exception.ParseException(String.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                //}
             }
 
             return null;
