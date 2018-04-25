@@ -11,7 +11,13 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class ResourceInfo
     {
+        /// <summary>
+        /// 内容
+        /// </summary>
         public String Content { get; set; }
+        /// <summary>
+        /// 完整路径
+        /// </summary>
         public string FullPath { get; set; }
     }
 }

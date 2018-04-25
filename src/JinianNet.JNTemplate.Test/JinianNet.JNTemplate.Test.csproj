@@ -61,6 +61,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.XML" />
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
@@ -85,6 +86,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestExecutor.cs" />
     <Compile Include="Model\Article.cs" />
     <Compile Include="Model\Basis.cs" />
     <Compile Include="Model\Category.cs" />
@@ -124,7 +126,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="html\css\layout.css" />
     <Content Include="templets\default\footer.html" />
     <Content Include="templets\default\header.html" />
     <Content Include="templets\default\meta.html" />
@@ -132,27 +133,32 @@
     <Content Include="templets\default\sidebar.html" />
     <Content Include="templets\nv\footer.html" />
     <Content Include="templets\nv\header.html" />
-    <Content Include="html\images\cline.png" />
-    <Content Include="html\images\csetp.png" />
-    <Content Include="html\images\csetp1.png" />
-    <Content Include="html\images\icon.png" />
-    <Content Include="html\images\line.png" />
-    <Content Include="html\images\no.gif" />
-    <Content Include="html\images\right.gif" />
-    <Content Include="html\images\setp-success.png" />
-    <Content Include="html\images\setp.png" />
-    <Content Include="html\images\top.png" />
-    <Content Include="html\images\yes.gif" />
     <Content Include="templets\default\include\header.txt" />
     <Content Include="templets\nv\meta.html" />
     <Content Include="templets\nv\questionlist.html" />
     <Content Include="templets\nv\sidebar.html" />
+    <Content Include="result\css\layout.css" />
+    <Content Include="result\IL.html" />
+    <Content Include="result\ILVsReflection.txt" />
+    <Content Include="result\images\cline.png" />
+    <Content Include="result\images\csetp.png" />
+    <Content Include="result\images\csetp1.png" />
+    <Content Include="result\images\icon.png" />
+    <Content Include="result\images\line.png" />
+    <Content Include="result\images\no.gif" />
+    <Content Include="result\images\right.gif" />
+    <Content Include="result\images\setp-success.png" />
+    <Content Include="result\images\setp.png" />
+    <Content Include="result\images\top.png" />
+    <Content Include="result\images\yes.gif" />
+    <Content Include="result\REFLECTION.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dll\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="result\Library\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj">

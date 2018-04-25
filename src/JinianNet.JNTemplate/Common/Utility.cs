@@ -49,18 +49,9 @@ namespace JinianNet.JNTemplate.Common
         /// <returns></returns>
         public static Boolean IsEqual(String x, String y)
         {
-            StringComparison sc;
-            if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
-            {
-                sc = StringComparison.OrdinalIgnoreCase;
-            }
-            else
-            {
-                sc = StringComparison.Ordinal;
-            }
             if (x == null || y == null)
                 return x == y;
-            return String.Equals(x, y, sc);
+            return String.Equals(x, y, Engine.Runtime.ComparisonIgnoreCase);
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace JinianNet.JNTemplate.Dynamic
+namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 动态帮助类
+    /// 动态对象执行类
     /// </summary>
-    public interface IProvider
+    public interface IExecutor
     {
         /// <summary>
         /// 动态执行方法

@@ -6,7 +6,7 @@
 
 using System;
 using System.Reflection;
-namespace JinianNet.JNTemplate.Dynamic
+namespace JinianNet.JNTemplate
 {
     /// <summary>
     /// 动态方法信息

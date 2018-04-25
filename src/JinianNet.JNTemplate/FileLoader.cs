@@ -5,8 +5,14 @@ using System.Text;
 
 namespace JinianNet.JNTemplate
 {
+    /// <summary>
+    /// 文件加载器
+    /// </summary>
     public class FileLoader : ILoader
     {
+        /// <summary>
+        /// 构造函数
+        /// </summary>
         public FileLoader()
         {
             this.ResourceDirectories = new List<string>();

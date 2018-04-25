@@ -120,3 +120,6 @@ UpgradeLog*.XML
 /src/JinianNet.JNTemplate/public.snk
 /src/JinianNet.JNTemplate/jiniannet.snk
 /tool/public.snk
+/src/JinianNet.JNTemplate.Test/result/REFLECTION.html
+/src/JinianNet.JNTemplate.Test/result/ILVsReflection.txt
+/src/JinianNet.JNTemplate.Test/result/IL.html

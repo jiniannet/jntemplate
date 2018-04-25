@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
     /// Context
     /// </summary>
     public class TemplateContext
-#if NOTDNX
+#if NET20 || NET40
         : ICloneable
 #endif
     {
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate
             this._variableScope = data ?? new VariableScope();
             this._errors = new List<System.Exception>();
             this._currentPath = null;
-            this._throwErrors = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("ThrowErrors"));
+            this._throwErrors = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
             this._stripWhiteSpace = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
             if (String.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
             {

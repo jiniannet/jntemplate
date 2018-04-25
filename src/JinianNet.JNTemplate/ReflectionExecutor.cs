@@ -9,40 +9,24 @@ using System;
 using System.Reflection;
 using System.Collections;
 
-namespace JinianNet.JNTemplate.Dynamic
+namespace JinianNet.JNTemplate
 {
     /// <summary>
     /// 反射辅助类
     /// </summary>
-    public class ReflectionProvider : IProvider
+    public class ReflectionExecutor : IExecutor
     {
         private readonly Char[] expressionPartSeparator;
         //private readonly Char[] indexExprEndChars;
         //private readonly Char[] indexExprStartChars;
-#if NET20 || NET40
-        private BindingFlags _bindingIgnoreCase;
-        private StringComparison _stringIgnoreCase;
-#endif
         /// <summary>
         /// 反射构造函数
         /// </summary>
-        public ReflectionProvider()
+        public ReflectionExecutor()
         {
             expressionPartSeparator = new Char[] { '.' };
             //indexExprEndChars = new Char[] { ']', ')' };
             //indexExprStartChars = new Char[] { '[', '(' };
-#if NET20 || NET40
-            if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
-            {
-                _bindingIgnoreCase = BindingFlags.IgnoreCase;
-                _stringIgnoreCase = StringComparison.OrdinalIgnoreCase;
-            }
-            else
-            {
-                _bindingIgnoreCase = BindingFlags.Default;
-                _stringIgnoreCase = StringComparison.Ordinal;
-            }
-#endif
         }
         #region EVAL解析
         #region 4.0版本
@@ -67,7 +51,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 return dic[propIndex];
             }
             Type t = container.GetType();
-#if NOTDNX
+#if NET20 || NET40
             PropertyInfo info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
             if (info != null)
             {
@@ -111,7 +95,7 @@ namespace JinianNet.JNTemplate.Dynamic
 #if NETSTANDARD
                     t.GetRuntimeProperty(propName);
 #else
-                    t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
+                    t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 #endif
                 //取属性
                 if (p != null)
@@ -167,7 +151,7 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             Object obj = Eval(container, expression);
             if ((obj == null)
-#if NOTDNX
+#if NET20 || NET40
                 || (obj == DBNull.Value)
 #endif
                 )
@@ -260,9 +244,9 @@ namespace JinianNet.JNTemplate.Dynamic
             //根据具体形参获取方法名，以处理重载
             if (args == null || Array.LastIndexOf(args, null) == -1)
             {
-#if NOTDNX
+#if NET20 || NET40
                 method = type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | _bindingIgnoreCase,
+                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
                     null, args, null);
 #elif NETSTANDARD
                 method = type.GetRuntimeMethod(methodName, args);
@@ -285,12 +269,12 @@ namespace JinianNet.JNTemplate.Dynamic
 #if NETSTANDARD
                 type.GetRuntimeMethods();
 #else
-                type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | _bindingIgnoreCase);
+                type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 #endif
             foreach (MethodInfo m in ms)
             {
 
-                if (m.Name.Equals(methodName, _stringIgnoreCase))
+                if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
                 {
                     pi = m.GetParameters();
 
@@ -298,7 +282,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     {
                         continue;
                     }
-#if NOTDNX
+#if NET20 || NET40
                     hasParam = System.Attribute.IsDefined(pi[pi.Length - 1], typeof(ParamArrayAttribute));
 #endif
                     //参数个数一致或者形参中含有 param 参数
@@ -309,7 +293,7 @@ namespace JinianNet.JNTemplate.Dynamic
                         {
                             if (args[i] != null
                                 && args[i] != pi[i].ParameterType
-#if NOTDNX
+#if NET20 || NET40
                                 && !args[i].IsSubclassOf(pi[i].ParameterType)
 #else
                                 && !args[i].GetTypeInfo().IsSubclassOf(pi[i].ParameterType)
@@ -330,7 +314,7 @@ namespace JinianNet.JNTemplate.Dynamic
                                     for (Int32 j = pi.Length - 1; j < args.Length; j++)
                                     {
                                         if (args[j] != null && args[j] != arrType
-#if NOTDNX
+#if NET20 || NET40
                                  && !args[j].IsSubclassOf(arrType)
 #else
                                  &&!args[j].GetTypeInfo().IsSubclassOf(arrType)

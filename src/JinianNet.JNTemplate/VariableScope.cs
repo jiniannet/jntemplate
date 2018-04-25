@@ -45,14 +45,7 @@ namespace JinianNet.JNTemplate
             this._parent = parent;
             if (dictionary == null)
             {
-                if (Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("IgnoreCase")))
-                {
-                    dictionary= new Dictionary<String, Object>(StringComparer.OrdinalIgnoreCase);
-                }
-                else
-                {
-                    dictionary = new Dictionary<String, Object>();
-                }
+                dictionary = new Dictionary<String, Object>(Engine.Runtime.ComparerIgnoreCase);
             }
             this._dic = dictionary;
         }

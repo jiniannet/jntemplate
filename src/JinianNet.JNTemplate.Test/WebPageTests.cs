@@ -1,22 +1,25 @@
-﻿//#define EQVER
-//#define TESTNV
+﻿//#define VER_EQ_TEST
+//#define NVELOCITY_TEST
+#define BASE_PAGE_TEST
+#define WIN  
 #if WIN
 using System.IO;
 using System.Reflection;
 using System;
 using JinianNet.JNTemplate.Test.Model;
 using System.Diagnostics;
-
+using Xunit;
 
 namespace JinianNet.JNTemplate.Test
 {
     /// <summary>
     /// 实际WEB页面模板测试
     /// </summary>
-    [TestClass]
     public class WebPageTests
     {
-        [TestMethod]
+        const int MAX_RUN_COUNT = 10000;
+#if BASE_PAGE_TEST
+        [Fact]
         public void TestILVsReflectionPage()
         {
 
@@ -55,13 +58,11 @@ namespace JinianNet.JNTemplate.Test
             s.Stop();
             ////////////////////////////////////////////////////////////////////////////////////
             //h = new JinianNet.JNTemplate.Dynamic.ILHelpers();
-            conf = Configuration.EngineConfig.CreateDefault();
-            //conf.CachingProvider = "JinianNet.JNTemplate.Test.UserCache,JinianNet.JNTemplate.Test";
-            conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
-            Engine.Configure(conf);
+            conf = Configuration.EngineConfig.CreateDefault(); 
+            Engine.Configure(conf); 
             s.Restart();
 
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < MAX_RUN_COUNT; i++)
             {
                 JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
 
@@ -70,40 +71,38 @@ namespace JinianNet.JNTemplate.Test
 
             }
             s.Stop();
-            result += "IL　１０００次运行 耗时　：" + s.ElapsedMilliseconds + "毫秒";
+            result += "\r\n耗时：" + s.ElapsedMilliseconds + "毫秒 - 反射(" + MAX_RUN_COUNT + "次)运行";
             ////////////////////////////////////////////////////////////////////////////////////
 
             GC.Collect();
- 
+
 
             ////////////////////////////////////////////////////////////////////////////////////
             //h = new JinianNet.JNTemplate.Dynamic.ReflectionHelpers();
             conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = null;
+            conf.CachingProvider = new UserCache(); 
             Engine.Configure(conf);
             s.Restart();
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < MAX_RUN_COUNT; i++)
             {
                 JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
-       
+
                 t.Context.CurrentPath = path;
                 text2 = t.Render();
                 //h.ExcuteMethod(DateTime.Now, "AddDays", new object[] { 30 });
             }
             s.Stop();
-            result += ": Reflection　１０００次运行 耗时　：" + s.ElapsedMilliseconds + "毫秒";
             ////////////////////////////////////////////////////////////////////////////////////
 
+            result += "\r\n耗时：" + s.ElapsedMilliseconds + "毫秒 - IL(" + MAX_RUN_COUNT + "次)运行";
 
-            System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection.txt", result);
-            System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection1.txt", text1);
-            System.IO.File.WriteAllText(basePath + "\\html\\ILVsReflection2.txt", text2);
-            Assert.AreEqual(text1, text2);
+            System.IO.File.WriteAllText(basePath + "\\TestResult\\ILVsReflection.txt", result);
+            Assert.Equal(text1, text2);
 
         }
 
 
-        [Test]
+        [Fact]
         public void TestILage()
         {
 
@@ -134,19 +133,31 @@ namespace JinianNet.JNTemplate.Test
             string path = basePath + "\\templets\\default";
 
             var conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
+            conf.CachingProvider = new UserCache();
+            conf.ExecuteProvider = new ILExecutor();// new TestExecutor();
             Engine.Configure(conf);
-
-            for (var i = 0; i < 20000; i++)
+            Stopwatch s = new Stopwatch();
+            s.Start();
+            for (var i = 0; i < MAX_RUN_COUNT; i++)
             {
                 JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
                 t.Context.CurrentPath = path;
-                t.Render();
+                if (i == MAX_RUN_COUNT - 1)
+                {
+                    System.IO.File.WriteAllText(basePath + "\\TestResult\\IL.html", t.Render());
+                }
+                else
+                {
+                    t.Render();
+                }
 
             }
+            s.Stop();
+            string result = "\r\n运行耗时：" + s.ElapsedMilliseconds + "毫秒 IL(" + MAX_RUN_COUNT + "次)";
+            System.IO.File.AppendAllText(basePath + "\\TestResult\\ILVsReflection.txt", result);
 
         }
-           [TestMethod]
+           [Fact]
         public void TestReflectionPage()
         {
 
@@ -177,24 +188,34 @@ namespace JinianNet.JNTemplate.Test
             string path = basePath + "\\templets\\default";
 
             var conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = null;
             Engine.Configure(conf);
 
-            for (var i = 0; i < 20000; i++)
+            Stopwatch s = new Stopwatch();
+            s.Start();
+            for (var i = 0; i < MAX_RUN_COUNT; i++)
             {
                 JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));
                 t.Context.CurrentPath = path;
-                t.Render();
+                if (i == MAX_RUN_COUNT - 1)
+                {
+                    System.IO.File.WriteAllText(basePath + "\\TestResult\\REFLECTION.html", t.Render());
+                }
+                else
+                {
+                    t.Render();
+                }
 
             }
+            s.Stop();
+            string result = "\r\n运行耗时：" + s.ElapsedMilliseconds + "毫秒 反射(" + MAX_RUN_COUNT + "次)";
+            System.IO.File.AppendAllText(basePath + "\\TestResult\\ILVsReflection.txt", result);
         }
 
 
-        [TestMethod]
+        [Fact]
         public void TestPage()
         {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
+            var conf = Configuration.EngineConfig.CreateDefault(); 
             Engine.Configure(conf);
 
             JinianNet.JNTemplate.TemplateContext ctx = new JinianNet.JNTemplate.TemplateContext();
@@ -231,15 +252,16 @@ namespace JinianNet.JNTemplate.Test
             string result = t.Render();
 
             //可直接查看项目录下的html/jnt.html 文件效果
-            System.IO.File.WriteAllText(basePath + "\\html\\jnt.html", result);
+            System.IO.File.WriteAllText(basePath + "\\TestResult\\jnt.html", result);
 
         }
-#if EQVER
+#endif
+#if VER_EQ_TEST
         /// <summary>
         /// 多版本比较测试
         /// </summary>
-        [TestMethod]
-        public void TestEqVersion()
+        [Fact]
+        public void TestVER_EQ_TESTsion()
         {
             var tm = new TemplateMethod();
             SiteInfo site = new SiteInfo();
@@ -278,36 +300,36 @@ namespace JinianNet.JNTemplate.Test
                 ctx.GetType().GetProperty("CurrentPath").SetValue(ctx, path, null);
 
                 s.Restart();
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < MAX_RUN_COUNT; j++)
                 {
                     object t = ass.CreateInstance("JinianNet.JNTemplate.Template"); ;
                     t.GetType().GetProperty("Context").SetValue(t, ctx, null);
                     t.GetType().GetProperty("TemplateContent").SetValue(t, content, null);
                     object r = t.GetType().GetMethod("Render", new Type[0]).Invoke(t, new object[0] { });
 
-                    if (j == 99)
+                    if (j == MAX_RUN_COUNT-1)
                     {
-                        //System.IO.File.WriteAllText(basePath + "\\html\\jnt"+ assFlies[i].Name +".html", r.ToString());
+                        System.IO.File.WriteAllText(basePath + "\\TestResult\\"+ assFlies[i].Name +".html", r.ToString());
                     }
                 }
                 s.Stop();
-                result += "\r\n:" + assFlies[i].Name + " 版本号：" + ass.GetName().Version + "耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒";
+                result += "\r\n:耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒 次数:"+ MAX_RUN_COUNT + " 文件:" + assFlies[i].Name + " 版本号：" + ass.GetName().Version;
                 System.Threading.Thread.Sleep(200);
             }
-            if (System.IO.File.Exists(basePath + "\\html\\TestResult.txt"))
+            if (System.IO.File.Exists(basePath + "\\TestResult\\TestResult.txt"))
             {
-                if (System.IO.File.GetLastWriteTime(basePath + "\\html\\TestResult.txt").Date == DateTime.Now.Date)
+                if (System.IO.File.GetLastWriteTime(basePath + "\\TestResult\\TestResult.txt").Date == DateTime.Now.Date)
                 {
-                    result = System.IO.File.ReadAllText(basePath + "\\html\\TestResult.txt") + "\r\n" + result;
+                    result = System.IO.File.ReadAllText(basePath + "\\TestResult\\TestResult.txt") + "\r\n" + result;
                 }
             }
 
-            System.IO.File.WriteAllText(basePath + "\\html\\TestResult.txt", result);
+            System.IO.File.WriteAllText(basePath + "\\TestResult\\TestResult.txt", result);
         }
 #endif
 
-#if TESTNV
-        [TestMethod]
+#if NVELOCITY_TEST
+        [Fact]
         public void TestJuxtaposePage()
         {
             SiteInfo site = new SiteInfo();
@@ -356,7 +378,7 @@ namespace JinianNet.JNTemplate.Test
             }
 
             //可直接查看项目录下的html/nv.html 文件效果
-            System.IO.File.WriteAllText(basePath + "\\html\\nv.html", result);
+            System.IO.File.WriteAllText(basePath + "\\TestResult\\nv.html", result);
         }
 #endif
     }

@@ -18,14 +18,12 @@ namespace JinianNet.JNTemplate.Configuration
         public static EngineConfig CreateDefault()
         {
             EngineConfig conf = new EngineConfig();
-            //conf.CachingProvider = "JinianNet.JNTemplate.Caching.MemoryCache";
             conf.StripWhiteSpace = true;
-            conf.TagFlag = '$';
+            conf.TagFlag ='$';
             conf.TagPrefix = "${";
             conf.TagSuffix = "}";
             conf.ThrowExceptions = true;
             conf.IgnoreCase = true;
-            conf.TagParsers = Field.RSEOLVER_TYPES;
             conf.Charset = "utf-8";
             return conf;
         }

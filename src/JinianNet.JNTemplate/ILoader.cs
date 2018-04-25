@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 获取父目录
         /// </summary>
-        /// <param name="fullPath"></param>
+        /// <param name="fullPath">完整路径</param>
         /// <returns></returns>
         String GetDirectoryName(String fullPath);
     }

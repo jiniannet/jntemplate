@@ -20,13 +20,13 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 实例
         /// </summary>
-        private static EngineInfo _instance;
+        private static RuntimeInfo _instance;
 
         /// <summary>
         /// 对象实例
         /// </summary>
 
-        internal static EngineInfo Instance
+        public static RuntimeInfo Runtime
         {
             get
             {
@@ -44,10 +44,26 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 配置加载器
         /// </summary>
-        /// <param name="loder"></param>
-        public static void SetLoder(ILoader loder)
+        /// <param name="loder">loder实列</param>
+        public static void SetLodeProvider(ILoader loder)
         {
-            Instance.Loder = loder;
+            Runtime.Loder = loder;
+        }
+        /// <summary>
+        /// 配置缓存提供器
+        /// </summary>
+        /// <param name="cache">缓存提供器实例 </param>
+        public static void SetCachingProvider(Caching.ICache cache)
+        {
+            Runtime.Cache = cache;
+        }
+        /// <summary>
+        /// 配置动态执行提供器
+        /// </summary>
+        /// <param name="executor">executor实例 </param>
+        public static void SetExecuteProvider(IExecutor executor)
+        {
+            Runtime.Executor = executor;
         }
         /// <summary>
         /// 解析器
@@ -56,7 +72,7 @@ namespace JinianNet.JNTemplate
         {
             get
             {
-                return Instance.Parsers;
+                return Runtime.Parsers;
             }
         }
         #endregion
@@ -73,44 +89,72 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
+            _instance = new RuntimeInfo();
+            _instance.Data = scope;
+            SetEnvironmentVariable("Charset",conf.Charset);
+            SetEnvironmentVariable("TagPrefix",conf.TagPrefix);
+            SetEnvironmentVariable("TagSuffix",conf.TagSuffix);
+            SetEnvironmentVariable("TagFlag",conf.TagFlag.ToString());
+            SetEnvironmentVariable("ThrowExceptions",conf.ThrowExceptions.ToString());
+            SetEnvironmentVariable("StripWhiteSpace",conf.StripWhiteSpace.ToString());
+            SetEnvironmentVariable("IgnoreCase",conf.IgnoreCase.ToString());
             if (conf.TagParsers == null || conf.TagParsers.Length == 0)
             {
-                conf.TagParsers = Field.RSEOLVER_TYPES;
+                conf.TagParsers = LoadParsers(Field.RSEOLVER_TYPES);
             }
-            Configure(conf.ToDictionary(), scope, LoadParsers(conf.TagParsers), new FileLoader());
+            for (Int32 i = 0; i < conf.TagParsers.Length; i++)
+            {
+                if (conf.TagParsers[i] != null)
+                {
+                    Runtime.Parsers.Add(conf.TagParsers[i]);
+                }
+            }
+            if (conf.IgnoreCase)
+            {
+#if NETSTANDARD
+                //_bindingFlags = true;
+#else
+                Runtime.BindIgnoreCase = BindingFlags.IgnoreCase;
+#endif
+                Runtime.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
+                Runtime.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
+            }
+            else
+            {
+                Runtime.ComparisonIgnoreCase = StringComparison.Ordinal;
+#if NETSTANDARD
+                //_bindingFlags = false;
+#else
+                Runtime.BindIgnoreCase = BindingFlags.DeclaredOnly;
+#endif
+                Runtime.ComparerIgnoreCase = StringComparer.Ordinal;
+            }
+            _instance.Cache = conf.CachingProvider;
+            SetLodeProvider(conf.LoadProvider ?? new FileLoader());
+            SetExecuteProvider(conf.ExecuteProvider ?? new ReflectionExecutor());
+            //Configure(conf.ToDictionary(), scope, conf.TagParsers, conf.LoadProvider, conf.ExecuteProvider);
         }
 
         /// <summary>
         /// 引擎配置
         /// </summary>
-        /// <param name="directories">模板目录，默认为当前程序目录</param>
-        /// <param name="parsers">解析器，可空</param>
-        /// <param name="conf">配置参数</param>
+        /// <param name="conf">基本配置字典</param> 
         /// <param name="scope">全局数据，可空</param>
+        /// <param name="parsers">解析器，可空</param>
+        /// <param name="loader">加载器，可空</param>
+        /// <param name="executor">执行器，可空</param>
         public static void Configure(
             IDictionary<String, String> conf,
-            VariableScope scope, ITagParser[] parsers, ILoader loader)
+            VariableScope scope,
+            ITagParser[] parsers,
+            ILoader loader,
+            IExecutor executor)
         {
             if (conf == null)
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
-            _instance = new EngineInfo();
-            _instance.Data = scope;
-            InitializationEnvironment(conf); 
-            if (parsers == null || parsers.Length == 0)
-            {
-                parsers = LoadParsers(Field.RSEOLVER_TYPES);
-            }
-            for (Int32 i = 0; i < parsers.Length; i++)
-            {
-                if (parsers[i] != null)
-                {
-                    Instance.Parsers.Add(parsers[i]);
-                }
-            }
-
-            SetLoder(loader ?? new FileLoader());
+           
         }
 
         /// <summary>
@@ -132,11 +176,11 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext()
         {
-            if (Instance.Data == null)
+            if (Runtime.Data == null)
             {
                 return new TemplateContext();
             }
-            return new TemplateContext(Instance.Data);
+            return new TemplateContext(Runtime.Data);
         }
 
         /// <summary>
@@ -167,14 +211,14 @@ namespace JinianNet.JNTemplate
         /// <returns>ITemplate</returns>
         public static ITemplate LoadTemplate(String path, TemplateContext ctx)
         {
-            ResourceInfo info = Instance.Loder.Load(path, ctx.Charset);
+            ResourceInfo info = Runtime.Load(path, ctx.Charset);
             Template template;
 
             if (info != null)
             {
                 template = new Template(ctx, info.Content);
                 template.TemplateKey = info.FullPath;
-                ctx.CurrentPath = Instance.Loder.GetDirectoryName(info.FullPath);
+                ctx.CurrentPath = Runtime.GetDirectoryName(info.FullPath);
             }
             else
             {
@@ -194,13 +238,13 @@ namespace JinianNet.JNTemplate
         {
 
             Tag t;
-            for (Int32 i = 0; i < Instance.Parsers.Count; i++)
+            for (Int32 i = 0; i < Runtime.Parsers.Count; i++)
             {
-                if (Instance.Parsers[i] == null)
+                if (Runtime.Parsers[i] == null)
                 {
                     continue;
                 }
-                t = Instance.Parsers[i].Parse(parser, tc);
+                t = Runtime.Parsers[i].Parse(parser, tc);
                 if (t != null)
                 {
                     t.FirstToken = tc.First;
@@ -229,7 +273,7 @@ namespace JinianNet.JNTemplate
         {
             String value;
 
-            if (Instance.EnvironmentVariable.TryGetValue(variable, out value))
+            if (Runtime.EnvironmentVariable.TryGetValue(variable, out value))
             {
                 return value;
             }
@@ -250,11 +294,11 @@ namespace JinianNet.JNTemplate
             }
             if (value == null)
             {
-                Instance.EnvironmentVariable.Remove(variable);
+                Runtime.EnvironmentVariable.Remove(variable);
             }
             else
             {
-                Instance.EnvironmentVariable[variable] = value;
+                Runtime.EnvironmentVariable[variable] = value;
             }
         }
 
@@ -282,10 +326,16 @@ namespace JinianNet.JNTemplate
             ITagParser[] list = new ITagParser[arr.Length];
             for (Int32 i = 0; i < arr.Length; i++)
             {
-                list[i] = ((ITagParser)Activator.CreateInstance(Type.GetType(arr[i])));
+                list[i] = CreateInstance<ITagParser>(Type.GetType(arr[i]));
             }
             return list;
         }
+
+        private static T CreateInstance<T>(Type type)
+        {
+            return (T)Activator.CreateInstance(type ?? typeof(T));
+        }
+
         #endregion
     }
 }

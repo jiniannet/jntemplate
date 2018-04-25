@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace JinianNet.JNTemplate.Node
 {
@@ -36,7 +37,7 @@ namespace JinianNet.JNTemplate.Node
 
         private void Excute(Object value, TemplateContext context, System.IO.TextWriter writer)
         {
-            IEnumerable enumerable = Dynamic.DynamicHelper.ToIEnumerable(value);
+            IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
             TemplateContext ctx;
             if (enumerable != null)
             {
@@ -81,6 +82,62 @@ namespace JinianNet.JNTemplate.Node
                 return write.ToString();
             }
         }
+
+
+        #region ToIEnumerable
+        /// <summary>
+        /// 将对象转换为IEnumerable
+        /// </summary>
+        /// <param name="dataSource">源对象</param>
+        /// <returns>IEnumerable</returns>
+        public static IEnumerable ToIEnumerable(Object dataSource)
+        {
+#if NET20 || NET40
+            IListSource source;
+#endif
+            IEnumerable result;
+            if (dataSource == null)
+            {
+                return null;
+            }
+
+            if ((result = dataSource as IEnumerable) != null)
+            {
+                return result;
+            }
+#if NET20 || NET40
+            if ((source = dataSource as IListSource) != null)
+            {
+                IList list = source.GetList();
+                if (!source.ContainsListCollection)
+                {
+                    return list;
+                }
+                if ((list != null) && (list is ITypedList))
+                {
+                    PropertyDescriptorCollection itemProperties = ((ITypedList)list).GetItemProperties(new PropertyDescriptor[0]);
+                    if ((itemProperties == null) || (itemProperties.Count == 0))
+                    {
+                        return null;
+                    }
+                    PropertyDescriptor descriptor = itemProperties[0];
+                    if (descriptor != null)
+                    {
+                        Object component = list[0];
+                        Object value = descriptor.GetValue(component);
+                        if ((value != null) && ((result = value as IEnumerable) != null))
+                        {
+                            return result;
+                        }
+                    }
+                    return null;
+                }
+            }
+#endif
+            return null;
+
+        }
+        #endregion
 
     }
 }

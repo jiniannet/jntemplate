@@ -35,7 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NOTDNX</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -52,21 +52,19 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Common\OperatorConvert.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Configuration\VariableAttribute.cs" />
-    <Compile Include="Dynamic\DynamicHelper.cs" />
-    <Compile Include="Dynamic\DynamicMethodInfo.cs" />
-    <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
-    <Compile Include="Dynamic\GetPropertyOrFieldDelegate.cs" />
-    <Compile Include="Dynamic\IProvider.cs" />
-    <Compile Include="Dynamic\ILProvider.cs" />
-    <Compile Include="Dynamic\ReflectionProvider.cs" />
+    <Compile Include="DynamicMethodInfo.cs" />
+    <Compile Include="ExcuteMethodDelegate.cs" />
+    <Compile Include="GetPropertyOrFieldDelegate.cs" />
+    <Compile Include="IExecutor.cs" />
+    <Compile Include="ILExecutor.cs" />
+    <Compile Include="ReflectionExecutor.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="EngineInfo.cs" />
+    <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />
     <Compile Include="Exception\ParseException.cs" />
@@ -91,7 +89,6 @@
     <Compile Include="Parser\IfParser.cs" />
     <Compile Include="Parser\IncludeParser.cs" />
     <Compile Include="Parser\ITagParser.cs" />
-    <Compile Include="Parser\ITagTypeResolver.cs" />
     <Compile Include="Parser\LoadParser.cs" />
     <Compile Include="Node\SimpleTag.cs" />
     <Compile Include="Node\TypeTag.cs" />
@@ -127,7 +124,6 @@
     <Compile Include="Parser\VariableParser.cs" />
     <Compile Include="VariableScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateRender.cs" />
     <Compile Include="TemplateContext.cs" />

@@ -4,7 +4,7 @@
  ********************************************************************************/
 
 using System;
-namespace JinianNet.JNTemplate.Dynamic
+namespace JinianNet.JNTemplate
 {
     /// <summary>
     /// 动态执行方法委托

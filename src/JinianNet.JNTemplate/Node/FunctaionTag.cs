@@ -60,14 +60,14 @@ namespace JinianNet.JNTemplate.Node
                     args[i] = Children[i].Parse(context);
                 }
 
-                Object result = Dynamic.DynamicHelper.ExcuteMethod(baseValue, this._name, args);
+                Object result = Engine.Runtime.ExcuteMethod(baseValue, this._name, args);
 
                 if (result != null)
                 {
                     return result;
                 }
 
-                result = Dynamic.DynamicHelper.GetPropertyOrField(baseValue, this._name);
+                result = Engine.Runtime.GetPropertyOrField(baseValue, this._name);
 
                 if (result != null && result is FuncHandler)
                 {

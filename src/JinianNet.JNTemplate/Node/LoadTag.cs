@@ -53,7 +53,7 @@ namespace JinianNet.JNTemplate.Node
                 {
                     paths = new[] { context.CurrentPath };
                 }
-                ResourceInfo info = Engine.Instance.Loder.Load(path.ToString(), context.Charset, paths);
+                ResourceInfo info = Engine.Runtime.Load(path.ToString(), context.Charset, paths);
                 if (info != null)
                 {
                     TemplateContent = info.Content;
