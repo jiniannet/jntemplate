@@ -208,6 +208,7 @@ namespace JinianNet.JNTemplate
             {
                 return false;
             }
+#if NET20 || NET40
             //win系统
             System.OperatingSystem osInfo = System.Environment.OSVersion;
             if (osInfo.Platform == PlatformID.Win32NT
@@ -224,7 +225,7 @@ namespace JinianNet.JNTemplate
             {
                 return IsUnixLocalPath(path);
             }
-
+#endif
             return IsUnixLocalPath(path) || IsWindowsLocalPath(path);
         }
 

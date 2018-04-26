@@ -74,11 +74,21 @@ namespace JinianNet.JNTemplate.Test
 
             //构建程序集
             var asmName = new AssemblyName("Test");
-            var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndSave);
-
+            AssemblyBuilder.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndCollect);
+            var asmBuilder =
+#if NETCOREAPP1_1
+                AssemblyBuilder.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndCollect);
+#else
+            
+                AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.RunAndSave);
+#endif
             //构建模块
-            var mdlBldr = asmBuilder.DefineDynamicModule("Main", key+".dll");
-
+            var mdlBldr =
+#if NETCOREAPP1_1
+                asmBuilder.GetDynamicModule("Main");
+#else
+                asmBuilder.DefineDynamicModule("Main", key + ".dll");
+#endif
             //构建类
             var typeBldr = mdlBldr.DefineType("DynamicClass", TypeAttributes.Public);
 
@@ -96,7 +106,13 @@ namespace JinianNet.JNTemplate.Test
 
             il.DeclareLocal(type);//0
             il.Emit(OpCodes.Ldarg_0);
-            if (type.IsValueType)
+            if (
+#if NETCOREAPP1_1
+                type.IsAssignableFrom(typeof(System.Enum))
+#else
+                type.IsValueType
+#endif
+                )
             {
                 il.Emit(OpCodes.Unbox_Any, type);
             }
@@ -141,7 +157,13 @@ namespace JinianNet.JNTemplate.Test
                 il.Emit(OpCodes.Ldnull);
                 returnType = objectType;
             }
-            if (returnType.IsValueType)
+            if (
+#if NETCOREAPP1_1
+                returnType.IsAssignableFrom(typeof(System.Enum))
+#else
+                returnType.IsValueType
+#endif
+                )
             {
                 il.Emit(OpCodes.Box, returnType);
             }
@@ -173,7 +195,6 @@ namespace JinianNet.JNTemplate.Test
                 String.Concat("DynamicMethod.PropertyOrField.", type.FullName, ".", propertyName),
                 objectType,
                 parameterTypes);
-
             ILGenerator il = dynamicMethod.GetILGenerator();
             il.DeclareLocal(type);//0
             il.Emit(OpCodes.Ldarg_0);
@@ -244,10 +265,10 @@ namespace JinianNet.JNTemplate.Test
             return dynamicMethod.CreateDelegate(typeof(GetPropertyOrFieldDelegate)) as GetPropertyOrFieldDelegate;
 
         }
-        #endregion
+#endregion
 
 
-        #region 执行方法
+#region 执行方法
         /// <summary>
         /// 执行方法
         /// </summary>
@@ -539,9 +560,9 @@ namespace JinianNet.JNTemplate.Test
             return model;
 
         }
-        #endregion
+#endregion
 
-        #region 共用方法
+#region 共用方法
         private Boolean HasNull(Object[] args)
         {
             if (args != null)
@@ -669,7 +690,7 @@ namespace JinianNet.JNTemplate.Test
             }
         }
 
-        #endregion
+#endregion
 
     }
 }

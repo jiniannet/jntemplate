@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET20 || NET40
+using System;
 using System.Collections;
 using System.Runtime.Caching;
 
@@ -43,3 +44,4 @@ namespace JinianNet.JNTemplate.Test
         }
     }
 }
+#endif

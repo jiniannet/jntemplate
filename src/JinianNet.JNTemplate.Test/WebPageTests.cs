@@ -96,7 +96,7 @@ namespace JinianNet.JNTemplate.Test
 
             result += "\r\n耗时：" + s.ElapsedMilliseconds + "毫秒 - IL(" + MAX_RUN_COUNT + "次)运行";
 
-            System.IO.File.WriteAllText(basePath + "\\TestResult\\ILVsReflection.txt", result);
+            System.IO.File.WriteAllText(basePath + "\\result\\ILVsReflection.txt", result);
             Assert.Equal(text1, text2);
 
         }
@@ -144,7 +144,7 @@ namespace JinianNet.JNTemplate.Test
                 t.Context.CurrentPath = path;
                 if (i == MAX_RUN_COUNT - 1)
                 {
-                    System.IO.File.WriteAllText(basePath + "\\TestResult\\IL.html", t.Render());
+                    System.IO.File.WriteAllText(basePath + "\\result\\IL.html", t.Render());
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace JinianNet.JNTemplate.Test
             }
             s.Stop();
             string result = "\r\n运行耗时：" + s.ElapsedMilliseconds + "毫秒 IL(" + MAX_RUN_COUNT + "次)";
-            System.IO.File.AppendAllText(basePath + "\\TestResult\\ILVsReflection.txt", result);
+            System.IO.File.AppendAllText(basePath + "\\result\\ILVsReflection.txt", result);
 
         }
            [Fact]
@@ -198,7 +198,7 @@ namespace JinianNet.JNTemplate.Test
                 t.Context.CurrentPath = path;
                 if (i == MAX_RUN_COUNT - 1)
                 {
-                    System.IO.File.WriteAllText(basePath + "\\TestResult\\REFLECTION.html", t.Render());
+                    System.IO.File.WriteAllText(basePath + "\\result\\REFLECTION.html", t.Render());
                 }
                 else
                 {
@@ -208,7 +208,7 @@ namespace JinianNet.JNTemplate.Test
             }
             s.Stop();
             string result = "\r\n运行耗时：" + s.ElapsedMilliseconds + "毫秒 反射(" + MAX_RUN_COUNT + "次)";
-            System.IO.File.AppendAllText(basePath + "\\TestResult\\ILVsReflection.txt", result);
+            System.IO.File.AppendAllText(basePath + "\\result\\ILVsReflection.txt", result);
         }
 
 
@@ -252,7 +252,7 @@ namespace JinianNet.JNTemplate.Test
             string result = t.Render();
 
             //可直接查看项目录下的html/jnt.html 文件效果
-            System.IO.File.WriteAllText(basePath + "\\TestResult\\jnt.html", result);
+            System.IO.File.WriteAllText(basePath + "\\result\\jnt.html", result);
 
         }
 #endif
@@ -309,22 +309,22 @@ namespace JinianNet.JNTemplate.Test
 
                     if (j == MAX_RUN_COUNT-1)
                     {
-                        System.IO.File.WriteAllText(basePath + "\\TestResult\\"+ assFlies[i].Name +".html", r.ToString());
+                        System.IO.File.WriteAllText(basePath + "\\result\\"+ assFlies[i].Name +".html", r.ToString());
                     }
                 }
                 s.Stop();
                 result += "\r\n:耗时：" + s.ElapsedMilliseconds.ToString() + "毫秒 次数:"+ MAX_RUN_COUNT + " 文件:" + assFlies[i].Name + " 版本号：" + ass.GetName().Version;
                 System.Threading.Thread.Sleep(200);
             }
-            if (System.IO.File.Exists(basePath + "\\TestResult\\TestResult.txt"))
+            if (System.IO.File.Exists(basePath + "\\result\\result.txt"))
             {
-                if (System.IO.File.GetLastWriteTime(basePath + "\\TestResult\\TestResult.txt").Date == DateTime.Now.Date)
+                if (System.IO.File.GetLastWriteTime(basePath + "\\result\\result.txt").Date == DateTime.Now.Date)
                 {
-                    result = System.IO.File.ReadAllText(basePath + "\\TestResult\\TestResult.txt") + "\r\n" + result;
+                    result = System.IO.File.ReadAllText(basePath + "\\result\\result.txt") + "\r\n" + result;
                 }
             }
 
-            System.IO.File.WriteAllText(basePath + "\\TestResult\\TestResult.txt", result);
+            System.IO.File.WriteAllText(basePath + "\\result\\result.txt", result);
         }
 #endif
 
@@ -378,7 +378,7 @@ namespace JinianNet.JNTemplate.Test
             }
 
             //可直接查看项目录下的html/nv.html 文件效果
-            System.IO.File.WriteAllText(basePath + "\\TestResult\\nv.html", result);
+            System.IO.File.WriteAllText(basePath + "\\result\\nv.html", result);
         }
 #endif
     }

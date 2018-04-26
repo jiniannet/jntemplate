@@ -471,7 +471,7 @@ namespace JinianNet.JNTemplate.Test
 
 
 
-
+#if NET20 || NET40
         /// <summary>
         /// 测试DataTable
         /// </summary>
@@ -542,6 +542,7 @@ $end
             var render = template.Render();
             Assert.Equal("值:Han Meimei", render);
         }
+#endif
         /// <summary>
         /// 测试委托方法
         /// </summary>
