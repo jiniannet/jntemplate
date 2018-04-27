@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 反射辅助类
     /// </summary>
-    public class ReflectionExecutor : IExecutor
+    public class ReflectionCallProxy : ICallProxy
     {
         private readonly Char[] expressionPartSeparator;
         //private readonly Char[] indexExprEndChars;
@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 反射构造函数
         /// </summary>
-        public ReflectionExecutor()
+        public ReflectionCallProxy()
         {
             expressionPartSeparator = new Char[] { '.' };
             //indexExprEndChars = new Char[] { ']', ')' };
@@ -82,7 +82,7 @@ namespace JinianNet.JNTemplate
         /// <param name="container">原对象</param>
         /// <param name="propName">属性或字段名，有参数属性为参数值</param>
         /// <returns></returns>
-        public Object GetPropertyOrField(Object container, String propName)
+        public Object CallPropertyOrField(Object container, String propName)
         {
             Type t = container.GetType();
             //此处的属性包括有参属性（索引）与无参属性（属性）
@@ -220,7 +220,7 @@ namespace JinianNet.JNTemplate
                     //throw new Exception("");
                     return null;
                 }
-                property = GetPropertyOrField(property, expressionParts[i]);
+                property = CallPropertyOrField(property, expressionParts[i]);
             }
             return property;
         }
@@ -359,7 +359,7 @@ namespace JinianNet.JNTemplate
         /// <param name="methodName">方法名</param>
         /// <param name="args">形参</param>
         /// <returns>Object</returns>
-        public Object ExcuteMethod(Object container, String methodName, Object[] args)
+        public Object CallMethod(Object container, String methodName, Object[] args)
         {
             Type[] types = new Type[args.Length];
             for (Int32 i = 0; i < args.Length; i++)

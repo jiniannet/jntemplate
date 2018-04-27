@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 提供运行时的通用方法与属性
     /// </summary>
-    public class RuntimeInfo : ILoader, IExecutor
+    public class RuntimeInfo : ILoader, ICallProxy
     {
         #region 字段
         private Dictionary<String, String> _environmentVariable;
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate
         private static BindingFlags _bindingFlags;
 #endif
         private static StringComparer _stringComparer;
-        private IExecutor _executor;
+        private ICallProxy _callProxy;
 
         #endregion
         /// <summary>
@@ -108,12 +108,12 @@ namespace JinianNet.JNTemplate
             internal set { _cache = value; }
         }
         /// <summary>
-        /// 动态执行器
+        /// 动态调用代理
         /// </summary>
-        internal IExecutor Executor
+        internal ICallProxy DynamicCallProxy
         {
-            private get { return _executor; }
-            set { _executor = value; }
+            private get { return _callProxy; }
+            set { _callProxy = value; }
         }
         /// <summary>
         /// 加载资源
@@ -122,7 +122,7 @@ namespace JinianNet.JNTemplate
         /// <param name="encoding">编码</param>
         /// <param name="directory">追加查找目录</param>
         /// <returns></returns>
-        public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
+        public ResourceInfo Load(String filename, Encoding encoding, params String[] directory)
         {
             return this.Loder.Load(filename, encoding, directory);
         }
@@ -130,7 +130,7 @@ namespace JinianNet.JNTemplate
         /// 获取父目录
         /// </summary>
         /// <param name="fullPath">完整路径</param>
-        public string GetDirectoryName(string fullPath)
+        public string GetDirectoryName(String fullPath)
         {
             return this.Loder.GetDirectoryName(fullPath);
         }
@@ -141,9 +141,9 @@ namespace JinianNet.JNTemplate
         /// <param name="methodName">方法名</param>
         /// <param name="args">实参</param>
         /// <returns>执行结果（Void返回NULL）</returns> 
-        public object ExcuteMethod(object container, string methodName, object[] args)
+        public object CallMethod(Object container, String methodName, Object[] args)
         {
-            return this.Executor.ExcuteMethod(container, methodName, args);
+            return this.DynamicCallProxy.CallMethod(container, methodName, args);
         }
         /// <summary>
         /// 动态获取属性或字段
@@ -151,9 +151,9 @@ namespace JinianNet.JNTemplate
         /// <param name="value">对象</param>
         /// <param name="propertyName">属性或字段名</param>
         /// <returns>返回结果</returns> 
-        public object GetPropertyOrField(object value, string propertyName)
+        public object CallPropertyOrField(Object value, String propertyName)
         {
-            return this.Executor.GetPropertyOrField(value, propertyName);
+            return this.DynamicCallProxy.CallPropertyOrField(value, propertyName);
         }
         #endregion
     }

@@ -13,5 +13,5 @@ namespace JinianNet.JNTemplate
     /// <param name="model">对象</param>
     /// <param name="propertyName">属性名称</param>
     /// <returns>返回结果</returns>
-    public delegate Object GetPropertyOrFieldDelegate(Object model, String propertyName);
+    public delegate Object CallPropertyOrFieldDelegate(Object model, String propertyName);
 }

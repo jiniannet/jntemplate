@@ -60,10 +60,10 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 配置动态执行提供器
         /// </summary>
-        /// <param name="executor">executor实例 </param>
-        public static void SetExecuteProvider(IExecutor executor)
+        /// <param name="proxy">ICallProxy实例 </param>
+        public static void SetCallProvider(ICallProxy proxy)
         {
-            Runtime.Executor = executor;
+            Runtime.DynamicCallProxy = proxy;
         }
         /// <summary>
         /// 解析器
@@ -131,7 +131,7 @@ namespace JinianNet.JNTemplate
             }
             _instance.Cache = conf.CachingProvider;
             SetLodeProvider(conf.LoadProvider ?? new FileLoader());
-            SetExecuteProvider(conf.ExecuteProvider ?? new ReflectionExecutor());
+            SetCallProvider(conf.CallProvider ?? new ReflectionCallProxy());
             //Configure(conf.ToDictionary(), scope, conf.TagParsers, conf.LoadProvider, conf.ExecuteProvider);
         }
 
@@ -148,7 +148,7 @@ namespace JinianNet.JNTemplate
             VariableScope scope,
             ITagParser[] parsers,
             ILoader loader,
-            IExecutor executor)
+            ICallProxy executor)
         {
             if (conf == null)
             {

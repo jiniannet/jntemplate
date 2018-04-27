@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Configuration
         private String _charset;
         private Caching.ICache _cachingProvider;
         private ILoader _loadProvider;
-        private IExecutor _executeProvider;
+        private ICallProxy _callProvider;
         private Parser.ITagParser[] _tagParsers;
 
         /// <summary>
@@ -109,10 +109,10 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 执行提供器
         /// </summary>
-        public IExecutor ExecuteProvider
+        public ICallProxy CallProvider
         {
-            get { return this._executeProvider; }
-            set { this._executeProvider = value; }
+            get { return this._callProvider; }
+            set { this._callProvider = value; }
         }
 
         /// <summary>

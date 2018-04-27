@@ -46,20 +46,25 @@ namespace JinianNet.JNTemplate.Test
             //ctx.TempData.Push("Model", );
             ctx.TempData.Push("Site", site);
 
-            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string basePath =
+#if NET20 || NET40
+                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+#else
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+#endif
             string path = basePath + "\\templets\\default";
-           // JinianNet.JNTemplate.Dynamic.IDynamicHelpers h;
+            // JinianNet.JNTemplate.Dynamic.IDynamicHelpers h;
             Configuration.EngineConfig conf;
- 
+
             string text1 = null, text2 = null;
-            string result="";
+            string result = "";
             Stopwatch s = new Stopwatch();
             s.Start();
             s.Stop();
             ////////////////////////////////////////////////////////////////////////////////////
             //h = new JinianNet.JNTemplate.Dynamic.ILHelpers();
-            conf = Configuration.EngineConfig.CreateDefault(); 
-            Engine.Configure(conf); 
+            conf = Configuration.EngineConfig.CreateDefault();
+            Engine.Configure(conf);
             s.Restart();
 
             for (var i = 0; i < MAX_RUN_COUNT; i++)
@@ -80,7 +85,7 @@ namespace JinianNet.JNTemplate.Test
             ////////////////////////////////////////////////////////////////////////////////////
             //h = new JinianNet.JNTemplate.Dynamic.ReflectionHelpers();
             conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = new UserCache(); 
+            conf.CachingProvider = new UserCache();
             Engine.Configure(conf);
             s.Restart();
             for (var i = 0; i < MAX_RUN_COUNT; i++)
@@ -129,12 +134,17 @@ namespace JinianNet.JNTemplate.Test
             //ctx.TempData.Push("Model", );
             ctx.TempData.Push("Site", site);
 
-            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string basePath =
+#if NET20 || NET40
+                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+#else
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+#endif
             string path = basePath + "\\templets\\default";
 
             var conf = Configuration.EngineConfig.CreateDefault();
             conf.CachingProvider = new UserCache();
-            conf.ExecuteProvider = new ILExecutor();// new TestExecutor();
+            conf.CallProvider = new ILCallProxy();// new TestExecutor();
             Engine.Configure(conf);
             Stopwatch s = new Stopwatch();
             s.Start();
@@ -157,7 +167,7 @@ namespace JinianNet.JNTemplate.Test
             System.IO.File.AppendAllText(basePath + "\\result\\ILVsReflection.txt", result);
 
         }
-           [Fact]
+        [Fact]
         public void TestReflectionPage()
         {
 
@@ -184,7 +194,12 @@ namespace JinianNet.JNTemplate.Test
             //ctx.TempData.Push("Model", );
             ctx.TempData.Push("Site", site);
 
-            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string basePath =
+#if NET20 || NET40
+                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+#else
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+#endif
             string path = basePath + "\\templets\\default";
 
             var conf = Configuration.EngineConfig.CreateDefault();
@@ -215,7 +230,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestPage()
         {
-            var conf = Configuration.EngineConfig.CreateDefault(); 
+            var conf = Configuration.EngineConfig.CreateDefault();
             Engine.Configure(conf);
 
             JinianNet.JNTemplate.TemplateContext ctx = new JinianNet.JNTemplate.TemplateContext();
@@ -242,8 +257,12 @@ namespace JinianNet.JNTemplate.Test
             site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
             //ctx.TempData.Push("Model", );
             ctx.TempData.Push("Site", site);
-
-            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string basePath =
+#if NET20 || NET40
+                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+#else
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+#endif
             string path = basePath + "\\templets\\default";
 
             JinianNet.JNTemplate.Template t = new JinianNet.JNTemplate.Template(ctx, System.IO.File.ReadAllText(path + "\\questionlist.html"));

@@ -35,7 +35,8 @@
     <DefineConstants>TRACE;DEBUG;NETCOREAPP1_1,NETCOREAPP</DefineConstants>
   </PropertyGroup>
   <ItemGroup> 
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" /> 
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 </Project>
  

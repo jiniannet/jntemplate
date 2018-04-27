@@ -1,12 +1,16 @@
-﻿#if NET20 || NET40
+﻿
 using System;
 using System.Collections;
+using System.Collections.Generic;
+#if NET20 || NET40
 using System.Runtime.Caching;
+#endif
 
 namespace JinianNet.JNTemplate.Test
 {
     public class UserCache : JinianNet.JNTemplate.Caching.ICache
     {
+#if NET20 || NET40
         MemoryCache cache = new MemoryCache("test");
         public int Count
         {
@@ -42,6 +46,40 @@ namespace JinianNet.JNTemplate.Test
             cip.SlidingExpiration = new TimeSpan(24, 0, 0);
             cache.Add(key, value, cip); 
         }
+#else
+        Dictionary<string, object> cache = new Dictionary<string, object>();
+        public int Count
+        {
+            get
+            {
+                return (Int32)cache.Count;
+            }
+        }
+
+        public void Dispose()
+        {
+            cache.Clear();
+        }
+
+        public object Get(string key)
+        {
+            return cache[key];
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return null;
+        }
+
+        public object Remove(string key)
+        {
+            return cache.Remove(key);
+        }
+
+        public void Set(string key, object value)
+        {
+            cache[key] = value;
+        }
+#endif
     }
 }
-#endif
