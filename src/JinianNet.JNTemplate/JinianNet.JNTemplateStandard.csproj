@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
@@ -27,13 +27,14 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_6,NETSTANDARD</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0,NETSTANDARD</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;RELEASE;NETSTANDARD1_3;NETSTANDARD</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;RELEASE;NETSTANDARD2_0;NETSTANDARD</DefineConstants>
   </PropertyGroup>
   <ItemGroup> 
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" /> 
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 </Project>

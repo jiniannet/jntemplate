@@ -26,9 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEB61DB3-0D68-43A3-91E6-E16AE02889E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JinianNet.JNTemplate_core", "src\JinianNet.JNTemplate\JinianNet.JNTemplate_core.csproj", "{8FB7F9D0-2202-439F-9808-BEE50EB5E809}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JinianNet.JNTemplateCore", "src\JinianNet.JNTemplate\JinianNet.JNTemplateCore.csproj", "{8FB7F9D0-2202-439F-9808-BEE50EB5E809}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JinianNet.JNTemplate_core.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplate_core.Test.csproj", "{78F17297-1C58-4548-9B17-C027CE87CCA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JinianNet.JNTemplateCore.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplateCore.Test.csproj", "{78F17297-1C58-4548-9B17-C027CE87CCA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

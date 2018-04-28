@@ -22,9 +22,7 @@ namespace JinianNet.JNTemplate
         private ILoader _loder;
         private static StringComparison _stringComparison;
         private Caching.ICache _cache;
-#if !NETSTANDARD
         private static BindingFlags _bindingFlags;
-#endif
         private static StringComparer _stringComparer;
         private ICallProxy _callProxy;
 
@@ -72,8 +70,6 @@ namespace JinianNet.JNTemplate
             set { _loder = value; }
         }
 
-
-#if !NETSTANDARD
         /// <summary>
         /// 绑定大小写配置
         /// </summary>
@@ -82,7 +78,7 @@ namespace JinianNet.JNTemplate
             get { return _bindingFlags; }
             set { _bindingFlags = value; }
         }
-#endif
+
         /// <summary>
         /// 字符串大小写比较配置
         /// </summary>

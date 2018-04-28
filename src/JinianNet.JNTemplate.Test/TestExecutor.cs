@@ -111,8 +111,11 @@ namespace JinianNet.JNTemplate.Test
                 il.Emit(OpCodes.Box, returnType);
             }
             il.Emit(OpCodes.Ret);
-
+#if NETSTANDARD
+            typeBldr.CreateTypeInfo();
+#else
             typeBldr.CreateType();
+#endif
 #if NET20 || NET40
             asmBuilder.Save(key + ".dll")
 #else
@@ -221,7 +224,11 @@ namespace JinianNet.JNTemplate.Test
             //il.Emit(OpCodes.Ldnull);
             il.Emit(OpCodes.Ret);
 
+#if NETSTANDARD
+            typeBldr.CreateTypeInfo();
+#else
             typeBldr.CreateType();
+#endif
 #if NET20 || NET40
             asmBuilder.Save(key + ".dll")
 #else

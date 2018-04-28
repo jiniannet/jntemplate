@@ -111,22 +111,14 @@ namespace JinianNet.JNTemplate
             }
             if (conf.IgnoreCase)
             {
-#if NETSTANDARD
-                //_bindingFlags = true;
-#else
                 Runtime.BindIgnoreCase = BindingFlags.IgnoreCase;
-#endif
                 Runtime.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
                 Runtime.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
             }
             else
             {
                 Runtime.ComparisonIgnoreCase = StringComparison.Ordinal;
-#if NETSTANDARD
-                //_bindingFlags = false;
-#else
                 Runtime.BindIgnoreCase = BindingFlags.DeclaredOnly;
-#endif
                 Runtime.ComparerIgnoreCase = StringComparer.Ordinal;
             }
             _instance.Cache = conf.CachingProvider;

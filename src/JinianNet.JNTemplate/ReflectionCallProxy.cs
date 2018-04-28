@@ -248,11 +248,10 @@ namespace JinianNet.JNTemplate
                 method = type.GetMethod(methodName,
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
                     null, args, null);
-#elif NETSTANDARD
-                method = type.GetRuntimeMethod(methodName, args);
 #else
 
-                method = type.GetMethod(methodName, args);
+                method = type.GetMethod(methodName,
+                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 #endif
                 if (method != null)
                 {
@@ -265,12 +264,7 @@ namespace JinianNet.JNTemplate
 
             ParameterInfo[] pi;
             Boolean accord;
-            System.Collections.Generic.IEnumerable<MethodInfo> ms =
-#if NETSTANDARD
-                type.GetRuntimeMethods();
-#else
-                type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-#endif
+            System.Collections.Generic.IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
             foreach (MethodInfo m in ms)
             {
 
@@ -293,12 +287,7 @@ namespace JinianNet.JNTemplate
                         {
                             if (args[i] != null
                                 && args[i] != pi[i].ParameterType
-#if NET20 || NET40
-                                && !args[i].IsSubclassOf(pi[i].ParameterType)
-#else
-                                && !args[i].GetTypeInfo().IsSubclassOf(pi[i].ParameterType)
-#endif
-                                )
+                                && !args[i].IsSubclassOf(pi[i].ParameterType))
                             {
                                 accord = false;
                                 break;
@@ -314,12 +303,7 @@ namespace JinianNet.JNTemplate
                                     for (Int32 j = pi.Length - 1; j < args.Length; j++)
                                     {
                                         if (args[j] != null && args[j] != arrType
-#if NET20 || NET40
-                                 && !args[j].IsSubclassOf(arrType)
-#else
-                                 &&!args[j].GetTypeInfo().IsSubclassOf(arrType)
-#endif
-                                            )
+                                            && !args[j].IsSubclassOf(arrType))
                                         {
                                             accord = false;
                                             break;

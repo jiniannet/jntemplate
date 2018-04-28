@@ -60,10 +60,10 @@
     <Compile Include="DynamicMethodInfo.cs" />
     <Compile Include="ExcuteMethodDelegate.cs" />
     <Compile Include="GetPropertyOrFieldDelegate.cs" />
-    <Compile Include="IExecutor.cs" />
-    <Compile Include="ILExecutor.cs" />
-    <Compile Include="ReflectionExecutor.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="ICallProxy.cs" />
+    <Compile Include="ILCallProxy.cs" />
+    <Compile Include="ReflectionCallProxy.cs" />
     <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />

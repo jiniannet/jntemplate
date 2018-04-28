@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JinianNet.JNTemplate\JinianNet.JNTemplate_core.csproj" />
+    <ProjectReference Include="..\JinianNet.JNTemplate\JinianNet.JNTemplateCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
