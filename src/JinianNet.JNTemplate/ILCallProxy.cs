@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
-using JinianNet.JNTemplate.Common;
 
 namespace JinianNet.JNTemplate
 {
@@ -78,7 +77,7 @@ namespace JinianNet.JNTemplate
                 stringType
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                String.Concat("P_", type.FullName.Replace(".","_"), "_", propertyName),
+                String.Concat("P_", type.FullName.Replace(".", "_"), "_", propertyName),
                 objectType,
                 parameterTypes);
 
@@ -95,7 +94,7 @@ namespace JinianNet.JNTemplate
             }
             il.Emit(OpCodes.Stloc_0);
 
-            if ((mi = GetMethod(type, String.Concat("get_", propertyName),Type.EmptyTypes)) != null)
+            if ((mi = GetMethod(type, String.Concat("get_", propertyName), Type.EmptyTypes)) != null)
             {
                 Ldloc(type, il, 0);
                 Call(type, il, mi);
@@ -111,7 +110,7 @@ namespace JinianNet.JNTemplate
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            else if ((mi = GetMethod(type,"get_Item",
+            else if ((mi = GetMethod(type, "get_Item",
                new Type[] {
                                 stringType
                })) != null)
@@ -268,7 +267,7 @@ namespace JinianNet.JNTemplate
                 typeof(Object[])
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                String.Concat("M_", type.FullName.Replace(".","_"), "_", mi.Name),
+                String.Concat("M_", type.FullName.Replace(".", "_"), "_", mi.Name),
                 objectType,
                 parameterTypes);
 
@@ -476,18 +475,15 @@ namespace JinianNet.JNTemplate
 
         private Boolean IsValueType(Type type)
         {
-#if NET20 || NET40
-            return IsValueType(type)
-#else
-            return type.IsAssignableFrom(typeof(System.ValueType));
-#endif
+            return type.IsValueType;
         }
 
-        private MethodInfo GetMethod(Type type,string methodName, Type[] argsType)
+
+        private MethodInfo GetMethod(Type type, string methodName, Type[] argsType)
         {
 
 #if NET20 || NET40
-            return type.GetMethod("get_Item", 
+            return type.GetMethod(methodName, 
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
                 null,
                 argsType,
@@ -498,7 +494,8 @@ namespace JinianNet.JNTemplate
 #endif
         }
 
-#endregion
+        #endregion
 
     }
+
 }

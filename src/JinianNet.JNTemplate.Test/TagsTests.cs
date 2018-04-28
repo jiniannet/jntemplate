@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var conf = Configuration.EngineConfig.CreateDefault();
             //开始严格大小写模式 默认忽略大小写
-            conf.IgnoreCase = false;
+            //conf.IgnoreCase = false;
             Engine.Configure(conf);
         }
 
@@ -406,7 +406,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$load(\"include/header.txt\")";
             var template = new Template(templateContent);
             template.Set("name", "jntemplate");
-#if NETCOREAPP1_1
+#if NETCOREAPP2_0
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
@@ -424,7 +424,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$include(\"include/header.txt\")";
             var template = new Template(templateContent);
             template.Set("name", "jntemplate");
-#if NETCOREAPP1_1
+#if NETCOREAPP2_0
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
@@ -581,7 +581,7 @@ $end
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
 
-#if !NETCOREAPP1_1
+#if !NETCOREAPP2_0
         /// <summary>
         /// 测试方法的params参数  .NET core中不支持
         /// </summary>

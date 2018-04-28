@@ -1,7 +1,7 @@
 ﻿//#define VER_EQ_TEST
 //#define NVELOCITY_TEST
 #define BASE_PAGE_TEST
-#define WIN  
+//#define WIN  
 #if WIN
 using System.IO;
 using System.Reflection;
@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public class WebPageTests
     {
-        const int MAX_RUN_COUNT = 10000;
+        const int MAX_RUN_COUNT = 100;
 #if BASE_PAGE_TEST
         [Fact]
         public void TestILVsReflectionPage()
@@ -50,7 +50,7 @@ namespace JinianNet.JNTemplate.Test
 #if NET20 || NET40
                 new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
 #else
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
             string path = basePath + "\\templets\\default";
             // JinianNet.JNTemplate.Dynamic.IDynamicHelpers h;
@@ -111,6 +111,11 @@ namespace JinianNet.JNTemplate.Test
         public void TestILage()
         {
 
+            var c = Configuration.EngineConfig.CreateDefault();
+            //开始严格大小写模式 默认忽略大小写
+            //conf.IgnoreCase = false;
+            Engine.Configure(c);
+
             JinianNet.JNTemplate.TemplateContext ctx = new JinianNet.JNTemplate.TemplateContext();
             ctx.TempData.Push("func", new TemplateMethod());
             SiteInfo site = new SiteInfo();
@@ -138,7 +143,7 @@ namespace JinianNet.JNTemplate.Test
 #if NET20 || NET40
                 new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
 #else
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
             string path = basePath + "\\templets\\default";
 
@@ -198,7 +203,7 @@ namespace JinianNet.JNTemplate.Test
 #if NET20 || NET40
                 new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
 #else
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
             string path = basePath + "\\templets\\default";
 
@@ -261,7 +266,7 @@ namespace JinianNet.JNTemplate.Test
 #if NET20 || NET40
                 new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
 #else
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
             string path = basePath + "\\templets\\default";
 

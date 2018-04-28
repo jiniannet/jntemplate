@@ -63,7 +63,10 @@ namespace JinianNet.JNTemplate.Test
 
         public object Get(string key)
         {
-            return cache[key];
+            object value;
+            if (cache.TryGetValue(key, out value))
+                return value;
+            return null;
         }
 
         public IEnumerator GetEnumerator()

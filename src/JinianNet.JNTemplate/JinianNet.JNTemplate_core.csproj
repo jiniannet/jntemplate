@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
@@ -33,6 +33,10 @@
     <NoWarn>1701;1702;1705</NoWarn>
     <Optimize>True</Optimize>
     <DefineConstants>TRACE;DEBUG;NETCOREAPP1_1,NETCOREAPP</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;RELEASE;NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup> 
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
