@@ -5,5 +5,5 @@ platform: Any CPU
 install:
   appveyor_core_conf.bat
 build:
-  project: JinianNet.JNTemplate_core.sln
+  project: JinianNet.JNTemplateStandard.sln
   verbosity: minimal

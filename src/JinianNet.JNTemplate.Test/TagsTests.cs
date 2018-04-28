@@ -6,7 +6,6 @@ namespace JinianNet.JNTemplate.Test
     /// <summary>
     /// 模板标签功能性测试
     /// </summary>
-    //[TestClass]
     public class TagsTests
     {
         public TagsTests()
