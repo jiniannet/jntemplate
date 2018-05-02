@@ -3,11 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using JinianNet.JNTemplate.Parser;
+using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Configuration;
 using System.Reflection;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Node;
+using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate
 {
@@ -226,7 +226,7 @@ namespace JinianNet.JNTemplate
         /// <param name="parser">模板解析器</param>
         /// <param name="tc">TOKEN集合</param>
         /// <returns></returns>
-        public static Node.Tag Resolve(TemplateParser parser, TokenCollection tc)
+        public static Nodes.Tag Resolve(TemplateParser parser, TokenCollection tc)
         {
 
             Tag t;

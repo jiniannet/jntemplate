@@ -30,21 +30,21 @@ namespace JinianNet.JNTemplate
         /// 默认标签解析器
         /// </summary>
         internal static readonly String[] RSEOLVER_TYPES = new String[] {
-                "JinianNet.JNTemplate.Parser.BooleanParser",
-                "JinianNet.JNTemplate.Parser.NumberParser",
-                "JinianNet.JNTemplate.Parser.EleseParser",
-                "JinianNet.JNTemplate.Parser.EndParser",
-                "JinianNet.JNTemplate.Parser.VariableParser",
-                "JinianNet.JNTemplate.Parser.StringParser",
-                "JinianNet.JNTemplate.Parser.ForeachParser",
-                "JinianNet.JNTemplate.Parser.ForParser",
-                "JinianNet.JNTemplate.Parser.SetParser",
-                "JinianNet.JNTemplate.Parser.IfParser",
-                "JinianNet.JNTemplate.Parser.ElseifParser",
-                "JinianNet.JNTemplate.Parser.LoadParser",
-                "JinianNet.JNTemplate.Parser.IncludeParser",
-                "JinianNet.JNTemplate.Parser.FunctionParser",
-                "JinianNet.JNTemplate.Parser.ComplexParser" };
+                "JinianNet.JNTemplate.Parsers.BooleanParser",
+                "JinianNet.JNTemplate.Parsers.NumberParser",
+                "JinianNet.JNTemplate.Parsers.EleseParser",
+                "JinianNet.JNTemplate.Parsers.EndParser",
+                "JinianNet.JNTemplate.Parsers.VariableParser",
+                "JinianNet.JNTemplate.Parsers.StringParser",
+                "JinianNet.JNTemplate.Parsers.ForeachParser",
+                "JinianNet.JNTemplate.Parsers.ForParser",
+                "JinianNet.JNTemplate.Parsers.SetParser",
+                "JinianNet.JNTemplate.Parsers.IfParser",
+                "JinianNet.JNTemplate.Parsers.ElseifParser",
+                "JinianNet.JNTemplate.Parsers.LoadParser",
+                "JinianNet.JNTemplate.Parsers.IncludeParser",
+                "JinianNet.JNTemplate.Parsers.FunctionParser",
+                "JinianNet.JNTemplate.Parsers.ComplexParser" };
     }
 
 

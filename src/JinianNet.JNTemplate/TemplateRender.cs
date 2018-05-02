@@ -3,8 +3,8 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using JinianNet.JNTemplate.Parser;
-using JinianNet.JNTemplate.Node;
+using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate
 {

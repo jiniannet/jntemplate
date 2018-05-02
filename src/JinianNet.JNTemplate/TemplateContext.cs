@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using JinianNet.JNTemplate.Parser;
+using JinianNet.JNTemplate.Parsers;
 
 namespace JinianNet.JNTemplate
 {

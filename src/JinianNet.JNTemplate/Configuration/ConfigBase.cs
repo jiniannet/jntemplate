@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Configuration
         private Caching.ICache _cachingProvider;
         private ILoader _loadProvider;
         private ICallProxy _callProvider;
-        private Parser.ITagParser[] _tagParsers;
+        private Parsers.ITagParser[] _tagParsers;
 
         /// <summary>
         /// 字符编码
@@ -127,7 +127,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签分析器
         /// </summary>
-        public Parser.ITagParser[] TagParsers
+        public Parsers.ITagParser[] TagParsers
         {
             get { return this._tagParsers; }
             set { this._tagParsers = value; }

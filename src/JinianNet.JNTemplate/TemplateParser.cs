@@ -4,7 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Node;
+using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate
 {
