@@ -103,7 +103,7 @@ var result = template.Render();
 
 
 ### 授权
-Apache License 2.0  详细内容，请查看 License.txt
+MIT  详细内容，请查看 License.txt
   
 ### 联系方式：
 - Email:i@jiniannet.com

@@ -102,5 +102,5 @@ see: www.jiniannet.com
 
 
 ### Licenses
-Apache License 2.0
+MIT
 
