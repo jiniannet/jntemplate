@@ -232,6 +232,8 @@ namespace JinianNet.JNTemplate
         {
             if (this._kind != TokenKind.EOF)
             {
+
+                Token token;
                 do
                 {
                     if (this._flagMode != FlagMode.None)
@@ -255,7 +257,6 @@ namespace JinianNet.JNTemplate
                             {
                                 Next(this._prefix.Length - 1);
                             }
-
                             AddToken(GetTokenKind(this._scanner.Read()));
                             switch (this._kind)
                             {
@@ -272,12 +273,20 @@ namespace JinianNet.JNTemplate
                     }
                     else if (IsTagStart())
                     {
-                        AddToken(TokenKind.TagStart);
+                        token = GetToken(TokenKind.TagStart);
+                        if (token.Text != "" && (this._collection.Count > 0 || !String.IsNullOrEmpty(token.Text.Trim())))
+                        {
+                            AddToken(token);
+                        }
                     }
                 }
                 while (Next());
 
-                AddToken(TokenKind.EOF);
+                token = GetToken(TokenKind.EOF);
+                if (token.Text != "")
+                {
+                    AddToken(token);
+                }
 
 
                 if (this._flagMode != FlagMode.None)
@@ -443,7 +452,7 @@ namespace JinianNet.JNTemplate
                         (this._kind != TokenKind.Number
                         && this._kind != TokenKind.RightBracket
                         && this._kind != TokenKind.RightParentheses
-                        && this._kind != TokenKind.String 
+                        && this._kind != TokenKind.String
                         && this._kind != TokenKind.Tag
                         && this._kind != TokenKind.TextData))
                     {
