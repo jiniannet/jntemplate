@@ -26,6 +26,8 @@ namespace JinianNet.JNTemplate
         internal const String KEY_END = "end";
         internal const String KEY_FOR = "for";
         internal const String KEY_IN = "in";
+        internal const String KEY_LAYOUT = "layout";
+        internal const String KEY_BODY = "BODY";
         /// <summary>
         /// 默认标签解析器
         /// </summary>
@@ -34,6 +36,7 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.NumberParser",
                 "JinianNet.JNTemplate.Parsers.EleseParser",
                 "JinianNet.JNTemplate.Parsers.EndParser",
+                "JinianNet.JNTemplate.Parsers.BodyParser",
                 "JinianNet.JNTemplate.Parsers.VariableParser",
                 "JinianNet.JNTemplate.Parsers.StringParser",
                 "JinianNet.JNTemplate.Parsers.ForeachParser",
@@ -41,6 +44,7 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.SetParser",
                 "JinianNet.JNTemplate.Parsers.IfParser",
                 "JinianNet.JNTemplate.Parsers.ElseifParser",
+                "JinianNet.JNTemplate.Parsers.LayoutParser",
                 "JinianNet.JNTemplate.Parsers.LoadParser",
                 "JinianNet.JNTemplate.Parsers.IncludeParser",
                 "JinianNet.JNTemplate.Parsers.FunctionParser",

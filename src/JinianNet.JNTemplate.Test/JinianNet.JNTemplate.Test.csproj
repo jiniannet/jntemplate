@@ -129,6 +129,7 @@
   <ItemGroup>
     <Content Include="templets\default\footer.html" />
     <Content Include="templets\default\header.html" />
+    <Content Include="templets\default\include\layout.txt" />
     <Content Include="templets\default\meta.html" />
     <Content Include="templets\default\questionlist.html" />
     <Content Include="templets\default\sidebar.html" />

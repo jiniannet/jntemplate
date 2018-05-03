@@ -3,38 +3,33 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// Layout标签
+    /// Body标签（配套Layout使用）
     /// </summary>
-    public class LayoutTag : LoadTag
+    public class BodyTag : TagBase
     {
-
         /// <summary>
-        /// 读取取签
+        /// 解析标签
         /// </summary>
+        /// <param name="context"></param>
         /// <returns></returns>
-        protected override Tag[] ReadTags()
+        public override object Parse(TemplateContext context)
         {
-            Tag[] tags = base.ReadTags();
-            for (Int32 i = 0; i < tags.Length; i++)
+            if (this.Children != null && this.Children.Count > 0)
             {
-                if (tags[i] is BodyTag)
+                using (System.IO.StringWriter write = new System.IO.StringWriter())
                 {
-                    BodyTag tag = (BodyTag)tags[i];
-                    for (Int32 j = 0; j < this.Children.Count; j++)
+                    for (Int32 i = 0; i < this.Children.Count; i++)
                     {
-                        tag.AddChild(this.Children[j]);
+                        this.Children[i].Parse(context, write);
                     }
-                    this.Children.Clear();
-                    tags[i] = tag;
+                    return write.ToString();
                 }
             }
-
-            return tags;
+            return null;
         }
     }
 }

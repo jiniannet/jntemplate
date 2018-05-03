@@ -23,11 +23,13 @@ goto cmdinput
 :BUILD11
 echo 开始build1.1
 dotnet build JinianNet.JNTemplate_core.csproj --configuration Release --output ..\..\lib\netcoreapp1.1 --framework netcoreapp1.1 
+dotnet build JinianNet.JNTemplate_core.csproj --configuration DEBUG --output ..\..\lib\netcoreapp1.1 --framework netcoreapp1.1 
 goto GOEND
 
 :BUILD20
 echo 开始build2.0
 dotnet build JinianNet.JNTemplate_core.csproj --configuration Release --output ..\..\lib\netcoreapp2.10 --framework netcoreapp 2.0 
+dotnet build JinianNet.JNTemplate_core.csproj --configuration DEBUG --output ..\..\lib\netcoreapp2.10 --framework netcoreapp 2.0 
 goto GOEND
 
 :GOEND

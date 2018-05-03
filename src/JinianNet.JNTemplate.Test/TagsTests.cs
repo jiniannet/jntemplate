@@ -17,6 +17,22 @@ namespace JinianNet.JNTemplate.Test
         }
 
 
+        /// <summary>
+        /// 测试Layout
+        /// </summary>
+        [Fact]
+        public void TestLayout()
+        {
+            var templateContent = "$layout(\"include/layout.txt\")<h1>主体内容<h1>";
+            var template = new Template(templateContent);
+#if NETCOREAPP2_0
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
+#else
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
+#endif
+            var render = template.Render();
+            Assert.Equal("这是LAYOUT头部<h1>主体内容<h1>这是LAYOUT尾部", render);
+        }
 
         /// <summary>
         /// 测试负数
