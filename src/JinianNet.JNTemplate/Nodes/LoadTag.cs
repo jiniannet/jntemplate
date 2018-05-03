@@ -44,7 +44,12 @@ namespace JinianNet.JNTemplate.Nodes
             base.Parse(context, write);
         }
 
-        private void LoadResource(Object path, TemplateContext context)
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="context">TemplateContext</param>
+        protected void LoadResource(Object path, TemplateContext context)
         {
             if (path != null)
             {

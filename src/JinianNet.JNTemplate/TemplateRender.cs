@@ -50,44 +50,22 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         public virtual void Render(System.IO.TextWriter writer)
         {
+            Render(writer, ReadTags());
+        }
+
+        /// <summary>
+        /// 呈现内容
+        /// </summary>
+        /// <param name="writer">TextWriter</param>
+        /// <param name="collection">Tags</param>
+        public virtual void Render(System.IO.TextWriter writer, Tag[] collection)
+        {
             if (writer == null)
             {
                 throw new ArgumentNullException("\"writer\" cannot be null.");
             }
 
-            //缓存功能，待添加
-            if (this._content == null)
-            {
-                return;
-            }
-
-            Tag[] collection = null;
-            if (!String.IsNullOrEmpty(this._content))
-            {
-                //Object value;
-                //if (Engine.Cache != null && !String.IsNullOrEmpty(this._key))
-                //{
-                //    if ((value = Engine.Cache.Get(this._key)) != null)
-                //    {
-                //        collection = (Tag[])value;
-                //    }
-                //    else
-                //    {
-                //        collection = ParseTag();
-                //        Engine.Cache.Set(this._key, collection);
-                //    }
-                //}
-                //else
-                //{
-                collection = ParseTag();
-                //}
-            }
-            else
-            {
-                collection = new Tag[0];
-            }
-
-            if (collection.Length > 0)
+            if (collection != null && collection.Length > 0)
             {
                 for (Int32 i = 0; i < collection.Length; i++)
                 {
@@ -110,10 +88,42 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
+        /// read all tags
+        /// </summary>
+        /// <returns></returns>
+        public Tag[] ReadTags()
+        {
+            if (!String.IsNullOrEmpty(this._content))
+            {
+                //Object value;
+                //if (Engine.Cache != null && !String.IsNullOrEmpty(this._key))
+                //{
+                //    if ((value = Engine.Cache.Get(this._key)) != null)
+                //    {
+                //        collection = (Tag[])value;
+                //    }
+                //    else
+                //    {
+                //        collection = ParseTag();
+                //        Engine.Cache.Set(this._key, collection);
+                //    }
+                //}
+                //else
+                //{
+                return ParseTags();
+                //}
+            }
+            else
+            {
+                return new Tag[0];
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        private Tag[] ParseTag()
+        private Tag[] ParseTags()
         {
             TemplateLexer lexer = new TemplateLexer(this._content);
             TemplateParser parser = new TemplateParser(lexer.Parse());

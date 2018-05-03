@@ -71,7 +71,16 @@ namespace JinianNet.JNTemplate.Nodes
         protected void Render(TemplateContext context, TextWriter writer)
         {
             this._render.Context = context;
-            this._render.Render(writer);
+            this._render.Render(writer, ReadTags());
         }
+
+        /// <summary>
+        /// read all tags
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Tag[] ReadTags()
+        {
+            return this._render.ReadTags();
+        } 
     }
 }

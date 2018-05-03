@@ -63,6 +63,8 @@
     <Compile Include="Engine.cs" />
     <Compile Include="ICallProxy.cs" />
     <Compile Include="ILCallProxy.cs" />
+    <Compile Include="Nodes\LayoutTag.cs" />
+    <Compile Include="Parsers\LayoutParser.cs" />
     <Compile Include="ReflectionCallProxy.cs" />
     <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Exception\CompileException.cs" />
