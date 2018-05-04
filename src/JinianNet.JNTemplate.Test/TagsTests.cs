@@ -340,6 +340,34 @@ namespace JinianNet.JNTemplate.Test
 
 
         /// <summary>
+        /// 测试ForIn
+        /// </summary>
+        [Fact]
+        public void TestForIn()
+        {
+            var templateContent = "$for(i in list)$i$end";
+            var template = new Template(templateContent);
+            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
+            var render = template.Render();
+            Assert.Equal("70206", render);
+        }
+
+
+
+        /// <summary>
+        /// 测试elif
+        /// </summary>
+        [Fact]
+        public void TestElif()
+        {
+            var templateContent = "${if(3>5)}3>5${elif(2==2)}2=2${else}not${end}";
+            var template = new Template(templateContent);
+            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
+            var render = template.Render();
+            Assert.Equal("2=2", render);
+        }
+
+        /// <summary>
         /// 测试复合标签
         /// </summary>
         [Fact]

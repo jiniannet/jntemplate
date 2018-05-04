@@ -1,7 +1,7 @@
 开发注意事项：
 
 1.解决方案与项目说明：
-	1.JinianNet.JNTemplateCore.sln(JinianNet.JNTemplate_core) 为.NET CORE项目，适用于VS2017
+	1.JinianNet.JNTemplateCore.sln(JinianNet.JNTemplateCore) 为.NET CORE项目，适用于VS2017
 	2.JinianNet.JNTemplate.sln(JinianNet.JNTemplate) 为.net framework/MONO项目，适用于VS2012/VS2013/VS2015/VS2017 
 	3.VS2005/VS2008无法直接打开本项目，但是运行build/build.win.bat 可以生成基于.net framework 2.0的DLL文件（位于lib/2.0目录），可用于VS2015/VS2018项目开发。
 	4.不支持.NET 1.1与.NET 1.0，不支持VS2003
@@ -15,7 +15,7 @@
 	2.2 文件版本号：同 程序集版本号 但是 省略修订号
 
 3.引用/依赖规则：
-	项目必须只依赖最小的dll(即只引用System),以保证项目的可移植性。
+	项目必须保证最小的依赖,以保证项目的可移植性。
 
 4.参与规则：
 	如果您想对jntemplate进行代码贡献，请在开源主页（https://github.com/jiniannet）上fork  dev分支，提交您的代码后，向我们进行 pull request即可！

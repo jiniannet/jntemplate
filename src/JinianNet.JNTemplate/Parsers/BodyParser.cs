@@ -6,6 +6,9 @@ using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
 {
+    /// <summary>
+    /// BODY标签解析器
+    /// </summary>
     public class BodyParser : ITagParser
     {
         #region ITagParser 成员
