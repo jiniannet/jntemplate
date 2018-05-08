@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
-		Changelog.txt = Changelog.txt
-		Developer-ReadMe.txt = Developer-ReadMe.txt
-		License.txt = License.txt
+		Changelog = Changelog
+		Developer-ReadMe = Developer-ReadMe
+		License = License
 		README.md = README.md
 	EndProjectSection
 EndProject
