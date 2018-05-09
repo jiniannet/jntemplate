@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Common
         /// <returns></returns>
         public static Boolean AllowWord(Char value)
         {
-            return Char.IsLower(value) || Char.IsUpper(value) || Char.IsNumber(value) || value == '_' || value == '[' || value == ']';
+            return Char.IsLower(value) || Char.IsUpper(value) || Char.IsNumber(value) || value == '_';
         }
         /// <summary>
         /// 字符串是否相同

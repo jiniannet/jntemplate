@@ -17,6 +17,19 @@ namespace JinianNet.JNTemplate.Test
         }
 
 
+
+        /// <summary>
+        /// 测试Layout
+        /// </summary>
+        [Fact]
+        public void TestIndex()
+        {
+            var templateContent = "$data[b[1]]()s";
+            var template = new Template(templateContent);
+            template.Set("data", new int[] { 7, 0, 2, 0, 6 });
+            var render = template.Render();
+            Assert.Equal("7", render);
+        }
         /// <summary>
         /// 测试Layout
         /// </summary>

@@ -205,8 +205,36 @@ namespace JinianNet.JNTemplate
                     else
                     {
                         Char value = this._scanner.Read();
-                        if (((value == '(' || Common.Utility.AllowWord(value)) && Common.Utility.AllowWord(this._scanner.Read(-1)))
-                        || (Common.Utility.AllowWord(value) && (this._scanner.Read(-1) == '.')))
+                        Char next = this._scanner.Read(-1);
+                        //if (value == '(' &&
+                        //    (Common.Utility.AllowWord(next)
+                        //    || next == ']'))
+                        //{
+                        //    return false;
+                        //}
+                        //if (Common.Utility.AllowWord(value) && 
+                        //    (Common.Utility.AllowWord(next) 
+                        //    || next == '[' 
+                        //    || next == '.'))
+                        //{
+                        //    return false;
+                        //}
+                        //if (value == '[' && (Common.Utility.AllowWord(next) || next == ']'))
+                        //{
+                        //    return false;
+                        //}
+                        //if (value == ']' && (Common.Utility.AllowWord(next) || next == ']'))
+                        //{
+                        //    return false;
+                        //}
+                        //if (Common.Utility.AllowWord(value) && (next == '.' || next == '['))
+                        //{
+                        //    return false;
+                        //}
+
+
+                        if (((value == '(' || Common.Utility.AllowWord(value) || value=='[') && Common.Utility.AllowWord(next))
+                        || (Common.Utility.AllowWord(value) && (next == '.')))
                         {
                             return false;
                         }
@@ -265,6 +293,9 @@ namespace JinianNet.JNTemplate
                                     break;
                                 case TokenKind.LeftParentheses:
                                     this._pos.Push("(");
+                                    break;
+                                case TokenKind.LeftBracket:
+                                    this._pos.Push("[");
                                     break;
                             }
                             ReadToken();
@@ -428,11 +459,13 @@ namespace JinianNet.JNTemplate
                     continue;
                 }
 
-                if (this._scanner.Read() == '(')
+                if (this._scanner.Read() == '(' || this._scanner.Read() == '[')
                 {
-                    this._pos.Push("(");
+                    this._pos.Push(this._scanner.Read().ToString());
                 }
-                else if (this._scanner.Read() == ')' && this._pos.Count > 0 && this._pos.Peek() == "(")// && this.pos.Count > 2
+                else if (
+                    (this._scanner.Read() == ')' && this._pos.Count > 0 && this._pos.Peek() == "(")
+                    || (this._scanner.Read() == ']' && this._pos.Count > 0 && this._pos.Peek() == "["))// && this.pos.Count > 2
                 {
                     this._pos.Pop();
                     if (this._pos.Count == 1)
@@ -468,9 +501,12 @@ namespace JinianNet.JNTemplate
                     tk = GetTokenKind(this._scanner.Read());
                 }
                 //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
-                if ((this._kind != tk || this._kind == TokenKind.LeftParentheses || this._kind == TokenKind.RightParentheses)
+                if (
+                    ((this._kind != tk || this._kind == TokenKind.LeftParentheses || this._kind == TokenKind.RightParentheses)
                     && (tk != TokenKind.Number || this._kind != TokenKind.TextData)
                     //&& (this.kind == TokenKind.Number && tk != TokenKind.Dot)
+                    )
+                    || (this._kind == tk && (tk == TokenKind.LeftBracket || tk == TokenKind.LeftParentheses || tk == TokenKind.RightBracket || tk == TokenKind.RightParentheses))
                     )
                 //|| (this.kind != TokenKind.Number && tk == TokenKind.Dot)
                 {
