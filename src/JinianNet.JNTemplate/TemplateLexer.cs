@@ -205,8 +205,8 @@ namespace JinianNet.JNTemplate
                     else
                     {
                         Char value = this._scanner.Read();
-                        if (((value == '(' || Common.Utility.IsWord(value)) && Common.Utility.IsWord(this._scanner.Read(-1)))
-                        || (Common.Utility.IsWord(value) && (this._scanner.Read(-1) == '.')))
+                        if (((value == '(' || Common.Utility.AllowWord(value)) && Common.Utility.AllowWord(this._scanner.Read(-1)))
+                        || (Common.Utility.AllowWord(value) && (this._scanner.Read(-1) == '.')))
                         {
                             return false;
                         }

@@ -41,9 +41,9 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">字符</param>
         /// <returns></returns>
-        public static Boolean IsWord(Char value)
+        public static Boolean AllowWord(Char value)
         {
-            return Char.IsLower(value) || Char.IsUpper(value) || Char.IsNumber(value) || value == '_';
+            return Char.IsLower(value) || Char.IsUpper(value) || Char.IsNumber(value) || value == '_' || value == '[' || value == ']';
         }
         /// <summary>
         /// 字符串是否相同
