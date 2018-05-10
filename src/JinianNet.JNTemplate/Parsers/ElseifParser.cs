@@ -30,9 +30,8 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 ElseifTag tag = new ElseifTag();
 
-                TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 2, tc.Count - 2);
-                tag.Test = parser.Read(coll);
+                TokenCollection coll = new TokenCollection(); 
+                tag.Test = parser.Read(tc[2,-1]);
 
                 return tag;
                 //}

@@ -32,10 +32,8 @@ namespace JinianNet.JNTemplate.Parsers
             {
 
                 ForeachTag tag = new ForeachTag();
-                tag.Name = tc[2].Text;
-                TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 4, tc.Count - 2);
-                tag.Source = parser.Read(coll);
+                tag.Name = tc[2].Text; 
+                tag.Source = parser.Read(tc[4,-1]);
 
                 while (parser.MoveNext())
                 {

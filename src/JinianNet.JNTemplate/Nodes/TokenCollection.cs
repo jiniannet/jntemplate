@@ -80,19 +80,19 @@ namespace JinianNet.JNTemplate.Nodes
                 return this[Count - 1];
             }
         }
-        /// <summary>
-        /// 添加多个TOKEN
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        public void Add(IList<Token> list, int start, int end)
-        {
-            for (int i = start; i <= end && i < list.Count; i++)
-            {
-                Add(list[i]);
-            }
-        }
+        ///// <summary>
+        ///// 添加多个TOKEN
+        ///// </summary>
+        ///// <param name="list"></param>
+        ///// <param name="start"></param>
+        ///// <param name="end"></param>
+        //public void Add(IList<Token> list, int start, int end)
+        //{
+        //    for (int i = start; i <= end && i < list.Count; i++)
+        //    {
+        //        Add(list[i]);
+        //    }
+        //}
 
         /// <summary>
         /// 获取所有TOKEN的字符串值
@@ -138,6 +138,112 @@ namespace JinianNet.JNTemplate.Nodes
         {
             this._list.RemoveAt(index);
         }
+        /// <summary>
+        /// 获取指定数量的TOKEN
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public TokenCollection this[int start, int end]
+        {
+            get
+            {
+                TokenCollection tc = new TokenCollection();
+                start = GetValidIndex(start);
+                end = GetValidIndex(end);
+                for (int i = start; i < end && i < this.Count; i++)
+                {
+                    tc.Add(this[i]);
+                }
+                return tc;
+            }
+        }
+
+
+        /// <summary>
+        /// 分隔TokenCollection
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public TokenCollection[] Split(int start, int end, params TokenKind[] kinds)
+        {
+            List<TokenCollection> tc = new List<TokenCollection>();
+            start = GetValidIndex(start);
+            end = GetValidIndex(end);
+            if (end > this.Count)
+            {
+                end = this.Count;
+            }
+            int pos = 0, x = start, y = 0;
+            for (int i = start; i < end; i++)
+            {
+                y = i;
+                if (this[i].TokenKind == TokenKind.LeftParentheses)
+                {
+                    pos++;
+                }
+                else if (this[i].TokenKind == TokenKind.RightParentheses)
+                {
+                    if (pos > 0)
+                    {
+                        pos--;
+                    }
+                    else
+                    {
+                        throw new Exception.ParseException(string.Concat("syntax error near ):", this), this[i].BeginLine, this[i].BeginColumn);
+                    }
+                }
+                else if (pos == 0 && IsInKinds(this[i].TokenKind, kinds))
+                {
+                    if (y > x)
+                    {
+                        tc.Add(this[x, y]);
+                    }
+                    x = i + 1;
+                    TokenCollection coll = new TokenCollection();
+                    coll.Add(this[i]);
+                    tc.Add(coll);
+                }
+
+                if (i == end - 1 && y >= x)
+                {
+                    if (x == 0 && y == i)
+                    {
+                        throw new Exception.ParseException(string.Concat("Unexpected  tag:", this), this[0].BeginLine, this[0].BeginColumn);
+                    }
+                    tc.Add(this[x, y + 1]);
+                    x = i + 1;
+                }
+            }
+
+            return tc.ToArray();
+        }
+
+        private bool IsInKinds(TokenKind kind, params TokenKind[] kinds)
+        {
+            if (kinds == null || kinds.Length == 0)
+            {
+                return false;
+            }
+            for (int i = 0; i < kinds.Length; i++)
+            {
+                if (kind == kinds[i])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private int GetValidIndex(int index)
+        {
+            if (index < 0)
+            {
+                return this.Count + index;
+            }
+            return index;
+        }
 
         /// <summary>
         /// 获取或设置指定索引的值
@@ -148,13 +254,13 @@ namespace JinianNet.JNTemplate.Nodes
         {
             get
             {
-                return this._list[index];
+                return this._list[GetValidIndex(index)];
             }
             set
             {
                 if (value.TokenKind != TokenKind.Space)
                 {
-                    this._list[index] = value;
+                    this._list[GetValidIndex(index)] = value;
                 }
             }
         }

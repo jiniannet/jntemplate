@@ -33,8 +33,7 @@ namespace JinianNet.JNTemplate.Parsers
                     IfTag tag = new IfTag();
 
                     ElseifTag t = new ElseifTag();
-                    TokenCollection coll = new TokenCollection();
-                    coll.Add(tc, 2, tc.Count - 2);
+                    TokenCollection coll = tc[2, -1];
                     t.Test = parser.Read(coll);
                     t.FirstToken = coll.First;
                     //t.LastToken = coll.Last;

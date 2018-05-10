@@ -15,8 +15,7 @@ namespace JinianNet.JNTemplate.Test
             //conf.IgnoreCase = false;
             Engine.Configure(conf);
         }
-
-
+ 
 
         /// <summary>
         /// 测试索引

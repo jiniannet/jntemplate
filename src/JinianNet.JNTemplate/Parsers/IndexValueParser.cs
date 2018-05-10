@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                 for (int i = y; i >= 0; i--)
                 {
-                    if (tc[i].TokenKind == TokenKind.Dot)
+                    if (tc[i].TokenKind == TokenKind.Dot && pos == 0)
                     {
                         return null;
                     }
@@ -57,15 +57,10 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return null;
                 }
-
-                TokenCollection indexColl = new TokenCollection();
-                TokenCollection containerColl = new TokenCollection();
-                indexColl.Add(tc, x + 1, y - 1);
-                containerColl.Add(tc, 0, x - 1);
-
+                  
                 IndexValueTag tag = new IndexValueTag();
-                tag.Container = (SimpleTag)parser.Read(containerColl);
-                tag.Index = parser.Read(indexColl);
+                tag.Container = (SimpleTag)parser.Read(tc[0, x]);
+                tag.Index = parser.Read(tc[x + 1, y]);
 
                 return tag;
             }

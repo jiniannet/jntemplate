@@ -46,8 +46,7 @@ namespace JinianNet.JNTemplate.Parsers
                         {
                             if (pos == 0)
                             {
-                                TokenCollection coll = new TokenCollection();
-                                coll.Add(tc, start, end - 1);
+                                TokenCollection coll = tc[start, end];
                                 if (coll.Count > 0)
                                 {
                                     ts.Add(parser.Read(coll));
@@ -71,9 +70,8 @@ namespace JinianNet.JNTemplate.Parsers
                         }
                         if (i == tc.Count - 2)
                         {
-                            TokenCollection coll = new TokenCollection();
-                            coll.Add(tc, start, end);
-                            if (coll.Count > 0)
+                            TokenCollection coll = tc[start, end + 1];
+                            if (coll.Count>0)
                             {
                                 ts.Add(parser.Read(coll));
                             }
