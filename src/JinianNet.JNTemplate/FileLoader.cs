@@ -25,14 +25,14 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 基本资源路径
         /// </summary>
-        public List<String> ResourceDirectories { get; set; }
+        public List<string> ResourceDirectories { get; set; }
 
         /// <summary>
         /// 获取父目录
         /// </summary>
         /// <param name="fullPath"></param>
         /// <returns></returns>
-        public String GetDirectoryName(String fullPath)
+        public string GetDirectoryName(string fullPath)
         {
             return System.IO.Path.GetDirectoryName(fullPath);
         }
@@ -44,7 +44,7 @@ namespace JinianNet.JNTemplate
         /// <param name="encoding">编码</param>
         /// <param name="directory">追加查找目录</param>
         /// <returns></returns>
-        public ResourceInfo Load(String filename, Encoding encoding, params string[] directory)
+        public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
             string fullPath;
@@ -65,7 +65,7 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param>
         /// <param name="fullPath">查找结果：完整路径</param>
         /// <returns>路径索引</returns>
-        public Int32 FindPath(String filename, out String fullPath)
+        public int FindPath(string filename, out string fullPath)
         {
             return FindPath(this.ResourceDirectories, filename, out fullPath);
         }
@@ -77,28 +77,28 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param>
         /// <param name="fullPath">查找结果：完整路径</param>
         /// <returns>路径索引</returns>
-        public Int32 FindPath(IEnumerable<String> paths, String filename, out String fullPath)
+        public int FindPath(IEnumerable<string> paths, string filename, out string fullPath)
         {
             //filename 允许单纯的文件名或相对路径
             fullPath = null;
 
-            if (!String.IsNullOrEmpty(filename))
+            if (!string.IsNullOrEmpty(filename))
             {
                 if ((filename = NormalizePath(filename)) == null)  //路径非法，比如用户试图跳出当前目录时（../header.txt）
                 {
                     return -1;
                 }
 
-                Int32 i = 0;
-                foreach (String checkUrl in paths)
+                int i = 0;
+                foreach (string checkUrl in paths)
                 {
                     if (checkUrl[checkUrl.Length - 1] != System.IO.Path.DirectorySeparatorChar)
                     {
-                        fullPath = String.Concat(checkUrl, filename);
+                        fullPath = string.Concat(checkUrl, filename);
                     }
                     else
                     {
-                        fullPath = String.Concat(checkUrl.Remove(checkUrl.Length - 1, 1), filename);
+                        fullPath = string.Concat(checkUrl.Remove(checkUrl.Length - 1, 1), filename);
                     }
                     if (System.IO.File.Exists(fullPath))
                     {
@@ -118,9 +118,9 @@ namespace JinianNet.JNTemplate
         /// <param name="filename">文件名</param>
         /// <param name="encoding">编码</param>
         /// <returns>文本内容</returns>
-        public String Load(IEnumerable<String> paths, String filename, Encoding encoding)
+        public string Load(IEnumerable<string> paths, string filename, Encoding encoding)
         {
-            if (paths == null && String.IsNullOrEmpty(filename))
+            if (paths == null && string.IsNullOrEmpty(filename))
             {
                 return null;
             }
@@ -128,7 +128,7 @@ namespace JinianNet.JNTemplate
             {
                 encoding = Encoding.UTF8;
             }
-            String full;
+            string full;
             if (FindPath(paths, filename, out full) != -1)
             {
                 return LoadResource(full, encoding);
@@ -143,7 +143,7 @@ namespace JinianNet.JNTemplate
         /// <param name="fullPath">完整文件路径</param>
         /// <param name="encoding">编码</param>
         /// <returns>文本内容</returns>
-        public String LoadResource(String fullPath, Encoding encoding)
+        public string LoadResource(string fullPath, Encoding encoding)
         {
             if (!System.IO.File.Exists(fullPath))
             {
@@ -164,7 +164,7 @@ namespace JinianNet.JNTemplate
         /// <param name="encoding">编码</param>
         /// <param name="fullName">完整路径</param>
         /// <returns></returns>
-        public String Load(IEnumerable<String> paths, String filename, Encoding encoding, out String fullName)
+        public string Load(IEnumerable<string> paths, string filename, Encoding encoding, out string fullName)
         {
             if (IsLocalPath(filename))
             {
@@ -172,7 +172,7 @@ namespace JinianNet.JNTemplate
             }
             else
             {
-                Int32 index = FindPath(paths, filename, out fullName); //如果是相对路径，则进行路径搜索
+                int index = FindPath(paths, filename, out fullName); //如果是相对路径，则进行路径搜索
                 if (index == -1)
                 {
                     return null;
@@ -186,7 +186,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private Boolean IsWindowsLocalPath(String path)
+        private bool IsWindowsLocalPath(string path)
         {
             return path.IndexOf(System.IO.Path.VolumeSeparatorChar) != -1;
         }
@@ -196,7 +196,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private Boolean IsUnixLocalPath(String path)
+        private bool IsUnixLocalPath(string path)
         {
             return path[0] == '/'; ;
         }
@@ -206,9 +206,9 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        public Boolean IsLocalPath(String path)
+        public bool IsLocalPath(string path)
         {
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
                 return false;
             }
@@ -238,18 +238,18 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="filename">待处理文件</param>
         /// <returns>处理后的路径</returns>
-        public String NormalizePath(String filename)
+        public string NormalizePath(string filename)
         {
-            if (String.IsNullOrEmpty(filename) || filename.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
+            if (string.IsNullOrEmpty(filename) || filename.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
             {
                 return null;
             }
 
-            List<String> values = new List<String>(filename.Split('/'));
+            List<string> values = new List<string>(filename.Split('/'));
 
-            for (Int32 i = 0; i < values.Count; i++)
+            for (int i = 0; i < values.Count; i++)
             {
-                if (values[i] == "." || String.IsNullOrEmpty(values[i]))
+                if (values[i] == "." || string.IsNullOrEmpty(values[i]))
                 {
                     values.RemoveAt(i);
                     i--;
@@ -267,9 +267,9 @@ namespace JinianNet.JNTemplate
                 }
             }
 
-            values.Insert(0, String.Empty);
+            values.Insert(0, string.Empty);
 
-            return String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), values.ToArray());
+            return string.Join(System.IO.Path.DirectorySeparatorChar.ToString(), values.ToArray());
         }
     }
 }

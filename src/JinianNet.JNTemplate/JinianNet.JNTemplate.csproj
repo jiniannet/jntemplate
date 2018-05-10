@@ -52,6 +52,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallIndexValueDelegate.cs" />
     <Compile Include="Common\OperatorConvert.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
@@ -59,13 +60,15 @@
     <Compile Include="Configuration\VariableAttribute.cs" />
     <Compile Include="DynamicMethodInfo.cs" />
     <Compile Include="ExcuteMethodDelegate.cs" />
-    <Compile Include="GetPropertyOrFieldDelegate.cs" />
+    <Compile Include="CallPropertyOrFieldDelegate.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="ICallProxy.cs" />
     <Compile Include="ILCallProxy.cs" />
     <Compile Include="Nodes\BodyTag.cs" />
+    <Compile Include="Nodes\IndexValueTag.cs" />
     <Compile Include="Nodes\LayoutTag.cs" />
     <Compile Include="Parsers\BodyParser.cs" />
+    <Compile Include="Parsers\IndexValueParser.cs" />
     <Compile Include="Parsers\LayoutParser.cs" />
     <Compile Include="ReflectionCallProxy.cs" />
     <Compile Include="RuntimeInfo.cs" />

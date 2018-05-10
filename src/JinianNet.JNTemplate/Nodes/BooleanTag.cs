@@ -9,13 +9,13 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 布尔标签
     /// </summary>
-    public class BooleanTag : TypeTag<Boolean>
+    public class BooleanTag : TypeTag<bool>
     {
         /// <summary>
         /// 获取布布值
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Boolean ToBoolean(TemplateContext context)
+        public override bool ToBoolean(TemplateContext context)
         {
             return Value;
         }

@@ -11,13 +11,13 @@ namespace JinianNet.JNTemplate.Exception
     /// </summary>
     public class TemplateException : System.Exception
     {
-        private Int32 _errorLine;
-        private Int32 _errorColumn;
-        private String _errorCode;
+        private int _errorLine;
+        private int _errorColumn;
+        private string _errorCode;
         /// <summary>
         /// 所在行
         /// </summary>
-        public Int32 Line
+        public int Line
         {
             get { return this._errorLine; }
             set { this._errorLine = value; }
@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Exception
         /// <summary>
         /// 所在字符
         /// </summary>
-        public Int32 Column
+        public int Column
         {
             get { return this._errorColumn; }
             set { this._errorColumn = value; }
@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate.Exception
         /// <summary>
         /// 错误代码
         /// </summary>
-        public String Code
+        public string Code
         {
             get { return this._errorCode; }
             set { this._errorCode = value; }
@@ -53,8 +53,8 @@ namespace JinianNet.JNTemplate.Exception
         /// <param name="message">异常信息</param>
         /// <param name="line">行</param>
         /// <param name="column">字符</param>
-        public TemplateException(String message, Int32 line, Int32 column)
-            : base(String.Concat("Line:",
+        public TemplateException(string message, int line, int column)
+            : base(string.Concat("Line:",
                 line.ToString(),
                 " Column:",
                 column.ToString(),
@@ -69,7 +69,7 @@ namespace JinianNet.JNTemplate.Exception
         /// 模板错误
         /// </summary>
         /// <param name="message">错误信息</param>
-        public TemplateException(String message)
+        public TemplateException(string message)
             : base(message)
         {
 
@@ -80,7 +80,7 @@ namespace JinianNet.JNTemplate.Exception
         /// </summary>
         /// <param name="message">错误信息</param>
         /// <param name="innerException">基础信息</param>
-        public TemplateException(String message, System.Exception innerException)
+        public TemplateException(string message, System.Exception innerException)
             : base(message, innerException)
         {
 

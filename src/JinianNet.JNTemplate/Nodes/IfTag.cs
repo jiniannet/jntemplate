@@ -15,9 +15,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
-            for (Int32 i = 0; i < Children.Count-1; i++) //最后面一个子对象为EndTag
+            for (int i = 0; i < Children.Count-1; i++) //最后面一个子对象为EndTag
             {
                 if (Children[i].ToBoolean(context))
                 {

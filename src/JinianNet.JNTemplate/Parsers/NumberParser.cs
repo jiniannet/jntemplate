@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Parsers
                 NumberTag tag = new NumberTag();
                 if (tc.First.Text.IndexOf('.') == -1)
                 {
-                    tag.Value = Int32.Parse(tc.First.Text);
+                    tag.Value = int.Parse(tc.First.Text);
                 }
                 else
                 {

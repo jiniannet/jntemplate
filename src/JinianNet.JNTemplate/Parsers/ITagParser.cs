@@ -63,7 +63,7 @@ namespace JinianNet.JNTemplate.Parsers
         {
             if (tc.Count > 2 && HasOperator(tc))
             {
-                Int32 start, end, pos;
+                int start, end, pos;
                 start = end = pos = 0;
 
                 #region 去括号
@@ -71,7 +71,7 @@ namespace JinianNet.JNTemplate.Parsers
                 //(8+2) * (10-5) ==》(8+2) * (10-5)
                 if (tc.First.TokenKind == TokenKind.LeftParentheses && tc.Last.TokenKind == TokenKind.RightParentheses)
                 {
-                    for (Int32 i = 1; i < tc.Count - 1; i++)
+                    for (int i = 1; i < tc.Count - 1; i++)
                     {
                         switch (tc[i].TokenKind)
                         {
@@ -101,7 +101,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                 #region 执行表达式折分
 
-                for (Int32 i = 0; i < tc.Count; i++)
+                for (int i = 0; i < tc.Count; i++)
                 {
                     end = i;
                     switch (tc[i].TokenKind)
@@ -165,9 +165,9 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
 
-        private Boolean HasOperator(TokenCollection tc)
+        private bool HasOperator(TokenCollection tc)
         {
-            for (Int32 i = 0; i < tc.Count; i++)
+            for (int i = 0; i < tc.Count; i++)
             {
                 if (tc[i].TokenKind == TokenKind.Operator)
                 {
@@ -192,10 +192,10 @@ namespace JinianNet.JNTemplate.Parsers
                 && HasDot(tc))
             {
                 ReferenceTag tag = new ReferenceTag();
-                Int32 start, end, pos;
+                int start, end, pos;
                 start = end = pos = 0;
 
-                for (Int32 i = 0; i < tc.Count; i++)
+                for (int i = 0; i < tc.Count; i++)
                 {
 
                     end = i;
@@ -242,10 +242,10 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
 
-        public Boolean HasDot(TokenCollection tc)
+        public bool HasDot(TokenCollection tc)
         {
-            Int32 pos = 0;
-            for (Int32 i = 0; i < tc.Count; i++)
+            int pos = 0;
+            for (int i = 0; i < tc.Count; i++)
             {
                 switch (tc[i].TokenKind)
                 {

@@ -11,29 +11,29 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public class FunctaionTag : SimpleTag
     {
-        private String _name;
+        private TagBase _func;
         /// <summary>
-        /// 方法名
+        /// 函数
         /// </summary>
-        public String Name
+        public TagBase Func
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this._func; }
+            set { this._func = value; }
         }
 
         /// <summary>
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
-            Object[] args = new Object[Children.Count];
-            for (Int32 i = 0; i < this.Children.Count; i++)
+            object[] args = new object[Children.Count];
+            for (int i = 0; i < this.Children.Count; i++)
             {
                 args[i] = Children[i].Parse(context);
             }
 
-            Object result = context.TempData[this._name];
+            object result = this.Func.Parse(context);
 
             if (result != null)
             {
@@ -50,24 +50,38 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="baseValue">baseValue</param>
-        public override Object Parse(Object baseValue, TemplateContext context)
+        public override object Parse(object baseValue, TemplateContext context)
         {
             if (baseValue != null)
             {
-                Object[] args = new Object[Children.Count];
-                for (Int32 i = 0; i < Children.Count; i++)
+                object[] args = new object[Children.Count];
+                for (int i = 0; i < Children.Count; i++)
                 {
                     args[i] = Children[i].Parse(context);
                 }
 
-                Object result = Engine.Runtime.CallMethod(baseValue, this._name, args);
+                object name;
+                if (this.Func is VariableTag)
+                {
+                    name = ((VariableTag)this.Func).Name;
+                }
+                else
+                {
+                    name = this.Func.Parse(context);
+                }
+
+                if (name == null)
+                {
+                    return null;
+                }
+                object result = Engine.Runtime.CallMethod(baseValue, name.ToString(), args);
 
                 if (result != null)
                 {
                     return result;
                 }
 
-                result = Engine.Runtime.CallPropertyOrField(baseValue, this._name);
+                result = Engine.Runtime.CallPropertyOrField(baseValue, name.ToString());
 
                 if (result != null && result is FuncHandler)
                 {

@@ -11,13 +11,13 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public class SetTag : TagBase
     {
-        private String _name;
+        private string _name;
         private Tag _value;
 
         /// <summary>
         /// 变量名
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return this._name; }
             set { this._name = value; }
@@ -36,9 +36,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
-            Object value = this.Value.Parse(context);
+            object value = this.Value.Parse(context);
             if (!context.TempData.SetValue(this.Name,value))
             {
                 context.TempData.Push(this.Name, value);

@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Nodes
             set { this._path = value; }
         }
 
-        private String LoadResource(Object path, TemplateContext context)
+        private string LoadResource(object path, TemplateContext context)
         {
             if (path != null)
             {
@@ -43,9 +43,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
-            Object path = this._path.Parse(context);
+            object path = this._path.Parse(context);
             return LoadResource(path, context);
         }
 

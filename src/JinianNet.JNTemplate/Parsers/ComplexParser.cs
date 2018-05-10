@@ -26,27 +26,20 @@ namespace JinianNet.JNTemplate.Parsers
                 && parser != null
                 && tc.Count > 2)
             {
-                Int32 start, end, pos;
+                int start, end, pos;
                 start = end = pos = 0;
 
-                Boolean isFunc = false;
+                bool isFunc = false;
 
                 List<Token> data = new List<Token>();
 
                 Queue<TokenCollection> queue = new Queue<TokenCollection>();
 
-                for (Int32 i = 0; i < tc.Count; i++)
+                for (int i = 0; i < tc.Count; i++)
                 {
                     end = i;
                     if (tc[i].TokenKind == TokenKind.LeftParentheses)
                     {
-                        if (pos == 0)
-                        {
-                            if (i > 0 && tc[i - 1].TokenKind == TokenKind.TextData)
-                            {
-                                isFunc = true;
-                            }
-                        }
                         pos++;
                     }
                     else if (tc[i].TokenKind == TokenKind.RightParentheses)
@@ -57,25 +50,25 @@ namespace JinianNet.JNTemplate.Parsers
                         }
                         else
                         {
-                            throw new Exception.ParseException(String.Concat("syntax error near ):", tc), data[i].BeginLine, data[i].BeginColumn);
+                            throw new Exception.ParseException(string.Concat("syntax error near ):", tc), data[i].BeginLine, data[i].BeginColumn);
                         }
 
-                        if (pos == 0)
-                        {
-                            TokenCollection coll = new TokenCollection();
-                            if (!isFunc)
-                            {
-                                coll.Add(tc, start + 1, end - 1);
-                            }
-                            else
-                            {
-                                coll.Add(tc, start, end);
-                            }
-                            queue.Enqueue(coll);
-                            data.Add(null);
-                            start = i + 1;
-                            //tag.AddChild(parser.Read(coll));
-                        }
+                        //if (pos == 0)
+                        //{
+                        //    TokenCollection coll = new TokenCollection();
+                        //    if (!isFunc)
+                        //    {
+                        //        coll.Add(tc, start + 1, end - 1);
+                        //    }
+                        //    else
+                        //    {
+                        //        coll.Add(tc, start, end);
+                        //    }
+                        //    queue.Enqueue(coll);
+                        //    data.Add(null);
+                        //    start = i + 1;
+                        //    //tag.AddChild(parser.Read(coll));
+                        //}
                     }
                     else if (pos == 0 && (tc[i].TokenKind == TokenKind.Dot || tc[i].TokenKind == TokenKind.Operator))
                     {
@@ -94,7 +87,7 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         if (start == 0 && end == i)
                         {
-                            throw new Exception.ParseException(String.Concat("Unexpected  tag:", tc), tc[0].BeginLine, tc[0].BeginColumn);
+                            throw new Exception.ParseException(string.Concat("Unexpected  tag:", tc), tc[0].BeginLine, tc[0].BeginColumn);
                         }
                         TokenCollection coll = new TokenCollection();
                         coll.Add(tc, start, end);
@@ -104,23 +97,33 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                 }
 
+
+                //===============================================================
+
+
                 if (queue.Count == 1 && queue.Peek().Equals(tc))
                 {
                     return null;
                 }
                 List<Tag> tags = new List<Tag>();
 
-                for (Int32 i = 0; i < data.Count; i++)
+                for (int i = 0; i < data.Count; i++)
                 {
                     if (data[i] == null)
                     {
-                        tags.Add(parser.Read(queue.Dequeue()));
+                        TokenCollection tmpColl = queue.Dequeue();
+                        if (tmpColl.First.TokenKind == TokenKind.LeftParentheses && tmpColl.Last.TokenKind == TokenKind.RightParentheses)
+                        {
+                            tmpColl.RemoveAt(0);
+                            tmpColl.RemoveAt(tmpColl.Count - 1);
+                        }
+                        tags.Add(parser.Read(tmpColl));
                     }
                     else if (data[i].TokenKind == TokenKind.Dot)
                     {
                         if (tags.Count == 0 || i == data.Count - 1 || data[i + 1] != null)
                         {
-                            throw new Exception.ParseException(String.Concat("syntax error near .:", tc), data[i].BeginLine, data[i].BeginColumn);
+                            throw new Exception.ParseException(string.Concat("syntax error near .:", tc), data[i].BeginLine, data[i].BeginColumn);
                         }
                         if (tags[tags.Count - 1] is ReferenceTag)
                         {
@@ -147,11 +150,12 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return tags[0];
                 }
+
                 if (tags.Count > 1)
                 {
                     ExpressionTag t = new ExpressionTag();
 
-                    for (Int32 i = 0; i < tags.Count; i++)
+                    for (int i = 0; i < tags.Count; i++)
                     {
                         t.AddChild(tags[i]);
                     }

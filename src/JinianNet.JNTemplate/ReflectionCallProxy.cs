@@ -16,17 +16,17 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class ReflectionCallProxy : ICallProxy
     {
-        private readonly Char[] expressionPartSeparator;
-        //private readonly Char[] indexExprEndChars;
-        //private readonly Char[] indexExprStartChars;
+        private readonly char[] expressionPartSeparator;
+        //private readonly char[] indexExprEndChars;
+        //private readonly char[] indexExprStartChars;
         /// <summary>
         /// 反射构造函数
         /// </summary>
         public ReflectionCallProxy()
         {
-            expressionPartSeparator = new Char[] { '.' };
-            //indexExprEndChars = new Char[] { ']', ')' };
-            //indexExprStartChars = new Char[] { '[', '(' };
+            expressionPartSeparator = new char[] { '.' };
+            //indexExprEndChars = new char[] { ']', ')' };
+            //indexExprStartChars = new char[] { '[', '(' };
         }
         #region EVAL解析
         #region 4.0版本
@@ -38,12 +38,12 @@ namespace JinianNet.JNTemplate
         /// <param name="propIndex">索引名称</param>
         /// <param name="isNumber">索引名称是否数字</param>
         /// <returns></returns>
-        private Object GetIndexedProperty(Object container, Boolean isNumber, Object propIndex)
+        private object GetIndexedProperty(object container, bool isNumber, object propIndex)
         {
             IList list;
             if (isNumber && (list = container as IList) != null)
             {
-                return list[(Int32)propIndex];
+                return list[(int)propIndex];
             }
             IDictionary dic;
             if ((dic = container as IDictionary) != null)
@@ -55,19 +55,19 @@ namespace JinianNet.JNTemplate
             PropertyInfo info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
             if (info != null)
             {
-                return info.GetValue(container, new Object[] { propIndex });
+                return info.GetValue(container, new object[] { propIndex });
             }
 #elif NETSTANDARD
             var info = t.GetRuntimeMethod("get_Item", new Type[] { propIndex.GetType() });
             if (info != null)
             {
-                return info.Invoke(container, new Object[] { propIndex });
+                return info.Invoke(container, new object[] { propIndex });
             }
 #else
             var info = t.GetMethod("get_Item", new Type[] { propIndex.GetType() });
             if (info != null)
             {
-                return info.Invoke(container, new Object[] { propIndex });
+                return info.Invoke(container, new object[] { propIndex });
             }
 #endif
             return null;
@@ -82,13 +82,13 @@ namespace JinianNet.JNTemplate
         /// <param name="container">原对象</param>
         /// <param name="propName">属性或字段名，有参数属性为参数值</param>
         /// <returns></returns>
-        public Object CallPropertyOrField(Object container, String propName)
+        public object CallPropertyOrField(object container, string propName)
         {
             Type t = container.GetType();
             //此处的属性包括有参属性（索引）与无参属性（属性）
             //if (propName.IndexOfAny(indexExprStartChars) < 0)
             //因属性与字段均不可能以数字开头，如第一个字符为数字则直接跳过属性判断以加快处理速度
-            if (!Char.IsDigit(propName[0]))
+            if (!char.IsDigit(propName[0]))
             {
 #if !NET20_NOTUSER
                 PropertyInfo p =
@@ -124,18 +124,63 @@ namespace JinianNet.JNTemplate
 #endif
             }
 
-            Int32 index;
-            if (Int32.TryParse(propName, out index))
-            {
-                return GetIndexedProperty(container, true, index);
-            }
-            //取索引
-            return GetIndexedProperty(container, false, propName);
+            return null;
         }
         #endregion
 
         #region Index Proerty
+        /// <summary>
+        /// 动态获取索引值
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="propIndex">索引</param>
+        /// <returns>返回结果</returns>
+        public object CallIndexValue(object container, object propIndex)
+        {
+            IList list;
+            if (propIndex is int && (list = container as IList) != null)
+            {
+                return list[(int)propIndex];
+            }
+            IDictionary dic;
+            if ((dic = container as IDictionary) != null)
+            {
+                return dic[propIndex];
+            } 
+            if (propIndex is int && container is string)
+            {
+                return ((string)container)[(int)propIndex];
+            }
+            Type t = container.GetType();
+#if NET20 || NET40
+            PropertyInfo info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
+            if (info != null)
+            {
+                return info.GetValue(container, new object[] { propIndex });
+            }
+#elif NETSTANDARD
+            var info = t.GetRuntimeMethod("get_Item", new Type[] { propIndex.GetType() });
+            if (info != null)
+            {
+                return info.Invoke(container, new object[] { propIndex });
+            }
+#else
+            var info = t.GetMethod("get_Item", new Type[] { propIndex.GetType() });
+            if (info != null)
+            {
+                return info.Invoke(container, new object[] { propIndex });
+            }
+#endif
+            return null;
 
+            //int index;
+            //if (int.TryParse(propName, out index))
+            //{
+            //    return GetIndexedProperty(container, true, index);
+            //}
+            ////取索引
+            //return GetIndexedProperty(container, false, propName);
+        }
         #endregion
 
         #endregion
@@ -147,22 +192,22 @@ namespace JinianNet.JNTemplate
         /// <param name="expression">表达式</param>
         /// <param name="format">格式化对象</param>
         /// <returns></returns>
-        public String Eval(Object container, String expression, String format)
+        public string Eval(object container, string expression, string format)
         {
-            Object obj = Eval(container, expression);
+            object obj = Eval(container, expression);
             if ((obj == null)
 #if NET20 || NET40
                 || (obj == DBNull.Value)
 #endif
                 )
             {
-                return String.Empty;
+                return string.Empty;
             }
-            if (String.IsNullOrEmpty(format))
+            if (string.IsNullOrEmpty(format))
             {
                 return obj.ToString();
             }
-            return String.Format(format, obj);
+            return string.Format(format, obj);
         }
 
         /// <summary>
@@ -171,7 +216,7 @@ namespace JinianNet.JNTemplate
         /// <param name="container">对象</param>
         /// <param name="expression">表达式</param>
         /// <returns></returns>
-        public Object Eval(Object container, String expression)
+        public object Eval(object container, string expression)
         {
             if (expression == null)
             {
@@ -188,7 +233,7 @@ namespace JinianNet.JNTemplate
             {
                 return null;
             }
-            String[] expressionParts = expression.Split(expressionPartSeparator);
+            string[] expressionParts = expression.Split(expressionPartSeparator);
             return Eval(container, expressionParts);
         }
         #region
@@ -198,7 +243,7 @@ namespace JinianNet.JNTemplate
         /// <param name="container">对象</param>
         /// <param name="expressionParts">表达式集合</param>
         /// <returns></returns>
-        public Object Eval(Object container, String[] expressionParts)
+        public object Eval(object container, string[] expressionParts)
         {
             return Eval(container, expressionParts, 0, expressionParts.Length);
         }
@@ -210,10 +255,10 @@ namespace JinianNet.JNTemplate
         /// <param name="start">开始索引</param>
         /// <param name="end">结束索引</param>
         /// <returns></returns>
-        private Object Eval(Object container, String[] expressionParts, Int32 start, Int32 end)
+        private object Eval(object container, string[] expressionParts, int start, int end)
         {
-            Object property = container;
-            for (Int32 i = start; (i < end) && (property != null); i++)
+            object property = container;
+            for (int i = start; (i < end) && (property != null); i++)
             {
                 if (property == null)
                 {
@@ -236,7 +281,7 @@ namespace JinianNet.JNTemplate
         /// <param name="args">形参</param>
         /// <param name="hasParam">是否有params参数</param>
         /// <returns>MethodInfo</returns>
-        public MethodInfo GetMethod(Type type, String methodName, ref Type[] args, out Boolean hasParam)
+        public MethodInfo GetMethod(Type type, string methodName, ref Type[] args, out bool hasParam)
         {
             hasParam = false;
 
@@ -263,7 +308,7 @@ namespace JinianNet.JNTemplate
             //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
 
             ParameterInfo[] pi;
-            Boolean accord;
+            bool accord;
             System.Collections.Generic.IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
             foreach (MethodInfo m in ms)
             {
@@ -283,7 +328,7 @@ namespace JinianNet.JNTemplate
                     if (pi.Length == args.Length || hasParam)
                     {
                         accord = true;
-                        for (Int32 i = 0; i < pi.Length - 1; i++)
+                        for (int i = 0; i < pi.Length - 1; i++)
                         {
                             if (args[i] != null
                                 && args[i] != pi[i].ParameterType
@@ -300,7 +345,7 @@ namespace JinianNet.JNTemplate
                                 if (args.Length != pi.Length - 1)
                                 {
                                     Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
-                                    for (Int32 j = pi.Length - 1; j < args.Length; j++)
+                                    for (int j = pi.Length - 1; j < args.Length; j++)
                                     {
                                         if (args[j] != null && args[j] != arrType
                                             && !args[j].IsSubclassOf(arrType))
@@ -314,7 +359,7 @@ namespace JinianNet.JNTemplate
                                 if (accord)
                                 {
                                     args = new Type[pi.Length];
-                                    for (Int32 i = 0; i < pi.Length; i++)
+                                    for (int i = 0; i < pi.Length; i++)
                                     {
                                         args[i] = pi[i].ParameterType;
 
@@ -342,11 +387,11 @@ namespace JinianNet.JNTemplate
         /// <param name="container">实例对象</param>
         /// <param name="methodName">方法名</param>
         /// <param name="args">形参</param>
-        /// <returns>Object</returns>
-        public Object CallMethod(Object container, String methodName, Object[] args)
+        /// <returns>object</returns>
+        public object CallMethod(object container, string methodName, object[] args)
         {
             Type[] types = new Type[args.Length];
-            for (Int32 i = 0; i < args.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] != null)
                 {
@@ -356,7 +401,7 @@ namespace JinianNet.JNTemplate
 
             Type t = container.GetType();
 
-            Boolean hasParam;
+            bool hasParam;
             MethodInfo method = GetMethod(t, methodName, ref types, out hasParam);
             if (method != null)
             {
@@ -370,14 +415,14 @@ namespace JinianNet.JNTemplate
                     else
                     {
                         arr = Array.CreateInstance(types[types.Length - 1].GetElementType(), args.Length - types.Length + 1);
-                        for (Int32 i = types.Length - 1; i < args.Length; i++)
+                        for (int i = types.Length - 1; i < args.Length; i++)
                         {
                             arr.SetValue(args[i], i - (types.Length - 1));
                         }
 
-                        Object[] newArgs = new Object[types.Length];
+                        object[] newArgs = new object[types.Length];
 
-                        for (Int32 i = 0; i < newArgs.Length - 1; i++)
+                        for (int i = 0; i < newArgs.Length - 1; i++)
                         {
                             newArgs[i] = args[i];
                         }
@@ -394,6 +439,7 @@ namespace JinianNet.JNTemplate
 
             return null;
         }
+
         #endregion
 
     }

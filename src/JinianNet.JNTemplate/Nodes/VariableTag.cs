@@ -12,11 +12,11 @@ namespace JinianNet.JNTemplate.Nodes
     public class VariableTag : SimpleTag
     {
 
-        private String _name;
+        private string _name;
         /// <summary>
         /// 变量名
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return this._name; }
             set { this._name = value; }
@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
             return context.TempData[this._name];
         }
@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="baseValue">baseValue</param>
-        public override Object Parse(Object baseValue, TemplateContext context)
+        public override object Parse(object baseValue, TemplateContext context)
         {
             if (baseValue == null)
             {

@@ -16,15 +16,6 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class ILCallProxy : ICallProxy
     {
-        private Regex isNumberRegex;
-        /// <summary>
-        /// IL构造函数
-        /// </summary>
-        public ILCallProxy()
-        {
-            isNumberRegex = new Regex("[0-9]+", RegexOptions.Compiled);
-        }
-
         #region 获取属性或索引
         /// <summary>
         /// 获取属性或字段
@@ -32,7 +23,7 @@ namespace JinianNet.JNTemplate
         /// <param name="value"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public Object CallPropertyOrField(Object value, String propertyName)
+        public object CallPropertyOrField(object value, string propertyName)
         {
             if (value != null)
             {
@@ -42,19 +33,11 @@ namespace JinianNet.JNTemplate
             return null;
         }
 
-        private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(Object value, String propertyName)
+        private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(object value, string propertyName)
         {
             Type type = value.GetType();
-            String key;
-            if (isNumberRegex.Match(propertyName).Success)
-            {
-                key = String.Concat("Dynamic.IL.Property.", type.FullName, ".get_Item");
-            }
-            else
-            {
-                key = String.Concat("Dynamic.IL.Property.", type.FullName, ".", propertyName);
-            }
-            Object result;
+            string key = string.Concat("Dynamic.IL.Property.", type.FullName, ".", propertyName);
+            object result;
             if ((result = Engine.Runtime.Cache.Get(key)) != null)
             {
                 return (CallPropertyOrFieldDelegate)result;
@@ -63,10 +46,10 @@ namespace JinianNet.JNTemplate
             Engine.Runtime.Cache.Set(key, gpf);
             return gpf;
         }
-        private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(Type type, Object value, String propertyName)
+        private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(Type type, object value, string propertyName)
         {
-            Type objectType = typeof(Object);
-            Type stringType = typeof(String);
+            Type objectType = typeof(object);
+            Type stringType = typeof(string);
             MethodInfo mi;
 #if NEEDFIELD
             FieldInfo fi;
@@ -77,7 +60,7 @@ namespace JinianNet.JNTemplate
                 stringType
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                String.Concat("P_", type.FullName.Replace(".", "_"), "_", propertyName),
+                string.Concat("P_", type.FullName.Replace(".", "_"), "_", propertyName),
                 objectType,
                 parameterTypes);
 
@@ -94,29 +77,9 @@ namespace JinianNet.JNTemplate
             }
             il.Emit(OpCodes.Stloc_0);
 
-            if ((mi = GetMethod(type, String.Concat("get_", propertyName), Type.EmptyTypes)) != null)
+            if ((mi = GetMethod(type, string.Concat("get_", propertyName), Type.EmptyTypes)) != null)
             {
                 Ldloc(type, il, 0);
-                Call(type, il, mi);
-                returnType = mi.ReturnType;
-            }
-            else if (isNumberRegex.Match(propertyName).Success && (mi = GetMethod(type, "get_Item",
-               new Type[] {
-                                typeof(int)
-               })) != null)
-            {
-                Ldloc(type, il, 0);
-                il.Emit(OpCodes.Ldind_I4, int.Parse(propertyName));
-                Call(type, il, mi);
-                returnType = mi.ReturnType;
-            }
-            else if ((mi = GetMethod(type, "get_Item",
-               new Type[] {
-                                stringType
-               })) != null)
-            {
-                Ldloc(type, il, 0);
-                il.Emit(OpCodes.Ldstr, propertyName);
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
@@ -124,7 +87,7 @@ namespace JinianNet.JNTemplate
             else if ((fi = type.GetField(propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)) != null)
             {
                 //Type t;
-                //if ((fi.FieldType.IsArray && (fi.FieldType.GetArrayRank() > 1 || (!(t = fi.FieldType.GetElementType()).IsValueType && t != typeof(String) && t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))) ||
+                //if ((fi.FieldType.IsArray && (fi.FieldType.GetArrayRank() > 1 || (!(t = fi.FieldType.GetElementType()).IsValueType && t != typeof(string) && t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))) ||
                 //                          (!fi.FieldType.IsArray && fi.FieldType.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) == null))
                 //    return null
                 //        ;
@@ -145,9 +108,108 @@ namespace JinianNet.JNTemplate
             il.Emit(OpCodes.Ret);
             return dynamicMethod.CreateDelegate(typeof(CallPropertyOrFieldDelegate)) as CallPropertyOrFieldDelegate;
         }
+
+        private CallIndexValueDelegate CreateCallIndexValueProxy(Type type, object value, object index)
+        {
+            Type objectType = typeof(object);
+            Type stringType = typeof(string);
+            MethodInfo mi;
+            Type returnType;
+            Type[] parameterTypes = {
+                objectType,
+                stringType
+            };
+            DynamicMethod dynamicMethod = new DynamicMethod(
+                string.Concat("I_", type.FullName.Replace(".", "_"), "_", index.ToString()),
+                objectType,
+                parameterTypes);
+
+            ILGenerator il = dynamicMethod.GetILGenerator();
+            il.DeclareLocal(type);//0
+            il.Emit(OpCodes.Ldarg_0);
+            if (IsValueType(type))
+            {
+                il.Emit(OpCodes.Unbox_Any, type);
+            }
+            else
+            {
+                il.Emit(OpCodes.Castclass, type);
+            }
+            il.Emit(OpCodes.Stloc_0);
+
+            if (index is int && (mi = GetMethod(type, "get_Item",
+               new Type[] {
+                                typeof(int)
+               })) != null)
+            {
+                Ldloc(type, il, 0);
+                il.Emit(OpCodes.Ldind_I4, (int)index);
+                Call(type, il, mi);
+                returnType = mi.ReturnType;
+            }
+            else if (index is string && (mi = GetMethod(type, "get_Item",
+               new Type[] {
+                                stringType
+               })) != null)
+            {
+                Ldloc(type, il, 0);
+                il.Emit(OpCodes.Ldstr, index.ToString());
+                Call(type, il, mi);
+                returnType = mi.ReturnType;
+            }
+            //else if ((mi = GetMethod(type, "get_Item",
+            //   new Type[] {
+            //                    objectType
+            //   })) != null)
+            //{
+            //    Ldloc(type, il, 0);
+            //    il.Emit(OpCodes.Ldobj, index);
+            //    Call(type, il, mi);
+            //    returnType = mi.ReturnType;
+            //}
+            else
+            {
+                il.Emit(OpCodes.Ldnull);
+                returnType = objectType;
+            }
+            if (IsValueType(returnType))
+            {
+                il.Emit(OpCodes.Box, returnType);
+            }
+            il.Emit(OpCodes.Ret);
+            return dynamicMethod.CreateDelegate(typeof(CallIndexValueDelegate)) as CallIndexValueDelegate;
+        }
         #endregion
 
-
+        #region 获取索引
+        /// <summary>
+        /// 动态获取索引值
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="index">索引</param>
+        /// <returns>返回结果</returns>
+        public object CallIndexValue(object container, object index)
+        {
+            if (container != null)
+            {
+                CallIndexValueDelegate d;
+                Type type = container.GetType();
+                string key = string.Concat("Dynamic.IL.Index.", type.FullName, ".", index.ToString());
+                object result;
+                if ((result = Engine.Runtime.Cache.Get(key)) != null)
+                {
+                    d = (CallIndexValueDelegate)result;
+                }
+                else
+                {
+                    d = CreateCallIndexValueProxy(type, container, index);
+                    Engine.Runtime.Cache.Set(key, d);
+                }
+                return d(container, index);
+            }
+            return null;
+        }
+        #endregion
         #region 执行方法
         /// <summary>
         /// 执行方法
@@ -156,7 +218,7 @@ namespace JinianNet.JNTemplate
         /// <param name="methodName">方法名</param>
         /// <param name="args">实参</param>
         /// <returns></returns>
-        public Object CallMethod(Object container, String methodName, Object[] args)
+        public object CallMethod(object container, string methodName, object[] args)
         {
             if (container != null)
             {
@@ -166,7 +228,7 @@ namespace JinianNet.JNTemplate
                 {
                     if (types != null && types.Length > 0)
                     {
-                        for (Int32 i = 0; i < types.Length; i++)
+                        for (int i = 0; i < types.Length; i++)
                         {
                             if (types[i] != null && args[i] != null)
                             {
@@ -179,28 +241,28 @@ namespace JinianNet.JNTemplate
             }
             return null;
         }
-        private ExcuteMethodDelegate CreateExcuteMethodProxy(Object container, String methodName, Object[] args, out Type[] parameterTypes)
+        private ExcuteMethodDelegate CreateExcuteMethodProxy(object container, string methodName, object[] args, out Type[] parameterTypes)
         {
             parameterTypes = null;
             Type type = container.GetType();
-            String key = String.Concat("Dynamic.IL.Method.", type.FullName, ".", methodName);
-            Object value;
-            String itemKey;
+            string key = string.Concat("Dynamic.IL.Method.", type.FullName, ".", methodName);
+            object value;
+            string itemKey;
             ParameterInfo[] pis;
-            Dictionary<Int32, Dictionary<String, DynamicMethodInfo>> dic;
-            Dictionary<String, DynamicMethodInfo> itemDic = null;
+            Dictionary<int, Dictionary<string, DynamicMethodInfo>> dic;
+            Dictionary<string, DynamicMethodInfo> itemDic = null;
             DynamicMethodInfo d;
 
             if ((value = Engine.Runtime.Cache.Get(key)) != null)
             {
-                dic = (Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>)value;
+                dic = (Dictionary<int, Dictionary<string, DynamicMethodInfo>>)value;
             }
             else
             {
-                dic = new Dictionary<Int32, Dictionary<String, DynamicMethodInfo>>();
+                dic = new Dictionary<int, Dictionary<string, DynamicMethodInfo>>();
                 MethodInfo[] mis = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                 Type[] types;
-                for (Int32 i = 0; i < mis.Length; i++)
+                for (int i = 0; i < mis.Length; i++)
                 {
                     if (!mis[i].Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
                     {
@@ -208,7 +270,7 @@ namespace JinianNet.JNTemplate
                     }
                     pis = mis[i].GetParameters();
                     types = new Type[pis.Length];
-                    for (Int32 j = 0; j < pis.Length; j++)
+                    for (int j = 0; j < pis.Length; j++)
                     {
                         types[j] = pis[j].ParameterType;
                     }
@@ -246,7 +308,7 @@ namespace JinianNet.JNTemplate
                 d = (DynamicMethodInfo)enumerator.Current;
                 parameterTypes = new Type[args.Length];
                 pis = d.Parameters;
-                for (Int32 i = 0; i < args.Length; i++)
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (pis[i].ParameterType != args[i].GetType())
                     {
@@ -261,13 +323,13 @@ namespace JinianNet.JNTemplate
 
         private DynamicMethodInfo CreateExcuteMethodProxy(Type type, MethodInfo mi)
         {
-            Type objectType = typeof(Object);
+            Type objectType = typeof(object);
             Type[] parameterTypes = {
                 objectType,
-                typeof(Object[])
+                typeof(object[])
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                String.Concat("M_", type.FullName.Replace(".", "_"), "_", mi.Name),
+                string.Concat("M_", type.FullName.Replace(".", "_"), "_", mi.Name),
                 objectType,
                 parameterTypes);
 
@@ -286,8 +348,8 @@ namespace JinianNet.JNTemplate
             il.Emit(OpCodes.Stloc_0);
 
             ParameterInfo[] pis = mi.GetParameters();
-            Int32 index = pis.Length;
-            for (Int32 i = 0; i < index; i++)
+            int index = pis.Length;
+            for (int i = 0; i < index; i++)
             {
                 il.DeclareLocal(pis[i].ParameterType);
                 il.Emit(OpCodes.Ldarg_1);
@@ -308,7 +370,7 @@ namespace JinianNet.JNTemplate
                 il.Emit(OpCodes.Stloc, i + 1);
             }
             Ldloc(type, il, 0);
-            for (Int32 i = 0; i < index; i++)
+            for (int i = 0; i < index; i++)
             {
                 il.Emit(OpCodes.Ldloc, i + 1);
             }
@@ -336,7 +398,7 @@ namespace JinianNet.JNTemplate
 
             DynamicMethodInfo model = new DynamicMethodInfo();
             model.Delegate = dynamicMethod.CreateDelegate(typeof(ExcuteMethodDelegate)) as ExcuteMethodDelegate;
-            model.FullName = String.Concat(type.FullName, "_", mi.Name);
+            model.FullName = string.Concat(type.FullName, "_", mi.Name);
             model.Name = mi.Name;
             model.Parameters = pis;
             return model;
@@ -346,11 +408,11 @@ namespace JinianNet.JNTemplate
         #endregion
 
         #region 共用方法
-        private Boolean HasNull(Object[] args)
+        private bool HasNull(object[] args)
         {
             if (args != null)
             {
-                for (Int32 i = 0; i < args.Length; i++)
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (args[i] == null)
                     {
@@ -361,7 +423,7 @@ namespace JinianNet.JNTemplate
             return false;
         }
 
-        private String GetArgsTypeKey(Object[] args)
+        private string GetArgsTypeKey(object[] args)
         {
             if (args != null)
             {
@@ -369,8 +431,8 @@ namespace JinianNet.JNTemplate
                 {
                     return "N";
                 }
-                String[] values = new String[args.Length];
-                for (Int32 i = 0; i < args.Length; i++)
+                string[] values = new string[args.Length];
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (args[i] == null)
                     {
@@ -378,30 +440,30 @@ namespace JinianNet.JNTemplate
                     }
                     values[i] = GetTypeKeyName(args[i].GetType().FullName);
                 }
-                return String.Join(".", values);
+                return string.Join(".", values);
             }
             return null;
         }
 
-        private String GetArgsTypeKey(Type[] types)
+        private string GetArgsTypeKey(Type[] types)
         {
             if (types.Length == 0)
             {
                 return "N";
             }
-            String[] values = new String[types.Length];
-            for (Int32 i = 0; i < types.Length; i++)
+            string[] values = new string[types.Length];
+            for (int i = 0; i < types.Length; i++)
             {
                 values[i] = GetTypeKeyName(types[i].FullName);
             }
-            return String.Join("_", values);
+            return string.Join("_", values);
         }
         /// <summary>
         /// 获取类型简写
         /// </summary>
         /// <param name="fullName"></param>
         /// <returns></returns>
-        private String GetTypeKeyName(string fullName)
+        private string GetTypeKeyName(string fullName)
         {
             switch (fullName)
             {
@@ -427,7 +489,7 @@ namespace JinianNet.JNTemplate
         /// <param name="type"></param>
         /// <param name="il"></param>
         /// <param name="index"></param>
-        private void Ldloc(Type type, ILGenerator il, Int32 index)
+        private void Ldloc(Type type, ILGenerator il, int index)
         {
             if (IsValueType(type))
             {
@@ -444,7 +506,7 @@ namespace JinianNet.JNTemplate
         /// <param name="type"></param>
         /// <param name="il"></param>
         /// <param name="index"></param>
-        private void Ldarg(Type type, ILGenerator il, Int32 index)
+        private void Ldarg(Type type, ILGenerator il, int index)
         {
             if (IsValueType(type))
             {
@@ -473,7 +535,7 @@ namespace JinianNet.JNTemplate
             }
         }
 
-        private Boolean IsValueType(Type type)
+        private bool IsValueType(Type type)
         {
             return type.IsValueType;
         }
@@ -483,7 +545,7 @@ namespace JinianNet.JNTemplate
         {
 
 #if NET20 || NET40
-            return type.GetMethod(methodName, 
+            return type.GetMethod(methodName,
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
                 null,
                 argsType,
@@ -494,7 +556,7 @@ namespace JinianNet.JNTemplate
 #endif
         }
 
-#endregion
+        #endregion
 
     }
 

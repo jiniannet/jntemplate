@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 模板KEY(用于缓存，默认为文路径)
         /// </summary>
-        public String TemplateKey
+        public string TemplateKey
         {
             get { return this._render.TemplateKey; }
             set { this._render.TemplateKey = value; }
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 模板内容
         /// </summary>
-        public String TemplateContent
+        public string TemplateContent
         {
             get { return this._render.TemplateContent; }
             set { this._render.TemplateContent = value; }
@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter writer = new StringWriter())
             {

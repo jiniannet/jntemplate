@@ -46,11 +46,11 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                 }
 
-                throw new Exception.ParseException(String.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                throw new Exception.ParseException(string.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
 
                 //else
                 //{
-                //    throw new Exception.ParseException(String.Concat("syntax error near foreach:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                //    throw new Exception.ParseException(string.Concat("syntax error near foreach:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                 //}
             }
             return null;

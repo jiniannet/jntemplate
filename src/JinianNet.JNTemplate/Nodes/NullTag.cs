@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
             return null;
         }
@@ -22,16 +22,16 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取标签的BOOLEAN
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Boolean ToBoolean(TemplateContext context)
+        public override bool ToBoolean(TemplateContext context)
         {
             return false;
         }
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>
-        public override String ToString()
+        public override string ToString()
         {
-            return String.Empty;
+            return string.Empty;
         }
     }
 }

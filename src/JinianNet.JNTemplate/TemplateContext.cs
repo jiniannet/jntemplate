@@ -18,10 +18,10 @@ namespace JinianNet.JNTemplate
 #endif
     {
         private VariableScope _variableScope;
-        private String _currentPath;
+        private string _currentPath;
         private Encoding _charset;
-        private Boolean _throwErrors;
-        private Boolean _stripWhiteSpace;
+        private bool _throwErrors;
+        private bool _stripWhiteSpace;
         private List<System.Exception> _errors;
 
         /// <summary>
@@ -39,13 +39,13 @@ namespace JinianNet.JNTemplate
         /// <param name="data">数据</param>
         public TemplateContext(VariableScope data)
         {
-            String charset;
+            string charset;
             this._variableScope = data ?? new VariableScope();
             this._errors = new List<System.Exception>();
             this._currentPath = null;
             this._throwErrors = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
             this._stripWhiteSpace = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
-            if (String.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
+            if (string.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
             {
                 this._charset = Encoding.UTF8;
             }
@@ -59,7 +59,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 处理标签前后空格
         /// </summary>
-        public Boolean StripWhiteSpace
+        public bool StripWhiteSpace
         {
             get { return _stripWhiteSpace; }
             set { this._stripWhiteSpace = value; }
@@ -78,7 +78,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前资源路径
         /// </summary>
-        public String CurrentPath
+        public string CurrentPath
         {
             get { return this._currentPath; }
             set { this._currentPath = value; }
@@ -97,7 +97,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 是否抛出异常(默认为true)
         /// </summary>
-        public Boolean ThrowExceptions
+        public bool ThrowExceptions
         {
             get { return this._throwErrors; }
             set { this._throwErrors = value; }
@@ -173,7 +173,7 @@ namespace JinianNet.JNTemplate
         /// 浅克隆当前实例
         /// </summary>
         /// <returns></returns>
-        public Object Clone()
+        public object Clone()
         {
             return this.MemberwiseClone();
         }

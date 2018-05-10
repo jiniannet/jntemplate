@@ -26,9 +26,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
-            Object path = this._path.Parse(context);
+            object path = this._path.Parse(context);
             LoadResource(path, context);
             return base.Parse(context);
         }
@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, TextWriter write)
         {
-            Object path = this._path.Parse(context);
+            object path = this._path.Parse(context);
             LoadResource(path, context);
             base.Parse(context, write);
         }
@@ -49,7 +49,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="path">路径</param>
         /// <param name="context">TemplateContext</param>
-        protected void LoadResource(Object path, TemplateContext context)
+        protected void LoadResource(object path, TemplateContext context)
         {
             if (path != null)
             {

@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Parsers
                 //}
                 //else
                 //{
-                //    throw new Exception.ParseException(String.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                //    throw new Exception.ParseException(string.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                 //}
             }
 

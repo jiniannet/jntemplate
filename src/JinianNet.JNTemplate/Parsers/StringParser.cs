@@ -7,7 +7,7 @@ using JinianNet.JNTemplate.Nodes;
 namespace JinianNet.JNTemplate.Parsers
 {
     /// <summary>
-    /// String标签分析器
+    /// string标签分析器
     /// </summary>
     public class StringParser : ITagParser
     {

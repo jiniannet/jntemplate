@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Exception
         /// <param name="message">异常信息</param>
         /// <param name="line">行</param>
         /// <param name="column">字符</param>
-        public ParseException(String message, Int32 line, Int32 column)
+        public ParseException(string message, int line, int column)
             : base(message, line,column)
         {
             Column = column;
@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate.Exception
         /// 模板错误
         /// </summary>
         /// <param name="message">错误信息</param>
-        public ParseException(String message)
+        public ParseException(string message)
             : base(message)
         {
 
@@ -48,7 +48,7 @@ namespace JinianNet.JNTemplate.Exception
         /// </summary>
         /// <param name="message">错误信息</param>
         /// <param name="innerException">基础信息</param>
-        public ParseException(String message, System.Exception innerException)
+        public ParseException(string message, System.Exception innerException)
             : base(message, innerException)
         {
 

@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// TOKEN集合
         /// </summary>
         /// <param name="capacity"></param>
-        public TokenCollection(Int32 capacity)
+        public TokenCollection(int capacity)
         {
             this._list = new List<Token>(capacity);
         }
@@ -44,10 +44,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="collection"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public TokenCollection(IList<Token> collection, Int32 start, Int32 end)
+        public TokenCollection(IList<Token> collection, int start, int end)
         {
             this._list = new List<Token>(end + 1 - start);
-            for (Int32 i = start; i <= end && i < collection.Count; i++)
+            for (int i = start; i <= end && i < collection.Count; i++)
             {
                 Add(collection[i]);
             }
@@ -86,9 +86,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="list"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void Add(IList<Token> list, Int32 start, Int32 end)
+        public void Add(IList<Token> list, int start, int end)
         {
-            for (Int32 i = start; i <= end && i < list.Count; i++)
+            for (int i = start; i <= end && i < list.Count; i++)
             {
                 Add(list[i]);
             }
@@ -98,10 +98,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取所有TOKEN的字符串值
         /// </summary>
         /// <returns></returns>
-        public override String ToString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (Int32 i = 0; i < this.Count; i++)
+            for (int i = 0; i < this.Count; i++)
             {
                 sb.Append(this[i].ToString());
             }
@@ -114,7 +114,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="item">要在集合中查找的对象。对于引用类型，该值可以为 null。</param>
         /// <returns>如果在整个集合中找到 item 的第一个匹配项，则为该项的从零开始的索引；否则为-1</returns>
-        public Int32 IndexOf(Token item)
+        public int IndexOf(Token item)
         {
             return this._list.IndexOf(item);
         }
@@ -123,7 +123,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="index">从零开始的索引，应在该位置插入 item。</param>
         /// <param name="item">要插入的对象。对于引用类型，该值可以为 null。</param>
-        public void Insert(Int32 index, Token item)
+        public void Insert(int index, Token item)
         {
             if (item.TokenKind != TokenKind.Space)
             {
@@ -134,7 +134,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 移除集合的指定索引处的元素。
         /// </summary>
         /// <param name="index">要移除的元素的从零开始的索引。</param>
-        public void RemoveAt(Int32 index)
+        public void RemoveAt(int index)
         {
             this._list.RemoveAt(index);
         }
@@ -144,7 +144,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="index">从零开始的索引。</param>
         /// <returns></returns>
-        public Token this[Int32 index]
+        public Token this[int index]
         {
             get
             {
@@ -187,7 +187,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="item">要在集合中查找的对象</param>
         /// <returns></returns>
-        public Boolean Contains(Token item)
+        public bool Contains(Token item)
         {
             return this._list.Contains(item);
         }
@@ -197,7 +197,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="array"> 作为从集合复制的元素的目标位置的一维Token数组</param>
         /// <param name="arrayIndex">必须具有从零开始的索引。</param>
-        public void CopyTo(Token[] array, Int32 arrayIndex)
+        public void CopyTo(Token[] array, int arrayIndex)
         {
             this._list.CopyTo(array, arrayIndex);
         }
@@ -205,7 +205,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 集合的对象
         /// </summary>
-        public Int32 Count
+        public int Count
         {
             get
             {
@@ -215,7 +215,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 是否只读集合
         /// </summary>
-        public Boolean IsReadOnly
+        public bool IsReadOnly
         {
             get
             {
@@ -227,7 +227,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="item">要从集合中移除的对象</param>
         /// <returns></returns>
-        public Boolean Remove(Token item)
+        public bool Remove(Token item)
         {
             return this._list.Remove(item);
         }
@@ -272,7 +272,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 return false;
             }
-            for (Int32 i = 0; i < other.Count; i++)
+            for (int i = 0; i < other.Count; i++)
             {
                 if (this[i] != other[i])
                 {

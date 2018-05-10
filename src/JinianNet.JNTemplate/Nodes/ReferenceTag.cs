@@ -19,12 +19,12 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
             if (Children.Count > 0)
             {
-                Object result = Children[0].Parse(context);
-                for (Int32 i = 1; i < Children.Count && result!=null; i++)
+                object result = Children[0].Parse(context);
+                for (int i = 1; i < Children.Count && result!=null; i++)
                 {
                     result = ((SimpleTag)Children[i]).Parse(result, context);
                 }
@@ -37,10 +37,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="baseValue">基本值</param>
-        public override Object Parse(Object baseValue, TemplateContext context)
+        public override object Parse(object baseValue, TemplateContext context)
         {
-            Object result = baseValue;
-            for (Int32 i = 0; i < Children.Count && result!=null; i++)
+            object result = baseValue;
+            for (int i = 0; i < Children.Count && result!=null; i++)
             {
                 result = ((SimpleTag)Children[i]).Parse(result, context);
             }

@@ -26,18 +26,49 @@ namespace JinianNet.JNTemplate.Parsers
                 && parser != null
                 && tc.First.TokenKind == TokenKind.TextData
                 && tc.Count > 2
-                && (tc[1].TokenKind == TokenKind.LeftParentheses)
                 && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
+                int y = tc.Count - 1;
+                int x = -1;
+                int pos = 0;
+
+                for (int i = y; i >= 0; i--)
+                {
+                    if (tc[i].TokenKind == TokenKind.Dot)
+                    {
+                        return null;
+                    }
+                    if (tc[i].TokenKind == TokenKind.RightParentheses)
+                    {
+                        pos++;
+                        continue;
+                    }
+                    if (tc[i].TokenKind == TokenKind.LeftParentheses)
+                    {
+                        pos--;
+                        if (pos == 0 && x == -1)
+                        {
+                            x = i;
+                        }
+                    }
+                }
+
+                if (x == -1)
+                {
+                    return null;
+                }
                 FunctaionTag tag = new FunctaionTag();
 
-                tag.Name = tc.First.Text;
+                //tag.Name = tc.First.Text;
+                TokenCollection funcColl = new TokenCollection();
+                funcColl.Add(tc, 0, x - 1);
+                tag.Func = (SimpleTag)parser.Read(funcColl);
 
-                Int32 pos = 0,
-                    start = 2,
-                    end;
+                pos = 0;
+                int start = x + 1;
+                int end = -1;
 
-                for (Int32 i = 2; i < tc.Count; i++)
+                for (int i = start; i < tc.Count; i++)
                 {
                     end = i;
                     switch (tc[i].TokenKind)

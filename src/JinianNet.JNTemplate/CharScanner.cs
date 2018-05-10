@@ -15,22 +15,22 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 结束字符
         /// </summary>
-        private const Char EOF = '\0';
-        private Int32 _index;
-        private Int32 _start;
-        private String _document;
+        private const char EOF = '\0';
+        private int _index;
+        private int _start;
+        private string _document;
         /// <summary>
         /// CharScanner
         /// </summary>
         /// <param name="text">扫描内容</param>
-        public CharScanner(String text)
+        public CharScanner(string text)
         {
-            this._document = (text ?? String.Empty);
+            this._document = (text ?? string.Empty);
         }
         /// <summary>
         /// 当前索引
         /// </summary>
-        public Int32 Index
+        public int Index
         {
             get { return this._index; }
         }
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate
         /// 前进1个字符
         /// </summary>
         /// <returns></returns>
-        public Boolean Next()
+        public bool Next()
         {
             return Next(1);
         }
@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="i">数目</param>
         /// <returns></returns>
-        public Boolean Next(Int32 i)
+        public bool Next(int i)
         {
             if (this._index + i > this._document.Length)
             {
@@ -60,7 +60,7 @@ namespace JinianNet.JNTemplate
         /// 后退一个字符
         /// </summary>
         /// <returns></returns>
-        public Boolean Back()
+        public bool Back()
         {
             return Back(1);
         }
@@ -69,7 +69,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="i">数目</param>
         /// <returns></returns>
-        public Boolean Back(Int32 i)
+        public bool Back(int i)
         {
             if (this._index < i)
             {
@@ -82,7 +82,7 @@ namespace JinianNet.JNTemplate
         /// 读取当前字符
         /// </summary>
         /// <returns></returns>
-        public Char Read()
+        public char Read()
         {
             return Read(0);
         }
@@ -91,7 +91,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="i">数目</param>
         /// <returns></returns>
-        public Char Read(Int32 i)
+        public char Read(int i)
         {
             if (this._index + i >= this._document.Length)
             {
@@ -104,7 +104,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="list">匹配对象</param>
         /// <returns></returns>
-        public Boolean IsMatch(Char[] list)
+        public bool IsMatch(char[] list)
         {
             return IsMatch(list, 0);
         }
@@ -112,7 +112,7 @@ namespace JinianNet.JNTemplate
         /// 是否扫描结束
         /// </summary>
         /// <returns></returns>
-        public Boolean IsEnd()
+        public bool IsEnd()
         {
             return this._index >= this._document.Length;
         }
@@ -122,12 +122,12 @@ namespace JinianNet.JNTemplate
         /// <param name="list">匹配对象</param>
         /// <param name="n">从当前索引后第N位开始</param>
         /// <returns></returns>
-        public Boolean IsMatch(Char[] list, Int32 n)
+        public bool IsMatch(char[] list, int n)
         {
             n = this._index + n;
             if (this._document.Length >= n + list.Length)
             {
-                for (Int32 i = 0; i < list.Length; i++)
+                for (int i = 0; i < list.Length; i++)
                 {
                     if (this._document[n + i] != list[i])
                     {
@@ -143,9 +143,9 @@ namespace JinianNet.JNTemplate
         /// 获取当前start到index的字符串(会处理转义符)
         /// </summary>
         /// <returns></returns>
-        public String GetEscapeString()
+        public string GetEscapeString()
         {
-            String value = GetEscapeString(this._start, this._index);
+            string value = GetEscapeString(this._start, this._index);
             this._start = this._index;
             return value;
         }
@@ -154,9 +154,9 @@ namespace JinianNet.JNTemplate
         /// 截取start到index的字符串
         /// </summary>
         /// <returns></returns>
-        public String GetString()
+        public string GetString()
         {
-            String value = GetString(this._start,this._index);
+            string value = GetString(this._start,this._index);
             this._start = this._index;
             return value;
         }
@@ -166,10 +166,10 @@ namespace JinianNet.JNTemplate
         /// <param name="x">开始索引</param>
         /// <param name="y">结束索引</param>
         /// <returns></returns>
-        public String GetEscapeString(Int32 x, Int32 y)
+        public string GetEscapeString(int x, int y)
         {
-            List<Char> cs = new List<Char>();
-            for (Int32 i = x; i < y; i++)
+            List<char> cs = new List<char>();
+            for (int i = x; i < y; i++)
             {
                 if (this._document[i] == '\\')
                 {
@@ -225,7 +225,7 @@ namespace JinianNet.JNTemplate
                     cs.Add(this._document[i]);
                 }
             }
-            return new String(cs.ToArray());
+            return new string(cs.ToArray());
         }
         /// <summary>
         /// 截取x到y的字符串
@@ -233,7 +233,7 @@ namespace JinianNet.JNTemplate
         /// <param name="x">开始索引</param>
         /// <param name="y">结束索引</param>
         /// <returns></returns>
-        public String GetString(Int32 x, Int32 y)
+        public string GetString(int x, int y)
         {
             return this._document.Substring(x, y - x);
         }
