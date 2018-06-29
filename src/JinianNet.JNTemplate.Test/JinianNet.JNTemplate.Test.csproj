@@ -151,6 +151,7 @@
     <Content Include="result\images\setp.png" />
     <Content Include="result\images\top.png" />
     <Content Include="result\images\yes.gif" />
+    <Content Include="templets\public.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dll\" />

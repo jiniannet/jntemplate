@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace JinianNet.JNTemplate.Test
@@ -499,6 +500,30 @@ namespace JinianNet.JNTemplate.Test
 #endif
             var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
+        }
+
+
+        /// <summary>
+        /// 测试索引取值与方法标签
+        /// </summary>
+        [Fact]
+        public void TestLoadParent()
+        {
+            var templateContent = "$load(\"public.html\")";
+            var template = new Template(templateContent);
+
+#if NETCOREAPP2_0
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
+#else
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
+#endif
+ 
+            //var loader = new JinianNet.JNTemplate.FileLoader();
+            //loader.ResourceDirectories = new List<string>(new string[] { new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" });
+            //Engine.SetLodeProvider(loader);
+             
+            var render = template.Render();
+            Assert.Equal("this is public", render);
         }
 
         /// <summary>
