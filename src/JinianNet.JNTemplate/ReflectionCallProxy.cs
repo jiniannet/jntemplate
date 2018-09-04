@@ -146,7 +146,7 @@ namespace JinianNet.JNTemplate
             if ((dic = container as IDictionary) != null)
             {
                 return dic[propIndex];
-            } 
+            }
             if (propIndex is int && container is string)
             {
                 return ((string)container)[(int)propIndex];
@@ -281,105 +281,155 @@ namespace JinianNet.JNTemplate
         /// <param name="args">形参</param>
         /// <param name="hasParam">是否有params参数</param>
         /// <returns>MethodInfo</returns>
-        public MethodInfo GetMethod(Type type, string methodName, ref Type[] args, out bool hasParam)
+        public MethodInfo GetMethod(Type type, string methodName, Type[] args, out bool hasParam)
         {
+            //             hasParam = false;
+            //             MethodInfo method;
+            //             //根据具体形参获取方法名，以处理重载
+            //             if (args == null || Array.LastIndexOf(args, null) == -1)
+            //             {
+            // #if NET20 || NET40
+            //                 method = type.GetMethod(methodName,
+            //                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
+            //                     null, args, null);
+            // #else
+
+            //                 method = type.GetMethod(methodName,
+            //                     BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+            // #endif
+            //                 if (method != null)
+            //                 {
+            //                     return method;
+            //                 }
+            //             }
+
             hasParam = false;
-
-            MethodInfo method;
-            //根据具体形参获取方法名，以处理重载
-            if (args == null || Array.LastIndexOf(args, null) == -1)
+            MethodInfo[] ms = FindAllMethod(type, methodName);
+            if (ms.Length == 1)
             {
-#if NET20 || NET40
-                method = type.GetMethod(methodName,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
-                    null, args, null);
-#else
-
-                method = type.GetMethod(methodName,
-                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-#endif
-                if (method != null)
+                return ms[0];
+            }
+            foreach (MethodInfo m in ms)
+            {
+                ParameterInfo[] pi = m.GetParameters();
+                if (pi.Length != args.Length)
                 {
-                    return method;
+                    continue;
+                }
+                //暂不考虑可选参数,默认参数,param参数
+                bool isMacth = true;
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (args[i] == null)
+                    {
+                        continue;
+                    }
+                    if (args[i] != pi[i].ParameterType && !args[i].IsSubclassOf(pi[i].ParameterType))
+                    {
+                        isMacth = false;
+                        break;
+                    }
+                }
+
+                if (isMacth)
+                {
+                    return m;
                 }
             }
+            return null;
 
 
-            //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
+            //             //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
 
-            ParameterInfo[] pi;
-            bool accord;
+            //             ParameterInfo[] pi;
+            //             bool accord;
+            //             System.Collections.Generic.IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+            //             foreach (MethodInfo m in ms)
+            //             {
+
+            //                 if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
+            //                 {
+            //                     pi = m.GetParameters();
+
+            //                     if (pi.Length < pi.Length - 1)
+            //                     {
+            //                         continue;
+            //                     }
+            // #if NET20 || NET40
+            //                     hasParam = System.Attribute.IsDefined(pi[pi.Length - 1], typeof(ParamArrayAttribute));
+            // #endif
+            //                     //参数个数一致或者形参中含有 param 参数
+            //                     if (pi.Length == args.Length || hasParam)
+            //                     {
+            //                         accord = true;
+            //                         for (int i = 0; i < pi.Length - 1; i++)
+            //                         {
+            //                             if (args[i] != null
+            //                                 && args[i] != pi[i].ParameterType
+            //                                 && !args[i].IsSubclassOf(pi[i].ParameterType))
+            //                             {
+            //                                 accord = false;
+            //                                 break;
+            //                             }
+            //                         }
+            //                         if (accord)
+            //                         {
+            //                             if (hasParam)
+            //                             {
+            //                                 if (args.Length != pi.Length - 1)
+            //                                 {
+            //                                     Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
+            //                                     for (int j = pi.Length - 1; j < args.Length; j++)
+            //                                     {
+            //                                         if (args[j] != null && args[j] != arrType
+            //                                             && !args[j].IsSubclassOf(arrType))
+            //                                         {
+            //                                             accord = false;
+            //                                             break;
+            //                                         }
+            //                                     }
+            //                                 }
+
+            //                                 if (accord)
+            //                                 {
+            //                                     args = new Type[pi.Length];
+            //                                     for (int i = 0; i < pi.Length; i++)
+            //                                     {
+            //                                         args[i] = pi[i].ParameterType;
+
+            //                                     }
+            //                                     return m;
+            //                                 }
+            //                             }
+            //                             else
+            //                             {
+            //                                 if (args[args.Length - 1] == pi[pi.Length - 1].ParameterType)
+            //                                 {
+            //                                     return m;
+            //                                 }
+            //                             }
+            //                         }
+            //                     }
+            //                 }
+            //             }
+
+            //             return null;
+        }
+
+        private MethodInfo[] FindAllMethod(Type type, string methodName)
+        {
             System.Collections.Generic.IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+            System.Collections.Generic.List<MethodInfo> result = new System.Collections.Generic.List<MethodInfo>();
+            //此处应缓存
             foreach (MethodInfo m in ms)
             {
 
                 if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
                 {
-                    pi = m.GetParameters();
-
-                    if (pi.Length < pi.Length - 1)
-                    {
-                        continue;
-                    }
-#if NET20 || NET40
-                    hasParam = System.Attribute.IsDefined(pi[pi.Length - 1], typeof(ParamArrayAttribute));
-#endif
-                    //参数个数一致或者形参中含有 param 参数
-                    if (pi.Length == args.Length || hasParam)
-                    {
-                        accord = true;
-                        for (int i = 0; i < pi.Length - 1; i++)
-                        {
-                            if (args[i] != null
-                                && args[i] != pi[i].ParameterType
-                                && !args[i].IsSubclassOf(pi[i].ParameterType))
-                            {
-                                accord = false;
-                                break;
-                            }
-                        }
-                        if (accord)
-                        {
-                            if (hasParam)
-                            {
-                                if (args.Length != pi.Length - 1)
-                                {
-                                    Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
-                                    for (int j = pi.Length - 1; j < args.Length; j++)
-                                    {
-                                        if (args[j] != null && args[j] != arrType
-                                            && !args[j].IsSubclassOf(arrType))
-                                        {
-                                            accord = false;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (accord)
-                                {
-                                    args = new Type[pi.Length];
-                                    for (int i = 0; i < pi.Length; i++)
-                                    {
-                                        args[i] = pi[i].ParameterType;
-
-                                    }
-                                    return m;
-                                }
-                            }
-                            else
-                            {
-                                if (args[args.Length - 1] == pi[pi.Length - 1].ParameterType)
-                                {
-                                    return m;
-                                }
-                            }
-                        }
-                    }
+                    result.Add(m);
                 }
             }
-
-            return null;
+            return result.ToArray();
         }
         /// <summary>
         /// 调用实例方法
@@ -391,18 +441,23 @@ namespace JinianNet.JNTemplate
         public object CallMethod(object container, string methodName, object[] args)
         {
             Type[] types = new Type[args.Length];
+            bool hasNullValue = false;
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] != null)
                 {
                     types[i] = args[i].GetType();
                 }
+                else
+                {
+                    hasNullValue = true;
+                }
             }
 
             Type t = container.GetType();
 
             bool hasParam;
-            MethodInfo method = GetMethod(t, methodName, ref types, out hasParam);
+            MethodInfo method = GetMethod(t, methodName, types, out hasParam);
             if (method != null)
             {
                 if (hasParam)
@@ -433,6 +488,17 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
+                    if (hasNullValue)
+                    {
+                        ParameterInfo[] pi = method.GetParameters();
+                        for (int i = 0; i < args.Length; i++)
+                        {
+                            if (args[i] == null && pi[i].DefaultValue != null)
+                            {
+                                args[i] = pi[i].DefaultValue;
+                            }
+                        }
+                    }
                     return method.Invoke(container, args);
                 }
             }

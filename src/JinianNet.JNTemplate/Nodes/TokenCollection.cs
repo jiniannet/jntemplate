@@ -163,8 +163,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 分隔TokenCollection
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
+        /// <param name="start">开始索引</param>
+        /// <param name="end">结束索引</param>
+        /// <param name="kinds">分隔类型</param>
         /// <returns></returns>
         public TokenCollection[] Split(int start, int end, params TokenKind[] kinds)
         {

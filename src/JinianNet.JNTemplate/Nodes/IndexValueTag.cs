@@ -31,7 +31,11 @@ namespace JinianNet.JNTemplate.Nodes
             object index = this.Index.Parse(context);
             return Engine.Runtime.CallIndexValue(obj, index);
         }
-
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="baseValue">基本值</param>
+        /// <param name="context">上下文</param>
         public override object Parse(object baseValue, TemplateContext context)
         {
             object obj = this.Container.Parse(baseValue,context);
