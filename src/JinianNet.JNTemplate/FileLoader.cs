@@ -19,13 +19,9 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public FileLoader()
         {
-            this.ResourceDirectories = new List<string>();
+
         }
 
-        /// <summary>
-        /// 基本资源路径
-        /// </summary>
-        public List<String> ResourceDirectories { get; set; }
 
         /// <summary>
         /// 获取父目录

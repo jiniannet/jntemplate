@@ -13,6 +13,7 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public class ConfigBase
     {
+        private String[] _resourceDirectories;
         private Char _tagFlag;
         private String _tagPrefix;
         private String _tagSuffix;
@@ -24,6 +25,16 @@ namespace JinianNet.JNTemplate.Configuration
         private ILoader _loadProvider;
         private ICallProxy _callProvider;
         private Parsers.ITagParser[] _tagParsers;
+
+
+        /// <summary>
+        /// 资源路径
+        /// </summary>
+        public String[] ResourceDirectories
+        {
+            get { return this._resourceDirectories; }
+            set { this._resourceDirectories = value; }
+        }
 
         /// <summary>
         /// 字符编码

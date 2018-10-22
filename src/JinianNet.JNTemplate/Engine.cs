@@ -89,6 +89,12 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
+
+            Type type = conf.GetType();
+            CreateInstance
+            //
+
+
             _instance = new RuntimeInfo();
             _instance.Data = scope;
             SetEnvironmentVariable("Charset",conf.Charset);
