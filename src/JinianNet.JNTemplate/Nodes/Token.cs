@@ -11,17 +11,17 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public class Token : IComparable<Token>
     {
-        private String _text;
-        private Int32 _beginline;
-        private Int32 _begincolumn;
-        private Int32 _endline;
-        private Int32 _endcolumn;
+        private string _text;
+        private int _beginline;
+        private int _begincolumn;
+        private int _endline;
+        private int _endcolumn;
         private TokenKind _tokenkind;
         private Token _next;
         /// <summary>
         /// 开始行
         /// </summary>
-        public Int32 BeginLine
+        public int BeginLine
         {
             get { return this._beginline; }
             set { this._beginline = value; }
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 开始列
         /// </summary>
-        public Int32 BeginColumn
+        public int BeginColumn
         {
             get { return this._begincolumn; }
             set { this._begincolumn = value; }
@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 结束行
         /// </summary>
-        public Int32 EndLine
+        public int EndLine
         {
             get { return this._endline; }
             set { this._endline = value; }
@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 结束列
         /// </summary>
-        public Int32 EndColumn
+        public int EndColumn
         {
             get { return this._endcolumn; }
             set { this._endcolumn = value; }
@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 文本
         /// </summary>
-        public String Text
+        public string Text
         {
             get { return this._text; }
         }
@@ -70,7 +70,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="kind"></param>
         /// <param name="text"></param>
-        public Token(TokenKind kind, String text)
+        public Token(TokenKind kind, string text)
         {
             this._tokenkind = kind;
             this._text = text;
@@ -87,7 +87,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取文本值
         /// </summary>
         /// <returns></returns>
-        public override String ToString()
+        public override string ToString()
         {
             return this.Text;
         }
@@ -98,7 +98,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Int32 CompareTo(Token other)
+        public int CompareTo(Token other)
         {
             if (this.BeginLine > other.BeginLine)
             {

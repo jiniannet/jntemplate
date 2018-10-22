@@ -14,8 +14,8 @@ namespace JinianNet.JNTemplate
     {
         private ExcuteMethodDelegate _delegate;
         private ParameterInfo[] _parameters;
-        private String _name;
-        private String _fullName;
+        private string _name;
+        private string _fullName;
 
         /// <summary>
         /// 执行方法委托
@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 方法名称
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return _name; }
             set { _name = value; }
@@ -44,7 +44,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 方法完整名称
         /// </summary>
-        public String FullName
+        public string FullName
         {
             get { return _fullName; }
             set { _fullName = value; }

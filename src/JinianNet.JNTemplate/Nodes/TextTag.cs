@@ -30,7 +30,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            String value = this.ToString();
+            string value = this.ToString();
             if (context.StripWhiteSpace 
                 && value!=null)
             {
@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>
-        public override String ToString()
+        public override string ToString()
         {
             return this.FirstToken.ToString();
         }

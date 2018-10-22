@@ -23,13 +23,13 @@ namespace JinianNet.JNTemplate
         /// <param name="encoding">编码</param>
         /// <param name="directory">追加查找目录</param>
         /// <returns></returns>
-        ResourceInfo Load(String filename, Encoding encoding, params string[] directory);
+        ResourceInfo Load(string filename, Encoding encoding, params string[] directory);
 
         /// <summary>
         /// 获取父目录
         /// </summary>
         /// <param name="fullPath">完整路径</param>
         /// <returns></returns>
-        String GetDirectoryName(String fullPath);
+        string GetDirectoryName(string fullPath);
     }
 }

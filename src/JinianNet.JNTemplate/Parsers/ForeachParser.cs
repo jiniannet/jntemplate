@@ -32,10 +32,8 @@ namespace JinianNet.JNTemplate.Parsers
             {
 
                 ForeachTag tag = new ForeachTag();
-                tag.Name = tc[2].Text;
-                TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 4, tc.Count - 2);
-                tag.Source = parser.Read(coll);
+                tag.Name = tc[2].Text; 
+                tag.Source = parser.Read(tc[4,-1]);
 
                 while (parser.MoveNext())
                 {
@@ -46,11 +44,11 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                 }
 
-                throw new Exception.ParseException(String.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                throw new Exception.ParseException(string.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
 
                 //else
                 //{
-                //    throw new Exception.ParseException(String.Concat("syntax error near foreach:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                //    throw new Exception.ParseException(string.Concat("syntax error near foreach:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                 //}
             }
             return null;

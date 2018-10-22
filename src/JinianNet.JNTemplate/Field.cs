@@ -14,30 +14,31 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前程序版本
         /// </summary>
-        public const String Version = "1.4";
-        internal const String KEY_FOREACH = "foreach";
-        internal const String KEY_IF = "if";
-        internal const String KEY_ELSEIF = "elseif";
-        internal const String KEY_ELIF = "elif";
-        internal const String KEY_ELSE = "else";
-        internal const String KEY_SET = "set";
-        internal const String KEY_LOAD = "load";
-        internal const String KEY_INCLUDE = "include";
-        internal const String KEY_END = "end";
-        internal const String KEY_FOR = "for";
-        internal const String KEY_IN = "in";
-        internal const String KEY_LAYOUT = "layout";
-        internal const String KEY_BODY = "BODY";
+        public const string Version = "1.4";
+        internal const string KEY_FOREACH = "foreach";
+        internal const string KEY_IF = "if";
+        internal const string KEY_ELSEIF = "elseif";
+        internal const string KEY_ELIF = "elif";
+        internal const string KEY_ELSE = "else";
+        internal const string KEY_SET = "set";
+        internal const string KEY_LOAD = "load";
+        internal const string KEY_INCLUDE = "include";
+        internal const string KEY_END = "end";
+        internal const string KEY_FOR = "for";
+        internal const string KEY_IN = "in";
+        internal const string KEY_LAYOUT = "layout";
+        internal const string KEY_BODY = "BODY";
         /// <summary>
         /// 默认标签解析器
         /// </summary>
-        internal static readonly String[] RSEOLVER_TYPES = new String[] {
+        internal static readonly string[] RSEOLVER_TYPES = new string[] {
                 "JinianNet.JNTemplate.Parsers.BooleanParser",
                 "JinianNet.JNTemplate.Parsers.NumberParser",
                 "JinianNet.JNTemplate.Parsers.EleseParser",
                 "JinianNet.JNTemplate.Parsers.EndParser",
                 "JinianNet.JNTemplate.Parsers.BodyParser",
                 "JinianNet.JNTemplate.Parsers.VariableParser",
+                "JinianNet.JNTemplate.Parsers.IndexValueParser",
                 "JinianNet.JNTemplate.Parsers.StringParser",
                 "JinianNet.JNTemplate.Parsers.ForeachParser",
                 "JinianNet.JNTemplate.Parsers.ForParser",

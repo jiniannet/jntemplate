@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace JinianNet.JNTemplate.Test
@@ -15,20 +16,36 @@ namespace JinianNet.JNTemplate.Test
             //conf.IgnoreCase = false;
             Engine.Configure(conf);
         }
-
-
+ 
 
         /// <summary>
-        /// 测试Layout
+        /// 测试索引
         /// </summary>
         [Fact]
         public void TestIndex()
         {
+<<<<<<< HEAD
             var templateContent = "$data[b[1]]()";
+=======
+            var templateContent = "$data[0]";
+>>>>>>> 660df13e7b922952bf41dbf6ae83ad7c525be08f
             var template = new Template(templateContent);
             template.Set("data", new int[] { 7, 0, 2, 0, 6 });
             var render = template.Render();
             Assert.Equal("7", render);
+        }
+
+        /// <summary>
+        /// 测试索引1
+        /// </summary>
+        [Fact]
+        public void TestIndex1()
+        {
+            var templateContent = "$data[0][1]";
+            var template = new Template(templateContent);
+            template.Set("data", new string[] { "abc","def","ghi" });
+            var render = template.Render();
+            Assert.Equal("b", render);
         }
         /// <summary>
         /// 测试Layout
@@ -66,6 +83,24 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("6", render);
 
 
+        }
+
+        /// <summary>
+        /// 测试索引
+        /// </summary>
+        [Fact]
+        public void TestIndexAndFunc()
+        {
+            var templateContent = "${test(8,-2).ToString()[0]}";
+            var template = new Template(templateContent);
+            template.Set("test", new JinianNet.JNTemplate.FuncHandler(args =>
+            {
+                var r = Convert.ToString( (int.Parse(args[0].ToString()) + int.Parse(args[1].ToString())) * 35);
+                return r.ToString();
+            }));
+            var render = template.Render();
+
+            Assert.Equal("2", render);//210
         }
 
 
@@ -429,7 +464,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestIndexValue2()
         {
-            var templateContent = "$data.name";//索引也可以和属性一样取值，不过推荐用get_Item，且如果索引是数字时，请尽量使用$data.get_Item(index)
+            var templateContent = "$data[\"name\"]";//索引也可以和属性一样取值，不过推荐用get_Item，且如果索引是数字时，请尽量使用$data.get_Item(index)
             var template = new Template(templateContent);
             var dic = new System.Collections.Generic.Dictionary<string, string>();
             dic["name"] = "你好！jntemplate";
@@ -469,6 +504,30 @@ namespace JinianNet.JNTemplate.Test
 #endif
             var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
+        }
+
+
+        /// <summary>
+        /// 测试索引取值与方法标签
+        /// </summary>
+        [Fact]
+        public void TestLoadParent()
+        {
+            var templateContent = "$load(\"public.html\")";
+            var template = new Template(templateContent);
+
+#if NETCOREAPP2_0
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
+#else
+            template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
+#endif
+ 
+            //var loader = new JinianNet.JNTemplate.FileLoader();
+            //loader.ResourceDirectories = new List<string>(new string[] { new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" });
+            //Engine.SetLodeProvider(loader);
+             
+            var render = template.Render();
+            Assert.Equal("this is public", render);
         }
 
         /// <summary>

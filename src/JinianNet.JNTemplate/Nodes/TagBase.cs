@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取标签内容的字符串引用
         /// </summary>
         /// <returns></returns>
-        public override String ToString()
+        public override string ToString()
         {
             if (LastToken != null && FirstToken != LastToken)
             {

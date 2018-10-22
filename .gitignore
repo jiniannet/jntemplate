@@ -124,4 +124,5 @@ UpgradeLog*.XML
 /src/JinianNet.JNTemplate.Test/result/ILVsReflection.txt
 /src/JinianNet.JNTemplate.Test/result/IL.html
 /.vs
-/src/JinianNet.JNTemplate.Test/result/jnt.html
+/src/JinianNet.JNTemplate.Test/result/*.html
+/src/JinianNet.JNTemplate.Test/result/*.txt

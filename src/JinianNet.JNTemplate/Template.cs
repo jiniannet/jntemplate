@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate
         /// Template
         /// </summary>
         /// <param name="text">模板内容</param>
-        public Template(String text)
+        public Template(string text)
             : this(new TemplateContext(), text)
         {
 
@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="ctx">TemplateContext 对象</param>
         /// <param name="text">模板内容</param>
-        public Template(TemplateContext ctx, String text)
+        public Template(TemplateContext ctx, string text)
         {
             if (ctx == null)
             {
@@ -50,10 +50,10 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板解析结果呈现
         /// </summary>
-        /// <returns>String</returns>
-        public String Render()
+        /// <returns>string</returns>
+        public string Render()
         {
-            String document;
+            string document;
 
             using (StringWriter writer = new StringWriter())
             {
@@ -69,7 +69,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public void Set(String key, Object value)
+        public void Set(string key, object value)
         {
             Context.TempData[key] = value;
         }
@@ -78,9 +78,9 @@ namespace JinianNet.JNTemplate
         /// 批量设置数据
         /// </summary>
         /// <param name="dic">字典</param>
-        public void Set(Dictionary<String, Object> dic)
+        public void Set(Dictionary<string, object> dic)
         {
-            foreach (KeyValuePair<String, Object> value in dic)
+            foreach (KeyValuePair<string, object> value in dic)
             {
                 Set(value.Key, value.Value);
             }

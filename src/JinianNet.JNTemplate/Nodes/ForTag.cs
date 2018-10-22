@@ -46,7 +46,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             this._initial.Parse(context);
             //如果标签为空，则直接为false,避免死循环以内存溢出
-            Boolean run;
+            bool run;
 
             if (this._test == null)
             {
@@ -59,7 +59,7 @@ namespace JinianNet.JNTemplate.Nodes
 
             while (run)
             {
-                for (Int32 i = 0; i < Children.Count; i++)
+                for (int i = 0; i < Children.Count; i++)
                 {
                     Children[i].Parse(context, writer);
                 }
@@ -74,7 +74,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {

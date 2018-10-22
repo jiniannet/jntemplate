@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate
         #region private field
         private Tag _tag;//当前标签
         private Token[] _tokens;//tokens列表
-        private Int32 _index;//当前索引
+        private int _index;//当前索引
         #endregion
 
         #region ctox
@@ -52,7 +52,7 @@ namespace JinianNet.JNTemplate
         /// 读取下一个标签
         /// </summary>
         /// <returns></returns>
-        public Boolean MoveNext()
+        public bool MoveNext()
         {
             if (this._index < this._tokens.Length)
             {
@@ -108,7 +108,7 @@ namespace JinianNet.JNTemplate
                 }
                 catch (System.Exception e)
                 {
-                    throw new Exception.ParseException(String.Concat("Parse error:", tc, "\r\nError message:", e.Message), tc.First.BeginLine, tc.First.BeginColumn);//标签分析异常
+                    throw new Exception.ParseException(string.Concat("Parse error:", tc, "\r\nError message:", e.Message), tc.First.BeginLine, tc.First.BeginColumn);//标签分析异常
                 }
 
                 if (t != null)
@@ -121,7 +121,7 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
-                    throw new Exception.ParseException(String.Concat("Unexpected  tag:", tc), tc.First.BeginLine, tc.First.BeginColumn); //未知的标签
+                    throw new Exception.ParseException(string.Concat("Unexpected  tag:", tc), tc.First.BeginLine, tc.First.BeginColumn); //未知的标签
                 }
             }
             else
@@ -148,22 +148,22 @@ namespace JinianNet.JNTemplate
         }
 
 
-        private Boolean IsTagEnd()
+        private bool IsTagEnd()
         {
             return IsTagEnd(GetToken());
         }
 
-        private Boolean IsTagStart()
+        private bool IsTagStart()
         {
             return IsTagStart(GetToken());
         }
 
-        private Boolean IsTagEnd(Token t)
+        private bool IsTagEnd(Token t)
         {
             return t == null || t.TokenKind == TokenKind.TagEnd || t.TokenKind == TokenKind.EOF;
         }
 
-        private Boolean IsTagStart(Token t)
+        private bool IsTagStart(Token t)
         {
             return t.TokenKind == TokenKind.TagStart;
         }
@@ -173,7 +173,7 @@ namespace JinianNet.JNTemplate
             return this._tokens[this._index];
         }
 
-        //private Token GetToken(Int32 i)
+        //private Token GetToken(int i)
         //{
         //    return tokens[this.index + 1];
         //}
@@ -182,7 +182,7 @@ namespace JinianNet.JNTemplate
 
         #region IEnumerator 成员
 
-        Object System.Collections.IEnumerator.Current
+        object System.Collections.IEnumerator.Current
         {
             get { return Current; }
         }

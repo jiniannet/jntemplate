@@ -14,13 +14,13 @@ namespace JinianNet.JNTemplate
     public class TemplateRender
     {
         private TemplateContext _context;
-        private String _content;
-        private String _key;
+        private string _content;
+        private string _key;
 
         /// <summary>
         /// 模板KEY(用于缓存，默认为文路径)
         /// </summary>
-        public String TemplateKey
+        public string TemplateKey
         {
             get { return this._key; }
             set { this._key = value; }
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板内容
         /// </summary>
-        public String TemplateContent
+        public string TemplateContent
         {
             get { return this._content; }
             set { this._content = value; }
@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate
 
             if (collection != null && collection.Length > 0)
             {
-                for (Int32 i = 0; i < collection.Length; i++)
+                for (int i = 0; i < collection.Length; i++)
                 {
                     try
                     {
@@ -93,10 +93,10 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public Tag[] ReadTags()
         {
-            if (!String.IsNullOrEmpty(this._content))
+            if (!string.IsNullOrEmpty(this._content))
             {
-                //Object value;
-                //if (Engine.Cache != null && !String.IsNullOrEmpty(this._key))
+                //object value;
+                //if (Engine.Cache != null && !string.IsNullOrEmpty(this._key))
                 //{
                 //    if ((value = Engine.Cache.Get(this._key)) != null)
                 //    {

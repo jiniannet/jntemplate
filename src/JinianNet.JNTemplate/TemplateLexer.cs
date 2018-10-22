@@ -21,15 +21,15 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前文档
         /// </summary>
-        private String _document;
+        private string _document;
         /// <summary>
         /// 当前列
         /// </summary>
-        private Int32 _column;
+        private int _column;
         /// <summary>
         /// 当前行
         /// </summary>
-        private Int32 _line;
+        private int _line;
         /// <summary>
         /// 当前TokenKind
         /// </summary>
@@ -37,11 +37,11 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 起始列
         /// </summary>
-        private Int32 _startColumn;
+        private int _startColumn;
         /// <summary>
         /// 起始行
         /// </summary>
-        private Int32 _startLine;
+        private int _startLine;
         /// <summary>
         /// 扫描器
         /// </summary>
@@ -54,16 +54,16 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 
         /// </summary>
-        private Stack<String> _pos;
-        private String _prefix;
-        private Char _flag;
-        private String _suffix;
+        private Stack<string> _pos;
+        private string _prefix;
+        private char _flag;
+        private string _suffix;
 
         /// <summary>
         /// TemplateLexer
         /// </summary>
         /// <param name="text">待分析内容</param>
-        public TemplateLexer(String text)
+        public TemplateLexer(string text)
         {
             this._document = text;
             this._prefix = Engine.GetEnvironmentVariable("TagPrefix");
@@ -85,7 +85,7 @@ namespace JinianNet.JNTemplate
             this._startLine = 1;
             this._scanner = new CharScanner(this._document);
             this._collection = new List<Token>();
-            this._pos = new Stack<String>();
+            this._pos = new Stack<string>();
         }
 
 
@@ -111,11 +111,11 @@ namespace JinianNet.JNTemplate
             return token;
         }
 
-        private Boolean Next()
+        private bool Next()
         {
             return Next(1);
         }
-        private Boolean Next(Int32 i)
+        private bool Next(int i)
         {
             if (this._scanner.Next(i))
             {
@@ -134,14 +134,14 @@ namespace JinianNet.JNTemplate
             return false;
         }
 
-        private Boolean IsTagStart()
+        private bool IsTagStart()
         {
             if (this._scanner.IsEnd() || this._flagMode != FlagMode.None)
             {
                 return false;
             }
-            Boolean find = true;
-            for (Int32 i = 0; i < this._prefix.Length; i++)
+            bool find = true;
+            for (int i = 0; i < this._prefix.Length; i++)
             {
                 if (this._prefix[i] != this._scanner.Read(i))
                 {
@@ -164,7 +164,7 @@ namespace JinianNet.JNTemplate
                 }
                 else
 #endif
-                    if (Char.IsLetter(this._scanner.Read(1)))
+                    if (char.IsLetter(this._scanner.Read(1)))
                 {
                     this._flagMode = FlagMode.Logogram;
                     return true;
@@ -173,7 +173,7 @@ namespace JinianNet.JNTemplate
             return false;
         }
 
-        private Boolean IsTagEnd()
+        private bool IsTagEnd()
         {
             if (this._flagMode != FlagMode.None && this._pos.Count == 0)
             {
@@ -186,7 +186,7 @@ namespace JinianNet.JNTemplate
                 {
                     if (this._flagMode == FlagMode.Full)
                     {
-                        for (Int32 i = 0; i < this._suffix.Length; i++)
+                        for (int i = 0; i < this._suffix.Length; i++)
                         {
                             if (this._suffix[i] != this._scanner.Read(i))
                             {
@@ -204,8 +204,8 @@ namespace JinianNet.JNTemplate
 #endif
                     else
                     {
-                        Char value = this._scanner.Read();
-                        Char next = this._scanner.Read(-1);
+                        char value = this._scanner.Read();
+                        char next = this._scanner.Read(-1);
                         //if (value == '(' &&
                         //    (Common.Utility.AllowWord(next)
                         //    || next == ']'))
@@ -243,7 +243,7 @@ namespace JinianNet.JNTemplate
                 }
                 //else if (value != '.' && value != '(')
                 //{
-                //    if (Char.IsControl(value) || (Char.IsPunctuation(value) && value != '_') || Char.IsSeparator(value) || Char.IsSymbol(value) || Char.IsWhiteSpace(value) || (Int32)value > 167)
+                //    if (char.IsControl(value) || (char.IsPunctuation(value) && value != '_') || char.IsSeparator(value) || char.IsSymbol(value) || char.IsWhiteSpace(value) || (int)value > 167)
                 //    {
                 //        return true;
                 //    }
@@ -305,7 +305,7 @@ namespace JinianNet.JNTemplate
                     else if (IsTagStart())
                     {
                         token = GetToken(TokenKind.TagStart);
-                        if (token.Text != "" && (this._collection.Count > 0 || !String.IsNullOrEmpty(token.Text.Trim())))
+                        if (token.Text != "" && (this._collection.Count > 0 || !string.IsNullOrEmpty(token.Text.Trim())))
                         {
                             AddToken(token);
                         }
@@ -323,7 +323,7 @@ namespace JinianNet.JNTemplate
                 if (this._flagMode != FlagMode.None)
                 {
                     this._flagMode = FlagMode.None;
-                    AddToken(new Token(TokenKind.TagEnd, String.Empty));
+                    AddToken(new Token(TokenKind.TagEnd, string.Empty));
                 }
 
             }
@@ -348,11 +348,11 @@ namespace JinianNet.JNTemplate
         }
 
 
-        private Boolean ReadEndToken()
+        private bool ReadEndToken()
         {
             if (IsTagEnd())
             {
-                Boolean add = true;
+                bool add = true;
                 if (this._flagMode == FlagMode.Full)
                 {
                     AddToken(TokenKind.TagEnd);
@@ -403,7 +403,7 @@ namespace JinianNet.JNTemplate
             }
         }
 
-        private int GetPrevCharCount(Char c)
+        private int GetPrevCharCount(char c)
         {
             int i = 1;
             while (this._scanner.Read(-i) == c)
@@ -481,7 +481,7 @@ namespace JinianNet.JNTemplate
                 TokenKind tk;
                 if (this._scanner.Read() == '+' || this._scanner.Read() == '-') //正负数符号识别
                 {
-                    if (Char.IsNumber(this._scanner.Read(1)) &&
+                    if (char.IsNumber(this._scanner.Read(1)) &&
                         (this._kind != TokenKind.Number
                         && this._kind != TokenKind.RightBracket
                         && this._kind != TokenKind.RightParentheses
@@ -529,7 +529,7 @@ namespace JinianNet.JNTemplate
         //    return GetTokenKind(this.scanner.Read());
         //}
 
-        private TokenKind GetTokenKind(Char c)
+        private TokenKind GetTokenKind(char c)
         {
             if (this._flagMode == FlagMode.None)
             {

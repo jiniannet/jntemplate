@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
     public class VariableScope
     {
         private VariableScope _parent;
-        private IDictionary<String, Object> _dic;
+        private IDictionary<string, object> _dic;
 
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate
         /// 以字典来初始化对象
         /// </summary>
         /// <param name="dictionary">初始化字典</param>
-        public VariableScope(IDictionary<String, Object> dictionary)
+        public VariableScope(IDictionary<string, object> dictionary)
             : this(null, dictionary)
         {
 
@@ -40,12 +40,12 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="parent">父VariableScope</param>
         /// <param name="dictionary">初始化字典</param>
-        public VariableScope(VariableScope parent, IDictionary<String, Object> dictionary)
+        public VariableScope(VariableScope parent, IDictionary<string, object> dictionary)
         {
             this._parent = parent;
             if (dictionary == null)
             {
-                dictionary = new Dictionary<String, Object>(Engine.Runtime.ComparerIgnoreCase);
+                dictionary = new Dictionary<string, object>(Engine.Runtime.ComparerIgnoreCase);
             }
             this._dic = dictionary;
         }
@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate
         /// 清空数据
         /// </summary>
         /// <param name="all">是否清空父数据</param>
-        public void Clear(Boolean all)
+        public void Clear(bool all)
         {
             this._dic.Clear();
             if (all
@@ -94,12 +94,12 @@ namespace JinianNet.JNTemplate
         /// 获取索引值
         /// </summary>
         /// <param name="name">索引名称</param>
-        /// <returns>Object</returns>
-        public Object this[String name]
+        /// <returns>object</returns>
+        public object this[string name]
         {
             get
             {
-                Object val;
+                object val;
                 if (this._dic.TryGetValue(name, out val))
                 {
                     return val;
@@ -121,7 +121,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        internal Boolean SetValue(String key, Object value)
+        internal bool SetValue(string key, object value)
         {
 
             if (this._dic.ContainsKey(key))
@@ -141,7 +141,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public void Push(String key, Object value)
+        public void Push(string key, object value)
         {
             this._dic.Add(key, value);
         }
@@ -150,8 +150,8 @@ namespace JinianNet.JNTemplate
         /// 是否包含指定键
         /// </summary>
         /// <param name="key">键</param>
-        /// <returns>Boolean</returns>
-        public Boolean ContainsKey(String key)
+        /// <returns>bool</returns>
+        public bool ContainsKey(string key)
         {
             if (this._dic.ContainsKey(key))
             {
@@ -170,7 +170,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="key"></param>
         /// <returns>是否移除成功</returns>
-        public Boolean Remove(String key)
+        public bool Remove(string key)
         {
             return this._dic.Remove(key);
         }

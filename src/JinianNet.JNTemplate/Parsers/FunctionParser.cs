@@ -26,56 +26,94 @@ namespace JinianNet.JNTemplate.Parsers
                 && parser != null
                 && tc.First.TokenKind == TokenKind.TextData
                 && tc.Count > 2
-                && (tc[1].TokenKind == TokenKind.LeftParentheses)
                 && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
+                int y = tc.Count - 1;
+                int x = -1;
+                int pos = 0;
+
+                for (int i = y; i >= 0; i--)
+                {
+                    if (tc[i].TokenKind == TokenKind.Dot && pos == 0)
+                    {
+                        return null;
+                    }
+                    if (tc[i].TokenKind == TokenKind.RightParentheses)
+                    {
+                        pos++;
+                        continue;
+                    }
+                    if (tc[i].TokenKind == TokenKind.LeftParentheses)
+                    {
+                        pos--;
+                        if (pos == 0 && x == -1)
+                        {
+                            x = i;
+                        }
+                    }
+                }
+
+                if (x == -1)
+                {
+                    return null;
+                }
                 FunctaionTag tag = new FunctaionTag();
 
-                tag.Name = tc.First.Text;
+                //tag.Name = tc.First.Text; 
+                tag.Func = (SimpleTag)parser.Read(tc[0, x]);
 
-                Int32 pos = 0,
-                    start = 2,
-                    end;
+                pos = 0;
 
-                for (Int32 i = 2; i < tc.Count; i++)
+                TokenCollection[] tcs = tc.Split(x + 1, tc.Count-1, TokenKind.Comma);
+                for (int i = 0; i < tcs.Length; i++)
                 {
-                    end = i;
-                    switch (tc[i].TokenKind)
+                    if(tcs[i].Count==1 && tcs[i][0].TokenKind == TokenKind.Comma)
                     {
-                        case TokenKind.Comma:
-                            if (pos == 0)
-                            {
-                                TokenCollection coll = new TokenCollection();
-                                coll.Add(tc, start, end - 1);
-                                if (coll.Count > 0)
-                                {
-                                    tag.AddChild(parser.Read(coll));
-                                }
-                                start = i + 1;
-                            }
-                            break;
-                        default:
-                            if (tc[i].TokenKind == TokenKind.LeftParentheses)
-                            {
-                                pos++;
-                            }
-                            else if (tc[i].TokenKind == TokenKind.RightParentheses)
-                            {
-                                pos--;
-                            }
-                            if (i == tc.Count - 1)
-                            {
-                                TokenCollection coll = new TokenCollection();
-                                coll.Add(tc, start, end - 1);
-                                if (coll.Count > 0)
-                                {
-                                    tag.AddChild(parser.Read(coll));
-                                }
-                            }
-                            break;
+                        continue;
                     }
-
+                    tag.AddChild(parser.Read(tcs[i]));
                 }
+
+                //int start = x + 1;
+                //int end = -1;
+
+                //for (int i = start; i < tc.Count; i++)
+                //{
+                //    end = i;
+                //    switch (tc[i].TokenKind)
+                //    {
+                //        case TokenKind.Comma:
+                //            if (pos == 0)
+                //            {
+                //                TokenCollection coll = tc[start, end]; 
+                //                if (coll.Count > 0)
+                //                {
+                //                    tag.AddChild(parser.Read(coll));
+                //                }
+                //                start = i + 1;
+                //            }
+                //            break;
+                //        default:
+                //            if (tc[i].TokenKind == TokenKind.LeftParentheses)
+                //            {
+                //                pos++;
+                //            }
+                //            else if (tc[i].TokenKind == TokenKind.RightParentheses)
+                //            {
+                //                pos--;
+                //            }
+                //            if (i == tc.Count - 1)
+                //            {
+                //                TokenCollection coll = tc[start, end]; 
+                //                if (coll.Count > 0)
+                //                {
+                //                    tag.AddChild(parser.Read(coll));
+                //                }
+                //            }
+                //            break;
+                //    }
+
+                //}
 
                 return tag;
 

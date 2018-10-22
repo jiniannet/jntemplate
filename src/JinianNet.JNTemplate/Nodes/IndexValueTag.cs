@@ -1,47 +1,46 @@
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 变量标签
+    /// 索引标签
     /// </summary>
-    public class VariableTag : SimpleTag
+    public class IndexValueTag : SimpleTag
     {
-
-        private string _name;
         /// <summary>
-        /// 变量名
+        /// 容器
         /// </summary>
-        public string Name
-        {
-            get { return this._name; }
-            set { this._name = value; }
-        }
+        public SimpleTag Container { get; set; }
+
+        /// <summary>
+        /// 索引
+        /// </summary>
+        public Tag Index { get; set; }
         /// <summary>
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
-            return context.TempData[this._name];
+            object obj = this.Container.Parse(context);
+            object index = this.Index.Parse(context);
+            return Engine.Runtime.CallIndexValue(obj, index);
         }
         /// <summary>
         /// 解析标签
         /// </summary>
+        /// <param name="baseValue">基本值</param>
         /// <param name="context">上下文</param>
-        /// <param name="baseValue">baseValue</param>
         public override object Parse(object baseValue, TemplateContext context)
         {
-            if (baseValue == null)
-            {
-                return null;
-            }
-            return Engine.Runtime.CallPropertyOrField(baseValue, this._name);
+            object obj = this.Container.Parse(baseValue,context);
+            object index = this.Index.Parse(context);
+            return Engine.Runtime.CallIndexValue(obj, index);
         }
-
     }
 }

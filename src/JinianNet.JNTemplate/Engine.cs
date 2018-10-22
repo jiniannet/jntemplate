@@ -108,7 +108,7 @@ namespace JinianNet.JNTemplate
             {
                 conf.TagParsers = LoadParsers(Field.RSEOLVER_TYPES);
             }
-            for (Int32 i = 0; i < conf.TagParsers.Length; i++)
+            for (int i = 0; i < conf.TagParsers.Length; i++)
             {
                 if (conf.TagParsers[i] != null)
                 {
@@ -142,7 +142,7 @@ namespace JinianNet.JNTemplate
         /// <param name="loader">加载器，可空</param>
         /// <param name="executor">执行器，可空</param>
         public static void Configure(
-            IDictionary<String, String> conf,
+            IDictionary<string, string> conf,
             VariableScope scope,
             ITagParser[] parsers,
             ILoader loader,
@@ -186,7 +186,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="text">文本</param>
         /// <returns></returns>
-        public static ITemplate CreateTemplate(String text)
+        public static ITemplate CreateTemplate(string text)
         {
             return new Template(CreateContext(), text);
         }
@@ -196,7 +196,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="path">模板文件</param>
         /// <returns>ITemplate</returns>
-        public static ITemplate LoadTemplate(String path)
+        public static ITemplate LoadTemplate(string path)
         {
             return LoadTemplate(path, CreateContext());
         }
@@ -207,7 +207,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">模板文件</param>
         /// <param name="ctx">模板上下文</param>
         /// <returns>ITemplate</returns>
-        public static ITemplate LoadTemplate(String path, TemplateContext ctx)
+        public static ITemplate LoadTemplate(string path, TemplateContext ctx)
         {
             ResourceInfo info = Runtime.Load(path, ctx.Charset);
             Template template;
@@ -220,7 +220,7 @@ namespace JinianNet.JNTemplate
             }
             else
             {
-                template = new Template(ctx, String.Empty);
+                template = new Template(ctx, string.Empty);
             }
             return template;
         }
@@ -236,7 +236,7 @@ namespace JinianNet.JNTemplate
         {
 
             Tag t;
-            for (Int32 i = 0; i < Runtime.Parsers.Count; i++)
+            for (int i = 0; i < Runtime.Parsers.Count; i++)
             {
                 if (Runtime.Parsers[i] == null)
                 {
@@ -267,9 +267,9 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="variable">变量名称</param>
         /// <returns></returns>
-        public static String GetEnvironmentVariable(String variable)
+        public static string GetEnvironmentVariable(string variable)
         {
-            String value;
+            string value;
 
             if (Runtime.EnvironmentVariable.TryGetValue(variable, out value))
             {
@@ -284,7 +284,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="variable">变量名</param>
         /// <param name="value">值</param>
-        public static void SetEnvironmentVariable(String variable, String value)
+        public static void SetEnvironmentVariable(string variable, string value)
         {
             if (variable == null)
             {
@@ -307,9 +307,9 @@ namespace JinianNet.JNTemplate
         /// 初始化环境变量配置
         /// </summary>
         /// <param name="conf">配置内容</param>
-        private static void InitializationEnvironment(IDictionary<String, String> conf)
+        private static void InitializationEnvironment(IDictionary<string, string> conf)
         {
-            foreach (KeyValuePair<String, String> node in conf)
+            foreach (KeyValuePair<string, string> node in conf)
             {
                 SetEnvironmentVariable(node.Key, node.Value);
             }
@@ -322,7 +322,7 @@ namespace JinianNet.JNTemplate
         private static ITagParser[] LoadParsers(string[] arr)
         {
             ITagParser[] list = new ITagParser[arr.Length];
-            for (Int32 i = 0; i < arr.Length; i++)
+            for (int i = 0; i < arr.Length; i++)
             {
                 list[i] = CreateInstance<ITagParser>(Type.GetType(arr[i]));
             }

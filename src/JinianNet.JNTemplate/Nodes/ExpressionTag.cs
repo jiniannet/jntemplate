@@ -18,9 +18,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
-            Object[] value = new Object[Children.Count];
+            object[] value = new object[Children.Count];
 
-            for (Int32 i = 0; i < Children.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
                 if (Children[i] is TextTag)
                 {
@@ -32,7 +32,7 @@ namespace JinianNet.JNTemplate.Nodes
                 }
             }
 
-            Stack<Object> stack = Common.ExpressionEvaluator.ProcessExpression(value);
+            Stack<object> stack = Common.ExpressionEvaluator.ProcessExpression(value);
 
             return Common.ExpressionEvaluator.Calculate(stack);
         }

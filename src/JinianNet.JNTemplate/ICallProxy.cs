@@ -18,13 +18,21 @@ namespace JinianNet.JNTemplate
         /// <param name="methodName">方法名</param>
         /// <param name="args">实参</param>
         /// <returns>执行结果（Void返回NULL）</returns>
-        Object CallMethod(Object container, String methodName, Object[] args);
+        object CallMethod(object container, string methodName, object[] args);
         /// <summary>
         /// 动态获取属性或字段
         /// </summary>
         /// <param name="value">对象</param>
         /// <param name="propertyName">属性或字段名</param>
         /// <returns>返回结果</returns>
-        Object CallPropertyOrField(Object value, String propertyName);
+        object CallPropertyOrField(object value, string propertyName);
+
+        /// <summary>
+        /// 动态获取索引值
+        /// </summary>
+        /// <param name="value">对象</param>
+        /// <param name="index">索引</param>
+        /// <returns>返回结果</returns>
+        object CallIndexValue(object value, object index);
     }
 }

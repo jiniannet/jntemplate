@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Object Parse(TemplateContext context)
+        public override object Parse(TemplateContext context)
         {
             if (Children.Count == 1)
             {
@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 using (System.IO.StringWriter write = new System.IO.StringWriter())
                 {
-                    for (Int32 i = 0; i < Children.Count; i++)
+                    for (int i = 0; i < Children.Count; i++)
                     {
                         Children[i].Parse(context, write);
                     }
@@ -52,7 +52,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            for (Int32 i = 0; i < Children.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
                 Children[0].Parse(context, write);
             }
@@ -62,7 +62,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取布布值
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Boolean ToBoolean(TemplateContext context)
+        public override bool ToBoolean(TemplateContext context)
         {
             return this._test.ToBoolean(context);
         }

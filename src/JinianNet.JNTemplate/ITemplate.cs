@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 模板内容
         /// </summary>
-        String TemplateContent { get; set; }
+        string TemplateContent { get; set; }
         /// <summary>
         /// 结果呈现
         /// </summary>

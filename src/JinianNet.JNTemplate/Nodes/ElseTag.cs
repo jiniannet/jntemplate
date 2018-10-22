@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取布布值
         /// </summary>
         /// <param name="context">上下文</param>
-        public override Boolean ToBoolean(TemplateContext context)
+        public override bool ToBoolean(TemplateContext context)
         {
             return true;
         }

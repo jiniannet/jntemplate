@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">TemplateContext</param>
         /// <returns></returns>
-        public abstract Object Parse(TemplateContext context);
+        public abstract object Parse(TemplateContext context);
 
         /// <summary>
         /// 解析结果
@@ -38,13 +38,13 @@ namespace JinianNet.JNTemplate.Nodes
         public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
 
         /// <summary>
-        /// 转换为 Boolean 
+        /// 转换为 bool 
         /// </summary>
         /// <param name="context">TemplateContext</param>
         /// <returns></returns>
-        public virtual Boolean ToBoolean(TemplateContext context)
+        public virtual bool ToBoolean(TemplateContext context)
         {
-            Object value = Parse(context);
+            object value = Parse(context);
             return Common.ExpressionEvaluator.CalculateBoolean(value);
         }
 

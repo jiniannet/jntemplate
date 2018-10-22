@@ -13,24 +13,24 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public class ConfigBase
     {
-        private String[] _resourceDirectories;
-        private Char _tagFlag;
-        private String _tagPrefix;
-        private String _tagSuffix;
-        private Boolean _throwExceptions;
-        private Boolean _stripWhiteSpace;
-        private Boolean _ignoreCase;
-        private String _charset;
+        private char _tagFlag;
+        private string _tagPrefix;
+        private string _tagSuffix;
+        private bool _throwExceptions;
+        private bool _stripWhiteSpace;
+        private bool _ignoreCase;
+        private string _charset;
         private Caching.ICache _cachingProvider;
         private ILoader _loadProvider;
         private ICallProxy _callProvider;
         private Parsers.ITagParser[] _tagParsers;
+        private string[] _resourceDirectories;
 
 
         /// <summary>
         /// 资源路径
         /// </summary>
-        public String[] ResourceDirectories
+        public string[] ResourceDirectories
         {
             get { return this._resourceDirectories; }
             set { this._resourceDirectories = value; }
@@ -40,7 +40,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 字符编码
         /// </summary>
         [Variable]
-        public String Charset
+        public string Charset
         {
             get { return this._charset; }
             set { this._charset = value; }
@@ -49,7 +49,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 标签前缀
         /// </summary>
         [Variable]
-        public String TagPrefix
+        public string TagPrefix
         {
             get { return this._tagPrefix; }
             set { this._tagPrefix = value; }
@@ -59,7 +59,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 标签后缀
         /// </summary>
         [Variable]
-        public String TagSuffix
+        public string TagSuffix
         {
             get { return this._tagSuffix; }
             set { this._tagSuffix = value; }
@@ -70,7 +70,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 简写标签前缀
         /// </summary>
         [Variable]
-        public Char TagFlag
+        public char TagFlag
         {
             get { return this._tagFlag; }
             set { this._tagFlag = value; }
@@ -80,7 +80,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 是否抛出异常
         /// </summary>
         [Variable]
-        public Boolean ThrowExceptions
+        public bool ThrowExceptions
         {
             get { return this._throwExceptions; }
             set { this._throwExceptions = value; }
@@ -91,7 +91,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 是否处理标签前后空白字符
         /// </summary>
         [Variable]
-        public Boolean StripWhiteSpace
+        public bool StripWhiteSpace
         {
             get { return this._stripWhiteSpace; }
             set { this._stripWhiteSpace = value; }
@@ -102,7 +102,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// 是否忽略大小写
         /// </summary>
         [Variable]
-        public Boolean IgnoreCase
+        public bool IgnoreCase
         {
             get { return this._ignoreCase; }
             set { this._ignoreCase = value; }
@@ -150,9 +150,9 @@ namespace JinianNet.JNTemplate.Configuration
         /// 将配置转换成字典形式
         /// </summary>
         /// <returns></returns>
-        public virtual Dictionary<String, String> ToDictionary()
+        public virtual Dictionary<string, string> ToDictionary()
         {
-            Dictionary<String, String> dic = new Dictionary<String, String>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
             dic["Charset"] = this.Charset;
             dic["TagPrefix"] = this.TagPrefix;
             dic["TagSuffix"] = this.TagSuffix;
@@ -186,7 +186,7 @@ namespace JinianNet.JNTemplate.Configuration
 //        /// 将字典转换成配置形式
 //        /// </summary>
 //        /// <returns></returns>
-//        public static ConfigBase ForDictionary<T>(Dictionary<String, String> dic)
+//        public static ConfigBase ForDictionary<T>(Dictionary<string, string> dic)
 //        {
 //            Type type =typeof(T);
 //            var conf = Activator.CreateInstance(type);
@@ -200,7 +200,7 @@ namespace JinianNet.JNTemplate.Configuration
 //                string value;
 //                if(dic.TryGetValue(pi.Name,out value))
 //                {
-//                    if (pi.PropertyType == typeof(String))
+//                    if (pi.PropertyType == typeof(string))
 //                    {
 //                        pi.SetValue(type, value, null);
 //                        continue;

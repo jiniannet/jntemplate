@@ -44,7 +44,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -151,6 +151,7 @@
     <Content Include="result\images\setp.png" />
     <Content Include="result\images\top.png" />
     <Content Include="result\images\yes.gif" />
+    <Content Include="templets\public.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dll\" />

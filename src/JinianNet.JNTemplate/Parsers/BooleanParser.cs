@@ -7,7 +7,7 @@ using JinianNet.JNTemplate.Nodes;
 namespace JinianNet.JNTemplate.Parsers
 {
     /// <summary>
-    /// Boolean标签分析器
+    /// bool标签分析器
     /// </summary>
     public class BooleanParser : ITagParser
     {

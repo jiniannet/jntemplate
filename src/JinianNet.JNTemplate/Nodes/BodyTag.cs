@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 using (System.IO.StringWriter write = new System.IO.StringWriter())
                 {
-                    for (Int32 i = 0; i < this.Children.Count; i++)
+                    for (int i = 0; i < this.Children.Count; i++)
                     {
                         this.Children[i].Parse(context, write);
                     }

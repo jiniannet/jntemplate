@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Common
     public class ExpressionEvaluator
     {
         #region Weights Array
-        private static readonly String[] _numberWeights = new String[] {
+        private static readonly string[] _numberWeights = new string[] {
                 "System.Int16",
                  "System.Int32",
                  "System.Int64",
@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Common
                  "System.Double",
                  "System.Decimal"};
 
-        private static readonly String[] _uintWeights = new String[] {
+        private static readonly string[] _uintWeights = new string[] {
                 "System.UInt16",
                  "System.UInt32",
                  "System.UInt64"};
@@ -62,7 +62,7 @@ namespace JinianNet.JNTemplate.Common
         #endregion
 
         #region common function
-        private static Boolean IsOperator(String value)
+        private static bool IsOperator(string value)
         {
             switch (value)
             {
@@ -89,7 +89,7 @@ namespace JinianNet.JNTemplate.Common
             }
         }
 
-        private static Int32 GetPriority(String c)
+        private static int GetPriority(string c)
         {
             switch (c)
             {
@@ -134,7 +134,7 @@ namespace JinianNet.JNTemplate.Common
             }
         }
 
-        private static Boolean IsNumber(String fullName)
+        private static bool IsNumber(string fullName)
         {
             switch (fullName)
             {
@@ -160,13 +160,13 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">表达式</param>
         /// <returns></returns>
-        public static Stack<Object> ProcessExpression(String value)
+        public static Stack<object> ProcessExpression(string value)
         {
-            value = value.Replace("  ", String.Empty);
-            List<Object> result = new List<Object>();
-            Int32 j = 0;
-            Int32 i;
-            String num;
+            value = value.Replace("  ", string.Empty);
+            List<object> result = new List<object>();
+            int j = 0;
+            int i;
+            string num;
 
             for (i = 0; i < value.Length; i++)
             {
@@ -184,7 +184,7 @@ namespace JinianNet.JNTemplate.Common
                             num = value.Substring(j, i - j);
                             if (num.IndexOf('.') == -1)
                             {
-                                result.Add(Int32.Parse(value.Substring(j, i - j)));
+                                result.Add(int.Parse(value.Substring(j, i - j)));
                             }
                             else
                             {
@@ -210,14 +210,14 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">表达式</param>
         /// <returns></returns>
-        public static Stack<Object> ProcessExpression(Object[] value)
+        public static Stack<object> ProcessExpression(object[] value)
         {
-            Stack<Object> post = new Stack<Object>();
-            Stack<Object> stack = new Stack<Object>();
+            Stack<object> post = new Stack<object>();
+            Stack<object> stack = new Stack<object>();
 
-            for (Int32 i = 0; i < value.Length; i++)
+            for (int i = 0; i < value.Length; i++)
             {
-                String fullName;
+                string fullName;
                 if (value[i] != null)
                 {
                     fullName = value[i].GetType().FullName;
@@ -289,8 +289,8 @@ namespace JinianNet.JNTemplate.Common
                         }
                         else
                         {
-                            Object eX = stack.Peek();
-                            Object eY = value[i];
+                            object eX = stack.Peek();
+                            object eY = value[i];
                             if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
                             {
                                 stack.Push(eY);
@@ -328,11 +328,11 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static Type GetType(Object value)
+        private static Type GetType(object value)
         {
             if (value == null)
             {
-                return typeof(Object);
+                return typeof(object);
             }
             return value.GetType();
         }
@@ -343,7 +343,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Object x, Object y, String value)
+        public static object Calculate(object x, object y, string value)
         {
             if (value == "||")
             {
@@ -367,26 +367,26 @@ namespace JinianNet.JNTemplate.Common
                 }
                 else
                 {
-                    Int32 i, j;
+                    int i, j;
                     if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
                     {
-                        i = Array.IndexOf<String>(_uintWeights, tX.FullName);
-                        j = Array.IndexOf<String>(_uintWeights, tY.FullName);
+                        i = Array.IndexOf<string>(_uintWeights, tX.FullName);
+                        j = Array.IndexOf<string>(_uintWeights, tY.FullName);
                     }
                     else
                     {
                         if (tX.Name[0] == 'U')
                         {
-                            tX = Type.GetType(String.Concat("System.", tX.Name.Remove(0, 1)));
+                            tX = Type.GetType(string.Concat("System.", tX.Name.Remove(0, 1)));
                         }
 
                         if (tY.Name[0] == 'U')
                         {
-                            tY = Type.GetType(String.Concat("System.", tY.Name.Remove(0, 1)));
+                            tY = Type.GetType(string.Concat("System.", tY.Name.Remove(0, 1)));
                         }
 
-                        i = Array.IndexOf<String>(_numberWeights, tX.FullName);
-                        j = Array.IndexOf<String>(_numberWeights, tY.FullName);
+                        i = Array.IndexOf<string>(_numberWeights, tX.FullName);
+                        j = Array.IndexOf<string>(_numberWeights, tY.FullName);
                     }
                     if (i > j)
                     {
@@ -425,7 +425,7 @@ namespace JinianNet.JNTemplate.Common
             }
 
             if (tX.FullName == "System.Boolean" && tY.FullName == "System.Boolean")
-                return Calculate((Boolean)x, (Boolean)y, value);
+                return Calculate((bool)x, (bool)y, value);
             if (tX.FullName == "System.String" && tY.FullName == "System.String")
                 return Calculate(x.ToString(), y.ToString(), value);
             if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
@@ -438,7 +438,7 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return !Equals(x, y, tX, tY);
                 case "+":
-                    return String.Concat(x.ToString(), y.ToString());
+                    return string.Concat(x.ToString(), y.ToString());
                 case ">=":
                 case ">":
                 case "<=":
@@ -447,8 +447,8 @@ namespace JinianNet.JNTemplate.Common
                     {
                         string strX, strY;
                         Single fx, fy;
-                        if (!String.IsNullOrEmpty(strX = x.ToString())
-                            && !String.IsNullOrEmpty(strY = y.ToString())
+                        if (!string.IsNullOrEmpty(strX = x.ToString())
+                            && !string.IsNullOrEmpty(strY = y.ToString())
                             && Single.TryParse(strX, out fx)
                             && Single.TryParse(strY, out fy))
                         {
@@ -461,11 +461,11 @@ namespace JinianNet.JNTemplate.Common
                     }
                     return false;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Object\" and \"Object\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"object\" and \"object\""));
             }
         }
 
-        private static Object CalculateAnd(Object x, Object y, String value)
+        private static object CalculateAnd(object x, object y, string value)
         {
             if (!CalculateBoolean(x))
             {
@@ -478,7 +478,7 @@ namespace JinianNet.JNTemplate.Common
             return true;
         }
 
-        private static Object CalculateOr(Object x, Object y, String value)
+        private static object CalculateOr(object x, object y, string value)
         {
             if (CalculateBoolean(x))
             {
@@ -491,16 +491,16 @@ namespace JinianNet.JNTemplate.Common
             return false;
         }
 
-        internal static Boolean CalculateBoolean(Object value)
+        internal static bool CalculateBoolean(object value)
         {
             if (value == null)
                 return false;
             switch (value.GetType().FullName)
             {
                 case "System.Boolean":
-                    return (Boolean)value;
+                    return (bool)value;
                 case "System.String":
-                    return !String.IsNullOrEmpty(value.ToString());
+                    return !string.IsNullOrEmpty(value.ToString());
                 case "System.UInt16":
                 case "System.UInt32":
                 case "System.UInt64":
@@ -519,7 +519,7 @@ namespace JinianNet.JNTemplate.Common
             }
         }
 
-        private static Boolean Equals(Object x, Object y, Type tX, Type tY)
+        private static bool Equals(object x, object y, Type tX, Type tY)
         {
             if (x == null || x == null)
             {
@@ -538,22 +538,22 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">后缀表达式</param>
         /// <returns></returns>
-        public static Object Calculate(Stack<Object> value)
+        public static object Calculate(Stack<object> value)
         {
-            Stack<Object> post = new Stack<Object>();
+            Stack<object> post = new Stack<object>();
             while (value.Count > 0)
             {
                 post.Push(value.Pop());
             }
-            Stack<Object> stack = new Stack<Object>();
+            Stack<object> stack = new Stack<object>();
 
             while (post.Count > 0)
             {
-                Object obj = post.Pop();
+                object obj = post.Pop();
                 if (obj != null && obj.GetType().FullName == "JinianNet.JNTemplate.Operator")
                 {
-                    Object y = stack.Pop();
-                    Object x = stack.Pop();
+                    object y = stack.Pop();
+                    object x = stack.Pop();
                     stack.Push(Calculate(x, y, OperatorConvert.ToString((Operator)obj)));
                 }
                 else
@@ -570,9 +570,9 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">表达式</param>
         /// <returns></returns>
-        public static Object Calculate(Object[] value)
+        public static object Calculate(object[] value)
         {
-            Stack<Object> stack = ProcessExpression(value);
+            Stack<object> stack = ProcessExpression(value);
 
             return Calculate(stack);
         }
@@ -582,9 +582,9 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">表达式</param>
         /// <returns></returns>
-        public static Object Calculate(String value)
+        public static object Calculate(string value)
         {
-            Stack<Object> stack = ProcessExpression(value);
+            Stack<object> stack = ProcessExpression(value);
 
             return Calculate(stack);
         }
@@ -600,7 +600,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Boolean x, Boolean y, String value)
+        public static object Calculate(bool x, bool y, string value)
         {
             switch (value)
             {
@@ -613,7 +613,7 @@ namespace JinianNet.JNTemplate.Common
                 case "&&":
                     return x && y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Boolean\" and \"Boolean\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"bool\" and \"bool\""));
             }
         }
         /// <summary>
@@ -623,7 +623,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(String x, String y, String value)
+        public static object Calculate(string x, string y, string value)
         {
             switch (value)
             {
@@ -632,9 +632,9 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return !x.Equals(y, Engine.Runtime.ComparisonIgnoreCase);
                 case "+":
-                    return String.Concat(x, y);
+                    return string.Concat(x, y);
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"String\" and \"String\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"string\" and \"string\""));
             }
         }
 
@@ -645,7 +645,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(DateTime x, DateTime y, String value)
+        public static object Calculate(DateTime x, DateTime y, string value)
         {
             switch (value)
             {
@@ -662,7 +662,7 @@ namespace JinianNet.JNTemplate.Common
                 case "<=":
                     return x <= y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"DateTime\" and \"DateTime\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"DateTime\" and \"DateTime\""));
             }
         }
         /// <summary>
@@ -672,45 +672,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Double x, Double y, String value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Double\" and \"Double\""));
-            }
-        }
-
-        /// <summary>
-        /// 计算结果
-        /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
-        public static Object Calculate(Single x, Single y, String value)
+        public static object Calculate(Double x, Double y, string value)
         {
             switch (value)
             {
@@ -737,7 +699,7 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return x != y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Single\" and \"Single\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Double\" and \"Double\""));
             }
         }
 
@@ -748,7 +710,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Decimal x, Decimal y, String value)
+        public static object Calculate(Single x, Single y, string value)
         {
             switch (value)
             {
@@ -775,10 +737,9 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return x != y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Decimal\" and \"Decimal\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Single\" and \"Single\""));
             }
         }
-
 
         /// <summary>
         /// 计算结果
@@ -787,7 +748,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Int32 x, Int32 y, String value)
+        public static object Calculate(Decimal x, Decimal y, string value)
         {
             switch (value)
             {
@@ -813,15 +774,11 @@ namespace JinianNet.JNTemplate.Common
                     return x == y;
                 case "!=":
                     return x != y;
-                case "|":
-                    return x | y;
-                case "&":
-                    return x & y;
-
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int32\" and \"Int32\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Decimal\" and \"Decimal\""));
             }
         }
+
 
         /// <summary>
         /// 计算结果
@@ -830,7 +787,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Int64 x, Int64 y, String value)
+        public static object Calculate(int x, int y, string value)
         {
             switch (value)
             {
@@ -862,7 +819,7 @@ namespace JinianNet.JNTemplate.Common
                     return x & y;
 
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int64\" and \"Int64\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"int\" and \"int\""));
             }
         }
 
@@ -873,7 +830,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(Int16 x, Int16 y, String value)
+        public static object Calculate(Int64 x, Int64 y, string value)
         {
             switch (value)
             {
@@ -905,7 +862,50 @@ namespace JinianNet.JNTemplate.Common
                     return x & y;
 
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Int64\" and \"Int64\""));
+            }
+        }
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
+        /// <param name="x">值一</param>
+        /// <param name="y">值二</param>
+        /// <param name="value">操作符</param>
+        /// <returns></returns>
+        public static object Calculate(Int16 x, Int16 y, string value)
+        {
+            switch (value)
+            {
+                case "+":
+                    return x + y;
+                case "-":
+                    return x - y;
+                case "*":
+                    return x * y;
+                case "/":
+                    return x / y;
+                case "%":
+                    return x % y;
+                case ">=":
+                    return x >= y;
+                case "<=":
+                    return x <= y;
+                case "<":
+                    return x < y;
+                case ">":
+                    return x > y;
+                case "==":
+                    return x == y;
+                case "!=":
+                    return x != y;
+                case "|":
+                    return x | y;
+                case "&":
+                    return x & y;
+
+                default:
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
             }
         }
         #region 以下参数类型因不符合CLS，故取消
@@ -917,7 +917,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(UInt32 x, UInt32 y, String value)
+        public static object Calculate(UInt32 x, UInt32 y, string value)
         {
             switch (value)
             {
@@ -944,7 +944,7 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return x != y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"UInt32\" and \"UInt32\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt32\" and \"UInt32\""));
             }
         }
 
@@ -955,7 +955,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(UInt64 x, UInt64 y, String value)
+        public static object Calculate(UInt64 x, UInt64 y, string value)
         {
             switch (value)
             {
@@ -982,7 +982,7 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return x != y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"UInt64\" and \"UInt64\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt64\" and \"UInt64\""));
             }
         }
 
@@ -993,7 +993,7 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="y">值二</param>
         /// <param name="value">操作符</param>
         /// <returns></returns>
-        public static Object Calculate(UInt16 x, UInt16 y, String value)
+        public static object Calculate(UInt16 x, UInt16 y, string value)
         {
             switch (value)
             {
@@ -1020,7 +1020,7 @@ namespace JinianNet.JNTemplate.Common
                 case "!=":
                     return x != y;
                 default:
-                    throw new Exception.TemplateException(String.Concat("Operator \"", value, "\" can not be applied operand \"UInt16\" and \"UInt16\""));
+                    throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt16\" and \"UInt16\""));
             }
         }
 

@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static String ToString(Operator value)
+        public static string ToString(Operator value)
         {
             switch (value)
             {
@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate.Common
                 case Operator.RightParentheses:
                     return ")";
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 
@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Operator Parse(String value)
+        public static Operator Parse(string value)
         {
             switch (value)
             {

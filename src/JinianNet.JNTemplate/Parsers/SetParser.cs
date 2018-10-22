@@ -36,11 +36,8 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 SetTag tag = new SetTag();
                 tag.Name = tc[2].Text;
-
-                TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 4, tc.Count - 2);
-
-                tag.Value = parser.Read(coll);
+ 
+                tag.Value = parser.Read(tc[4,-1]);
                 return tag;
 
             }
@@ -78,12 +75,8 @@ namespace JinianNet.JNTemplate.Parsers
                 && tc[1].Text == "=")
             {
                 SetTag tag = new SetTag();
-                tag.Name = tc.First.Text;
-
-                TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 2, tc.Count - 1);
-
-                tag.Value = parser.Read(coll);
+                tag.Name = tc.First.Text; 
+                tag.Value = parser.Read(tc[2, tc.Count]);
                 return tag;
             }
 

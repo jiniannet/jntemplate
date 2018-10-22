@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Boolean ToBoolean(String input)
+        public static bool ToBoolean(string input)
         {
             if ("true".Equals(input, StringComparison.OrdinalIgnoreCase))
             {
@@ -32,18 +32,18 @@ namespace JinianNet.JNTemplate.Common
         /// </summary>
         /// <param name="value">字符</param>
         /// <returns></returns>
-        public static Boolean IsLetter(Char value)
+        public static bool IsLetter(char value)
         {
-            return Char.IsLower(value) || Char.IsUpper(value);
+            return char.IsLower(value) || char.IsUpper(value);
         }
         /// <summary>
         /// 是否单词
         /// </summary>
         /// <param name="value">字符</param>
         /// <returns></returns>
-        public static Boolean AllowWord(Char value)
+        public static bool AllowWord(char value)
         {
-            return Char.IsLower(value) || Char.IsUpper(value) || Char.IsNumber(value) || value == '_';
+            return char.IsLower(value) || char.IsUpper(value) || char.IsNumber(value) || value == '_';
         }
         /// <summary>
         /// 字符串是否相同
@@ -51,11 +51,11 @@ namespace JinianNet.JNTemplate.Common
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static Boolean IsEqual(String x, String y)
+        public static bool IsEqual(string x, string y)
         {
             if (x == null || y == null)
                 return x == y;
-            return String.Equals(x, y, Engine.Runtime.ComparisonIgnoreCase);
+            return string.Equals(x, y, Engine.Runtime.ComparisonIgnoreCase);
         }
     }
 }

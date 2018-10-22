@@ -30,15 +30,14 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 ElseifTag tag = new ElseifTag();
 
-                TokenCollection coll = new TokenCollection();
-                coll.Add(tc, 2, tc.Count - 2);
-                tag.Test = parser.Read(coll);
+                TokenCollection coll = new TokenCollection(); 
+                tag.Test = parser.Read(tc[2,-1]);
 
                 return tag;
                 //}
                 //else
                 //{
-                //    throw new Exception.ParseException(String.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                //    throw new Exception.ParseException(string.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                 //}
             }
 
