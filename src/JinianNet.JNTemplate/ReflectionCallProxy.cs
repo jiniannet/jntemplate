@@ -77,6 +77,24 @@ namespace JinianNet.JNTemplate
 
         #region Property
         /// <summary>
+        /// 获取属性
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="propName">属性名称</param>
+        /// <returns></returns>
+        internal static PropertyInfo GetPropertyInfo(Type type, string propName)
+        {
+#if !NET20_NOTUSER
+            PropertyInfo p =
+#if NETSTANDARD
+                    t.GetRuntimeProperty(propName);
+#else
+                    type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+#endif
+            return p;
+        }
+
+        /// <summary>
         /// 获取属性或字段的值
         /// </summary>
         /// <param name="container">原对象</param>
@@ -91,12 +109,7 @@ namespace JinianNet.JNTemplate
             if (!char.IsDigit(propName[0]))
             {
 #if !NET20_NOTUSER
-                PropertyInfo p =
-#if NETSTANDARD
-                    t.GetRuntimeProperty(propName);
-#else
-                    t.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-#endif
+                PropertyInfo p = GetPropertyInfo(t,propName);
                 //取属性
                 if (p != null)
                 {
@@ -126,7 +139,6 @@ namespace JinianNet.JNTemplate
 
             return null;
         }
-        #endregion
 
         #region Index Proerty
         /// <summary>
@@ -182,8 +194,7 @@ namespace JinianNet.JNTemplate
             //return GetIndexedProperty(container, false, propName);
         }
         #endregion
-
-        #endregion
+        
         #region EVAL解析
         /// <summary>
         /// 执行表达式

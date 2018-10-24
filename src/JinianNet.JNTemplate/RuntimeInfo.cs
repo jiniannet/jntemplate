@@ -25,8 +25,10 @@ namespace JinianNet.JNTemplate
         private static BindingFlags _bindingFlags;
         private static StringComparer _stringComparer;
         private ICallProxy _callProxy;
-
+        private string[] _resourceDirectories;
         #endregion
+
+
         /// <summary>
         /// 引擎信息
         /// </summary>
@@ -37,6 +39,12 @@ namespace JinianNet.JNTemplate
         }
 
         #region 实列
+
+        public string[] ResourceDirectories
+         {
+            get { return this._resourceDirectories; }
+            set { this._resourceDirectories = value; }
+        }
         /// <summary>
         /// 环境变量
         /// </summary>

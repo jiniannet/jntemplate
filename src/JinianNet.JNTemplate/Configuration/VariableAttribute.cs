@@ -12,5 +12,14 @@ namespace JinianNet.JNTemplate.Configuration
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class VariableAttribute : System.Attribute
     {
+        public string Name { get; set; }
+        public VariableAttribute()
+        {
+
+        }
+        public VariableAttribute(string name)
+        {
+            this.Name = name;
+        }
     }
 }

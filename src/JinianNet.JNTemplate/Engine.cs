@@ -17,6 +17,7 @@ namespace JinianNet.JNTemplate
     public class Engine
     {
         #region 私有变量
+        private static object lockObject = new object();
         /// <summary>
         /// 实例
         /// </summary>
@@ -78,6 +79,41 @@ namespace JinianNet.JNTemplate
         #endregion
 
         #region 引擎配置
+        private static object ChangeType(Type oldType, Type newType, object value)
+        {
+            if (oldType == newType)
+            {
+                return value;
+            }
+            if (newType.IsClass && oldType == typeof(string))
+            {
+                Type t = Type.GetType(value.ToString());
+                return CreateInstance(t);
+            }
+            if (newType.IsArray && oldType.IsArray)
+            {
+                var oldArr = value as Array;
+                var arr = Array.CreateInstance(newType.GetElementType(), oldArr.Length);
+                for (int i = 0; i < oldArr.Length; i++)
+                {
+                    arr.SetValue(ChangeType(oldType.GetElementType(), newType.GetElementType(), oldArr.GetValue(i)), i);
+                }
+                return arr;
+            }
+            if (newType.IsGenericType && oldType.IsArray)
+            {
+                //IsSubclassOf
+                // var oldArr = value as Array;
+                // var arr = Array.CreateInstance(newType.GetElementType(), oldArr.Length);
+                // for (int i = 0; i < oldArr.Length; i++)
+                // {
+                //     arr.SetValue(ChangeType(oldType.GetElementType(), newType.GetElementType(), oldArr.GetValue(i)), i);
+                // }
+                // return arr;
+            }
+            return Convert.ChangeType(value, newType);
+        }
+
         /// <summary>
         /// 引擎配置
         /// </summary>
@@ -89,47 +125,70 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
-
-            Type type = conf.GetType();
-            CreateInstance
-            //
-
-
-            _instance = new RuntimeInfo();
-            _instance.Data = scope;
-            SetEnvironmentVariable("Charset",conf.Charset);
-            SetEnvironmentVariable("TagPrefix",conf.TagPrefix);
-            SetEnvironmentVariable("TagSuffix",conf.TagSuffix);
-            SetEnvironmentVariable("TagFlag",conf.TagFlag.ToString());
-            SetEnvironmentVariable("ThrowExceptions",conf.ThrowExceptions.ToString());
-            SetEnvironmentVariable("StripWhiteSpace",conf.StripWhiteSpace.ToString());
-            SetEnvironmentVariable("IgnoreCase",conf.IgnoreCase.ToString());
-            if (conf.TagParsers == null || conf.TagParsers.Length == 0)
+            lock (lockObject)
             {
-                conf.TagParsers = LoadParsers(Field.RSEOLVER_TYPES);
-            }
-            for (int i = 0; i < conf.TagParsers.Length; i++)
-            {
-                if (conf.TagParsers[i] != null)
+                _instance = new RuntimeInfo();
+                _instance.Data = scope;
+                Type runtimeType = _instance.GetType();
+                Type type = conf.GetType();
+                Type attrType = typeof(VariableAttribute);
+                PropertyInfo[] properties = type.GetProperties();
+                VariableAttribute attr;
+                foreach (PropertyInfo p in properties)
                 {
-                    Runtime.Parsers.Add(conf.TagParsers[i]);
+                    object value;
+                    if (!p.CanRead || (value = p.GetValue(conf)) == null)
+                    {
+                        continue;
+                    }
+                    PropertyInfo runtimeProperty;
+                    if (Attribute.IsDefined(p, attrType) && !string.IsNullOrEmpty((attr = (VariableAttribute)p.GetCustomAttribute(attrType)).Name))
+                    {
+                        runtimeProperty = ReflectionCallProxy.GetPropertyInfo(runtimeType, p.Name);
+                    }
+                    else
+                    {
+                        runtimeProperty = ReflectionCallProxy.GetPropertyInfo(runtimeType, attr.Name);
+                    }
+                    if (runtimeProperty != null)
+                    {
+                        object newValue = ChangeType(p.PropertyType, runtimeProperty.PropertyType, value);
+                        if (newValue != null)
+                        {
+                            runtimeProperty.SetValue(runtimeProperty, value);
+                        }
+                        continue;
+                    }
+                    SetEnvironmentVariable(p.Name, value.ToString());
                 }
+
+                // if (conf.TagParsers == null || conf.TagParsers.Length == 0)
+                // {
+                //     conf.TagParsers = LoadParsers(Field.RSEOLVER_TYPES);
+                // }
+                // for (int i = 0; i < conf.TagParsers.Length; i++)
+                // {
+                //     if (conf.TagParsers[i] != null)
+                //     {
+                //         Runtime.Parsers.Add(conf.TagParsers[i]);
+                //     }
+                // }
+                // if (conf.IgnoreCase)
+                // {
+                //     Runtime.BindIgnoreCase = BindingFlags.IgnoreCase;
+                //     Runtime.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
+                //     Runtime.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
+                // }
+                // else
+                // {
+                //     Runtime.ComparisonIgnoreCase = StringComparison.Ordinal;
+                //     Runtime.BindIgnoreCase = BindingFlags.DeclaredOnly;
+                //     Runtime.ComparerIgnoreCase = StringComparer.Ordinal;
+                // }
+                // _instance.Cache = conf.CachingProvider;
+                // SetLodeProvider(conf.LoadProvider ?? new FileLoader());
+                // SetCallProvider(conf.CallProvider ?? new ReflectionCallProxy());
             }
-            if (conf.IgnoreCase)
-            {
-                Runtime.BindIgnoreCase = BindingFlags.IgnoreCase;
-                Runtime.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
-                Runtime.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
-            }
-            else
-            {
-                Runtime.ComparisonIgnoreCase = StringComparison.Ordinal;
-                Runtime.BindIgnoreCase = BindingFlags.DeclaredOnly;
-                Runtime.ComparerIgnoreCase = StringComparer.Ordinal;
-            }
-            _instance.Cache = conf.CachingProvider;
-            SetLodeProvider(conf.LoadProvider ?? new FileLoader());
-            SetCallProvider(conf.CallProvider ?? new ReflectionCallProxy());
             //Configure(conf.ToDictionary(), scope, conf.TagParsers, conf.LoadProvider, conf.ExecuteProvider);
         }
 
@@ -152,7 +211,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
-           
+
         }
 
         /// <summary>
@@ -333,7 +392,10 @@ namespace JinianNet.JNTemplate
         {
             return (T)Activator.CreateInstance(type ?? typeof(T));
         }
-
+        private static object CreateInstance(Type type)
+        {
+            return Activator.CreateInstance(type);
+        }
         #endregion
     }
 }

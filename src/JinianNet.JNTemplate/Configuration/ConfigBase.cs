@@ -35,7 +35,6 @@ namespace JinianNet.JNTemplate.Configuration
             get { return this._resourceDirectories; }
             set { this._resourceDirectories = value; }
         }
-
         /// <summary>
         /// 字符编码
         /// </summary>
@@ -138,6 +137,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签分析器
         /// </summary>
+        [Variable("Parsers")]
         public Parsers.ITagParser[] TagParsers
         {
             get { return this._tagParsers; }
@@ -182,58 +182,58 @@ namespace JinianNet.JNTemplate.Configuration
             return dic;
         }
 
-//        /// <summary>
-//        /// 将字典转换成配置形式
-//        /// </summary>
-//        /// <returns></returns>
-//        public static ConfigBase ForDictionary<T>(Dictionary<string, string> dic)
-//        {
-//            Type type =typeof(T);
-//            var conf = Activator.CreateInstance(type);
-//#if NETSTANDARD
-//            IEnumerable<PropertyInfo> pis = type.GetRuntimeProperties();
-//#else
-//            IEnumerable<PropertyInfo> pis = type.GetProperties();
-//#endif
-//            foreach (PropertyInfo pi in pis)
-//            {
-//                string value;
-//                if(dic.TryGetValue(pi.Name,out value))
-//                {
-//                    if (pi.PropertyType == typeof(string))
-//                    {
-//                        pi.SetValue(type, value, null);
-//                        continue;
-//                    }
-//                    //if (pi.PropertyType == ) 
-//                }
-//                //dic[pi.Name] = (pi.GetValue(this, null) ?? string.Empty).ToString();
-//            }
+        //        /// <summary>
+        //        /// 将字典转换成配置形式
+        //        /// </summary>
+        //        /// <returns></returns>
+        //        public static ConfigBase ForDictionary<T>(Dictionary<string, string> dic)
+        //        {
+        //            Type type =typeof(T);
+        //            var conf = Activator.CreateInstance(type);
+        //#if NETSTANDARD
+        //            IEnumerable<PropertyInfo> pis = type.GetRuntimeProperties();
+        //#else
+        //            IEnumerable<PropertyInfo> pis = type.GetProperties();
+        //#endif
+        //            foreach (PropertyInfo pi in pis)
+        //            {
+        //                string value;
+        //                if(dic.TryGetValue(pi.Name,out value))
+        //                {
+        //                    if (pi.PropertyType == typeof(string))
+        //                    {
+        //                        pi.SetValue(type, value, null);
+        //                        continue;
+        //                    }
+        //                    //if (pi.PropertyType == ) 
+        //                }
+        //                //dic[pi.Name] = (pi.GetValue(this, null) ?? string.Empty).ToString();
+        //            }
 
-//            //    switch (t.FullName)
-//            //    {
-//            //        case "System.String":
-//            //        case "System.Byte":
-//            //        case "System.Boolean":
-//            //        case "System.DateTime":
-//            //        case "System.Decimal":
-//            //        case "System.Double":
-//            //        case "System.Guid":
-//            //        case "System.Int16":
-//            //        case "System.Int32":
-//            //        case "System.Int64":
-//            //        case "System.SByte":
-//            //        case "System.Single":
-//            //        case "System.UInt16":
-//            //        case "System.UInt32":
-//            //        case "System.UInt64":
-//            //        case "System.Object":
-//            //            return true;
-//            //        default:
-//            //            return false;
-//            //    }
-//            //}
-//            return new ConfigBase();
-//        }
+        //            //    switch (t.FullName)
+        //            //    {
+        //            //        case "System.String":
+        //            //        case "System.Byte":
+        //            //        case "System.Boolean":
+        //            //        case "System.DateTime":
+        //            //        case "System.Decimal":
+        //            //        case "System.Double":
+        //            //        case "System.Guid":
+        //            //        case "System.Int16":
+        //            //        case "System.Int32":
+        //            //        case "System.Int64":
+        //            //        case "System.SByte":
+        //            //        case "System.Single":
+        //            //        case "System.UInt16":
+        //            //        case "System.UInt32":
+        //            //        case "System.UInt64":
+        //            //        case "System.Object":
+        //            //            return true;
+        //            //        default:
+        //            //            return false;
+        //            //    }
+        //            //}
+        //            return new ConfigBase();
+        //        }
     }
 }

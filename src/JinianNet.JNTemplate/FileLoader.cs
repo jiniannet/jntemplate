@@ -43,10 +43,10 @@ namespace JinianNet.JNTemplate
         {
             ResourceInfo info = new ResourceInfo();
             string fullPath;
-            if ((directory == null 
-                || directory.Length == 0 
+            if ((directory == null
+                || directory.Length == 0
                 || (info.Content = Load(directory, filename, encoding, out fullPath)) == null)
-                && (info.Content = Load(this.ResourceDirectories, filename, encoding, out fullPath)) == null)
+                && (info.Content = Load(Engine.Runtime.ResourceDirectories, filename, encoding, out fullPath)) == null)
             {
                 return null;
             }
@@ -62,7 +62,7 @@ namespace JinianNet.JNTemplate
         /// <returns>路径索引</returns>
         public int FindPath(string filename, out string fullPath)
         {
-            return FindPath(this.ResourceDirectories, filename, out fullPath);
+            return FindPath(Engine.Runtime.ResourceDirectories, filename, out fullPath);
         }
 
         /// <summary>
