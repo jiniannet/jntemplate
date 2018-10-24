@@ -24,11 +24,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestIndex()
         {
-<<<<<<< HEAD
-            var templateContent = "$data[b[1]]()";
-=======
             var templateContent = "$data[0]";
->>>>>>> 660df13e7b922952bf41dbf6ae83ad7c525be08f
             var template = new Template(templateContent);
             template.Set("data", new int[] { 7, 0, 2, 0, 6 });
             var render = template.Render();

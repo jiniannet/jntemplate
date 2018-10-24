@@ -28,7 +28,6 @@ namespace JinianNet.JNTemplate
             //indexExprEndChars = new char[] { ']', ')' };
             //indexExprStartChars = new char[] { '[', '(' };
         }
-        #region EVAL解析
         #region 4.0版本
 
         /// <summary>
@@ -84,10 +83,9 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         internal static PropertyInfo GetPropertyInfo(Type type, string propName)
         {
-#if !NET20_NOTUSER
             PropertyInfo p =
 #if NETSTANDARD
-                    t.GetRuntimeProperty(propName);
+                    type.GetRuntimeProperty(propName);
 #else
                     type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 #endif
@@ -109,7 +107,7 @@ namespace JinianNet.JNTemplate
             if (!char.IsDigit(propName[0]))
             {
 #if !NET20_NOTUSER
-                PropertyInfo p = GetPropertyInfo(t,propName);
+                PropertyInfo p = GetPropertyInfo(t, propName);
                 //取属性
                 if (p != null)
                 {
@@ -139,7 +137,7 @@ namespace JinianNet.JNTemplate
 
             return null;
         }
-
+        #endregion
         #region Index Proerty
         /// <summary>
         /// 动态获取索引值
@@ -183,18 +181,10 @@ namespace JinianNet.JNTemplate
                 return info.Invoke(container, new object[] { propIndex });
             }
 #endif
-            return null;
-
-            //int index;
-            //if (int.TryParse(propName, out index))
-            //{
-            //    return GetIndexedProperty(container, true, index);
-            //}
-            ////取索引
-            //return GetIndexedProperty(container, false, propName);
+            return null; 
         }
         #endregion
-        
+
         #region EVAL解析
         /// <summary>
         /// 执行表达式
@@ -348,83 +338,6 @@ namespace JinianNet.JNTemplate
                 }
             }
             return null;
-
-
-            //             //如果参数中存在空值，无法获取正常的参数类型，则进行智能判断
-
-            //             ParameterInfo[] pi;
-            //             bool accord;
-            //             System.Collections.Generic.IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-            //             foreach (MethodInfo m in ms)
-            //             {
-
-            //                 if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
-            //                 {
-            //                     pi = m.GetParameters();
-
-            //                     if (pi.Length < pi.Length - 1)
-            //                     {
-            //                         continue;
-            //                     }
-            // #if NET20 || NET40
-            //                     hasParam = System.Attribute.IsDefined(pi[pi.Length - 1], typeof(ParamArrayAttribute));
-            // #endif
-            //                     //参数个数一致或者形参中含有 param 参数
-            //                     if (pi.Length == args.Length || hasParam)
-            //                     {
-            //                         accord = true;
-            //                         for (int i = 0; i < pi.Length - 1; i++)
-            //                         {
-            //                             if (args[i] != null
-            //                                 && args[i] != pi[i].ParameterType
-            //                                 && !args[i].IsSubclassOf(pi[i].ParameterType))
-            //                             {
-            //                                 accord = false;
-            //                                 break;
-            //                             }
-            //                         }
-            //                         if (accord)
-            //                         {
-            //                             if (hasParam)
-            //                             {
-            //                                 if (args.Length != pi.Length - 1)
-            //                                 {
-            //                                     Type arrType = pi[pi.Length - 1].ParameterType.GetElementType();
-            //                                     for (int j = pi.Length - 1; j < args.Length; j++)
-            //                                     {
-            //                                         if (args[j] != null && args[j] != arrType
-            //                                             && !args[j].IsSubclassOf(arrType))
-            //                                         {
-            //                                             accord = false;
-            //                                             break;
-            //                                         }
-            //                                     }
-            //                                 }
-
-            //                                 if (accord)
-            //                                 {
-            //                                     args = new Type[pi.Length];
-            //                                     for (int i = 0; i < pi.Length; i++)
-            //                                     {
-            //                                         args[i] = pi[i].ParameterType;
-
-            //                                     }
-            //                                     return m;
-            //                                 }
-            //                             }
-            //                             else
-            //                             {
-            //                                 if (args[args.Length - 1] == pi[pi.Length - 1].ParameterType)
-            //                                 {
-            //                                     return m;
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             }
-
-            //             return null;
         }
 
         private MethodInfo[] FindAllMethod(Type type, string methodName)

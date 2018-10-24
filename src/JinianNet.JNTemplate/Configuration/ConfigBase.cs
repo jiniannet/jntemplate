@@ -110,6 +110,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 缓存提供器
         /// </summary>
+        [Variable("Cache")]
         public Caching.ICache CachingProvider
         {
             get { return this._cachingProvider; }
