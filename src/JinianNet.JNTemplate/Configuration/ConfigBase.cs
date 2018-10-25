@@ -13,24 +13,24 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public class ConfigBase
     {
-        private char _tagFlag;
-        private string _tagPrefix;
-        private string _tagSuffix;
-        private bool _throwExceptions;
-        private bool _stripWhiteSpace;
-        private bool _ignoreCase;
-        private string _charset;
+        private char _tagFlag = '$';
+        private string _tagPrefix = "${";
+        private string _tagSuffix = "}";
+        private bool _throwExceptions = true;
+        private bool _stripWhiteSpace = true;
+        private bool _ignoreCase = true;
+        private string _charset = "utf-8";
         private Caching.ICache _cachingProvider;
         private ILoader _loadProvider;
         private ICallProxy _callProvider;
-        private Parsers.ITagParser[] _tagParsers;
-        private string[] _resourceDirectories;
+        private List<Parsers.ITagParser> _tagParsers;
+        private List<string> _resourceDirectories;
 
 
         /// <summary>
         /// 资源路径
         /// </summary>
-        public string[] ResourceDirectories
+        public List<string> ResourceDirectories
         {
             get { return this._resourceDirectories; }
             set { this._resourceDirectories = value; }
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 字符编码
         /// </summary>
-        [Variable]
+        [Property]
         public string Charset
         {
             get { return this._charset; }
@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签前缀
         /// </summary>
-        [Variable]
+        [Property]
         public string TagPrefix
         {
             get { return this._tagPrefix; }
@@ -57,7 +57,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签后缀
         /// </summary>
-        [Variable]
+        [Property]
         public string TagSuffix
         {
             get { return this._tagSuffix; }
@@ -68,7 +68,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 简写标签前缀
         /// </summary>
-        [Variable]
+        [Property]
         public char TagFlag
         {
             get { return this._tagFlag; }
@@ -78,7 +78,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 是否抛出异常
         /// </summary>
-        [Variable]
+        [Property]
         public bool ThrowExceptions
         {
             get { return this._throwExceptions; }
@@ -89,7 +89,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 是否处理标签前后空白字符
         /// </summary>
-        [Variable]
+        [Property]
         public bool StripWhiteSpace
         {
             get { return this._stripWhiteSpace; }
@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 是否忽略大小写
         /// </summary>
-        [Variable]
+        [Property]
         public bool IgnoreCase
         {
             get { return this._ignoreCase; }
@@ -110,7 +110,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 缓存提供器
         /// </summary>
-        [Variable("Cache")]
+        [Property("Cache")]
         public Caching.ICache CachingProvider
         {
             get { return this._cachingProvider; }
@@ -120,6 +120,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 执行提供器
         /// </summary>
+        [Property("DynamicCallProxy")]
         public ICallProxy CallProvider
         {
             get { return this._callProvider; }
@@ -129,6 +130,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 加载提供器
         /// </summary>
+        [Property("Loder")]
         public ILoader LoadProvider
         {
             get { return this._loadProvider; }
@@ -138,8 +140,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签分析器
         /// </summary>
-        [Variable("Parsers")]
-        public Parsers.ITagParser[] TagParsers
+        [Property("Parsers")]
+        public List<Parsers.ITagParser> TagParsers
         {
             get { return this._tagParsers; }
             set { this._tagParsers = value; }
@@ -167,7 +169,7 @@ namespace JinianNet.JNTemplate.Configuration
             //            IEnumerable<PropertyInfo> pis = this.GetType().GetProperties();
             //#endif
             //#if NOTDNX
-            //            Type type = typeof(VariableAttribute);
+            //            Type type = typeof(PropertyAttribute);
             //#endif
             //            foreach (PropertyInfo pi in pis)
             //            {

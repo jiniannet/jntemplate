@@ -7,17 +7,28 @@ using System;
 namespace JinianNet.JNTemplate.Configuration
 {
     /// <summary>
-    /// 变量标记
+    /// 配置属性
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class VariableAttribute : System.Attribute
+    public class PropertyAttribute : System.Attribute
     {
+        /// <summary>
+        /// 对应名称
+        /// </summary>
+        /// <value></value>
         public string Name { get; set; }
-        public VariableAttribute()
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public PropertyAttribute()
         {
 
         }
-        public VariableAttribute(string name)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="name">名称</param>
+        public PropertyAttribute(string name)
         {
             this.Name = name;
         }

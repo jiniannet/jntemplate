@@ -39,9 +39,12 @@ namespace JinianNet.JNTemplate
         }
 
         #region 实列
-
+        /// <summary>
+        /// 模板资源搜索目录
+        /// </summary>
+        /// <value></value>
         public string[] ResourceDirectories
-         {
+        {
             get { return this._resourceDirectories; }
             set { this._resourceDirectories = value; }
         }
@@ -67,6 +70,7 @@ namespace JinianNet.JNTemplate
         public List<ITagParser> Parsers
         {
             get { return _parsers; }
+            internal set {  _parsers = value; }
         }
 
         /// <summary>

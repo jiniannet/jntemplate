@@ -57,7 +57,7 @@
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
-    <Compile Include="Configuration\VariableAttribute.cs" />
+    <Compile Include="Configuration\PropertyAttribute.cs" />
     <Compile Include="DynamicMethodInfo.cs" />
     <Compile Include="ExcuteMethodDelegate.cs" />
     <Compile Include="CallPropertyOrFieldDelegate.cs" />

@@ -17,15 +17,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <returns></returns>
         public static EngineConfig CreateDefault()
         {
-            EngineConfig conf = new EngineConfig();
-            conf.StripWhiteSpace = true;
-            conf.TagFlag ='$';
-            conf.TagPrefix = "${";
-            conf.TagSuffix = "}";
-            conf.ThrowExceptions = true;
-            conf.IgnoreCase = true;
-            conf.Charset = "utf-8";
-            return conf;
+            return new EngineConfig();
         }
     }
 }
