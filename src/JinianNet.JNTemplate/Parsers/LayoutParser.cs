@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Parsers
             if (tc != null
       && parser != null
       && tc.Count > 2
-      && JinianNet.JNTemplate.Common.Utility.IsEqual(tc.First.Text, Field.KEY_LAYOUT)
+      && Utility.IsEqual(tc.First.Text, Field.KEY_LAYOUT)
       && (tc[1].TokenKind == TokenKind.LeftParentheses)
       && tc.Last.TokenKind == TokenKind.RightParentheses)
             {

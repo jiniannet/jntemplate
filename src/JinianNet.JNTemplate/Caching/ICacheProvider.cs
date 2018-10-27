@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Caching
     /// <summary>
     /// 缓存
     /// </summary>
-    public interface ICache : IEnumerable, IDisposable
+    public interface ICacheProvider : IEnumerable, IDisposable
     {
         /// <summary>
         /// 当前缓存数量

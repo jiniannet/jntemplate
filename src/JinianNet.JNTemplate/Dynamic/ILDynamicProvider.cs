@@ -8,13 +8,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
     /// IL操作类
     /// 注：本类并非最终版本，请勿使用本类
     /// </summary>
-    public class ILCallProxy : ICallProxy
+    public class ILDynamicProvider : IDynamicProvider
     {
         #region 获取属性或索引
         /// <summary>

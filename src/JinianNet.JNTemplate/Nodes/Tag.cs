@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.Collections.ObjectModel;
 
@@ -45,7 +46,7 @@ namespace JinianNet.JNTemplate.Nodes
         public virtual bool ToBoolean(TemplateContext context)
         {
             object value = Parse(context);
-            return Common.ExpressionEvaluator.CalculateBoolean(value);
+            return ExpressionEvaluator.CalculateBoolean(value);
         }
 
         /// <summary>

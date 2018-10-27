@@ -43,8 +43,8 @@ namespace JinianNet.JNTemplate
             this._variableScope = data ?? new VariableScope();
             this._errors = new List<System.Exception>();
             this._currentPath = null;
-            this._throwErrors = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
-            this._stripWhiteSpace = Common.Utility.ToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
+            this._throwErrors = Utility.ToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
+            this._stripWhiteSpace = Utility.ToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
             if (string.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
             {
                 this._charset = Encoding.UTF8;

@@ -9,12 +9,12 @@ using System;
 using System.Reflection;
 using System.Collections;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
     /// 反射辅助类
     /// </summary>
-    public class ReflectionCallProxy : ICallProxy
+    public class ReflectionDynamicProvider : IDynamicProvider
     {
         private readonly char[] expressionPartSeparator;
         //private readonly char[] indexExprEndChars;
@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 反射构造函数
         /// </summary>
-        public ReflectionCallProxy()
+        public ReflectionDynamicProvider()
         {
             expressionPartSeparator = new char[] { '.' };
             //indexExprEndChars = new char[] { ']', ')' };

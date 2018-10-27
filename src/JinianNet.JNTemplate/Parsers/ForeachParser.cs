@@ -24,10 +24,10 @@ namespace JinianNet.JNTemplate.Parsers
             if (tc != null
                 && parser != null
                 && tc.Count > 5
-                && (Common.Utility.IsEqual(Field.KEY_FOREACH, tc.First.Text) || Common.Utility.IsEqual(Field.KEY_FOR, tc.First.Text))
+                && (Utility.IsEqual(Field.KEY_FOREACH, tc.First.Text) || Utility.IsEqual(Field.KEY_FOR, tc.First.Text))
                 && tc[1].TokenKind == TokenKind.LeftParentheses
                 && tc[2].TokenKind == TokenKind.TextData
-                && Common.Utility.IsEqual(tc[3].Text, Field.KEY_IN)
+                && Utility.IsEqual(tc[3].Text, Field.KEY_IN)
                 && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
 

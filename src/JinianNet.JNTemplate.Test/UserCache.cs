@@ -8,7 +8,7 @@ using System.Runtime.Caching;
 
 namespace JinianNet.JNTemplate.Test
 {
-    public class UserCache : JinianNet.JNTemplate.Caching.ICache
+    public class UserCache : JinianNet.JNTemplate.Caching.ICacheProvider
     {
 #if NET20 || NET40
         MemoryCache cache = new MemoryCache("test");

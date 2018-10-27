@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using JinianNet.JNTemplate.Configuration;
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Resources;
 
 namespace JinianNet.JNTemplate
 {
@@ -19,11 +21,6 @@ namespace JinianNet.JNTemplate
         #region 私有变量
         private static object lockObject = new object();
         /// <summary>
-        /// 实例
-        /// </summary>
-        private static RuntimeInfo _instance;
-
-        /// <summary>
         /// 对象实例
         /// </summary>
 
@@ -31,11 +28,11 @@ namespace JinianNet.JNTemplate
         {
             get
             {
-                if (_instance == null)
+                if (RuntimeInfo.GetInstance().State != RuntimeInfo.InitializationState.Complete)
                 {
                     Configure(Configuration.EngineConfig.CreateDefault());
                 }
-                return _instance;
+                return RuntimeInfo.GetInstance();
             }
         }
 
@@ -46,15 +43,15 @@ namespace JinianNet.JNTemplate
         /// 配置加载器
         /// </summary>
         /// <param name="loder">loder实列</param>
-        public static void SetLodeProvider(ILoader loder)
+        public static void SetLodeProvider(ILoadProvider loder)
         {
-            Runtime.Loder = loder;
+            Runtime.LoadProvider = loder;
         }
         /// <summary>
         /// 配置缓存提供器
         /// </summary>
         /// <param name="cache">缓存提供器实例 </param>
-        public static void SetCachingProvider(Caching.ICache cache)
+        public static void SetCachingProvider(Caching.ICacheProvider cache)
         {
             Runtime.Cache = cache;
         }
@@ -62,9 +59,9 @@ namespace JinianNet.JNTemplate
         /// 配置动态执行提供器
         /// </summary>
         /// <param name="proxy">ICallProxy实例 </param>
-        public static void SetCallProvider(ICallProxy proxy)
+        public static void SetCallProvider(IDynamicProvider proxy)
         {
-            Runtime.DynamicCallProxy = proxy;
+            Runtime.DynamicProvider = proxy;
         }
         /// <summary>
         /// 解析器
@@ -132,17 +129,16 @@ namespace JinianNet.JNTemplate
             }
             if (conf.LoadProvider == null)
             {
-                conf.LoadProvider = new FileLoader();
+                conf.LoadProvider = new FileLoadProvider();
             }
-            if (conf.CallProvider == null)
+            if (conf.DynamicProvider == null)
             {
-                conf.CallProvider = new ReflectionCallProxy();
+                conf.DynamicProvider = new ReflectionDynamicProvider();
             }
             lock (lockObject)
             {
-                _instance = new RuntimeInfo();
-                _instance.Data = scope;
-                Type runtimeType = _instance.GetType();
+                Runtime.Data = scope;
+                Type runtimeType = Runtime.GetType();
                 Type type = conf.GetType();
                 Type attrType = typeof(PropertyAttribute);
                 PropertyInfo[] properties = type.GetProperties();
@@ -169,11 +165,11 @@ namespace JinianNet.JNTemplate
 #endif
                         ).Name))
                     {
-                        runtimeProperty = ReflectionCallProxy.GetPropertyInfo(runtimeType, attr.Name);
+                        runtimeProperty = ReflectionDynamicProvider.GetPropertyInfo(runtimeType, attr.Name);
                     }
                     else
                     {
-                        runtimeProperty = ReflectionCallProxy.GetPropertyInfo(runtimeType, p.Name);
+                        runtimeProperty = ReflectionDynamicProvider.GetPropertyInfo(runtimeType, p.Name);
                     }
                     if (runtimeProperty != null)
                     {
@@ -181,9 +177,9 @@ namespace JinianNet.JNTemplate
                         if (newValue != null)
                         {
 #if NET20 || NET40
-                            runtimeProperty.SetValue(_instance, newValue, null);
+                            runtimeProperty.SetValue(Runtime, newValue, null);
 #else
-                            runtimeProperty.SetValue(_instance, newValue);
+                            runtimeProperty.SetValue(Runtime, newValue);
 #endif
                         }
                         continue;
@@ -204,6 +200,8 @@ namespace JinianNet.JNTemplate
                 Runtime.BindIgnoreCase = BindingFlags.DeclaredOnly;
                 Runtime.ComparerIgnoreCase = StringComparer.Ordinal;
             }
+
+            Runtime.State = RuntimeInfo.InitializationState.Complete; 
         }
 
 

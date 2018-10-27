@@ -4,7 +4,7 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Common
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
     /// 操作符处理类

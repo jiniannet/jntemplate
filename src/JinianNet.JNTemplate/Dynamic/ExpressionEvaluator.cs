@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace JinianNet.JNTemplate.Common
+namespace JinianNet.JNTemplate.Dynamic
 {
 
     /// <summary>

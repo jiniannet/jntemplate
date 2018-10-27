@@ -21,7 +21,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Common.Utility.IsEqual(tc.First.Text, Field.KEY_LOAD))
+            if (Utility.IsEqual(tc.First.Text, Field.KEY_LOAD))
             {
                 if (tc != null
                     && parser != null

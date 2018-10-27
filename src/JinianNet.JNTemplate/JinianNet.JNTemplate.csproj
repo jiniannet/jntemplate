@@ -52,36 +52,36 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CallIndexValueDelegate.cs" />
-    <Compile Include="Common\OperatorConvert.cs" />
-    <Compile Include="Common\Utility.cs" />
+    <Compile Include="Dynamic\CallIndexValueDelegate.cs" />
+    <Compile Include="Dynamic\OperatorConvert.cs" />
+    <Compile Include="Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
     <Compile Include="Configuration\PropertyAttribute.cs" />
-    <Compile Include="DynamicMethodInfo.cs" />
-    <Compile Include="ExcuteMethodDelegate.cs" />
-    <Compile Include="CallPropertyOrFieldDelegate.cs" />
+    <Compile Include="Dynamic\DynamicMethodInfo.cs" />
+    <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
+    <Compile Include="Dynamic\CallPropertyOrFieldDelegate.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="ICallProxy.cs" />
-    <Compile Include="ILCallProxy.cs" />
+    <Compile Include="Dynamic\IDynamicProvider.cs" />
+    <Compile Include="Dynamic\ILDynamicProvider.cs" />
     <Compile Include="Nodes\BodyTag.cs" />
     <Compile Include="Nodes\IndexValueTag.cs" />
     <Compile Include="Nodes\LayoutTag.cs" />
     <Compile Include="Parsers\BodyParser.cs" />
     <Compile Include="Parsers\IndexValueParser.cs" />
     <Compile Include="Parsers\LayoutParser.cs" />
-    <Compile Include="ReflectionCallProxy.cs" />
+    <Compile Include="Dynamic\ReflectionDynamicProvider.cs" />
     <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
-    <Compile Include="FileLoader.cs" />
+    <Compile Include="Resources\FileLoadProvider.cs" />
     <Compile Include="FuncHandler.cs" />
-    <Compile Include="Caching\ICache.cs" />
-    <Compile Include="ILoader.cs" />
+    <Compile Include="Caching\ICacheProvider.cs" />
+    <Compile Include="Resources\ILoadProvider.cs" />
     <Compile Include="ITemplate.cs" />
-    <Compile Include="Common\ExpressionEvaluator.cs" />
+    <Compile Include="Dynamic\ExpressionEvaluator.cs" />
     <Compile Include="LexerMode.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="Parsers\BooleanParser.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="Parsers\NumberParser.cs" />
     <Compile Include="Parsers\SetParser.cs" />
     <Compile Include="Parsers\StringParser.cs" />
-    <Compile Include="ResourceInfo.cs" />
+    <Compile Include="Resources\ResourceInfo.cs" />
     <Compile Include="TemplateLexer.cs" />
     <Compile Include="TemplateParser.cs" />
     <Compile Include="Parsers\VariableParser.cs" />
@@ -137,6 +137,7 @@
     <Compile Include="TokenKind.cs" />
     <Compile Include="FlagMode.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

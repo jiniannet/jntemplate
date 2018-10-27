@@ -4,12 +4,12 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
     /// 动态对象执行类
     /// </summary>
-    public interface ICallProxy
+    public interface IDynamicProvider
     {
         /// <summary>
         /// 动态执行方法

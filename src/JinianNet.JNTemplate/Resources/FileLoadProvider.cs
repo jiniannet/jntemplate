@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
     /// 文件加载器
     /// </summary>
-    public class FileLoader : ILoader
+    public class FileLoadProvider : ILoadProvider
     {
         /// <summary>
         /// 构造函数
         /// </summary>
-        public FileLoader()
+        public FileLoadProvider()
         {
 
         }

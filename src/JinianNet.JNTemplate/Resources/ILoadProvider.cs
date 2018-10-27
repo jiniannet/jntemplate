@@ -9,12 +9,12 @@ using System;
  ********************************************************************************/
 using System.Text;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
     /// 模板加载器
     /// </summary>
-    public interface ILoader
+    public interface ILoadProvider
     {
         /// <summary>
         /// 加载资源

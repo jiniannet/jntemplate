@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace JinianNet.JNTemplate.Common
+namespace JinianNet.JNTemplate
 {
     /// <summary>
     /// 公用类

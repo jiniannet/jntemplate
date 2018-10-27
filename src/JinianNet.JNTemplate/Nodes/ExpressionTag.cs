@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.Collections.Generic;
 
@@ -24,7 +25,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 if (Children[i] is TextTag)
                 {
-                    value[i] = Common.OperatorConvert.Parse(Children[i].Parse(context).ToString());
+                    value[i] = OperatorConvert.Parse(Children[i].Parse(context).ToString());
                 }
                 else
                 {
@@ -32,9 +33,9 @@ namespace JinianNet.JNTemplate.Nodes
                 }
             }
 
-            Stack<object> stack = Common.ExpressionEvaluator.ProcessExpression(value);
+            Stack<object> stack = ExpressionEvaluator.ProcessExpression(value);
 
-            return Common.ExpressionEvaluator.Calculate(stack);
+            return ExpressionEvaluator.Calculate(stack);
         }
 
     }

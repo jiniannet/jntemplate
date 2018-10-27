@@ -2,7 +2,9 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -13,40 +15,71 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 提供运行时的通用方法与属性
     /// </summary>
-    public class RuntimeInfo : ILoader, ICallProxy
+    public class RuntimeInfo
     {
         #region 字段
         private Dictionary<string, string> _environmentVariable;
         private VariableScope _data;
         private List<ITagParser> _parsers;
-        private ILoader _loder;
+        private ILoadProvider _loder;
         private static StringComparison _stringComparison;
-        private Caching.ICache _cache;
+        private Caching.ICacheProvider _cache;
         private static BindingFlags _bindingFlags;
         private static StringComparer _stringComparer;
-        private ICallProxy _callProxy;
-        private string[] _resourceDirectories;
+        private IDynamicProvider _callProxy;
+        private List<string> _resourceDirectories;
+        private static RuntimeInfo _instance;
+        private static readonly object lockHelper = new object();
+        private InitializationState _state;
         #endregion
 
+
+        public static RuntimeInfo GetInstance()
+        {
+            if (_instance == null)
+            {
+                lock (lockHelper)
+                {
+                    // 如果类的实例不存在则创建，否则直接返回
+                    if (_instance == null)
+                    {
+                        _instance = new RuntimeInfo();
+                    }
+                }
+            }
+            return _instance;
+        }
 
         /// <summary>
         /// 引擎信息
         /// </summary>
-        public RuntimeInfo()
+        private RuntimeInfo()
         {
             _environmentVariable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            _state = InitializationState.None;
             _parsers = new List<ITagParser>();
         }
 
+
+
         #region 实列
+        /// <summary>
+        /// 状态 
+        /// </summary>
+        /// <value></value>
+        public InitializationState State
+        {
+            get { return this._state; }
+            internal set { this._state = value; }
+        }
         /// <summary>
         /// 模板资源搜索目录
         /// </summary>
         /// <value></value>
-        public string[] ResourceDirectories
+        public List<string> ResourceDirectories
         {
             get { return this._resourceDirectories; }
-            set { this._resourceDirectories = value; }
+            internal set { this._resourceDirectories = value; }
         }
         /// <summary>
         /// 环境变量
@@ -58,7 +91,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 全局初始数据
         /// </summary>
-        public VariableScope Data
+        internal VariableScope Data
         {
             get { return _data; }
             set { _data = value; }
@@ -70,13 +103,13 @@ namespace JinianNet.JNTemplate
         public List<ITagParser> Parsers
         {
             get { return _parsers; }
-            internal set {  _parsers = value; }
+            internal set { _parsers = value; }
         }
 
         /// <summary>
         /// 加载器
         /// </summary>
-        internal ILoader Loder
+        internal ILoadProvider LoadProvider
         {
             private get { return _loder; }
             set { _loder = value; }
@@ -110,7 +143,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 缓存
         /// </summary>
-        public Caching.ICache Cache
+        public Caching.ICacheProvider Cache
         {
             get { return _cache; }
             internal set { _cache = value; }
@@ -118,7 +151,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 动态调用代理
         /// </summary>
-        internal ICallProxy DynamicCallProxy
+        internal IDynamicProvider DynamicProvider
         {
             private get { return _callProxy; }
             set { _callProxy = value; }
@@ -132,7 +165,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
-            return this.Loder.Load(filename, encoding, directory);
+            return this.LoadProvider.Load(filename, encoding, directory);
         }
         /// <summary>
         /// 获取父目录
@@ -140,7 +173,7 @@ namespace JinianNet.JNTemplate
         /// <param name="fullPath">完整路径</param>
         public string GetDirectoryName(string fullPath)
         {
-            return this.Loder.GetDirectoryName(fullPath);
+            return this.LoadProvider.GetDirectoryName(fullPath);
         }
         /// <summary>
         /// 动态执行方法
@@ -151,7 +184,7 @@ namespace JinianNet.JNTemplate
         /// <returns>执行结果（Void返回NULL）</returns> 
         public object CallMethod(object container, string methodName, object[] args)
         {
-            return this.DynamicCallProxy.CallMethod(container, methodName, args);
+            return this.DynamicProvider.CallMethod(container, methodName, args);
         }
         /// <summary>
         /// 动态获取属性或字段
@@ -161,7 +194,7 @@ namespace JinianNet.JNTemplate
         /// <returns>返回结果</returns> 
         public object CallPropertyOrField(object value, string propertyName)
         {
-            return this.DynamicCallProxy.CallPropertyOrField(value, propertyName);
+            return this.DynamicProvider.CallPropertyOrField(value, propertyName);
         }
 
         /// <summary>
@@ -173,7 +206,17 @@ namespace JinianNet.JNTemplate
 
         public object CallIndexValue(object value, object index)
         {
-            return this.DynamicCallProxy.CallIndexValue(value, index);
+            return this.DynamicProvider.CallIndexValue(value, index);
+        }
+
+        /// <summary>
+        /// 状态枚举
+        /// </summary>
+
+        public enum InitializationState
+        {
+            None,
+            Complete
         }
         #endregion
     }

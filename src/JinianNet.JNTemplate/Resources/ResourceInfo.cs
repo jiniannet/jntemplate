@@ -4,7 +4,7 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
     /// 资源信息

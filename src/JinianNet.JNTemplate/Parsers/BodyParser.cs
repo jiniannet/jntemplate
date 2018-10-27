@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Parsers
         {
             if (tc != null
                 && tc.Count == 1
-                && Common.Utility.IsEqual(tc.First.Text, Field.KEY_BODY))
+                && Utility.IsEqual(tc.First.Text, Field.KEY_BODY))
             {
                 return new BodyTag();
             }

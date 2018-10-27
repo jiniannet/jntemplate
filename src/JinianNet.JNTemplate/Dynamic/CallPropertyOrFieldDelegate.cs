@@ -5,7 +5,7 @@
 
 using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
     /// 获取属性（包括有参属性）或字段委托

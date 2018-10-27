@@ -207,34 +207,34 @@ namespace JinianNet.JNTemplate
                         char value = this._scanner.Read();
                         char next = this._scanner.Read(-1);
                         //if (value == '(' &&
-                        //    (Common.Utility.AllowWord(next)
+                        //    (Utility.AllowWord(next)
                         //    || next == ']'))
                         //{
                         //    return false;
                         //}
-                        //if (Common.Utility.AllowWord(value) && 
-                        //    (Common.Utility.AllowWord(next) 
+                        //if (Utility.AllowWord(value) && 
+                        //    (Utility.AllowWord(next) 
                         //    || next == '[' 
                         //    || next == '.'))
                         //{
                         //    return false;
                         //}
-                        //if (value == '[' && (Common.Utility.AllowWord(next) || next == ']'))
+                        //if (value == '[' && (Utility.AllowWord(next) || next == ']'))
                         //{
                         //    return false;
                         //}
-                        //if (value == ']' && (Common.Utility.AllowWord(next) || next == ']'))
+                        //if (value == ']' && (Utility.AllowWord(next) || next == ']'))
                         //{
                         //    return false;
                         //}
-                        //if (Common.Utility.AllowWord(value) && (next == '.' || next == '['))
+                        //if (Utility.AllowWord(value) && (next == '.' || next == '['))
                         //{
                         //    return false;
                         //}
 
 
-                        if (((value == '(' || Common.Utility.AllowWord(value) || value=='[') && Common.Utility.AllowWord(next))
-                        || (Common.Utility.AllowWord(value) && (next == '.')))
+                        if (((value == '(' || Utility.AllowWord(value) || value=='[') && Utility.AllowWord(next))
+                        || (Utility.AllowWord(value) && (next == '.')))
                         {
                             return false;
                         }
