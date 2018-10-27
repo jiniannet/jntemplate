@@ -6,18 +6,20 @@ function menu(){
         cmdtext=$1
     else
         echo "
-                欢迎使用服务管理控制台
-        请确认您是否是以管理员身份模式运行本程序
-                    www.jiniannet.com
-        ┌─────请输入您要操作的命令─────┐
-        │  1 构建netframework版　　　　│
-        │  2 构建netcore 版　　　　　　│
-        │  3 构建netstandard 版　　　　│
-        │  4 清理无用文件　　　　　　　│
-        │  5 配置core/standard环境 　　│
-        │  6 配置netframework环境　　　│
-        │  0 退出 　　　　　　　　 　　│
-        └──────────────────────────────┘"
+              welcome use jntemplate tools
+          请确认您是否是以管理员身份模式运行本程序
+                  www.jiniannet.com
+
+           ┌──────── please enter ────────┐
+           │  1 build by net40 or net20   │
+           │  2 build by netcoreapp       │
+           │  3 build by netstandard      │
+           │  4 clear temporary files     │
+           │  5 core/standard setting     │
+           │  6 net framework setting     │
+           │  0 exit                      │
+           └──────────────────────────────┘
+                         "
         echo -n "input your command:"
         read cmdtext
     fi
@@ -71,12 +73,29 @@ function cmdbuildnf(){
 
 #netcore
 function cmdbuildnc(){
+    cmdncev
 
+    cd ../src/JinianNet.JNTemplate
+    dotnet build JinianNet.JNTemplateCore.csproj --configuration Release --output ../../lib/netcoreapp2.0
+
+    cd ..
+    cd ..
+    cd build
+    echo "jntemplate for netcoreapp 2.0 build success!"
 }
 
 #netstandard
 function cmdbuildns(){
+    cmdncev
 
+    cd ../src/JinianNet.JNTemplate
+
+    dotnet build JinianNet.JNTemplateStandard.csproj --configuration Release --output ../../lib/netstandard2.0 --framework netstandard2.0
+
+    cd ..
+    cd ..
+    cd build
+    echo jntemplate for netStandard 2.0 build success!
 }
 
 #clear
@@ -94,12 +113,44 @@ function cmdclearfiles(){
 
 #net core nev
 function cmdncev(){
+    if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp" ];then
+        if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs" ];then
+            rm -f ../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp
+        fi
+    fi
+    if [ -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs.build.tmp" ];then
+        if [ -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs" ];then
+            rm -f ../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp
+        fi
+    fi
+    rm -rf ../src/JinianNet.JNTemplate/obj
+    rm -rf ../src/JinianNet.JNTemplate/bin
+    rm -rf ../src/JinianNet.JNTemplate.Test/bin
+    rm -rf ../src/JinianNet.JNTemplate.Test/obj
+
+    echo "config net core or net Standard env success!"
 
 }
 
 #mono nev
 function cmdnfev(){
+    if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp" ];then
+        if [ ! -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs" ];then
+            mv../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+        fi
+    fi
 
+    if [ -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs.build.tmp" ];then
+        if [ ! -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs" ];then
+            mv../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+        fi
+    fi
+    rm -rf ../src/JinianNet.JNTemplate/obj
+    rm -rf ../src/JinianNet.JNTemplate/bin
+    rm -rf ../src/JinianNet.JNTemplate.Test/bin
+    rm -rf ../src/JinianNet.JNTemplate.Test/obj
+
+    echo config framework env success!
 }
 
 #exit
@@ -108,3 +159,4 @@ function cmdexit(){
 }
 
 menu
+cmdexit

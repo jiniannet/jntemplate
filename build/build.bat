@@ -1,20 +1,22 @@
 @echo off
 cd /d %~dp0
-echo            欢迎使用服务管理控制台
-echo   请确认您是否是以管理员身份模式运行本程序
+echo              welcome use jntemplate tools
+echo          请确认您是否是以管理员身份模式运行本程序
 echo                  www.jiniannet.com
-echo .
+echo                         .
+echo                         .
 :cmdshow
-echo ┌─────请输入您要操作的命令─────┐
-echo │  1 构建netframework版　　　　│
-echo │  2 构建netcore 版　　　　　　│
-echo │  3 构建netstandard 版　　　　│
-echo │  4 清理无用文件　　　　　　　│
-echo │  5 配置core/standard环境 　　│
-echo │  6 配置netframework环境　　　│
-echo │  0 退出 　　　　　　　　 　　│
-echo └──────────────────────────────┘
-echo .
+echo           ┌──────── please enter ────────┐
+echo           │  1 build by net40 or net20   │
+echo           │  2 build by netcoreapp       │
+echo           │  3 build by netstandard      │
+echo           │  4 clear temporary files     │
+echo           │  5 core/standard setting     │
+echo           │  6 net framework setting     │
+echo           │  0 exit                      │
+echo           └──────────────────────────────┘
+echo                         .
+
 
 :cmdinput
 set cmdtype=0
