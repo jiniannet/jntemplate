@@ -33,7 +33,10 @@ namespace JinianNet.JNTemplate
         private InitializationState _state;
         #endregion
 
-
+        /// <summary>
+        /// 获取实例 
+        /// </summary>
+        /// <returns></returns>
         public static RuntimeInfo GetInstance()
         {
             if (_instance == null)
@@ -143,7 +146,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 缓存
         /// </summary>
-        public Caching.ICacheProvider Cache
+        public Caching.ICacheProvider CacheProvider
         {
             get { return _cache; }
             internal set { _cache = value; }
@@ -215,7 +218,17 @@ namespace JinianNet.JNTemplate
 
         public enum InitializationState
         {
+            /// <summary>
+            /// 未初始化
+            /// </summary>
             None,
+            /// <summary>
+            /// 初始化中
+            /// </summary>
+            Initialization,
+            /// <summary>
+            /// 初始完成
+            /// </summary>
             Complete
         }
         #endregion
