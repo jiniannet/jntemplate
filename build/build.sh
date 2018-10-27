@@ -1,8 +1,7 @@
 #!/bin/sh
-cmdtype = 0
-
-function menu(){
-    if [ $# -gt 0 ] then
+cmdtype=0
+menu(){
+    if [ $# -gt 0 ] ; then
         cmdtext=$1
     else
         echo "
@@ -23,31 +22,30 @@ function menu(){
         echo -n "input your command:"
         read cmdtext
     fi
-    cmdtype = 0
-    If  [ $cmdtext ="1"] then
+    if  [ "$cmdtext" = "1" ] ; then
         cmdbuildnf
-    elif [ $cmdtext =="2"] then
+    elif [ "$cmdtext" = "2" ] ; then
         cmdbuildnc
-    elif [ $cmdtext =="3"] then
+    elif [ "$cmdtext" = "3" ] ; then
         cmdbuildns
-    elif [ $cmdtext =="4"] then
+    elif [ "$cmdtext" = "4" ] ; then
         cmdclearfiles
-    elif [ $cmdtext =="5"] then
+    elif [ "$cmdtext" = "5" ] ; then
         cmdncev
-    elif [ $cmdtext =="6"] then
+    elif [ "$cmdtext" = "6" ] ; then
         cmdnfev
-    elif [ $cmdtext =="0"] then
+    elif [ "$cmdtext" = "0" ] ; then
         cmdexit
-    elif [ $cmdtext =="exit"] then
+    elif [ "$cmdtext" = "exit" ] ; then
         cmdexit
     else
-        echo input error,try again！
+        echo "input error,try again！"
         menu
     fi
 }
 
 # mono
-function cmdbuildnf(){
+cmdbuildnf(){
     echo "start build..."
     build_path="../lib"
     build_key="../../tool/jiniannet.snk"
@@ -60,9 +58,9 @@ function cmdbuildnf(){
     cd $cur_path/../src/JinianNet.JNTemplate
 
     if [ ! -f "../../tool/jiniannet.snk" ]; then
-        mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /warn:3 /nologo /o /define:NET40,NOTDNX /recurse:*.cs
+        mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /warn:3 /nologo /o /define:NET40,NOTDNX ecurse:*.cs
     else
-        mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /keyfile:../../tool/jiniannet.snk /warn:3 /nologo /o /define:NET40,NOTDNX /recurse:*.cs
+        mcs /target:library /out:../../lib/JinianNet.JNTemplate.dll /doc:../../lib/JinianNet.JNTemplate.xml /keyfile:../../tool/jiniannet.snk /warn:3 /nologo /o /define:NET40,NOTDNX ecurse:*.cs
     fi
 
     echo "build complete..."
@@ -72,10 +70,11 @@ function cmdbuildnf(){
 }
 
 #netcore
-function cmdbuildnc(){
+cmdbuildnc(){
     cmdncev
 
     cd ../src/JinianNet.JNTemplate
+    dotnet restore JinianNet.JNTemplateCore.csproj
     dotnet build JinianNet.JNTemplateCore.csproj --configuration Release --output ../../lib/netcoreapp2.0
 
     cd ..
@@ -85,11 +84,11 @@ function cmdbuildnc(){
 }
 
 #netstandard
-function cmdbuildns(){
+cmdbuildns(){
     cmdncev
 
     cd ../src/JinianNet.JNTemplate
-
+    dotnet restore JinianNet.JNTemplateStandard.csproj
     dotnet build JinianNet.JNTemplateStandard.csproj --configuration Release --output ../../lib/netstandard2.0 --framework netstandard2.0
 
     cd ..
@@ -99,7 +98,7 @@ function cmdbuildns(){
 }
 
 #clear
-function cmdclearfiles(){
+cmdclearfiles(){
     rm -f ../src/JinianNet.JNTemplate.Test/dll/JinianNet.JNTemplate.dll
     rm -f ../lib/*.*
     rm -f ../src/JinianNet.JNTemplate.Test/html/*.html
@@ -112,7 +111,7 @@ function cmdclearfiles(){
 }
 
 #net core nev
-function cmdncev(){
+cmdncev(){
     if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp" ];then
         if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs" ];then
             rm -f ../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp
@@ -133,7 +132,7 @@ function cmdncev(){
 }
 
 #mono nev
-function cmdnfev(){
+cmdnfev(){
     if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp" ];then
         if [ ! -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs" ];then
             mv../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp AssemblyInfo.cs
@@ -154,7 +153,7 @@ function cmdnfev(){
 }
 
 #exit
-function cmdexit(){
+cmdexit(){
     exit 0
 }
 
