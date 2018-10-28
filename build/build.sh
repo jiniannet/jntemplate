@@ -112,20 +112,29 @@ cmdclearfiles(){
 
 #net core nev
 cmdncev(){
-    if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp" ];then
-        if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs" ];then
-            rm -f ../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp
+    cd ..
+    cd src/JinianNet.JNTemplate/Properties
+    if [ -d "AssemblyInfo.cs.build.tmp" ] ; then
+        if [ -d "AssemblyInfo.cs" ] ; then
+            rm -f AssemblyInfo.cs.build.tmp
         fi
     fi
-    if [ -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs.build.tmp" ];then
-        if [ -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs" ];then
-            rm -f ../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp
+    cd ..
+    rm -rf obj
+    rm -rf bin
+    cd ..
+    cd JinianNet.JNTemplate.Test/Properties
+    if [ -d "AssemblyInfo.cs.build.tmp" ] ; then
+        if [ -d "AssemblyInfo.cs" ] ; then
+            rm -f AssemblyInfo.cs.build.tmp
         fi
     fi
-    rm -rf ../src/JinianNet.JNTemplate/obj
-    rm -rf ../src/JinianNet.JNTemplate/bin
-    rm -rf ../src/JinianNet.JNTemplate.Test/bin
-    rm -rf ../src/JinianNet.JNTemplate.Test/obj
+    cd ..
+    rm -rf obj
+    rm -rf bin
+    cd ..
+    cd ..
+    cd build
 
     echo "config net core or net Standard env success!"
 
@@ -133,23 +142,30 @@ cmdncev(){
 
 #mono nev
 cmdnfev(){
-    if [ -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp" ];then
-        if [ ! -d "../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs" ];then
-            mv../src/JinianNet.JNTemplate/Properties/AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+    cd ..
+    cd src/JinianNet.JNTemplate/Properties
+    if [ -d "AssemblyInfo.cs.build.tmp" ];then
+        if [ ! -d "AssemblyInfo.cs" ];then
+            mv AssemblyInfo.cs.build.tmp AssemblyInfo.cs
         fi
     fi
-
-    if [ -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs.build.tmp" ];then
-        if [ ! -d "../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs" ];then
-            mv../src/JinianNet.JNTemplate.Test/Properties/AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+    cd ..
+    rm -rf obj
+    rm -rf bin
+    cd ..
+    cd JinianNet.JNTemplate.Test/Properties
+    if [ -d "AssemblyInfo.cs.build.tmp" ];then
+        if [ ! -d "AssemblyInfo.cs" ];then
+            mv AssemblyInfo.cs.build.tmp AssemblyInfo.cs
         fi
     fi
-    rm -rf ../src/JinianNet.JNTemplate/obj
-    rm -rf ../src/JinianNet.JNTemplate/bin
-    rm -rf ../src/JinianNet.JNTemplate.Test/bin
-    rm -rf ../src/JinianNet.JNTemplate.Test/obj
+    rm -rf obj
+    rm -rf bin
+    cd ..
+    cd ..
+    cd build
 
-    echo config framework env success!
+    echo "config framework env success!"
 }
 
 #exit
