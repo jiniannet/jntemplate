@@ -119,6 +119,7 @@ cmdncev(){
             rm -f AssemblyInfo.cs.build.tmp
         fi
     fi
+    mv AssemblyInfo.cs AssemblyInfo.cs.build.tmp
     cd ..
     rm -rf obj
     rm -rf bin
@@ -129,6 +130,7 @@ cmdncev(){
             rm -f AssemblyInfo.cs.build.tmp
         fi
     fi
+    mv AssemblyInfo.cs AssemblyInfo.cs.build.tmp
     cd ..
     rm -rf obj
     rm -rf bin
