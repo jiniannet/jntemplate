@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Configuration
         private string _tagPrefix = "${";
         private string _tagSuffix = "}";
         private bool _throwExceptions = true;
-        private bool _stripWhiteSpace = true;
+        private bool _stripWhiteSpace = false;
         private bool _ignoreCase = true;
         private string _charset = "utf-8";
         private Caching.ICacheProvider _cachingProvider;
@@ -112,8 +112,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 缓存提供器
         /// </summary>
-        [Property("Cache")]
-        public Caching.ICacheProvider CachingProvider
+        public Caching.ICacheProvider CacheProvider
         {
             get { return this._cachingProvider; }
             set { this._cachingProvider = value; }
