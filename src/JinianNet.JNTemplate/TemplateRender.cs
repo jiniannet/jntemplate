@@ -126,7 +126,8 @@ namespace JinianNet.JNTemplate
         private Tag[] ParseTags()
         {
             TemplateLexer lexer = new TemplateLexer(this._content);
-            TemplateParser parser = new TemplateParser(lexer.Parse());
+            Token[] ts = lexer.ToArray();
+            TemplateParser parser = new TemplateParser(ts);
             return parser.ToArray();
         }
 

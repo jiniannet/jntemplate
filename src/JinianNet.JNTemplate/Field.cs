@@ -32,6 +32,7 @@ namespace JinianNet.JNTemplate
         /// 默认标签解析器
         /// </summary>
         internal static readonly string[] RSEOLVER_TYPES = new string[] {
+                "JinianNet.JNTemplate.Parsers.CommentParser",
                 "JinianNet.JNTemplate.Parsers.BooleanParser",
                 "JinianNet.JNTemplate.Parsers.NumberParser",
                 "JinianNet.JNTemplate.Parsers.EleseParser",

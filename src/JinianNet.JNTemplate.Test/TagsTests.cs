@@ -600,7 +600,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$dt.Rows.get_Item(0).get_Item(\"name\")";
             var template = new Template(templateContent);
             template.Set("dt", dt);
-            var render = template.Render();
+            var render = template.Render().Trim();
             Assert.Equal("Han Meimei", render);
         }
 
@@ -625,7 +625,7 @@ $end
 ";
             var template = new Template(templateContent);
             template.Set("dt", dt);
-            var render = template.Render();
+            var render = template.Render().Trim();
             Assert.Equal("Han Meimei", render);
         }
 
@@ -650,7 +650,7 @@ $end
 ";
             var template = new Template(templateContent);
             template.Set("dt", dt);
-            var render = template.Render();
+            var render = template.Render().Trim();
             Assert.Equal("值:Han Meimei", render);
         }
 #endif

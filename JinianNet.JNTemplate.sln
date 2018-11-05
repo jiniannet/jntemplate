@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate", "src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj", "{3744DD16-5A83-4C50-B711-74EA11DA6B27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272-B7F5-4A30-8DCD-C8EB022BCD09}"
 	ProjectSection(SolutionItems) = preProject
-		build\build.core.bat = build\build.core.bat
+		build\build.bat = build\build.bat
 		build\build.mono.sh = build\build.mono.sh
-		build\build.win.bat = build\build.win.bat
+		build\build.sh = build\build.sh
 		build\build.win.field.bat = build\build.win.field.bat
 		build\build说明.txt = build\build说明.txt
 	EndProjectSection

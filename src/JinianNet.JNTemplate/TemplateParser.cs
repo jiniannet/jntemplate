@@ -98,6 +98,11 @@ namespace JinianNet.JNTemplate
 
                 this._index++;
 
+                //if (tc.Count == 1 && tc[0] != null && tc[0].TokenKind == TokenKind.Comment)
+                //{
+                //    return new TextTag();
+                //}
+
                 try
                 {
                     t = Read(tc);

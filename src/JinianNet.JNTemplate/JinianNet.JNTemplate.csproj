@@ -54,6 +54,8 @@
   <ItemGroup>
     <Compile Include="Dynamic\CallIndexValueDelegate.cs" />
     <Compile Include="Dynamic\OperatorConvert.cs" />
+    <Compile Include="Nodes\CommentTag.cs" />
+    <Compile Include="Parsers\CommentParser.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />

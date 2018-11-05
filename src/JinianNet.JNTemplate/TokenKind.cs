@@ -15,11 +15,11 @@ namespace JinianNet.JNTemplate
         /// </summary>
         None,
         /// <summary>
-        /// 文本
+        /// 非标签文本
         /// </summary>
         Text,
         /// <summary>
-        /// 文本数据
+        /// 标签内文本
         /// </summary>
         TextData,
         /// <summary>
@@ -55,9 +55,17 @@ namespace JinianNet.JNTemplate
         /// </summary>
         LeftParentheses,
         /// <summary>
-        /// 右员括号
+        /// 右圆括号
         /// </summary>
         RightParentheses,
+        /// <summary>
+        /// 左大括号
+        /// </summary>
+        LeftBrace,
+        /// <summary>
+        /// 右大括号
+        /// </summary>
+        RightBrace,
         /// <summary>
         /// 新行（换行符）
         /// </summary>
@@ -90,6 +98,14 @@ namespace JinianNet.JNTemplate
         /// 逗号
         /// </summary>
         Comma,
+        /// <summary>
+        /// 冒号
+        /// </summary>
+        Colon,
+        /// <summary>
+        /// 注释
+        /// </summary>
+        Comment,
         /// <summary>
         /// 结束
         /// </summary>
