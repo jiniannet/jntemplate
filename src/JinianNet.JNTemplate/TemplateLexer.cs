@@ -294,10 +294,10 @@ namespace JinianNet.JNTemplate
                         if (this._scanner.Read(-1) != '\\'
                             || GetPrevCharCount('\\') % 2 == 0)
                         {
-                            if (this._kind == TokenKind.StringStart)
-                            {
-                                token = GetToken(TokenKind.String);
-                            }
+                            //if (this._kind == TokenKind.StringStart)
+                            //{
+                            //    token = GetToken(TokenKind.String);
+                            //}
                             token = GetToken(TokenKind.StringEnd);
                             this._pos.Pop();
                         }

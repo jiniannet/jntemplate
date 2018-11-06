@@ -181,7 +181,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 return info.Invoke(container, new object[] { propIndex });
             }
 #endif
-            return null; 
+            return null;
         }
         #endregion
 
@@ -282,29 +282,8 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="args">形参</param>
         /// <param name="hasParam">是否有params参数</param>
         /// <returns>MethodInfo</returns>
-        public MethodInfo GetMethod(Type type, string methodName, Type[] args, out bool hasParam)
+        public MethodInfo GetMethod(Type type, string methodName, Type[] args)
         {
-            //             hasParam = false;
-            //             MethodInfo method;
-            //             //根据具体形参获取方法名，以处理重载
-            //             if (args == null || Array.LastIndexOf(args, null) == -1)
-            //             {
-            // #if NET20 || NET40
-            //                 method = type.GetMethod(methodName,
-            //                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
-            //                     null, args, null);
-            // #else
-
-            //                 method = type.GetMethod(methodName,
-            //                     BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-            // #endif
-            //                 if (method != null)
-            //                 {
-            //                     return method;
-            //                 }
-            //             }
-
-            hasParam = false;
             MethodInfo[] ms = FindAllMethod(type, methodName);
             if (ms.Length == 1)
             {
@@ -380,51 +359,49 @@ namespace JinianNet.JNTemplate.Dynamic
 
             Type t = container.GetType();
 
-            bool hasParam;
-            MethodInfo method = GetMethod(t, methodName, types, out hasParam);
+            MethodInfo method = GetMethod(t, methodName, types);
             if (method != null)
             {
-                if (hasParam)
+                //if (hasParam)
+                //{
+                //    Array arr;
+                //    if (types.Length - 1 == args.Length)
+                //    {
+                //        arr = null;
+                //    }
+                //    else
+                //    {
+                //        arr = Array.CreateInstance(types[types.Length - 1].GetElementType(), args.Length - types.Length + 1);
+                //        for (int i = types.Length - 1; i < args.Length; i++)
+                //        {
+                //            arr.SetValue(args[i], i - (types.Length - 1));
+                //        }
+
+                //        object[] newArgs = new object[types.Length];
+
+                //        for (int i = 0; i < newArgs.Length - 1; i++)
+                //        {
+                //            newArgs[i] = args[i];
+                //        }
+                //        newArgs[newArgs.Length - 1] = arr;
+
+                //        return method.Invoke(container, newArgs);
+                //    }
+                //}
+
+                if (hasNullValue)
                 {
-                    Array arr;
-                    if (types.Length - 1 == args.Length)
+                    ParameterInfo[] pi = method.GetParameters();
+                    for (int i = 0; i < args.Length; i++)
                     {
-                        arr = null;
-                    }
-                    else
-                    {
-                        arr = Array.CreateInstance(types[types.Length - 1].GetElementType(), args.Length - types.Length + 1);
-                        for (int i = types.Length - 1; i < args.Length; i++)
+                        if (args[i] == null && pi[i].DefaultValue != null)
                         {
-                            arr.SetValue(args[i], i - (types.Length - 1));
+                            args[i] = pi[i].DefaultValue;
                         }
-
-                        object[] newArgs = new object[types.Length];
-
-                        for (int i = 0; i < newArgs.Length - 1; i++)
-                        {
-                            newArgs[i] = args[i];
-                        }
-                        newArgs[newArgs.Length - 1] = arr;
-
-                        return method.Invoke(container, newArgs);
                     }
                 }
-                else
-                {
-                    if (hasNullValue)
-                    {
-                        ParameterInfo[] pi = method.GetParameters();
-                        for (int i = 0; i < args.Length; i++)
-                        {
-                            if (args[i] == null && pi[i].DefaultValue != null)
-                            {
-                                args[i] = pi[i].DefaultValue;
-                            }
-                        }
-                    }
-                    return method.Invoke(container, args);
-                }
+                return method.Invoke(container, args);
+
             }
 
             return null;

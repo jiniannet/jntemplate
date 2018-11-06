@@ -20,15 +20,21 @@ namespace JinianNet.JNTemplate.Parsers
         /// <returns></returns>
         public Tag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (tc!=null
-                && tc.Count == 3
+            if (tc != null
+                && tc.Count > 1
                 && tc.First.TokenKind == TokenKind.StringStart
-                && tc[1].TokenKind == TokenKind.String
                 && tc.Last.TokenKind == TokenKind.StringEnd
                 )
             {
                 StringTag tag = new StringTag();
-                tag.Value = tc[1].Text;
+                if (tc.Count == 3 && tc[1].TokenKind == TokenKind.String)
+                {
+                    tag.Value = tc[1].Text;
+                }
+                else
+                {
+                    tag.Value = "";
+                }
                 return tag;
             }
             return null;
