@@ -1,7 +1,7 @@
 ﻿//#define VER_EQ_TEST
 //#define NVELOCITY_TEST
 #define BASE_PAGE_TEST
-//#define WIN  
+#define WIN  
 #if WIN
 using System.IO;
 using System.Reflection;
@@ -85,7 +85,7 @@ namespace JinianNet.JNTemplate.Test
             ////////////////////////////////////////////////////////////////////////////////////
             //h = new JinianNet.JNTemplate.Dynamic.ReflectionHelpers();
             conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = new UserCache();
+            conf.CacheProvider = new UserCache();
             Engine.Configure(conf);
             s.Restart();
             for (var i = 0; i < MAX_RUN_COUNT; i++)
@@ -148,8 +148,8 @@ namespace JinianNet.JNTemplate.Test
             string path = basePath + "\\templets\\default";
 
             var conf = Configuration.EngineConfig.CreateDefault();
-            conf.CachingProvider = new UserCache();
-            conf.CallProvider = new ILCallProxy();// new TestExecutor();
+            conf.CacheProvider = new UserCache();
+            conf.DynamicProvider = new JinianNet.JNTemplate.Dynamic.ILDynamicProvider();// new TestExecutor();
             Engine.Configure(conf);
             Stopwatch s = new Stopwatch();
             s.Start();

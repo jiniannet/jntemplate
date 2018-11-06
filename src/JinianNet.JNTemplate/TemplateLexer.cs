@@ -305,9 +305,21 @@ namespace JinianNet.JNTemplate
                     }
                     else
                     {
-                        token = GetToken(TokenKind.StringStart);
-                        this._pos.Push("\"");
-                        continue;
+                        if (this._kind == TokenKind.TagStart
+                            || this._kind == TokenKind.LeftBracket
+                           || this._kind == TokenKind.LeftParentheses
+                           || this._kind == TokenKind.Operator
+                           || this._kind == TokenKind.Punctuation
+                           || this._kind == TokenKind.Comma
+                           || this._kind == TokenKind.Colon
+                           || this._kind == TokenKind.LeftBrace
+                           || this._kind == TokenKind.Space)
+                        {
+                            token = GetToken(TokenKind.StringStart);
+                            this._pos.Push("\"");
+                            continue;
+                        }
+
                     }
                 }
 

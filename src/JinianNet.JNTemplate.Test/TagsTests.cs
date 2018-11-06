@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Test
             //conf.IgnoreCase = false;
             Engine.Configure(conf);
         }
- 
+
 
         /// <summary>
         /// 测试索引
@@ -39,10 +39,57 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$data[0][1]";
             var template = new Template(templateContent);
-            template.Set("data", new string[] { "abc","def","ghi" });
+            template.Set("data", new string[] { "abc", "def", "ghi" });
             var render = template.Render();
             Assert.Equal("b", render);
         }
+
+        /// <summary>
+        /// 测试索引2
+        /// </summary>
+        [Fact]
+        public void TestIndex2()
+        {
+            var templateContent = "$data[arr[0]]";
+            var template = new Template(templateContent);
+            template.Set("data", new string[] { "abc", "def", "ghi" });
+            template.Set("arr", new int[] { 1, 4, 0, 8, 3 });
+            var render = template.Render();
+            Assert.Equal("def", render);
+        }
+
+        /// <summary>
+        /// 测试属性
+        /// </summary>
+        [Fact]
+        public void TestOther()
+        {
+            var templateContent = @"$foreach(row in list)
+                        <li><a href=""$func.GetHelpUrl(row)"">$row.Title</a></li>
+                        $end";
+            var template = new Template(templateContent);
+            template.Set("list", new TemplateMethod().GetHelpList(0,0,0,0));
+            template.Set("func", new TemplateMethod());
+            var render = template.Render().Replace("\t","").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+            Assert.Equal("<li><a href=\"/Help/art001.aspx\">下单后可以修改订单吗？</a></li><li><a href=\"/Help/art001.aspx\">无货商品几天可以到货？</a></li><li><a href=\"/Help/art001.aspx\">合约机资费如何计算？</a></li><li><a href=\"/Help/art001.aspx\">可以开发票吗？</a></li>".Replace(" ", ""), render);
+        }
+
+        /// <summary>
+        /// 测试属性
+        /// </summary>
+        [Fact]
+        public void TestProperty()
+        {
+            var templateContent = "$Site.Url";
+            var template = new Template(templateContent);
+            template.Set("Site", new
+            {
+                Url = "jiniannet.com"
+            });
+            var render = template.Render();
+            Assert.Equal("jiniannet.com", render);
+        }
+
         /// <summary>
         /// 测试Layout
         /// </summary>
@@ -91,7 +138,7 @@ namespace JinianNet.JNTemplate.Test
             var template = new Template(templateContent);
             template.Set("test", new JinianNet.JNTemplate.FuncHandler(args =>
             {
-                var r = Convert.ToString( (int.Parse(args[0].ToString()) + int.Parse(args[1].ToString())) * 35);
+                var r = Convert.ToString((int.Parse(args[0].ToString()) + int.Parse(args[1].ToString())) * 35);
                 return r.ToString();
             }));
             var render = template.Render();
@@ -517,11 +564,11 @@ namespace JinianNet.JNTemplate.Test
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
 #endif
- 
+
             //var loader = new JinianNet.JNTemplate.FileLoader();
             //loader.ResourceDirectories = new List<string>(new string[] { new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" });
             //Engine.SetLodeProvider(loader);
-             
+
             var render = template.Render();
             Assert.Equal("this is public", render);
         }
