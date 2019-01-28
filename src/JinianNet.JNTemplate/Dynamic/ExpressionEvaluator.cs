@@ -2,8 +2,10 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -320,6 +322,8 @@ namespace JinianNet.JNTemplate.Dynamic
             return post;
         }
 
+ 
+
         #endregion
 
         #region Calculate
@@ -564,7 +568,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return stack.Pop();
         }
-
+ 
         /// <summary>
         /// 计算表达式
         /// </summary>

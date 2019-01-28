@@ -19,23 +19,58 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public override object Parse(TemplateContext context)
         {
-            object[] value = new object[Children.Count];
+            List<object> value = new List<object>();
+            Stack<object> stack;
 
             for (int i = 0; i < Children.Count; i++)
             {
                 if (Children[i] is TextTag)
                 {
-                    value[i] = OperatorConvert.Parse(Children[i].Parse(context).ToString());
+                    Operator op = OperatorConvert.Parse(Children[i].Parse(context).ToString());
+                    if(op== Operator.Or || op == Operator.And)
+                    {
+                        object result;
+                        bool isTrue;
+                        if (value.Count > 1)
+                        {
+                            stack = ExpressionEvaluator.ProcessExpression(value.ToArray());
+                             result = ExpressionEvaluator.Calculate(stack);
+                        }
+                        else
+                        {
+                            result = value[0];
+                        }
+                        if (result is Boolean)
+                        {
+                            isTrue = (Boolean)result;
+                        }
+                        else
+                        {
+                            isTrue = ExpressionEvaluator.CalculateBoolean(result);
+                        }
+                        if(op == Operator.Or && isTrue)
+                        {
+                            return true;
+                        }
+                        if(op == Operator.And && !isTrue)
+                        {
+                            return false;
+                        }
+                        value.Clear();
+                        value.Add(isTrue);
+                    }
+                    value.Add(op);
                 }
                 else
                 {
-                    value[i] = Children[i].Parse(context);
+                    value.Add(Children[i].Parse(context));
                 }
             }
-
-            Stack<object> stack = ExpressionEvaluator.ProcessExpression(value);
-
+ 
+            stack = ExpressionEvaluator.ProcessExpression(value.ToArray());
             return ExpressionEvaluator.Calculate(stack);
+            //Stack<Tag> stack = ExpressionEvaluator.ProcessExpression(Children,context);
+            //return ExpressionEvaluator.Calculate(stack, context);
         }
 
     }

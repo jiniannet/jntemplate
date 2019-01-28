@@ -17,6 +17,42 @@ namespace JinianNet.JNTemplate.Test
             Engine.Configure(conf);
         }
 
+        /// <summary>
+        /// 测试AND
+        /// </summary>
+        [Fact]
+        public void TestAndTag()
+        { 
+            var templateContent = @"${foreach(entity in list)}${ if (entity.Name.Length > 4 && entity.Name.Substring(0, 4) == ""File"")}yes${else}no${end}${end}";
+            var template = new Template(templateContent); 
+            var arr = new List<object>();
+            arr.Add(new 
+            {
+                Name = "File20190128"
+            });
+            arr.Add(new {
+                Name = "19"
+            }); 
+            template.Set("list",arr);
+            var render = template.Render();
+            Assert.Equal("yesno", render);
+        }
+
+        /// <summary>
+        /// 测试AND2
+        /// </summary>
+        [Fact]
+        public void TestAndTag2()
+        {
+            var templateContent = @"${ if (entity.Name.Length > 4 && entity.Name.Substring(0, 4) == ""File"" &&  entity.Name.EndsWith(""19""))}yes${else}no${end}";
+            var template = new Template(templateContent);
+            template.Set("entity", new
+            {
+                Name = "File19"
+            });
+            var render = template.Render(); 
+            Assert.Equal("yes", render);
+        }
 
         /// <summary>
         /// 测试索引
@@ -68,9 +104,9 @@ namespace JinianNet.JNTemplate.Test
                         <li><a href=""$func.GetHelpUrl(row)"">$row.Title</a></li>
                         $end";
             var template = new Template(templateContent);
-            template.Set("list", new TemplateMethod().GetHelpList(0,0,0,0));
+            template.Set("list", new TemplateMethod().GetHelpList(0, 0, 0, 0));
             template.Set("func", new TemplateMethod());
-            var render = template.Render().Replace("\t","").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+            var render = template.Render().Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
             Assert.Equal("<li><a href=\"/Help/art001.aspx\">下单后可以修改订单吗？</a></li><li><a href=\"/Help/art001.aspx\">无货商品几天可以到货？</a></li><li><a href=\"/Help/art001.aspx\">合约机资费如何计算？</a></li><li><a href=\"/Help/art001.aspx\">可以开发票吗？</a></li>".Replace(" ", ""), render);
         }
 
@@ -741,7 +777,7 @@ $end
 
 #if !NETCOREAPP2_0
         /// <summary>
-        /// 测试方法的params参数  .NET core中不支持
+        /// 测试方法的params参数  .NET core中不支持,从.V1.3.2以上版本不再支持
         /// </summary>
         [Fact]
         public void TestFunctionParams()
@@ -754,7 +790,7 @@ $end
         }
 
         /// <summary>
-        /// 测试方法的params参数2 .NET core中不支持
+        /// 测试方法的params参数2 .NET core中不支持,从.V1.3.2以上版本不再支持
         /// </summary>
         [Fact]
         public void TestFunctionParams2()
