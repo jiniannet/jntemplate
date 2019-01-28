@@ -54,6 +54,19 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("yes", render);
         }
 
+
+        /// <summary>
+        /// 测试AND3
+        /// </summary>
+        [Fact]
+        public void TestAndTag3()
+        {
+            var templateContent = @"${if(3+5>20 && 1-2<7 && 1<2) }yes${else}no${end}";
+            var template = new Template(templateContent);
+            var render = template.Render();
+            Assert.Equal("no", render);
+        }
+
         /// <summary>
         /// 测试索引
         /// </summary>
