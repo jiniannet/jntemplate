@@ -39,9 +39,9 @@ or
 git clone https://github.com/jiniannet/jntemplate.git
 ```
 
-Windows:After cloning the repository, run build/build.win.bat
+Windows:After cloning the repository, run build/build.bat
 
-Mono:After cloning the repository, run build/build.mono.sh
+Linux:After cloning the repository, run build/build.sh
 
   
   

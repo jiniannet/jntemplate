@@ -8,6 +8,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -288,6 +289,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return ms[0];
             }
+            //为了方便处理可选参数等前台模板写法，从以后版本开始将不再支持重载
             foreach (MethodInfo m in ms)
             {
                 ParameterInfo[] pi = m.GetParameters();
@@ -357,8 +359,8 @@ namespace JinianNet.JNTemplate.Dynamic
             }
 
             Type t = container.GetType();
-
             MethodInfo method = GetMethod(t, methodName, types);
+
             if (method != null)
             {
                 //if (hasParam)
@@ -388,14 +390,50 @@ namespace JinianNet.JNTemplate.Dynamic
                 //    }
                 //}
 
-                if (hasNullValue)
+                ParameterInfo[] pi = method.GetParameters();
+                //处理可选参数
+                if (types.Length == 1 && types[0] == typeof(Dictionary<object, object>)
+                    && (pi.Length != 1 || !pi[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
                 {
-                    ParameterInfo[] pi = method.GetParameters();
+                    //实参
+                    var newAgs = new object[pi.Length];
+                    var dict = (Dictionary<object, object>)args[0];
+                    //处理实参
+                    for (int i = 0; i < pi.Length; i++)
+                    {
+                        foreach (var kv in dict)
+                        {
+                            if (pi[i].Name.Equals(kv.Key.ToString()))
+                            {
+                                newAgs[i] = kv.Value;
+                            }
+                        }
+
+                        if (newAgs[i] == null)
+                        { 
+                            if (pi[i].DefaultValue != null && pi[i].DefaultValue.GetType().Name!= "DBNull")
+                            {
+                                newAgs[i] = pi[i].DefaultValue;
+                            }
+                            else
+                            {
+                                newAgs[i] = DefaultForType(pi[i].ParameterType);
+                            }
+                        }
+                    }
+                    args = newAgs;
+                }
+                else if (hasNullValue)
+                { 
                     for (int i = 0; i < args.Length; i++)
                     {
                         if (args[i] == null && pi[i].DefaultValue != null)
                         {
                             args[i] = pi[i].DefaultValue;
+                        }
+                        else
+                        {
+                            args[i] = DefaultForType(pi[i].ParameterType);
                         }
                     }
                 }
@@ -406,6 +444,10 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
         }
 
+        public object DefaultForType(Type targetType)
+        {
+            return targetType.IsValueType ? Activator.CreateInstance(targetType) : null;
+        }
         #endregion
 
     }

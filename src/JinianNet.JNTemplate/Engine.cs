@@ -252,6 +252,12 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static Nodes.Tag Resolve(TemplateParser parser, TokenCollection tc)
         {
+
+            if (tc == null || tc.Count == 0 || parser == null)
+            {
+                return null;
+            }
+
             Tag t;
             for (int i = 0; i < Runtime.Parsers.Count; i++)
             {

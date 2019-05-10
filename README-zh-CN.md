@@ -39,9 +39,8 @@ PM> Install-Package JinianNet.JNTemplate
 git clone https://github.com/jiniannet/jntemplate.git
 ```
 
-Windows:克隆完成后,运行 build/build.win.bat
-
-Mono:克隆完成后,运行 build/build.mono.sh
+Windows:克隆完成后,运行 build/build.bat
+linux:克隆完成后,运行 build/build.sh
 
   
   
@@ -103,7 +102,7 @@ var result = template.Render();
 
 
 ### 授权
-MIT  详细内容，请查看 License.txt
+MIT 详细请查看 License.txt(1.4以下版本为apache 2.0)
   
 ### 联系方式：
 - Email:i@jiniannet.com

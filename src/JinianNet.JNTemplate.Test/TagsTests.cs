@@ -790,31 +790,31 @@ $end
         }
 
 #if !NETCOREAPP2_0
-        /// <summary>
-        /// 测试方法的params参数  .NET core中不支持,从.V1.3.2以上版本不再支持
-        /// </summary>
-        [Fact]
-        public void TestFunctionParams()
-        {
-            var templateContent = "$fun.TestParams(\"字符串\",1,true)";
-            var template = new Template(templateContent);
-            template.Set("fun", new TemplateMethod());
-            var render = template.Render();
-            Assert.Equal("您输入的参数是有：字符串 1 True ", render);
-        }
+        ///// <summary>
+        ///// 测试方法的params参数  .NET core中不支持,从.V1.3.2以上版本不再支持
+        ///// </summary>
+        //[Fact]
+        //public void TestFunctionParams()
+        //{
+        //    var templateContent = "$fun.TestParams(\"字符串\",1,true)";
+        //    var template = new Template(templateContent);
+        //    template.Set("fun", new TemplateMethod());
+        //    var render = template.Render();
+        //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
+        //}
 
-        /// <summary>
-        /// 测试方法的params参数2 .NET core中不支持,从.V1.3.2以上版本不再支持
-        /// </summary>
-        [Fact]
-        public void TestFunctionParams2()
-        {
-            var templateContent = "$fun.TestParams2(\"您输入的参数是有：\",\"字符串\",1,true)";
-            var template = new Template(templateContent);
-            template.Set("fun", new TemplateMethod());
-            var render = template.Render();
-            Assert.Equal("您输入的参数是有：字符串 1 True ", render);
-        }
+        ///// <summary>
+        ///// 测试方法的params参数2 .NET core中不支持,从.V1.3.2以上版本不再支持
+        ///// </summary>
+        //[Fact]
+        //public void TestFunctionParams2()
+        //{
+        //    var templateContent = "$fun.TestParams2(\"您输入的参数是有：\",\"字符串\",1,true)";
+        //    var template = new Template(templateContent);
+        //    template.Set("fun", new TemplateMethod());
+        //    var render = template.Render();
+        //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
+        //}
 
 #endif
 
@@ -864,6 +864,25 @@ $key5";
             template.Context.StripWhiteSpace = true;
             var render = template.Render();
             Assert.Equal("your data is:5", render);
+        }
+
+
+        /// <summary>
+        /// 测试JSON支持
+        /// </summary>
+        [Fact]
+        public void TestJson()
+        {
+            //JSON标签在本次版本中仅仅是方便处理函数参数使用，不支持复杂格式
+            //如果需要支持复杂JSON，可自行引用第三方JSON类库并以扩展标签的方式处理
+            var templateContent =  "${helper.Test({\"message\":\"你好\",\"id\":UserId})}";
+            var template = new Template(templateContent);
+            template.Set("UserId",110);
+            template.Set("helper",new TemplateMethod());
+            var render = template.Render();
+            //false是布尔类型的默认值
+            Assert.Equal("您输入的参数是有：你好 110 False ", render);
+
         }
 
         ///// <summary>

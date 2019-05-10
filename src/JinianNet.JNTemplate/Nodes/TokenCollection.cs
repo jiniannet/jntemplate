@@ -176,26 +176,39 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 end = this.Count;
             }
-            int pos = 0, x = start, y = 0;
+            int x = start, y = 0;
+            var pos = new Stack<TokenKind>();
             for (int i = start; i < end; i++)
             {
                 y = i;
-                if (this[i].TokenKind == TokenKind.LeftParentheses)
+                if (this[i].TokenKind == TokenKind.LeftParentheses ||
+                    this[i].TokenKind == TokenKind.LeftBracket
+                    || this[i].TokenKind == TokenKind.LeftBrace)
                 {
-                    pos++;
+                    pos.Push(this[i].TokenKind);
                 }
-                else if (this[i].TokenKind == TokenKind.RightParentheses)
+                else if (this[i].TokenKind == TokenKind.RightParentheses ||
+                    this[i].TokenKind == TokenKind.RightBrace
+                    || this[i].TokenKind == TokenKind.RightBracket
+                    )
                 {
-                    if (pos > 0)
+                    if (pos.Count > 0 &&
+                        (
+                        (pos.Peek() == TokenKind.LeftParentheses && this[i].TokenKind == TokenKind.RightParentheses)
+                        ||
+                        (pos.Peek() == TokenKind.LeftBrace && this[i].TokenKind == TokenKind.RightBrace)
+                        ||
+                        (pos.Peek() == TokenKind.LeftBracket && this[i].TokenKind == TokenKind.RightBracket)
+                        ))
                     {
-                        pos--;
+                        pos.Pop();
                     }
                     else
                     {
-                        throw new Exception.ParseException(string.Concat("syntax error near ):", this), this[i].BeginLine, this[i].BeginColumn);
+                        throw new Exception.ParseException(string.Concat("syntax error near ", this[i].TokenKind.ToString(), this), this[i].BeginLine, this[i].BeginColumn);
                     }
                 }
-                else if (pos == 0 && IsInKinds(this[i].TokenKind, kinds))
+                else if (pos.Count == 0 && IsInKinds(this[i].TokenKind, kinds))
                 {
                     if (y > x)
                     {

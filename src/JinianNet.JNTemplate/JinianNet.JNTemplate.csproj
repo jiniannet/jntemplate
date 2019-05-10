@@ -61,7 +61,9 @@
     <Compile Include="Dynamic\OperatorConvert.cs" />
     <Compile Include="Dynamic\ReflectionActuator.cs" />
     <Compile Include="Nodes\CommentTag.cs" />
+    <Compile Include="Nodes\JsonTag.cs" />
     <Compile Include="Parsers\CommentParser.cs" />
+    <Compile Include="Parsers\JsonParser.cs" />
     <Compile Include="Resources\DefaultLoaderProvider.cs" />
     <Compile Include="Resources\FileLoader.cs" />
     <Compile Include="Resources\ILoaderProvider.cs" />

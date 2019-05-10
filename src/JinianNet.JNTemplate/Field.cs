@@ -50,6 +50,7 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.LoadParser",
                 "JinianNet.JNTemplate.Parsers.IncludeParser",
                 "JinianNet.JNTemplate.Parsers.FunctionParser",
+                "JinianNet.JNTemplate.Parsers.JsonParser",
                 "JinianNet.JNTemplate.Parsers.ComplexParser" };
     }
 
