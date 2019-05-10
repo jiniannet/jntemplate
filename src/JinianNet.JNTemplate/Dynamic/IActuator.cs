@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 动态对象执行类
     /// </summary>
-    public interface IDynamicProvider
+    public interface IActuator
     {
         /// <summary>
         /// 动态执行方法

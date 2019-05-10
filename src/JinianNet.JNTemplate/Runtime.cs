@@ -15,20 +15,20 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 提供运行时的通用方法与属性
     /// </summary>
-    public class RuntimeInfo
+    public class Runtime
     {
         #region 字段
         private Dictionary<string, string> _environmentVariable;
         private VariableScope _data;
         private List<ITagParser> _parsers;
-        private ILoadProvider _loder;
+        private IResourceLoader _loder;
         private static StringComparison _stringComparison;
-        private Caching.ICacheProvider _cache;
+        private Caching.ICache _cache;
         private static BindingFlags _bindingFlags;
         private static StringComparer _stringComparer;
-        private IDynamicProvider _callProxy;
+        private IActuator _callProxy;
         private List<string> _resourceDirectories;
-        private static RuntimeInfo _instance;
+        private static Runtime _instance;
         private static readonly object lockHelper = new object();
         private InitializationState _state;
         #endregion
@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate
         /// 获取实例 
         /// </summary>
         /// <returns></returns>
-        public static RuntimeInfo GetInstance()
+        public static Runtime GetInstance()
         {
             if (_instance == null)
             {
@@ -46,7 +46,7 @@ namespace JinianNet.JNTemplate
                     // 如果类的实例不存在则创建，否则直接返回
                     if (_instance == null)
                     {
-                        _instance = new RuntimeInfo();
+                        _instance = new Runtime();
                     }
                 }
             }
@@ -56,7 +56,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 引擎信息
         /// </summary>
-        private RuntimeInfo()
+        private Runtime()
         {
             _environmentVariable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             _state = InitializationState.None;
@@ -112,7 +112,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 加载器
         /// </summary>
-        internal ILoadProvider LoadProvider
+        internal IResourceLoader Loader
         {
             private get { return _loder; }
             set { _loder = value; }
@@ -146,7 +146,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 缓存
         /// </summary>
-        public Caching.ICacheProvider CacheProvider
+        public Caching.ICache Cache
         {
             get { return _cache; }
             internal set { _cache = value; }
@@ -154,7 +154,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 动态调用代理
         /// </summary>
-        internal IDynamicProvider DynamicProvider
+        internal IActuator Actuator
         {
             private get { return _callProxy; }
             set { _callProxy = value; }
@@ -168,7 +168,8 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
-            return this.LoadProvider.Load(filename, encoding, directory);
+            return this.Loader.Load(filename, encoding, directory);
+
         }
         /// <summary>
         /// 获取父目录
@@ -176,7 +177,7 @@ namespace JinianNet.JNTemplate
         /// <param name="fullPath">完整路径</param>
         public string GetDirectoryName(string fullPath)
         {
-            return this.LoadProvider.GetDirectoryName(fullPath);
+            return this.Loader.GetDirectoryName(fullPath);
         }
         /// <summary>
         /// 动态执行方法
@@ -187,7 +188,7 @@ namespace JinianNet.JNTemplate
         /// <returns>执行结果（Void返回NULL）</returns> 
         public object CallMethod(object container, string methodName, object[] args)
         {
-            return this.DynamicProvider.CallMethod(container, methodName, args);
+            return this.Actuator.CallMethod(container, methodName, args);
         }
         /// <summary>
         /// 动态获取属性或字段
@@ -197,7 +198,7 @@ namespace JinianNet.JNTemplate
         /// <returns>返回结果</returns> 
         public object CallPropertyOrField(object value, string propertyName)
         {
-            return this.DynamicProvider.CallPropertyOrField(value, propertyName);
+            return this.Actuator.CallPropertyOrField(value, propertyName);
         }
 
         /// <summary>
@@ -209,7 +210,7 @@ namespace JinianNet.JNTemplate
 
         public object CallIndexValue(object value, object index)
         {
-            return this.DynamicProvider.CallIndexValue(value, index);
+            return this.Actuator.CallIndexValue(value, index);
         }
 
         /// <summary>

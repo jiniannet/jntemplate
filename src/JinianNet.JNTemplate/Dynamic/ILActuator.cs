@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// IL操作类
     /// 注：本类并非最终版本，请勿使用本类
     /// </summary>
-    public class ILDynamicProvider : IDynamicProvider
+    public class ILActuator : IActuator
     {
         #region 获取属性或索引
         /// <summary>
@@ -38,12 +38,12 @@ namespace JinianNet.JNTemplate.Dynamic
             Type type = value.GetType();
             string key = string.Concat("Dynamic.IL.Property.", type.FullName, ".", propertyName);
             object result;
-            if ((result = Engine.Runtime.CacheProvider.Get(key)) != null)
+            if ((result = Engine.Runtime.Cache.Get(key)) != null)
             {
                 return (CallPropertyOrFieldDelegate)result;
             }
             CallPropertyOrFieldDelegate gpf = CreateCallPropertyOrFieldProxy(type, value, propertyName);
-            Engine.Runtime.CacheProvider.Set(key, gpf);
+            Engine.Runtime.Cache.Set(key, gpf);
             return gpf;
         }
         private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(Type type, object value, string propertyName)
@@ -196,14 +196,14 @@ namespace JinianNet.JNTemplate.Dynamic
                 Type type = container.GetType();
                 string key = string.Concat("Dynamic.IL.Index.", type.FullName, ".", index.ToString());
                 object result;
-                if ((result = Engine.Runtime.CacheProvider.Get(key)) != null)
+                if ((result = Engine.Runtime.Cache.Get(key)) != null)
                 {
                     d = (CallIndexValueDelegate)result;
                 }
                 else
                 {
                     d = CreateCallIndexValueProxy(type, container, index);
-                    Engine.Runtime.CacheProvider.Set(key, d);
+                    Engine.Runtime.Cache.Set(key, d);
                 }
                 return d(container, index);
             }
@@ -253,7 +253,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Dictionary<string, DynamicMethodInfo> itemDic = null;
             DynamicMethodInfo d;
 
-            if ((value = Engine.Runtime.CacheProvider.Get(key)) != null)
+            if ((value = Engine.Runtime.Cache.Get(key)) != null)
             {
                 dic = (Dictionary<int, Dictionary<string, DynamicMethodInfo>>)value;
             }
@@ -283,7 +283,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     //if (!itemDic.TryGetValue(itemKey,out d))
                     itemDic[itemKey] = CreateExcuteMethodProxy(type, mis[i]);
                 }
-                Engine.Runtime.CacheProvider.Set(key, dic);
+                Engine.Runtime.Cache.Set(key, dic);
             }
 
             if (!dic.TryGetValue(args.Length, out itemDic))

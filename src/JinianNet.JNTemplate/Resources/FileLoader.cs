@@ -12,12 +12,12 @@ namespace JinianNet.JNTemplate.Resources
     /// <summary>
     /// 文件加载器
     /// </summary>
-    public class FileLoadProvider : ILoadProvider
+    public class FileLoader : IResourceLoader
     {
         /// <summary>
         /// 构造函数
         /// </summary>
-        public FileLoadProvider()
+        public FileLoader()
         {
 
         }
@@ -161,7 +161,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <returns></returns>
         public string Load(IEnumerable<string> paths, string filename, Encoding encoding, out string fullName)
         {
-            if (IsLocalPath(filename))
+            if (IsAbsolutePath(filename))
             {
                 fullName = filename;
             }
@@ -177,55 +177,45 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <summary>
-        /// 是否WIN风格本地路径
+        /// 是否WIN风格绝对路径
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private bool IsWindowsLocalPath(string path)
+        private bool IsWindowsAbsolutePath(string path)
         {
-            return path.IndexOf(System.IO.Path.VolumeSeparatorChar) != -1;
+            return path.Length > 2 && path[1] == System.IO.Path.VolumeSeparatorChar;
         }
 
         /// <summary>
-        /// 是否Unix风格本地路径
+        /// 是否Unix风格绝对路径
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private bool IsUnixLocalPath(string path)
+        private bool IsUnixAbsolutePath(string path)
         {
-            return path[0] == '/'; ;
+            return path.Length > 0 && path[0] == '/';
         }
 
         /// <summary>
-        /// 是否本地路径表达形式
+        /// 是否绝对路径表达形式
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        public bool IsLocalPath(string path)
+        public bool IsAbsolutePath(string path)
         {
-            if (!string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
                 return false;
             }
 #if NET20 || NET40
-            //win系统
             System.OperatingSystem osInfo = System.Environment.OSVersion;
-            if (osInfo.Platform == PlatformID.Win32NT
-                || osInfo.Platform == PlatformID.Win32S
-                 || osInfo.Platform == PlatformID.Win32Windows
-                 || osInfo.Platform == PlatformID.WinCE
-                  || osInfo.Platform == PlatformID.Xbox)
+            if (osInfo.Platform == PlatformID.Unix || osInfo.Platform == PlatformID.MacOSX)
             {
-                return IsWindowsLocalPath(path);
+                return IsUnixAbsolutePath(path);
             }
-            //mac or unix
-            if (osInfo.Platform == PlatformID.MacOSX
-               || osInfo.Platform == PlatformID.Unix)
-            {
-                return IsUnixLocalPath(path);
-            }
+            return IsWindowsAbsolutePath(path);
 #endif
-            return IsUnixLocalPath(path) || IsWindowsLocalPath(path);
+            return IsUnixAbsolutePath(path) || IsWindowsAbsolutePath(path);
         }
 
         /// <summary>

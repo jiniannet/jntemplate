@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Xunit;
+using System;
 using System.Collections.Generic;
-using Xunit;
+
 
 namespace JinianNet.JNTemplate.Test
 {

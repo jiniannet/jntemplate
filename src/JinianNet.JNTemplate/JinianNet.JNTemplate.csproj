@@ -52,10 +52,21 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\ICache.cs" />
     <Compile Include="Dynamic\CallIndexValueDelegate.cs" />
+    <Compile Include="Dynamic\DefaultActuatorProvider.cs" />
+    <Compile Include="Dynamic\IActuator.cs" />
+    <Compile Include="Dynamic\IActuatorProvider.cs" />
+    <Compile Include="Dynamic\ILActuator.cs" />
     <Compile Include="Dynamic\OperatorConvert.cs" />
+    <Compile Include="Dynamic\ReflectionActuator.cs" />
     <Compile Include="Nodes\CommentTag.cs" />
     <Compile Include="Parsers\CommentParser.cs" />
+    <Compile Include="Resources\DefaultLoaderProvider.cs" />
+    <Compile Include="Resources\FileLoader.cs" />
+    <Compile Include="Resources\ILoaderProvider.cs" />
+    <Compile Include="Resources\IResourceLoader.cs" />
+    <Compile Include="Runtime.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Configuration\EngineConfig.cs" />
@@ -64,24 +75,18 @@
     <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
     <Compile Include="Dynamic\CallPropertyOrFieldDelegate.cs" />
     <Compile Include="Engine.cs" />
-    <Compile Include="Dynamic\IDynamicProvider.cs" />
-    <Compile Include="Dynamic\ILDynamicProvider.cs" />
     <Compile Include="Nodes\BodyTag.cs" />
     <Compile Include="Nodes\IndexValueTag.cs" />
     <Compile Include="Nodes\LayoutTag.cs" />
     <Compile Include="Parsers\BodyParser.cs" />
     <Compile Include="Parsers\IndexValueParser.cs" />
     <Compile Include="Parsers\LayoutParser.cs" />
-    <Compile Include="Dynamic\ReflectionDynamicProvider.cs" />
-    <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Exception\CompileException.cs" />
     <Compile Include="Exception\TemplateException.cs" />
     <Compile Include="Exception\ParseException.cs" />
     <Compile Include="Field.cs" />
-    <Compile Include="Resources\FileLoadProvider.cs" />
     <Compile Include="FuncHandler.cs" />
     <Compile Include="Caching\ICacheProvider.cs" />
-    <Compile Include="Resources\ILoadProvider.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="Dynamic\ExpressionEvaluator.cs" />
     <Compile Include="LexerMode.cs" />

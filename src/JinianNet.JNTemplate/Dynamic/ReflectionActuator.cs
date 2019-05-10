@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 反射辅助类
     /// </summary>
-    public class ReflectionDynamicProvider : IDynamicProvider
+    public class ReflectionActuator : IActuator
     {
         private readonly char[] expressionPartSeparator;
         //private readonly char[] indexExprEndChars;
@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <summary>
         /// 反射构造函数
         /// </summary>
-        public ReflectionDynamicProvider()
+        public ReflectionActuator()
         {
             expressionPartSeparator = new char[] { '.' };
             //indexExprEndChars = new char[] { ']', ')' };
@@ -280,7 +280,6 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="type">目标TYPE</param>
         /// <param name="methodName">方法名</param>
         /// <param name="args">形参</param>
-        /// <param name="hasParam">是否有params参数</param>
         /// <returns>MethodInfo</returns>
         public MethodInfo GetMethod(Type type, string methodName, Type[] args)
         {

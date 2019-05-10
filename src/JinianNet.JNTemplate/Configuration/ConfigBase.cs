@@ -23,8 +23,8 @@ namespace JinianNet.JNTemplate.Configuration
         private bool _ignoreCase = true;
         private string _charset = "utf-8";
         private Caching.ICacheProvider _cachingProvider;
-        private ILoadProvider _loadProvider;
-        private IDynamicProvider _dynamicProvider;
+        private ILoaderProvider _loadProvider;
+        private IActuatorProvider _actuatorProvider;
         private List<Parsers.ITagParser> _tagParsers;
         private List<string> _resourceDirectories;
 
@@ -121,16 +121,16 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 执行提供器
         /// </summary> 
-        public IDynamicProvider DynamicProvider
+        public IActuatorProvider ActuatorProvider
         {
-            get { return this._dynamicProvider; }
-            set { this._dynamicProvider = value; }
+            get { return this._actuatorProvider; }
+            set { this._actuatorProvider = value; }
         }
 
         /// <summary>
         /// 加载提供器
         /// </summary>
-        public ILoadProvider LoadProvider
+        public ILoaderProvider LoadProvider
         {
             get { return this._loadProvider; }
             set { this._loadProvider = value; }

@@ -23,15 +23,15 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 运行时
         /// </summary>
-        public static RuntimeInfo Runtime
+        public static Runtime Runtime
         {
             get
             {
-                if (RuntimeInfo.GetInstance().State == RuntimeInfo.InitializationState.None)
+                if (Runtime.GetInstance().State == Runtime.InitializationState.None)
                 {
                     Configure(Configuration.EngineConfig.CreateDefault());
                 }
-                return RuntimeInfo.GetInstance();
+                return Runtime.GetInstance();
             }
         }
 
@@ -41,26 +41,26 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 配置加载器
         /// </summary>
-        /// <param name="provider">loder实列</param>
-        public static void RegisterLodeProvider(ILoadProvider provider)
+        /// <param name="loader">loder实列</param>
+        public static void RegisterLoader(IResourceLoader loader)
         {
-            Runtime.LoadProvider = provider;
+            Runtime.Loader = loader;
         }
         /// <summary>
-        /// 配置缓存提供器
+        /// 配置缓存
         /// </summary>
-        /// <param name="provider">缓存提供器实例 </param>
-        public static void RegisterCachingProvider(Caching.ICacheProvider provider)
+        /// <param name="cache">缓存提实例 </param>
+        public static void RegisterCachingProvider(Caching.ICache cache)
         {
-            Runtime.CacheProvider = provider;
+            Runtime.Cache = cache;
         }
         /// <summary>
-        /// 配置动态执行提供器
+        /// 配置动态访问器
         /// </summary>
-        /// <param name="provider">ICallProxy实例 </param>
-        public static void RegisterDynamicProvider(IDynamicProvider provider)
+        /// <param name="actuator">IActuator实例 </param>
+        public static void RegisterActuator(IActuator actuator)
         {
-            Runtime.DynamicProvider = provider;
+            Runtime.Actuator = actuator;
         }
         /// <summary>
         /// 解析器
@@ -110,32 +110,16 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
-            RuntimeInfo.GetInstance().State = RuntimeInfo.InitializationState.Initialization;
-            if (conf.TagParsers == null || conf.TagParsers.Count == 0)
-            {
-                conf.TagParsers = new List<ITagParser>();
-                conf.TagParsers.AddRange(LoadParsers(Field.RSEOLVER_TYPES));
-            }
-            if (conf.LoadProvider == null)
-            {
-                conf.LoadProvider = new FileLoadProvider();
-            }
-            if (conf.DynamicProvider == null)
-            {
-                conf.DynamicProvider = new ReflectionDynamicProvider();
-            }
-            if (conf.ResourceDirectories == null)
-            {
-                conf.ResourceDirectories = new List<string>();
-            }
-            if (conf.ResourceDirectories.Count == 0)
-            {
-                conf.ResourceDirectories.Add(System.IO.Directory.GetCurrentDirectory());
-            }
+            Runtime.GetInstance().State = Runtime.InitializationState.Initialization;
+
+
             lock (lockObject)
             {
-                RuntimeInfo.GetInstance().Data = scope;
-                Type runtimeType = RuntimeInfo.GetInstance().GetType();
+                Runtime.GetInstance().Data = scope;
+
+                Initialization(conf);
+
+                Type runtimeType = Runtime.GetInstance().GetType();
                 Type type = conf.GetType();
                 Type attrType = typeof(PropertyAttribute);
                 PropertyInfo[] properties = type.GetProperties();
@@ -147,7 +131,7 @@ namespace JinianNet.JNTemplate
 #if NET20 || NET40
                         (value = p.GetValue(conf, null))
 #else
-                        (value = p.GetValue (conf))
+                        (value = p.GetValue(conf))
 #endif
                         ==
                         null)
@@ -159,15 +143,15 @@ namespace JinianNet.JNTemplate
 #if NET20 || NET40
                             (PropertyAttribute)p.GetCustomAttributes(attrType, true)[0]
 #else
-                            (PropertyAttribute) p.GetCustomAttribute (attrType)
+                            (PropertyAttribute)p.GetCustomAttribute(attrType)
 #endif
                         ).Name))
                     {
-                        runtimeProperty = ReflectionDynamicProvider.GetPropertyInfo(runtimeType, attr.Name);
+                        runtimeProperty = ReflectionActuator.GetPropertyInfo(runtimeType, attr.Name);
                     }
                     else
                     {
-                        runtimeProperty = ReflectionDynamicProvider.GetPropertyInfo(runtimeType, p.Name);
+                        runtimeProperty = ReflectionActuator.GetPropertyInfo(runtimeType, p.Name);
                     }
                     if (runtimeProperty != null && runtimeProperty.CanWrite)
                     {
@@ -175,9 +159,9 @@ namespace JinianNet.JNTemplate
                         if (newValue != null)
                         {
 #if NET20 || NET40
-                            runtimeProperty.SetValue(RuntimeInfo.GetInstance(), newValue, null);
+                            runtimeProperty.SetValue(Runtime.GetInstance(), newValue, null);
 #else
-                            runtimeProperty.SetValue (RuntimeInfo.GetInstance (), newValue);
+                            runtimeProperty.SetValue(Runtime.GetInstance(), newValue);
 #endif
                         }
                         continue;
@@ -186,20 +170,9 @@ namespace JinianNet.JNTemplate
                 }
             }
 
-            if (conf.IgnoreCase)
-            {
-                RuntimeInfo.GetInstance().BindIgnoreCase = BindingFlags.IgnoreCase;
-                RuntimeInfo.GetInstance().ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
-                RuntimeInfo.GetInstance().ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
-            }
-            else
-            {
-                RuntimeInfo.GetInstance().ComparisonIgnoreCase = StringComparison.Ordinal;
-                RuntimeInfo.GetInstance().BindIgnoreCase = BindingFlags.DeclaredOnly;
-                RuntimeInfo.GetInstance().ComparerIgnoreCase = StringComparer.Ordinal;
-            }
 
-            RuntimeInfo.GetInstance().State = RuntimeInfo.InitializationState.Complete;
+
+            Runtime.GetInstance().State = Runtime.InitializationState.Complete;
         }
 
         /// <summary>
@@ -379,6 +352,41 @@ namespace JinianNet.JNTemplate
         private static object CreateInstance(Type type)
         {
             return Activator.CreateInstance(type);
+        }
+        private static void Initialization(ConfigBase conf)
+        {
+            if (conf.TagParsers == null || conf.TagParsers.Count == 0)
+            {
+                Runtime.GetInstance().Parsers = new List<ITagParser>(LoadParsers(Field.RSEOLVER_TYPES));
+            }
+            else
+            {
+                Runtime.GetInstance().Parsers = conf.TagParsers;
+            }
+            Runtime.GetInstance().Loader = (conf.LoadProvider ?? new DefaultLoaderProvider()).CreateLoader();
+            Runtime.GetInstance().Actuator = (conf.ActuatorProvider ?? new DefaultActuatorProvider()).CreateActuator();
+
+            Runtime.GetInstance().ResourceDirectories = (conf.ResourceDirectories ?? new List<string>());
+            if (Runtime.GetInstance().ResourceDirectories.Count == 0)
+            {
+                Runtime.GetInstance().ResourceDirectories.Add(System.IO.Directory.GetCurrentDirectory());
+            }
+            if (conf.IgnoreCase)
+            {
+                Runtime.GetInstance().BindIgnoreCase = BindingFlags.IgnoreCase;
+                Runtime.GetInstance().ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
+                Runtime.GetInstance().ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
+            }
+            else
+            {
+                Runtime.GetInstance().ComparisonIgnoreCase = StringComparison.Ordinal;
+                Runtime.GetInstance().BindIgnoreCase = BindingFlags.DeclaredOnly;
+                Runtime.GetInstance().ComparerIgnoreCase = StringComparer.Ordinal;
+            }
+            //if (conf.CacheProvider == null)
+            //{
+            //    conf.CacheProvider = null;
+            //}
         }
         #endregion
     }

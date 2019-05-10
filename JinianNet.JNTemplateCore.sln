@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1A18DEF-5DB0-48CD-876B-2EB28343FAC2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272-B7F5-4A30-8DCD-C8EB022BCD09}"
 	ProjectSection(SolutionItems) = preProject
-		build\build.core.bat = build\build.core.bat
+		build\build.bat = build\build.bat
 		build\build.mono.sh = build\build.mono.sh
-		build\build.win.bat = build\build.win.bat
+		build\build.sh = build\build.sh
 		build\build.win.field.bat = build\build.win.field.bat
 		build\build说明.txt = build\build说明.txt
 	EndProjectSection
@@ -51,5 +51,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8FB7F9D0-2202-439F-9808-BEE50EB5E809} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
 		{78F17297-1C58-4548-9B17-C027CE87CCA3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADF6CF90-D6B5-4A8C-9BE1-29EFDE50D632}
 	EndGlobalSection
 EndGlobal

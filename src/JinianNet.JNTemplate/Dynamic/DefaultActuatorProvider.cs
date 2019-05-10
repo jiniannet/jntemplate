@@ -1,21 +1,22 @@
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
-using System.Collections;
 
-namespace JinianNet.JNTemplate.Caching
+namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
-    /// 缓存提供者
+    /// 默认执行Provider
     /// </summary>
-    public interface ICacheProvider : IEnumerable, IDisposable
+    public class DefaultActuatorProvider : IActuatorProvider
     {
         /// <summary>
-        /// 创建缓存
+        /// 创建执行器
         /// </summary>
         /// <returns></returns>
-        ICache CreateCache();
+        public IActuator CreateActuator()
+        {
+            return new ReflectionActuator();
+        }
     }
 }

@@ -3,19 +3,19 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.Collections;
+using System.Text;
 
-namespace JinianNet.JNTemplate.Caching
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// 缓存提供者
+    /// 加载提供器
     /// </summary>
-    public interface ICacheProvider : IEnumerable, IDisposable
+    public interface ILoaderProvider
     {
         /// <summary>
-        /// 创建缓存
+        /// 创建加载器
         /// </summary>
         /// <returns></returns>
-        ICache CreateCache();
+        IResourceLoader CreateLoader();
     }
 }
