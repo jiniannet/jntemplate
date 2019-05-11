@@ -59,7 +59,7 @@
     <Compile Include="Dynamic\CallIndexValueDelegate.cs" />
     <Compile Include="Dynamic\DefaultActuatorProvider.cs" />
     <Compile Include="Dynamic\ExpressionActuator.cs" />
-    <Compile Include="Dynamic\Helpers.cs" />
+    <Compile Include="Dynamic\DynamicHelpers.cs" />
     <Compile Include="Dynamic\IActuator.cs" />
     <Compile Include="Dynamic\IActuatorProvider.cs" />
     <Compile Include="Dynamic\ILActuator.cs" />
