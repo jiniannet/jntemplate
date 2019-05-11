@@ -52,9 +52,14 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\CacheHelpers.cs" />
+    <Compile Include="Caching\DefaultCacheProvider.cs" />
     <Compile Include="Caching\ICache.cs" />
+    <Compile Include="Caching\SimpleCache.cs" />
     <Compile Include="Dynamic\CallIndexValueDelegate.cs" />
     <Compile Include="Dynamic\DefaultActuatorProvider.cs" />
+    <Compile Include="Dynamic\ExpressionActuator.cs" />
+    <Compile Include="Dynamic\Helpers.cs" />
     <Compile Include="Dynamic\IActuator.cs" />
     <Compile Include="Dynamic\IActuatorProvider.cs" />
     <Compile Include="Dynamic\ILActuator.cs" />

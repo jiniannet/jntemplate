@@ -2,7 +2,9 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Caching;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -36,15 +38,22 @@ namespace JinianNet.JNTemplate.Dynamic
         private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(object value, string propertyName)
         {
             Type type = value.GetType();
-            string key = string.Concat("Dynamic.IL.Property.", type.FullName, ".", propertyName);
-            object result;
-            if ((result = Engine.Runtime.Cache.Get(key)) != null)
+            string key = string.Concat("p.", TypeToName(type), ".", propertyName);
+            CallPropertyOrFieldDelegate gpf;
+            if ((gpf = CacheHelpers.Get<CallPropertyOrFieldDelegate>(key)) != null)
             {
-                return (CallPropertyOrFieldDelegate)result;
+                return gpf;
             }
-            CallPropertyOrFieldDelegate gpf = CreateCallPropertyOrFieldProxy(type, value, propertyName);
-            Engine.Runtime.Cache.Set(key, gpf);
+            gpf = CreateCallPropertyOrFieldProxy(type, value, propertyName);
+            CacheHelpers.Set(key, gpf);
             return gpf;
+        }
+
+        private string TypeToName(Type type)
+        {
+            string name = type.IsGenericType ? type.Name : type.FullName;
+            return name.Replace(".", "_").Replace(" ", "").Replace("<", "_").Replace(">", "_").Replace("`", "_");
+            //<> f__AnonymousType0`1[[System.String, mscorlib, Version = 4.0.0.0, Culture = neutral, PublicKeyToken = b77a5c561934e089]]
         }
         private CallPropertyOrFieldDelegate CreateCallPropertyOrFieldProxy(Type type, object value, string propertyName)
         {
@@ -60,7 +69,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 stringType
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                string.Concat("P_", type.FullName.Replace(".", "_"), "_", propertyName),
+                string.Concat("P_", TypeToName(type), "_", propertyName),
                 objectType,
                 parameterTypes);
 
@@ -117,10 +126,10 @@ namespace JinianNet.JNTemplate.Dynamic
             Type returnType;
             Type[] parameterTypes = {
                 objectType,
-                stringType
+                objectType
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                string.Concat("I_", type.FullName.Replace(".", "_"), "_", index.ToString()),
+                string.Concat("i_",TypeToName(type),"_",index.GetType().Name),
                 objectType,
                 parameterTypes);
 
@@ -137,47 +146,56 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             il.Emit(OpCodes.Stloc_0);
 
-            if (index is int && (mi = GetMethod(type, "get_Item",
+            var indexType = index.GetType();
+
+            if ((mi = GetMethod(type, "get_Item",
                new Type[] {
-                                typeof(int)
+                   indexType
                })) != null)
             {
                 Ldloc(type, il, 0);
-                il.Emit(OpCodes.Ldind_I4, (int)index);
+                il.Emit(OpCodes.Ldarg_1);
+                if (IsValueType(indexType))
+                {
+                    il.Emit(OpCodes.Unbox_Any, indexType);
+                }
+                else
+                {
+                    il.Emit(OpCodes.Castclass, indexType);
+                }
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            else if (index is string && (mi = GetMethod(type, "get_Item",
-               new Type[] {
-                                stringType
-               })) != null)
+            if ((mi = GetMethod(type, "get",
+              new Type[] {
+                   indexType
+              })) != null)
             {
                 Ldloc(type, il, 0);
-                il.Emit(OpCodes.Ldstr, index.ToString());
+                il.Emit(OpCodes.Ldarg_1);
+                if (IsValueType(indexType))
+                {
+                    il.Emit(OpCodes.Unbox_Any, indexType);
+                }
+                else
+                {
+                    il.Emit(OpCodes.Castclass, indexType);
+                }
                 Call(type, il, mi);
                 returnType = mi.ReturnType;
             }
-            //else if ((mi = GetMethod(type, "get_Item",
-            //   new Type[] {
-            //                    objectType
-            //   })) != null)
-            //{
-            //    Ldloc(type, il, 0);
-            //    il.Emit(OpCodes.Ldobj, index);
-            //    Call(type, il, mi);
-            //    returnType = mi.ReturnType;
-            //}
             else
             {
-                il.Emit(OpCodes.Ldnull);
-                returnType = objectType;
+                return null;
             }
+
             if (IsValueType(returnType))
             {
                 il.Emit(OpCodes.Box, returnType);
             }
             il.Emit(OpCodes.Ret);
             return dynamicMethod.CreateDelegate(typeof(CallIndexValueDelegate)) as CallIndexValueDelegate;
+
         }
         #endregion
 
@@ -192,18 +210,30 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             if (container != null)
             {
+                #region 常见类型做特殊处理
+                IList list;
+                if (index is int && (list = container as IList) != null)
+                {
+                    return list[(int)index];
+                }
+                IDictionary dic;
+                if ((dic = container as IDictionary) != null)
+                {
+                    return dic[index];
+                }
+                if (index is int && container is string)
+                {
+                    return ((string)container)[(int)index];
+                }
+                #endregion
+
                 CallIndexValueDelegate d;
                 Type type = container.GetType();
-                string key = string.Concat("Dynamic.IL.Index.", type.FullName, ".", index.ToString());
-                object result;
-                if ((result = Engine.Runtime.Cache.Get(key)) != null)
-                {
-                    d = (CallIndexValueDelegate)result;
-                }
-                else
+                string key = string.Concat("i.",TypeToName(type), ".", index.GetType().Name);
+                if ((d = CacheHelpers.Get<CallIndexValueDelegate>(key)) == null)
                 {
                     d = CreateCallIndexValueProxy(type, container, index);
-                    Engine.Runtime.Cache.Set(key, d);
+                    CacheHelpers.Set(key, d);
                 }
                 return d(container, index);
             }
@@ -222,100 +252,82 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             if (container != null)
             {
-                Type[] types;
-                ExcuteMethodDelegate d = CreateExcuteMethodProxy(container, methodName, args, out types);
-                if (d != null)
+                var m = GetExcuteMethodProxy(container, methodName, args);
+                if (m != null)
                 {
-                    if (types != null && types.Length > 0)
+                    if (!m.IsMatchParameters)
                     {
-                        for (int i = 0; i < types.Length; i++)
+                        args = DynamicHelpers.ChangeParameters((Dictionary<object, object>)args[0], m.Parameters);
+                    }
+                    for (int i = 0; i < m.Parameters.Length; i++)
+                    {
+                        if (m.Parameters[i] != null && args[i] != null && args[i].GetType() != m.Parameters[i].ParameterType)
                         {
-                            if (types[i] != null && args[i] != null)
-                            {
-                                args[i] = Convert.ChangeType(args[i], types[i]);
-                            }
+                            args[i] = Convert.ChangeType(args[i], m.Parameters[i].ParameterType);
                         }
                     }
-                    return d(container, args);
+                    return m.Delegate(container, args);
                 }
             }
             return null;
         }
-        private ExcuteMethodDelegate CreateExcuteMethodProxy(object container, string methodName, object[] args, out Type[] parameterTypes)
+        private DynamicMethodInfo[] CreateDynamicMethods(Type type, string methodName)
         {
-            parameterTypes = null;
+            MethodInfo[] mis = DynamicHelpers.GetMethods(type, methodName);
+            DynamicMethodInfo[] list = new DynamicMethodInfo[mis.Length];
+            Type[] types;
+            for (int i = 0; i < mis.Length; i++)
+            {
+                ParameterInfo[] pis = mis[i].GetParameters();
+                types = new Type[pis.Length];
+                for (int j = 0; j < pis.Length; j++)
+                {
+                    types[j] = pis[j].ParameterType;
+                }
+                list[i] = CreateExcuteMethodProxy(type, mis[i]);
+            }
+            return list;
+        }
+
+        private DynamicMethodInfo GetExcuteMethodProxy(object container, string methodName, object[] args)
+        {
             Type type = container.GetType();
-            string key = string.Concat("Dynamic.IL.Method.", type.FullName, ".", methodName);
-            object value;
-            string itemKey;
-            ParameterInfo[] pis;
-            Dictionary<int, Dictionary<string, DynamicMethodInfo>> dic;
-            Dictionary<string, DynamicMethodInfo> itemDic = null;
-            DynamicMethodInfo d;
+            string key = string.Concat("m.", TypeToName(type), ".", methodName);
 
-            if ((value = Engine.Runtime.Cache.Get(key)) != null)
+            DynamicMethodInfo[] list;
+
+            if ((list = CacheHelpers.Get<DynamicMethodInfo[]>(key)) == null)
             {
-                dic = (Dictionary<int, Dictionary<string, DynamicMethodInfo>>)value;
+                list = CreateDynamicMethods(type, methodName);
+                CacheHelpers.Set(key, list);
             }
-            else
+            if (list != null && list.Length > 0)
             {
-                dic = new Dictionary<int, Dictionary<string, DynamicMethodInfo>>();
-                MethodInfo[] mis = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                Type[] types;
-                for (int i = 0; i < mis.Length; i++)
+                var argsType = new Type[args.Length];
+                for (var i = 0; i < args.Length; i++)
                 {
-                    if (!mis[i].Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
+                    if (args[i] != null)
                     {
-                        continue;
-                    }
-                    pis = mis[i].GetParameters();
-                    types = new Type[pis.Length];
-                    for (int j = 0; j < pis.Length; j++)
-                    {
-                        types[j] = pis[j].ParameterType;
-                    }
-                    itemKey = GetArgsTypeKey(types);
-                    if (!dic.TryGetValue(types.Length, out itemDic))
-                    {
-                        itemDic = new Dictionary<string, DynamicMethodInfo>();
-                        dic[types.Length] = itemDic;
-                    }
-                    //if (!itemDic.TryGetValue(itemKey,out d))
-                    itemDic[itemKey] = CreateExcuteMethodProxy(type, mis[i]);
-                }
-                Engine.Runtime.Cache.Set(key, dic);
-            }
-
-            if (!dic.TryGetValue(args.Length, out itemDic))
-            {
-                return null;
-            }
-
-            itemKey = GetArgsTypeKey(args);
-
-            if (itemKey != null)
-            {
-                if (itemDic.TryGetValue(itemKey, out d))
-                {
-                    return d.Delegate;
-                }
-            }
-
-            if (itemDic.Count > 0)
-            {
-                System.Collections.IEnumerator enumerator = itemDic.Values.GetEnumerator();
-                enumerator.MoveNext();
-                d = (DynamicMethodInfo)enumerator.Current;
-                parameterTypes = new Type[args.Length];
-                pis = d.Parameters;
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (pis[i].ParameterType != args[i].GetType())
-                    {
-                        parameterTypes[i] = pis[i].ParameterType;
+                        argsType[i] = args[i].GetType();
                     }
                 }
-                return d.Delegate;
+                var m = DynamicHelpers.GetDynamicMethod(methodName, list, argsType);
+                if (m != null)
+                {
+                    m.IsMatchParameters = true;
+                    return m;
+                }
+
+
+                //可选参数
+                if (argsType.Length == 1 && argsType[0] != null && argsType[0] == typeof(Dictionary<object, object>)
+         && (list[0].Parameters.Length != 1 || !list[0].Parameters[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
+                {
+                    m = list[0];
+                    m.IsMatchParameters = false;
+                    return m;
+                }
+
             }
 
             return null;
@@ -329,7 +341,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 typeof(object[])
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                string.Concat("M_", type.FullName.Replace(".", "_"), "_", mi.Name),
+                string.Concat("M_", TypeToName(type), "_", mi.Name),
                 objectType,
                 parameterTypes);
 
@@ -398,7 +410,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             DynamicMethodInfo model = new DynamicMethodInfo();
             model.Delegate = dynamicMethod.CreateDelegate(typeof(ExcuteMethodDelegate)) as ExcuteMethodDelegate;
-            model.FullName = string.Concat(type.FullName, "_", mi.Name);
+            model.FullName = string.Concat(TypeToName(type), "_", mi.Name);
             model.Name = mi.Name;
             model.Parameters = pis;
             return model;
@@ -407,82 +419,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
         #endregion
 
-        #region 共用方法
-        private bool HasNull(object[] args)
-        {
-            if (args != null)
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (args[i] == null)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private string GetArgsTypeKey(object[] args)
-        {
-            if (args != null)
-            {
-                if (args.Length == 0)
-                {
-                    return "N";
-                }
-                string[] values = new string[args.Length];
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (args[i] == null)
-                    {
-                        return null;
-                    }
-                    values[i] = GetTypeKeyName(args[i].GetType().FullName);
-                }
-                return string.Join(".", values);
-            }
-            return null;
-        }
-
-        private string GetArgsTypeKey(Type[] types)
-        {
-            if (types.Length == 0)
-            {
-                return "N";
-            }
-            string[] values = new string[types.Length];
-            for (int i = 0; i < types.Length; i++)
-            {
-                values[i] = GetTypeKeyName(types[i].FullName);
-            }
-            return string.Join("_", values);
-        }
-        /// <summary>
-        /// 获取类型简写
-        /// </summary>
-        /// <param name="fullName"></param>
-        /// <returns></returns>
-        private string GetTypeKeyName(string fullName)
-        {
-            switch (fullName)
-            {
-                case "System.String":
-                    return "S";
-                case "System.Int16":
-                    return "I";
-                case "System.Int32":
-                    return "I4";
-                case "System.Int64":
-                    return "I8";
-                case "System.Single":
-                    return "F";
-                case "System.Double":
-                    return "D";
-                default:
-                    return fullName;
-            }
-        }
+        #region 共用方法 
         /// <summary>
         /// 加载局部变量
         /// </summary>

@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Caching
     /// <summary>
     /// 缓存提供者
     /// </summary>
-    public interface ICacheProvider : IEnumerable, IDisposable
+    public interface ICacheProvider
     {
         /// <summary>
         /// 创建缓存

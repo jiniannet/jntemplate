@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
@@ -27,11 +28,11 @@ namespace JinianNet.JNTemplate
         {
             get
             {
-                if (Runtime.GetInstance().State == Runtime.InitializationState.None)
+                if (Runtime.GetInstance.State == Runtime.InitializationState.None)
                 {
                     Configure(Configuration.EngineConfig.CreateDefault());
                 }
-                return Runtime.GetInstance();
+                return Runtime.GetInstance;
             }
         }
 
@@ -110,16 +111,16 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
-            Runtime.GetInstance().State = Runtime.InitializationState.Initialization;
+            Runtime.GetInstance.State = Runtime.InitializationState.Initialization;
 
 
             lock (lockObject)
             {
-                Runtime.GetInstance().Data = scope;
+                Runtime.GetInstance.Data = scope;
 
                 Initialization(conf);
 
-                Type runtimeType = Runtime.GetInstance().GetType();
+                Type runtimeType = Runtime.GetInstance.GetType();
                 Type type = conf.GetType();
                 Type attrType = typeof(PropertyAttribute);
                 PropertyInfo[] properties = type.GetProperties();
@@ -147,11 +148,11 @@ namespace JinianNet.JNTemplate
 #endif
                         ).Name))
                     {
-                        runtimeProperty = ReflectionActuator.GetPropertyInfo(runtimeType, attr.Name);
+                        runtimeProperty = DynamicHelpers.GetPropertyInfo(runtimeType, attr.Name);
                     }
                     else
                     {
-                        runtimeProperty = ReflectionActuator.GetPropertyInfo(runtimeType, p.Name);
+                        runtimeProperty = DynamicHelpers.GetPropertyInfo(runtimeType, p.Name);
                     }
                     if (runtimeProperty != null && runtimeProperty.CanWrite)
                     {
@@ -159,9 +160,9 @@ namespace JinianNet.JNTemplate
                         if (newValue != null)
                         {
 #if NET20 || NET40
-                            runtimeProperty.SetValue(Runtime.GetInstance(), newValue, null);
+                            runtimeProperty.SetValue(Runtime.GetInstance, newValue, null);
 #else
-                            runtimeProperty.SetValue(Runtime.GetInstance(), newValue);
+                            runtimeProperty.SetValue(Runtime.GetInstance, newValue);
 #endif
                         }
                         continue;
@@ -172,7 +173,7 @@ namespace JinianNet.JNTemplate
 
 
 
-            Runtime.GetInstance().State = Runtime.InitializationState.Complete;
+            Runtime.GetInstance.State = Runtime.InitializationState.Complete;
         }
 
         /// <summary>
@@ -361,38 +362,37 @@ namespace JinianNet.JNTemplate
         }
         private static void Initialization(ConfigBase conf)
         {
+            var r = Runtime.GetInstance;
             if (conf.TagParsers == null || conf.TagParsers.Count == 0)
             {
-                Runtime.GetInstance().Parsers = new List<ITagParser>(LoadParsers(Field.RSEOLVER_TYPES));
+                r.Parsers = new List<ITagParser>(LoadParsers(Field.RSEOLVER_TYPES));
             }
             else
             {
-                Runtime.GetInstance().Parsers = conf.TagParsers;
+                r.Parsers = conf.TagParsers;
             }
-            Runtime.GetInstance().Loader = (conf.LoadProvider ?? new DefaultLoaderProvider()).CreateLoader();
-            Runtime.GetInstance().Actuator = (conf.ActuatorProvider ?? new DefaultActuatorProvider()).CreateActuator();
+            r.Loader = (conf.LoadProvider ?? new DefaultLoaderProvider()).CreateLoader();
+            r.Actuator = (conf.ActuatorProvider ?? new DefaultActuatorProvider()).CreateActuator();
+            r.ResourceDirectories = (conf.ResourceDirectories ?? new List<string>());
+            r.Cache = (conf.CacheProvider ?? new DefaultCacheProvider()).CreateCache();
 
-            Runtime.GetInstance().ResourceDirectories = (conf.ResourceDirectories ?? new List<string>());
-            if (Runtime.GetInstance().ResourceDirectories.Count == 0)
+            if (r.ResourceDirectories.Count == 0)
             {
-                Runtime.GetInstance().ResourceDirectories.Add(System.IO.Directory.GetCurrentDirectory());
+                r.ResourceDirectories.Add(System.IO.Directory.GetCurrentDirectory());
             }
             if (conf.IgnoreCase)
             {
-                Runtime.GetInstance().BindIgnoreCase = BindingFlags.IgnoreCase;
-                Runtime.GetInstance().ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
-                Runtime.GetInstance().ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
+                r.BindIgnoreCase = BindingFlags.IgnoreCase;
+                r.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
+                r.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
             }
             else
             {
-                Runtime.GetInstance().ComparisonIgnoreCase = StringComparison.Ordinal;
-                Runtime.GetInstance().BindIgnoreCase = BindingFlags.DeclaredOnly;
-                Runtime.GetInstance().ComparerIgnoreCase = StringComparer.Ordinal;
+                r.ComparisonIgnoreCase = StringComparison.Ordinal;
+                r.BindIgnoreCase = BindingFlags.DeclaredOnly;
+                r.ComparerIgnoreCase = StringComparer.Ordinal;
             }
-            //if (conf.CacheProvider == null)
-            //{
-            //    conf.CacheProvider = null;
-            //}
+
         }
         #endregion
     }

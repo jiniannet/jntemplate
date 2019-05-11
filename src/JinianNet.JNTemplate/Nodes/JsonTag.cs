@@ -14,9 +14,17 @@ namespace JinianNet.JNTemplate.Nodes
     public class JsonTag : TagBase
     {
         /// <summary>
+        /// JsonTag
+        /// </summary>
+        public JsonTag()
+        {
+            this.Dict = new Dictionary<Tag, Tag>(); 
+        }
+
+        /// <summary>
         /// 集合
         /// </summary>
-        public Dictionary<Tag, Tag> Dict { get; private set; } = new Dictionary<Tag, Tag>();
+        public Dictionary<Tag, Tag> Dict { get; private set; }
 
         /// <summary>
         ///  解析JSON

@@ -214,8 +214,9 @@ namespace JinianNet.JNTemplate.Resources
                 return IsUnixAbsolutePath(path);
             }
             return IsWindowsAbsolutePath(path);
-#endif
+#else
             return IsUnixAbsolutePath(path) || IsWindowsAbsolutePath(path);
+#endif
         }
 
         /// <summary>

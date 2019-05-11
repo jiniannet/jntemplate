@@ -13,13 +13,32 @@ namespace JinianNet.JNTemplate.Resources
     /// </summary>
     public class DefaultLoaderProvider : ILoaderProvider
     {
+        private IResourceLoader loader;
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public DefaultLoaderProvider(IResourceLoader loader)
+        {
+            this.loader = loader;
+        }
+
+        /// <summary>
+        /// 无参构造函数
+        /// </summary>
+        public DefaultLoaderProvider()
+            : this(new FileLoader())
+        {
+
+        }
+
         /// <summary>
         /// 创建文件加载器
         /// </summary>
         /// <returns></returns>
         public IResourceLoader CreateLoader()
         {
-            return new FileLoader();
+            return loader;
         }
     }
 }

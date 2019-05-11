@@ -10,13 +10,38 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public class DefaultActuatorProvider : IActuatorProvider
     {
+        IActuator actuator;
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        public DefaultActuatorProvider(IActuator actuator)
+        {
+            this.actuator = actuator;
+        }
+
+        /// <summary>
+        /// 无参构造函数
+        /// </summary>
+        public DefaultActuatorProvider()
+            : this(
+#if NET20 || NET40
+                  new ReflectionActuator()
+#else
+                  new ILActuator()
+#endif
+                  )
+        {
+
+        }
+
+
         /// <summary>
         /// 创建执行器
         /// </summary>
         /// <returns></returns>
         public IActuator CreateActuator()
         {
-            return new ReflectionActuator();
+            return actuator;
         }
     }
 }

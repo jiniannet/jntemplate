@@ -76,23 +76,7 @@ namespace JinianNet.JNTemplate.Dynamic
         #endregion
 
         #region Property
-        /// <summary>
-        /// 获取属性
-        /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="propName">属性名称</param>
-        /// <returns></returns>
-        internal static PropertyInfo GetPropertyInfo(Type type, string propName)
-        {
-            PropertyInfo p =
-#if NETSTANDARD
-                    type.GetRuntimeProperty(propName);
-#else
-                    type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-#endif
-            return p;
-        }
-
+ 
         /// <summary>
         /// 获取属性或字段的值
         /// </summary>
@@ -108,7 +92,7 @@ namespace JinianNet.JNTemplate.Dynamic
             if (!char.IsDigit(propName[0]))
             {
 #if !NET20_NOTUSER
-                PropertyInfo p = GetPropertyInfo(t, propName);
+                PropertyInfo p = DynamicHelpers.GetPropertyInfo(t, propName);
                 //取属性
                 if (p != null)
                 {
@@ -275,66 +259,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
         #endregion
         #region Method
-        /// <summary>
-        /// 根据形参与方法名获取MethodInfo
-        /// </summary>
-        /// <param name="type">目标TYPE</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="args">形参</param>
-        /// <returns>MethodInfo</returns>
-        public MethodInfo GetMethod(Type type, string methodName, Type[] args)
-        {
-            MethodInfo[] ms = FindAllMethod(type, methodName);
-            if (ms.Length == 1)
-            {
-                return ms[0];
-            }
-            //为了方便处理可选参数等前台模板写法，从以后版本开始将不再支持重载
-            foreach (MethodInfo m in ms)
-            {
-                ParameterInfo[] pi = m.GetParameters();
-                if (pi.Length != args.Length)
-                {
-                    continue;
-                }
-                //暂不考虑可选参数,默认参数,param参数
-                bool isMacth = true;
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (args[i] == null)
-                    {
-                        continue;
-                    }
-                    if (args[i] != pi[i].ParameterType && !args[i].IsSubclassOf(pi[i].ParameterType))
-                    {
-                        isMacth = false;
-                        break;
-                    }
-                }
 
-                if (isMacth)
-                {
-                    return m;
-                }
-            }
-            return null;
-        }
-
-        private MethodInfo[] FindAllMethod(Type type, string methodName)
-        {
-            System.Collections.Generic.IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
-            System.Collections.Generic.List<MethodInfo> result = new System.Collections.Generic.List<MethodInfo>();
-            //此处应缓存
-            foreach (MethodInfo m in ms)
-            {
-
-                if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
-                {
-                    result.Add(m);
-                }
-            }
-            return result.ToArray();
-        }
         /// <summary>
         /// 调用实例方法
         /// </summary>
@@ -359,7 +284,7 @@ namespace JinianNet.JNTemplate.Dynamic
             }
 
             Type t = container.GetType();
-            MethodInfo method = GetMethod(t, methodName, types);
+            MethodInfo method = DynamicHelpers.GetMethod(t, methodName, types);
 
             if (method != null)
             {
@@ -396,32 +321,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     && (pi.Length != 1 || !pi[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
                 {
                     //实参
-                    var newAgs = new object[pi.Length];
-                    var dict = (Dictionary<object, object>)args[0];
-                    //处理实参
-                    for (int i = 0; i < pi.Length; i++)
-                    {
-                        foreach (var kv in dict)
-                        {
-                            if (pi[i].Name.Equals(kv.Key.ToString()))
-                            {
-                                newAgs[i] = kv.Value;
-                            }
-                        }
-
-                        if (newAgs[i] == null)
-                        { 
-                            if (pi[i].DefaultValue != null && pi[i].DefaultValue.GetType().Name!= "DBNull")
-                            {
-                                newAgs[i] = pi[i].DefaultValue;
-                            }
-                            else
-                            {
-                                newAgs[i] = DefaultForType(pi[i].ParameterType);
-                            }
-                        }
-                    }
-                    args = newAgs;
+                    args = DynamicHelpers.ChangeParameters((Dictionary<object, object>)args[0],pi);
                 }
                 else if (hasNullValue)
                 { 
@@ -431,10 +331,10 @@ namespace JinianNet.JNTemplate.Dynamic
                         {
                             args[i] = pi[i].DefaultValue;
                         }
-                        else
-                        {
-                            args[i] = DefaultForType(pi[i].ParameterType);
-                        }
+                        //else
+                        //{
+                        //    args[i] = DefaultForType(pi[i].ParameterType);
+                        //}
                     }
                 }
                 return method.Invoke(container, args);
@@ -444,10 +344,6 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
         }
 
-        public object DefaultForType(Type targetType)
-        {
-            return targetType.IsValueType ? Activator.CreateInstance(targetType) : null;
-        }
         #endregion
 
     }

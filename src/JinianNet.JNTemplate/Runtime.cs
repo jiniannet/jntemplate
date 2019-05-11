@@ -37,20 +37,23 @@ namespace JinianNet.JNTemplate
         /// 获取实例 
         /// </summary>
         /// <returns></returns>
-        public static Runtime GetInstance()
+        public static Runtime GetInstance
         {
-            if (_instance == null)
+            get
             {
-                lock (lockHelper)
+                if (_instance == null)
                 {
-                    // 如果类的实例不存在则创建，否则直接返回
-                    if (_instance == null)
+                    lock (lockHelper)
                     {
-                        _instance = new Runtime();
+                        // 如果类的实例不存在则创建，否则直接返回
+                        if (_instance == null)
+                        {
+                            _instance = new Runtime();
+                        }
                     }
                 }
+                return _instance;
             }
-            return _instance;
         }
 
         /// <summary>

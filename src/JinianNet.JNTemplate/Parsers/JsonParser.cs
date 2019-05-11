@@ -6,7 +6,10 @@ using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
 {
-    class JsonParser : ITagParser
+    /// <summary>
+    /// JSONParser
+    /// </summary>
+    public class JsonParser : ITagParser
     {
         #region ITagParser 成员
         /// <summary>

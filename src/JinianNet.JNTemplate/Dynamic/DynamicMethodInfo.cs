@@ -49,5 +49,10 @@ namespace JinianNet.JNTemplate.Dynamic
             get { return _fullName; }
             set { _fullName = value; }
         }
+
+        /// <summary>
+        /// 形参实参是否匹配
+        /// </summary>
+        public bool IsMatchParameters { get; set; }
     }
 }
