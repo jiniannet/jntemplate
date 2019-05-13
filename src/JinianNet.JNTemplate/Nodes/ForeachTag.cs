@@ -67,18 +67,18 @@ namespace JinianNet.JNTemplate.Nodes
         {
             if (Source != null)
             {
-                Excute(Source.Parse(context), context, writer);
+                Excute(Source.ParseResult(context), context, writer);
             }
         }
         /// <summary>
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {
-                Excute(Source.Parse(context), context, write);
+                Excute(Source.ParseResult(context), context, write);
                 return write.ToString();
             }
         }

@@ -19,11 +19,11 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             if (Children.Count > 0)
             {
-                object result = Children[0].Parse(context);
+                object result = Children[0].ParseResult(context);
                 for (int i = 1; i < Children.Count && result!=null; i++)
                 {
                     result = ((SimpleTag)Children[i]).Parse(result, context);

@@ -5,6 +5,8 @@
 using System;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Nodes;
+using System.Threading.Tasks;
+using JinianNet.JNTemplate.Caching;
 
 namespace JinianNet.JNTemplate
 {
@@ -48,10 +50,70 @@ namespace JinianNet.JNTemplate
         /// 呈现内容
         /// </summary>
         /// <param name="writer">TextWriter</param>
-        public virtual void Render(System.IO.TextWriter writer)
+        public void Render(System.IO.TextWriter writer)
         {
             Render(writer, ReadTags());
         }
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 异步呈现内容
+        /// </summary>
+        /// <param name="writer">TextWriter</param>
+        public async Task RenderAsync(System.IO.TextWriter writer)
+        {
+            Tag[] ts;
+            if (!string.IsNullOrEmpty(this._content))
+            {
+                
+                if (string.IsNullOrEmpty(this._key) || (ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
+                {
+                    ts = await ParseTagsAsync();
+                    CacheHelpers.Set(this._key, ts);
+                } 
+            }
+            else
+            {
+                ts = new Tag[0];
+            }
+
+            await RenderAsync(writer, ts);
+        }
+
+        
+        /// <summary>
+        /// 呈现内容
+        /// </summary>
+        /// <param name="writer">TextWriter</param>
+        /// <param name="collection">Tags</param>
+        public virtual async Task RenderAsync(System.IO.TextWriter writer, Tag[] collection)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("\"writer\" cannot be null.");
+            }
+
+            if (collection != null && collection.Length > 0)
+            {
+                for (int i = 0; i < collection.Length; i++)
+                {
+                    try
+                    {
+                        await collection[i].ParseAsync(this._context, writer);
+                    }
+                    catch (Exception.TemplateException e)
+                    {
+                        ThrowException(e, collection[i], writer);
+                    }
+                    catch (System.Exception e)
+                    {
+                        System.Exception baseException = e.GetBaseException();
+                        Exception.ParseException ex = new Exception.ParseException(baseException.Message, baseException);
+                        ThrowException(ex, collection[i], writer);
+                    }
+                }
+            }
+        }
+#endif
 
         /// <summary>
         /// 呈现内容
@@ -87,6 +149,7 @@ namespace JinianNet.JNTemplate
             }
         }
 
+
         /// <summary>
         /// read all tags
         /// </summary>
@@ -95,23 +158,13 @@ namespace JinianNet.JNTemplate
         {
             if (!string.IsNullOrEmpty(this._content))
             {
-                //object value;
-                //if (Engine.Cache != null && !string.IsNullOrEmpty(this._key))
-                //{
-                //    if ((value = Engine.Cache.Get(this._key)) != null)
-                //    {
-                //        collection = (Tag[])value;
-                //    }
-                //    else
-                //    {
-                //        collection = ParseTag();
-                //        Engine.Cache.Set(this._key, collection);
-                //    }
-                //}
-                //else
-                //{
-                return ParseTags();
-                //}
+                Tag[] ts;
+                if (string.IsNullOrEmpty(this._key) || (ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
+                {
+                    ts = ParseTags();
+                    CacheHelpers.Set(this._key, ts);
+                }
+                return ts;
             }
             else
             {
@@ -125,11 +178,27 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         private Tag[] ParseTags()
         {
-            TemplateLexer lexer = new TemplateLexer(this._content);
-            Token[] ts = lexer.ToArray();
-            TemplateParser parser = new TemplateParser(ts);
-            return parser.ToArray();
+            var lexer = new TemplateLexer(this._content);
+            var ts = lexer.Execute();
+
+            var parser = new TemplateParser(ts);
+            return parser.Execute();
         }
+
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private async Task<Tag[]> ParseTagsAsync()
+        {
+            var lexer = new TemplateLexer(this._content);
+            var ts = await lexer.ExecuteAsync();
+
+            var parser = new TemplateParser(ts);
+            return await parser.ExecuteAsync();
+        }
+#endif
 
         /// <summary>
         /// 异常处理

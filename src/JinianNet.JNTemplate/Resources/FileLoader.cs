@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Resources
 {
@@ -257,5 +258,23 @@ namespace JinianNet.JNTemplate.Resources
 
             return string.Join(System.IO.Path.DirectorySeparatorChar.ToString(), values.ToArray());
         }
+
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 异步资源
+        /// </summary>
+        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
+        /// <param name="encoding">编码</param>
+        /// <param name="directory">追加查找目录</param>
+        /// <returns>ResourceInfo</returns>
+        public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
+        {
+            return await Task.Run<ResourceInfo>(() =>
+            {
+                return Load(filename, encoding, directory);
+            });
+        }
+#endif
+
     }
 }

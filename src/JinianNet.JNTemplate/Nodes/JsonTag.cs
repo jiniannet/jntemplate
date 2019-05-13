@@ -31,13 +31,13 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             var result = new Dictionary<object, object>();
             foreach (var kv in Dict)
             {
-                var key = kv.Key == null ? null : kv.Key.Parse(context);
-                var value = kv.Value == null ? null : kv.Value.Parse(context);
+                var key = kv.Key == null ? null : kv.Key.ParseResult(context);
+                var value = kv.Value == null ? null : kv.Value.ParseResult(context);
                 result.Add(key, value);
             }
             return result;

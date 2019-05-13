@@ -44,9 +44,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
-            object path = this._path.Parse(context);
+            object path = this._path.ParseResult(context);
             return LoadResource(path, context);
         }
 

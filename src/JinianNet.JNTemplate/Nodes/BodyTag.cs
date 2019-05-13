@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -16,11 +17,11 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             if (this.Children != null && this.Children.Count > 0)
             {
-                using (System.IO.StringWriter write = new System.IO.StringWriter())
+                using (var write = new StringWriter())
                 {
                     for (int i = 0; i < this.Children.Count; i++)
                     {

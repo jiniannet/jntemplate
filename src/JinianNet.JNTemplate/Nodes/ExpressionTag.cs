@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             List<object> value = new List<object>();
             Stack<object> stack;
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 if (Children[i] is TextTag)
                 {
-                    Operator op = OperatorConvert.Parse(Children[i].Parse(context).ToString());
+                    Operator op = OperatorConvert.Parse(Children[i].ParseResult(context).ToString());
                     if(op== Operator.Or || op == Operator.And)
                     {
                         object result;
@@ -63,7 +63,7 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 else
                 {
-                    value.Add(Children[i].Parse(context));
+                    value.Add(Children[i].ParseResult(context));
                 }
             }
  

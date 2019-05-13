@@ -11,12 +11,13 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// TemplateParser
     /// </summary>
-    public class TemplateParser : IEnumerator<Tag>
+    public class TemplateParser : Executer<Tag[]>, IEnumerator<Tag>
     {
         #region private field
         private Tag _tag;//当前标签
         private Token[] _tokens;//tokens列表
         private int _index;//当前索引
+        private List<Tag> Tags;
         #endregion
 
         #region ctox
@@ -33,6 +34,20 @@ namespace JinianNet.JNTemplate
             this._tokens = ts;
             Reset();
         }
+
+        ///// <summary>
+        ///// 模板分模器
+        ///// </summary>
+        ///// <param name="lexer">lexer</param>
+        //public TemplateParser(TemplateLexer lexer)
+        //{
+        //    if (lexer == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(lexer));
+        //    }
+        //    this._tokens = await lexer.ExecuteAsync();
+        //    Reset();
+        //}
         #endregion
 
         #region IEnumerator<Tag> 成员
@@ -208,14 +223,28 @@ namespace JinianNet.JNTemplate
         /// 将解析结果复制到数组中
         /// </summary>
         /// <returns>Tag[]</returns>
+        [Obsolete("This method has been deprecated. Please use Execute() instead")]
         public Tag[] ToArray()
         {
-            List<Tag> arr = new List<Tag>();
-            while (MoveNext())
+            return Execute();
+        }
+
+        /// <summary>
+        /// 执行TAG解析
+        /// </summary>
+        /// <returns></returns>
+        public override Tag[] Execute()
+        {
+            if (Tags == null)
             {
-                arr.Add(Current);
+                Tags = new List<Tag>();
+
+                while (MoveNext())
+                {
+                    Tags.Add(Current);
+                }
             }
-            return arr.ToArray();
+            return Tags.ToArray();
         }
     }
 }

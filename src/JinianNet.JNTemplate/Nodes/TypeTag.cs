@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">TemplateContext</param>
         /// <returns></returns>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             return this._baseValue;
         }

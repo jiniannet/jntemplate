@@ -36,9 +36,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
-            object value = this.Value.Parse(context);
+            object value = this.Value.ParseResult(context);
             if (!context.TempData.SetValue(this.Name,value))
             {
                 context.TempData.Push(this.Name, value);
@@ -52,7 +52,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            Parse(context);
+            ParseResult(context);
         }
     }
 }

@@ -65,6 +65,10 @@
     <Compile Include="Dynamic\ILActuator.cs" />
     <Compile Include="Dynamic\OperatorConvert.cs" />
     <Compile Include="Dynamic\ReflectionActuator.cs" />
+    <Compile Include="Executer.cs" />
+    <Compile Include="ExecuterGeneric.cs" />
+    <Compile Include="IExecuter.cs" />
+    <Compile Include="IExecuterGeneric.cs" />
     <Compile Include="Nodes\CommentTag.cs" />
     <Compile Include="Nodes\JsonTag.cs" />
     <Compile Include="Parsers\CommentParser.cs" />

@@ -25,15 +25,15 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             object[] args = new object[Children.Count];
             for (int i = 0; i < this.Children.Count; i++)
             {
-                args[i] = Children[i].Parse(context);
+                args[i] = Children[i].ParseResult(context);
             }
 
-            object result = this.Func.Parse(context);
+            object result = this.Func.ParseResult(context);
 
             if (result != null)
             {
@@ -57,7 +57,7 @@ namespace JinianNet.JNTemplate.Nodes
                 object[] args = new object[Children.Count];
                 for (int i = 0; i < Children.Count; i++)
                 {
-                    args[i] = Children[i].Parse(context);
+                    args[i] = Children[i].ParseResult(context);
                 }
 
                 object name;
@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 else
                 {
-                    name = this.Func.Parse(context);
+                    name = this.Func.ParseResult(context);
                 }
 
                 if (name == null)

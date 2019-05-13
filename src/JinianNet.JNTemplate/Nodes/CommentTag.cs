@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 注释标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             return null;
         }

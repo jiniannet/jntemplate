@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="write">write</param>
         public override void Parse(TemplateContext context, System.IO.TextWriter write)
         {
-            write.Write(Parse(context));
+            write.Write(ParseResult(context));
         }
     }
 }

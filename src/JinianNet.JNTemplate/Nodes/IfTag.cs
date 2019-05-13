@@ -15,13 +15,13 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             for (int i = 0; i < Children.Count-1; i++) //最后面一个子对象为EndTag
             {
                 if (Children[i].ToBoolean(context))
                 {
-                    return Children[i].Parse(context);
+                    return Children[i].ParseResult(context);
                 }
             }
             return null;

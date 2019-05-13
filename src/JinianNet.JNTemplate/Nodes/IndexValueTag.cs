@@ -25,10 +25,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
-            object obj = this.Container.Parse(context);
-            object index = this.Index.Parse(context);
+            object obj = this.Container.ParseResult(context);
+            object index = this.Index.ParseResult(context);
             return Engine.Runtime.CallIndexValue(obj, index);
         }
         /// <summary>
@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Nodes
         public override object Parse(object baseValue, TemplateContext context)
         {
             object obj = this.Container.Parse(baseValue,context);
-            object index = this.Index.Parse(context);
+            object index = this.Index.ParseResult(context);
             return Engine.Runtime.CallIndexValue(obj, index);
         }
     }

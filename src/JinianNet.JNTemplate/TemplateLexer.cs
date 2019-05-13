@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 词素分析器
     /// </summary>
-    public class TemplateLexer : IEnumerable<Token>, IEnumerator<Token>
+    public class TemplateLexer : Executer<Token[]>, IEnumerable<Token>, IEnumerator<Token>
     {
         /// <summary>
         /// 标记模式
@@ -495,23 +495,10 @@ namespace JinianNet.JNTemplate
         /// 获取数组
         /// </summary>
         /// <returns></returns>
+        [Obsolete("This method has been deprecated. Please use Execute() instead")]
         public Token[] ToArray()
         {
-            if (_collection.Count == 0)
-            {
-                while (MoveNext())
-                {
-                    if (this.Current != null)
-                    {
-                        if (this._collection.Count > 0 && this._collection[this._collection.Count - 1].Next == null)
-                        {
-                            this._collection[this._collection.Count - 1].Next = this.Current;
-                        }
-                        this._collection.Add(this.Current);
-                    }
-                }
-            }
-            return _collection.ToArray();
+            return this.Execute();
         }
 
         /// <summary>
@@ -531,11 +518,34 @@ namespace JinianNet.JNTemplate
             return this.GetEnumerator();
         }
         /// <summary>
-        /// 释主放资源
+        /// 释放资源
         /// </summary>
         public void Dispose()
         {
 
+        }
+
+        /// <summary>
+        /// 执行解析
+        /// </summary>
+        /// <returns></returns>
+        public override Token[] Execute()
+        {
+            if (_collection.Count == 0)
+            {
+                while (MoveNext())
+                {
+                    if (this.Current != null)
+                    {
+                        if (this._collection.Count > 0 && this._collection[this._collection.Count - 1].Next == null)
+                        {
+                            this._collection[this._collection.Count - 1].Next = this.Current;
+                        }
+                        this._collection.Add(this.Current);
+                    }
+                }
+            }
+            return _collection.ToArray();
         }
     }
 }

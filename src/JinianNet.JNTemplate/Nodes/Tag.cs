@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -29,7 +30,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">TemplateContext</param>
         /// <returns></returns>
-        public abstract object Parse(TemplateContext context);
+        public abstract object ParseResult(TemplateContext context);
 
         /// <summary>
         /// 解析结果
@@ -37,7 +38,48 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">TemplateContext</param>
         /// <param name="write">TextWriter</param>
         public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 异步解析结果
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <param name="write">TextWriter</param>
+        /// <returns></returns>
+        public async Task ParseAsync(TemplateContext context, System.IO.TextWriter write)
+        {
+            await Task.Run(() =>
+            {
+                Parse(context, write);
+            });
+        }
 
+        /// <summary>
+        /// 异步解析结果
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
+        public async Task<object> ParseResultAsync(TemplateContext context)
+        {
+            return await Task<object>.Run(() =>
+            {
+                return ParseResult(context);
+            });
+        }
+
+        
+        /// <summary>
+        /// 转换为 bool 
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
+        public async virtual Task<bool> ToBooleanAsync(TemplateContext context)
+        {
+            return await Task<object>.Run(() =>
+            {
+                return ToBoolean(context);
+            });
+        }
+#endif
         /// <summary>
         /// 转换为 bool 
         /// </summary>
@@ -45,9 +87,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public virtual bool ToBoolean(TemplateContext context)
         {
-            object value = Parse(context);
+            object value = ParseResult(context);
             return ExpressionEvaluator.CalculateBoolean(value);
         }
+
 
         /// <summary>
         /// 开始Token

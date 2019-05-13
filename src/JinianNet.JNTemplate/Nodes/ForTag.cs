@@ -44,7 +44,7 @@ namespace JinianNet.JNTemplate.Nodes
 
         private void Excute(TemplateContext context, System.IO.TextWriter writer)
         {
-            this._initial.Parse(context);
+            this._initial.ParseResult(context);
             //如果标签为空，则直接为false,避免死循环以内存溢出
             bool run;
 
@@ -65,7 +65,7 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 if (this._dothing != null)
                 {
-                    this._dothing.Parse(context);
+                    this._dothing.ParseResult(context);
                 }
                 run = this._test == null ? true : this._test.ToBoolean(context);
             }
@@ -74,7 +74,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override object Parse(TemplateContext context)
+        public override object ParseResult(TemplateContext context)
         {
             using (System.IO.StringWriter write = new System.IO.StringWriter())
             {
