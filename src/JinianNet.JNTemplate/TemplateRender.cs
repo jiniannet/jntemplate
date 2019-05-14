@@ -5,7 +5,10 @@
 using System;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Nodes;
+#if NETCOREAPP || NETSTANDARD
 using System.Threading.Tasks;
+#endif
+
 using JinianNet.JNTemplate.Caching;
 
 namespace JinianNet.JNTemplate

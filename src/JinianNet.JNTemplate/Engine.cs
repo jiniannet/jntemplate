@@ -284,6 +284,7 @@ namespace JinianNet.JNTemplate
         }
 
         #endregion
+
         #region 环境变量
 
         /// <summary>

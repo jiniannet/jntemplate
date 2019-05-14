@@ -62,7 +62,8 @@ namespace JinianNet.JNTemplate.Nodes
                 ResourceInfo info = Engine.Runtime.Load(path.ToString(), context.Charset, paths);
                 if (info != null)
                 {
-                    TemplateContent = info.Content;
+                    this.TemplateContent = info.Content;
+                    this.TemplateKey = info.FullPath;
                 }
 
             }
