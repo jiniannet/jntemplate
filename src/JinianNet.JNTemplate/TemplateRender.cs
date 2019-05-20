@@ -162,7 +162,11 @@ namespace JinianNet.JNTemplate
             if (!string.IsNullOrEmpty(this._content))
             {
                 Tag[] ts;
-                if (string.IsNullOrEmpty(this._key) || (ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
+                if (string.IsNullOrEmpty(this._key))
+                {
+                    return ParseTags();
+                }
+                if ((ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
                 {
                     ts = ParseTags();
                     CacheHelpers.Set(this._key, ts);

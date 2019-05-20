@@ -47,11 +47,6 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"${ if (entity.Name.Length > 4 && entity.Name.Substring(0, 4) == ""File"" &&  entity.Name.EndsWith(""19""))}yes${else}no${end}";
             var template = new Template(templateContent);
-            var il = new JinianNet.JNTemplate.Dynamic.ILActuator();
-            Console.WriteLine(il.CallPropertyOrField(new
-            {
-                Name = "File19"
-            },"Name"));
             template.Set("entity", new
             {
                 Name = "File19"

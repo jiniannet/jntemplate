@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate
         /// 获取实例 
         /// </summary>
         /// <returns></returns>
-        public static Runtime GetInstance
+        public static Runtime Instance
         {
             get
             {

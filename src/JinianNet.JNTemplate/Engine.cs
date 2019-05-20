@@ -28,11 +28,11 @@ namespace JinianNet.JNTemplate
         {
             get
             {
-                if (Runtime.GetInstance.State == Runtime.InitializationState.None)
+                if (Runtime.Instance.State == Runtime.InitializationState.None)
                 {
                     Configure(Configuration.EngineConfig.CreateDefault());
                 }
-                return Runtime.GetInstance;
+                return Runtime.Instance;
             }
         }
 
@@ -111,69 +111,18 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"conf\" cannot be null.");
             }
-            Runtime.GetInstance.State = Runtime.InitializationState.Initialization;
+            Runtime.Instance.State = Runtime.InitializationState.Initialization;
 
 
             lock (lockObject)
             {
-                Runtime.GetInstance.Data = scope;
+                Runtime.Instance.Data = scope;
 
                 Initialization(conf);
-
-                Type runtimeType = Runtime.GetInstance.GetType();
-                Type type = conf.GetType();
-                Type attrType = typeof(PropertyAttribute);
-                PropertyInfo[] properties = type.GetProperties();
-                PropertyAttribute attr;
-                foreach (PropertyInfo p in properties)
-                {
-                    object value;
-                    if (!p.CanRead ||
-#if NET20 || NET40
-                        (value = p.GetValue(conf, null))
-#else
-                        (value = p.GetValue(conf))
-#endif
-                        ==
-                        null)
-                    {
-                        continue;
-                    }
-                    PropertyInfo runtimeProperty;
-                    if (Attribute.IsDefined(p, attrType) && !string.IsNullOrEmpty((attr =
-#if NET20 || NET40
-                            (PropertyAttribute)p.GetCustomAttributes(attrType, true)[0]
-#else
-                            (PropertyAttribute)p.GetCustomAttribute(attrType)
-#endif
-                        ).Name))
-                    {
-                        runtimeProperty = DynamicHelpers.GetPropertyInfo(runtimeType, attr.Name);
-                    }
-                    else
-                    {
-                        runtimeProperty = DynamicHelpers.GetPropertyInfo(runtimeType, p.Name);
-                    }
-                    if (runtimeProperty != null && runtimeProperty.CanWrite)
-                    {
-                        object newValue = ChangeType(p.PropertyType, runtimeProperty.PropertyType, value);
-                        if (newValue != null)
-                        {
-#if NET20 || NET40
-                            runtimeProperty.SetValue(Runtime.GetInstance, newValue, null);
-#else
-                            runtimeProperty.SetValue(Runtime.GetInstance, newValue);
-#endif
-                        }
-                        continue;
-                    }
-                    SetEnvironmentVariable(p.Name, value.ToString());
-                }
+                InitializationEnvironment(conf.ToDictionary());
             }
 
-
-
-            Runtime.GetInstance.State = Runtime.InitializationState.Complete;
+            Runtime.Instance.State = Runtime.InitializationState.Complete;
         }
 
         /// <summary>
@@ -335,7 +284,7 @@ namespace JinianNet.JNTemplate
         {
             foreach (KeyValuePair<string, string> node in conf)
             {
-                SetEnvironmentVariable(node.Key, node.Value);
+                Runtime.Instance.EnvironmentVariable[node.Key] = node.Value;
             }
         }
 
@@ -363,7 +312,7 @@ namespace JinianNet.JNTemplate
         }
         private static void Initialization(ConfigBase conf)
         {
-            var r = Runtime.GetInstance;
+            var r = Runtime.Instance;
             if (conf.TagParsers == null || conf.TagParsers.Count == 0)
             {
                 r.Parsers = new List<ITagParser>(LoadParsers(Field.RSEOLVER_TYPES));
