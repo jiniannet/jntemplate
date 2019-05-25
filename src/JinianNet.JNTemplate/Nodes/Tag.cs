@@ -48,7 +48,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">TemplateContext</param>
         /// <param name="write">TextWriter</param>
         /// <returns></returns>
-        public async Task ParseAsync(TemplateContext context, System.IO.TextWriter write)
+        public async virtual Task ParseAsync(TemplateContext context, System.IO.TextWriter write)
         {
             await Task.Run(() =>
             {
@@ -61,7 +61,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">TemplateContext</param>
         /// <returns></returns>
-        public async Task<object> ParseResultAsync(TemplateContext context)
+        public async virtual Task<object> ParseResultAsync(TemplateContext context)
         {
             return await Task<object>.Run(() =>
             {

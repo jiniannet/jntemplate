@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="baseValue">baseValue</param>
-        public override object Parse(object baseValue, TemplateContext context)
+        public override object ParseResult(object baseValue, TemplateContext context)
         {
             if (baseValue == null)
             {

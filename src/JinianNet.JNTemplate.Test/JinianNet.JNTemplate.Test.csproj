@@ -87,6 +87,13 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArithmeticTests.cs" />
+    <Compile Include="BlockTests.cs" />
+    <Compile Include="FuncTests.cs" />
+    <Compile Include="IndexTests.cs" />
+    <Compile Include="LogicTests.cs" />
+    <Compile Include="LoopTests.cs" />
+    <Compile Include="TagsTestBase.cs" />
     <Compile Include="TestExecutor.cs" />
     <Compile Include="Model\Article.cs" />
     <Compile Include="Model\Basis.cs" />

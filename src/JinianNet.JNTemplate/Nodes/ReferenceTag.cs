@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
                 object result = Children[0].ParseResult(context);
                 for (int i = 1; i < Children.Count && result!=null; i++)
                 {
-                    result = ((SimpleTag)Children[i]).Parse(result, context);
+                    result = ((SimpleTag)Children[i]).ParseResult(result, context);
                 }
                 return result;
             }
@@ -37,12 +37,12 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="baseValue">基本值</param>
-        public override object Parse(object baseValue, TemplateContext context)
+        public override object ParseResult(object baseValue, TemplateContext context)
         {
             object result = baseValue;
             for (int i = 0; i < Children.Count && result!=null; i++)
             {
-                result = ((SimpleTag)Children[i]).Parse(result, context);
+                result = ((SimpleTag)Children[i]).ParseResult(result, context);
             }
             return result;
         }

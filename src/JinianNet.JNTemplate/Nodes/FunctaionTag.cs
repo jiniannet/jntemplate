@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -45,12 +46,14 @@ namespace JinianNet.JNTemplate.Nodes
 
             return null;
         }
+
         /// <summary>
-        /// 解析标签
+        /// 调用方法
         /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="baseValue">baseValue</param>
-        public override object Parse(object baseValue, TemplateContext context)
+        /// <param name="baseValue"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private object CallMethod(object baseValue, TemplateContext context)
         {
             if (baseValue != null)
             {
@@ -92,5 +95,42 @@ namespace JinianNet.JNTemplate.Nodes
             return null;
         }
 
+        /// <summary>
+        /// 执行标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="baseValue">baseValue</param>
+        public override object ParseResult(object baseValue, TemplateContext context)
+        {
+            object r = CallMethod(baseValue, context);
+#if NETCOREAPP || NETSTANDARD
+            if (r != null && r is Task)
+            {
+                Task task = r as Task;
+                task.GetAwaiter().GetResult();
+                return Engine.Runtime.CallPropertyOrField(task, "Result");
+            }
+#endif
+            return r;
+        }
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 异步执行标签
+        /// </summary>
+        /// <param name="baseValue"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<object> ParseResultAsync(object baseValue, TemplateContext context)
+        {
+            object r = await Task.Run<object>(() => CallMethod(baseValue, context));
+            if (r != null && r is Task)
+            {
+                Task task = r as Task;
+                await task;
+                return Engine.Runtime.CallPropertyOrField(task, "Result");
+            }
+            return r;
+        }
+#endif
     }
 }

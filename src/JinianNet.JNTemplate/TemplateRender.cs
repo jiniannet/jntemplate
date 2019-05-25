@@ -68,11 +68,15 @@ namespace JinianNet.JNTemplate
             if (!string.IsNullOrEmpty(this._content))
             {
                 
-                if (string.IsNullOrEmpty(this._key) || (ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
+                if (string.IsNullOrEmpty(this._key))
+                {
+                    ts = await ParseTagsAsync();
+                }
+                else if ( (ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
                 {
                     ts = await ParseTagsAsync();
                     CacheHelpers.Set(this._key, ts);
-                } 
+                }
             }
             else
             {
