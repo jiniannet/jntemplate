@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
@@ -174,6 +175,20 @@ namespace JinianNet.JNTemplate
             return this.Loader.Load(filename, encoding, directory);
 
         }
+
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 加载资源
+        /// </summary>
+        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
+        /// <param name="encoding">编码</param>
+        /// <param name="directory">追加查找目录</param>
+        /// <returns></returns>
+        public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
+        {
+            return await this.Loader.LoadAsync(filename, encoding, directory);
+        }
+#endif
         /// <summary>
         /// 获取父目录
         /// </summary>

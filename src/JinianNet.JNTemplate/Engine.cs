@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Dynamic;
@@ -157,7 +158,9 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static ITemplate CreateTemplate(string text)
         {
-            return new Template(CreateContext(), text);
+            var template =  new Template(CreateContext(), text);
+            template.Context.CurrentPath = System.IO.Directory.GetCurrentDirectory();
+            return template;
         }
 
         /// <summary>
@@ -194,6 +197,36 @@ namespace JinianNet.JNTemplate
             return template;
         }
 
+
+
+
+        /// <summary>
+        /// 从指定路径加载模板
+        /// </summary>
+        /// <param name="path">模板文件</param>
+        /// <param name="ctx">模板上下文</param>
+        /// <returns>ITemplate</returns>
+        public static async Task<ITemplate> LoadTemplateAsync(string path, TemplateContext ctx=null)
+        {
+            if (ctx == null)
+            {
+                ctx = CreateContext();
+            }
+            ResourceInfo info = await Runtime.LoadAsync(path, ctx.Charset);
+            Template template;
+
+            if (info != null)
+            {
+                template = new Template(ctx, info.Content);
+                template.TemplateKey = info.FullPath;
+                ctx.CurrentPath = Runtime.GetDirectoryName(info.FullPath);
+            }
+            else
+            {
+                template = new Template(ctx, string.Empty);
+            }
+            return template;
+        }
         /// <summary>
         /// 分析标签
         /// </summary>
