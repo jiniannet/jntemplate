@@ -158,7 +158,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static ITemplate CreateTemplate(string text)
         {
-            var template =  new Template(CreateContext(), text);
+            var template = new Template(CreateContext(), text);
             template.Context.CurrentPath = System.IO.Directory.GetCurrentDirectory();
             return template;
         }
@@ -199,7 +199,7 @@ namespace JinianNet.JNTemplate
 
 
 
-
+#if NETCOREAPP || NETSTANDARD
         /// <summary>
         /// 从指定路径加载模板
         /// </summary>
@@ -227,13 +227,14 @@ namespace JinianNet.JNTemplate
             }
             return template;
         }
+#endif
         /// <summary>
         /// 分析标签
         /// </summary>
         /// <param name="parser">模板解析器</param>
         /// <param name="tc">TOKEN集合</param>
         /// <returns></returns>
-        public static Nodes.Tag Resolve(TemplateParser parser, TokenCollection tc)
+        public static Nodes.ITag Resolve(TemplateParser parser, TokenCollection tc)
         {
 
             if (tc == null || tc.Count == 0 || parser == null)
@@ -241,7 +242,7 @@ namespace JinianNet.JNTemplate
                 return null;
             }
 
-            Tag t;
+            ITag t;
             for (int i = 0; i < Runtime.Parsers.Count; i++)
             {
                 if (Runtime.Parsers[i] == null)

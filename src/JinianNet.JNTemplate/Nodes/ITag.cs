@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿/********************************************************************************
+ Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
+ Licensed under the MIT license. See licence.txt file in the project root for full license information.
+ ********************************************************************************/
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Nodes
@@ -10,6 +12,19 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public interface ITag
     {
+
+        /// <summary>
+        /// 子标签
+        /// </summary>
+        Collection<ITag> Children { get; }
+
+        /// <summary>
+        /// 添加一个子标签
+        /// </summary>
+        /// <param name="node"></param>
+        void AddChild(ITag node);
+
+
         /// <summary>
         /// 解析结果
         /// </summary>

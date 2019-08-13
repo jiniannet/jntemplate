@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// $User.CreateDate.ToString("yyyy-MM-dd")
     /// $Db.Query().Result.Count
     /// </summary>
-    public class ReferenceTag : SimpleTag
+    public class ReferenceTag : BasisTag
     {
         /// <summary>
         /// 解析标签
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
                 object result = Children[0].ParseResult(context);
                 for (int i = 1; i < Children.Count && result!=null; i++)
                 {
-                    result = ((SimpleTag)Children[i]).ParseResult(result, context);
+                    result = ((BasisTag)Children[i]).ParseResult(result, context);
                 }
                 return result;
             }
@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate.Nodes
             object result = baseValue;
             for (int i = 0; i < Children.Count && result!=null; i++)
             {
-                result = ((SimpleTag)Children[i]).ParseResult(result, context);
+                result = ((BasisTag)Children[i]).ParseResult(result, context);
             }
             return result;
         }

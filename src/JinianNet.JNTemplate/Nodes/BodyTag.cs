@@ -10,27 +10,22 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// Body标签（配套Layout使用）
     /// </summary>
-    public class BodyTag : TagBase
+    public class BodyTag : ComplexTag
     {
         /// <summary>
-        /// 解析标签
+        /// 
         /// </summary>
         /// <param name="context"></param>
-        /// <returns></returns>
-        public override object ParseResult(TemplateContext context)
+        /// <param name="write"></param>
+        public override void Parse(TemplateContext context, TextWriter write)
         {
             if (this.Children != null && this.Children.Count > 0)
             {
-                using (var write = new StringWriter())
+                for (int i = 0; i < this.Children.Count; i++)
                 {
-                    for (int i = 0; i < this.Children.Count; i++)
-                    {
-                        this.Children[i].Parse(context, write);
-                    }
-                    return write.ToString();
+                    this.Children[i].Parse(context, write);
                 }
             }
-            return null;
         }
     }
 }

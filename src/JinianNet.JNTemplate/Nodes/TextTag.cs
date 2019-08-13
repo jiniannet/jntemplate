@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 文本标签
     /// </summary>
-    public class TextTag : Tag
+    public class TextTag : SpecialTag
     {
         /// <summary>
         /// 解析标签

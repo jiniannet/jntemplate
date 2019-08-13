@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns></returns>
-        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
 
             if (tc != null
@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate.Parsers
                         start = 2,
                         end;
 
-                    List<Tag> ts = new List<Tag>(3);
+                    List<ITag> ts = new List<ITag>(3);
 
                     ForTag tag = new ForTag();
                     for (int i = 2; i < tc.Count - 1; i++)

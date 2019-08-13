@@ -127,7 +127,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="writer">TextWriter</param>
         /// <param name="collection">Tags</param>
-        public virtual void Render(System.IO.TextWriter writer, Tag[] collection)
+        public virtual void Render(System.IO.TextWriter writer, ITag[] collection)
         {
             if (writer == null)
             {
@@ -161,16 +161,16 @@ namespace JinianNet.JNTemplate
         /// read all tags
         /// </summary>
         /// <returns></returns>
-        public Tag[] ReadTags()
+        public ITag[] ReadTags()
         {
             if (!string.IsNullOrEmpty(this._content))
             {
-                Tag[] ts;
+                ITag[] ts;
                 if (string.IsNullOrEmpty(this._key))
                 {
                     return ParseTags();
                 }
-                if ((ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
+                if ((ts = CacheHelpers.Get<ITag[]>(this._key)) == null)
                 {
                     ts = ParseTags();
                     CacheHelpers.Set(this._key, ts);
@@ -179,7 +179,7 @@ namespace JinianNet.JNTemplate
             }
             else
             {
-                return new Tag[0];
+                return new ITag[0];
             }
         }
 
@@ -187,7 +187,7 @@ namespace JinianNet.JNTemplate
         /// 
         /// </summary>
         /// <returns></returns>
-        private Tag[] ParseTags()
+        private ITag[] ParseTags()
         {
             var lexer = new TemplateLexer(this._content);
             var ts = lexer.Execute();
@@ -217,7 +217,7 @@ namespace JinianNet.JNTemplate
         /// <param name="e">异常信息</param>
         /// <param name="tag">影响标签</param>
         /// <param name="writer">TextWriter</param>
-        private void ThrowException(Exception.TemplateException e, Tag tag, System.IO.TextWriter writer)
+        private void ThrowException(Exception.TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
             if (this._context.ThrowExceptions)
             {

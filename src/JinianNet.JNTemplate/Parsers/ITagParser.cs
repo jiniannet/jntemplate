@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns></returns>
-        Tag Parse(TemplateParser parser, TokenCollection tc);
+        ITag Parse(TemplateParser parser, TokenCollection tc);
     }
 
     #region Word

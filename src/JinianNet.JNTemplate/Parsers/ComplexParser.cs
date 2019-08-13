@@ -20,14 +20,14 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns></returns>
-        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc != null
                 && parser != null
                 && tc.Count > 2)
             {
 
-                List<Tag> tags = new List<Tag>();
+                List<ITag> tags = new List<ITag>();
                 TokenCollection[] tcs = tc.Split(0, tc.Count, TokenKind.Dot, TokenKind.Operator);
                 if (tcs.Length == 1)
                 {

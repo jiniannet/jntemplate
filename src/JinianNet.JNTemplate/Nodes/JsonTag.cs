@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -11,20 +12,20 @@ namespace JinianNet.JNTemplate.Nodes
     /// 简单JSON标签
     /// 注意：该标签仅只支持简单的JSON解析
     /// </summary>
-    public class JsonTag : TagBase
+    public class JsonTag : ComplexTag
     {
         /// <summary>
         /// JsonTag
         /// </summary>
         public JsonTag()
         {
-            this.Dict = new Dictionary<Tag, Tag>(); 
+            this.Dict = new Dictionary<ITag, ITag>(); 
         }
 
         /// <summary>
         /// 集合
         /// </summary>
-        public Dictionary<Tag, Tag> Dict { get; private set; }
+        public Dictionary<ITag, ITag> Dict { get; private set; }
 
         /// <summary>
         ///  解析JSON
@@ -41,6 +42,16 @@ namespace JinianNet.JNTemplate.Nodes
                 result.Add(key, value);
             }
             return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="write"></param>
+        public override void Parse(TemplateContext context, TextWriter write)
+        {
+            write.Write(ParseResult(context));
         }
     }
 }

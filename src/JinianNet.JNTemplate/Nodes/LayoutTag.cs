@@ -17,9 +17,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 读取取签
         /// </summary>
         /// <returns></returns>
-        protected override Tag[] ReadTags()
+        protected override ITag[] ReadTags()
         {
-            Tag[] tags = base.ReadTags();
+            ITag[] tags = base.ReadTags();
             for (int i = 0; i < tags.Length; i++)
             {
                 if (tags[i] is BodyTag)

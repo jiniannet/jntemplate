@@ -10,17 +10,17 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 索引标签
     /// </summary>
-    public class IndexValueTag : SimpleTag
+    public class IndexValueTag : BasisTag
     {
         /// <summary>
         /// 容器
         /// </summary>
-        public SimpleTag Container { get; set; }
+        public BasisTag Container { get; set; }
 
         /// <summary>
         /// 索引
         /// </summary>
-        public Tag Index { get; set; }
+        public ITag Index { get; set; }
         /// <summary>
         /// 解析标签
         /// </summary>

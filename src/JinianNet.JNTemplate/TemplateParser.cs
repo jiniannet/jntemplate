@@ -11,13 +11,13 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// TemplateParser
     /// </summary>
-    public class TemplateParser : Executer<Tag[]>, IEnumerator<Tag>
+    public class TemplateParser : Executer<ITag[]>, IEnumerator<ITag>
     {
         #region private field
-        private Tag _tag;//当前标签
+        private ITag _tag;//当前标签
         private Token[] _tokens;//tokens列表
         private int _index;//当前索引
-        private List<Tag> Tags;
+        private List<ITag> Tags;
         #endregion
 
         #region ctox
@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前标签
         /// </summary>
-        public Tag Current
+        public ITag Current
         {
             get { return this._tag; }
         }
@@ -71,7 +71,7 @@ namespace JinianNet.JNTemplate
         {
             if (this._index < this._tokens.Length)
             {
-                Tag t = Read();
+                ITag t = Read();
                 if (t != null)
                 {
                     this._tag = t;
@@ -89,9 +89,9 @@ namespace JinianNet.JNTemplate
             this._tag = null;
         }
 
-        private Tag Read()
+        private ITag Read()
         {
-            Tag t = null;
+            ITag t = null;
             if (IsTagStart())
             {
                 Token t1, t2;
@@ -158,7 +158,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="tc">TOKEN集合</param>
         /// <returns></returns>
-        public Tag Read(TokenCollection tc)
+        public ITag Read(TokenCollection tc)
         {
             if (tc == null || tc.Count == 0)
             {
@@ -224,7 +224,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <returns>Tag[]</returns>
         [Obsolete("This method has been deprecated. Please use Execute() instead")]
-        public Tag[] ToArray()
+        public ITag[] ToArray()
         {
             return Execute();
         }
@@ -233,11 +233,11 @@ namespace JinianNet.JNTemplate
         /// 执行TAG解析
         /// </summary>
         /// <returns></returns>
-        public override Tag[] Execute()
+        public override ITag[] Execute()
         {
             if (Tags == null)
             {
-                Tags = new List<Tag>();
+                Tags = new List<ITag>();
 
                 while (MoveNext())
                 {

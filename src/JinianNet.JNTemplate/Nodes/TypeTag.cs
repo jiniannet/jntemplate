@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// 基本类型标签
     /// </summary>
     /// <typeparam name="T">类型</typeparam>
-    public abstract class TypeTag<T> : Tag
+    public abstract class TypeTag<T> : SpecialTag
     {
         private T _baseValue;
         /// <summary>

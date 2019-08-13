@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns></returns>
-        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc != null
                 && parser != null
@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate.Parsers
                 FunctaionTag tag = new FunctaionTag();
 
                 //tag.Name = tc.First.Text; 
-                tag.Func = (SimpleTag)parser.Read(tc[0, 1]);
+                tag.Func = (BasisTag)parser.Read(tc[0, 1]);
  
                 TokenCollection[] tcs = tc.Split(2, tc.Count-1, TokenKind.Comma);
                 for (int i = 0; i < tcs.Length; i++)

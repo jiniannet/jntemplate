@@ -19,13 +19,150 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static bool ToBoolean(string input)
+        public static bool StringToBoolean(string input)
         {
             if ("true".Equals(input, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(int input)
+        {
+            if (input==0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(double input)
+        {
+            if (input == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(decimal input)
+        {
+            if (input == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(Int16 input)
+        {
+            if (input == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(Int64 input)
+        {
+            if (input == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(float input)
+        {
+            if (input == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(bool input)
+        {
+            return input;
+        }
+
+        /// <summary>
+        /// 转布尔
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool ToBoolean(object input)
+        {
+            if (input == null)
+            {
+                return false;
+            }
+            var t = input.GetType();
+            switch (t.FullName)
+            {
+                case "System.Int16":
+                case "System.Int32":
+                case "System.Int64":
+                case "System.UInt16":
+                case "System.UInt32":
+                case "System.UInt64":
+                    return ToBoolean(long.Parse(input.ToString()));
+                case "System.Single":
+                case "System.Decimal":
+                case "System.Double": 
+                    return ToBoolean(decimal.Parse(input.ToString())); 
+                case "System.String":
+                    return ToBoolean(input.ToString()); 
+                case "System.Boolean":
+                    return ToBoolean(bool.Parse(input.ToString()));
+                default:
+                    return true;
+            }
         }
         /// <summary>
         /// 是否英文字母

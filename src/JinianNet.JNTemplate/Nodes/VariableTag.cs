@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 变量标签
     /// </summary>
-    public class VariableTag : SimpleTag
+    public class VariableTag : BasisTag
     {
 
         private string _name;

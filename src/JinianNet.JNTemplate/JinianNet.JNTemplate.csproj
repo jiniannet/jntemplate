@@ -71,8 +71,12 @@
     <Compile Include="ExecuterGeneric.cs" />
     <Compile Include="IExecuter.cs" />
     <Compile Include="IExecuterGeneric.cs" />
+    <Compile Include="Nodes\BasisTag.cs" />
     <Compile Include="Nodes\CommentTag.cs" />
+    <Compile Include="Nodes\ComplexTag.cs" />
+    <Compile Include="Nodes\ITag.cs" />
     <Compile Include="Nodes\JsonTag.cs" />
+    <Compile Include="Nodes\SpecialTag.cs" />
     <Compile Include="Parsers\CommentParser.cs" />
     <Compile Include="Parsers\JsonParser.cs" />
     <Compile Include="Resources\DefaultLoaderProvider.cs" />

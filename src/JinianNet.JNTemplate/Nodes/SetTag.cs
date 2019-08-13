@@ -9,10 +9,10 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 赋值标签
     /// </summary>
-    public class SetTag : TagBase
+    public class SetTag : ComplexTag
     {
         private string _name;
-        private Tag _value;
+        private ITag _value;
 
         /// <summary>
         /// 变量名
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 值
         /// </summary>
-        public Tag Value
+        public ITag Value
         {
             get { return this._value; }
             set { this._value = value; }

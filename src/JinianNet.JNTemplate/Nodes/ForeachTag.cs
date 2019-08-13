@@ -11,11 +11,11 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// Foreach标签
     /// </summary>
-    public class ForeachTag : TagBase
+    public class ForeachTag : ComplexTag
     {
 
         private string _name;
-        private Tag _source;
+        private ITag _source;
 
         /// <summary>
         /// 节点名
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 源对象
         /// </summary>
-        public Tag Source
+        public ITag Source
         {
             get { return this._source; }
             set { this._source = value; }

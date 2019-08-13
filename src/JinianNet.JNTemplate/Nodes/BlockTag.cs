@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 标签块
     /// </summary>
-    public class BlockTag : TagBase
+    public class BlockTag : ComplexTag
     {
         private TemplateRender _render;
 
@@ -78,7 +78,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// read all tags
         /// </summary>
         /// <returns></returns>
-        protected virtual Tag[] ReadTags()
+        protected virtual ITag[] ReadTags()
         {
             return this._render.ReadTags();
         } 

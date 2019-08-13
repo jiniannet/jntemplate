@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns>标签</returns>
-        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc != null
                 && tc.Count == 1

@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Exception;
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 表达式
     /// </summary>
-    public class ExpressionTag : TagBase
+    public class ExpressionTag : BasisTag
     {
         /// <summary>
         /// 解析标签
@@ -73,5 +74,15 @@ namespace JinianNet.JNTemplate.Nodes
             //return ExpressionEvaluator.Calculate(stack, context);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseValue"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override object ParseResult(object baseValue, TemplateContext context)
+        {
+            throw new TemplateException("unsupported");
+        }
     }
 }

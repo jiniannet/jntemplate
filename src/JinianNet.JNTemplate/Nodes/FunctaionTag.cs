@@ -10,13 +10,13 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 函数（方法）标签
     /// </summary>
-    public class FunctaionTag : SimpleTag
+    public class FunctaionTag : BasisTag
     {
-        private TagBase _func;
+        private BasisTag _func;
         /// <summary>
         /// 函数
         /// </summary>
-        public TagBase Func
+        public BasisTag Func
         {
             get { return this._func; }
             set { this._func = value; }

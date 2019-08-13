@@ -12,9 +12,10 @@ namespace JinianNet.JNTemplate.Nodes
     public class ElseTag : ElseifTag
     {
         /// <summary>
-        /// 获取布布值
+        /// 
         /// </summary>
-        /// <param name="context">上下文</param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override bool ToBoolean(TemplateContext context)
         {
             return true;

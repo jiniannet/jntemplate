@@ -14,11 +14,11 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public class LoadTag : BlockTag
     {
-        private Tag _path;
+        private ITag _path;
         /// <summary>
         /// 路径
         /// </summary>
-        public Tag Path
+        public ITag Path
         {
             get { return this._path; }
             set { this._path = value; }

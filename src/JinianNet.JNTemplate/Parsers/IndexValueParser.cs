@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="parser">TemplateParser</param>
         /// <param name="tc">Token集合</param>
         /// <returns></returns>
-        public Tag Parse(TemplateParser parser, TokenCollection tc)
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
 
             if (tc != null
@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return null;
                 }
                 IndexValueTag tag = new IndexValueTag();
-                tag.Container = (SimpleTag)parser.Read(tc[0, x]);
+                tag.Container = (BasisTag)parser.Read(tc[0, x]);
                 tag.Index = parser.Read(tc[x + 1, y]);
 
                 return tag;

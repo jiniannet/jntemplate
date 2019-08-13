@@ -9,14 +9,14 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// ELSE if 标签
     /// </summary>
-    public class ElseifTag : TagBase
+    public class ElseifTag : ComplexTag
     {
 
-        private Tag _test;
+        private ITag _test;
         /// <summary>
         /// 条件
         /// </summary>
-        public virtual Tag Test
+        public virtual ITag Test
         {
             get { return this._test; }
             set { this._test = value; }
@@ -62,9 +62,9 @@ namespace JinianNet.JNTemplate.Nodes
         /// 获取布布值
         /// </summary>
         /// <param name="context">上下文</param>
-        public override bool ToBoolean(TemplateContext context)
+        public virtual bool ToBoolean(TemplateContext context)
         {
-            return this._test.ToBoolean(context);
+            return Utility.ToBoolean(this._test.ParseResult(context));
         }
 
     }

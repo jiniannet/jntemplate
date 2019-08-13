@@ -9,16 +9,16 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// FOR标签
     /// </summary>
-    public class ForTag : TagBase
+    public class ForTag : ComplexTag
     {
-        private Tag _initial;
-        private Tag _test;
-        private Tag _dothing;
+        private ITag _initial;
+        private ITag _test;
+        private ITag _dothing;
 
         /// <summary>
         /// 初始标签 
         /// </summary>
-        public Tag Initial
+        public ITag Initial
         {
             get { return this._initial; }
             set { this._initial = value; }
@@ -27,7 +27,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 逻辑标签
         /// </summary>
-        public Tag Test
+        public ITag Test
         {
             get { return this._test; }
             set { this._test = value; }
@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// Do 
         /// </summary>
-        public Tag Do
+        public ITag Do
         {
             get { return this._dothing; }
             set { this._dothing = value; }
@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate.Nodes
             }
             else
             {
-                run = this._test.ToBoolean(context);
+                run = Utility.ToBoolean(this._test.ParseResult(context));
             }
 
             while (run)
@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     this._dothing.ParseResult(context);
                 }
-                run = this._test == null ? true : this._test.ToBoolean(context);
+                run = this._test == null ? true : run = Utility.ToBoolean(this._test.ParseResult(context));
             }
         }
         /// <summary>

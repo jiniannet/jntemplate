@@ -11,13 +11,13 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public class StringTag : TypeTag<string>
     {
-        /// <summary>
-        /// 转换成BOOLEAN
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override bool ToBoolean(TemplateContext context)
-        {
-            return !string.IsNullOrEmpty(Value);
-        }
+        ///// <summary>
+        ///// 转换成BOOLEAN
+        ///// </summary>
+        ///// <param name="context">上下文</param>
+        //public override bool ToBoolean(TemplateContext context)
+        //{
+        //    return !string.IsNullOrEmpty(Value);
+        //}
     }
 }

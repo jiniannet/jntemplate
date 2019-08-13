@@ -5,19 +5,20 @@
 using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// INCLUDE标签
     /// </summary>
-    public class IncludeTag : TagBase
+    public class IncludeTag : ComplexTag
     {
-        private Tag _path;
+        private ITag _path;
         /// <summary>
         /// 模板路径
         /// </summary>
-        public Tag Path
+        public ITag Path
         {
             get { return this._path; }
             set { this._path = value; }
@@ -50,5 +51,9 @@ namespace JinianNet.JNTemplate.Nodes
             return LoadResource(path, context);
         }
 
+        public override void Parse(TemplateContext context, TextWriter write)
+        {
+            write.Write(ParseResult(context));
+        }
     }
 }

@@ -15,19 +15,31 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 标签基类
     /// </summary>
-    public abstract class Tag
+    public abstract class Tag : ITag
     {
         private Token _first, _last;
-        //private Tag parent;
-        private Collection<Tag> _children = new Collection<Tag>();
-
+        private Collection<ITag> _children = new Collection<ITag>();
         /// <summary>
         /// 子标签
         /// </summary>
-        public Collection<Tag> Children
+        public Collection<ITag> Children
         {
-            get { return this._children; }
+            get { return _children; }
         }
+
+        /// <summary>
+        /// 添加一个子标签
+        /// </summary>
+        /// <param name="node"></param>
+        public void AddChild(ITag node)
+        {
+            if (node != null)
+            {
+                Children.Add(node);
+            }
+        }
+
+
         /// <summary>
         /// 解析结果
         /// </summary>
@@ -41,6 +53,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">TemplateContext</param>
         /// <param name="write">TextWriter</param>
         public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
+
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
         /// 异步解析结果
@@ -69,30 +82,20 @@ namespace JinianNet.JNTemplate.Nodes
             });
         }
 
-        
-        /// <summary>
-        /// 转换为 bool 
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public async virtual Task<bool> ToBooleanAsync(TemplateContext context)
-        {
-            return await Task<object>.Run(() =>
-            {
-                return ToBoolean(context);
-            });
-        }
+
+        ///// <summary>
+        ///// 转换为 bool 
+        ///// </summary>
+        ///// <param name="context">TemplateContext</param>
+        ///// <returns></returns>
+        //public async virtual Task<bool> ToBooleanAsync(TemplateContext context)
+        //{
+        //    return await Task<object>.Run(() =>
+        //    {
+        //        return ToBoolean(context);
+        //    });
+        //}
 #endif
-        /// <summary>
-        /// 转换为 bool 
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public virtual bool ToBoolean(TemplateContext context)
-        {
-            object value = ParseResult(context);
-            return ExpressionEvaluator.CalculateBoolean(value);
-        }
 
 
         /// <summary>
@@ -112,16 +115,32 @@ namespace JinianNet.JNTemplate.Nodes
             get { return this._last; }
         }
 
-        /// <summary>
-        /// 添加一个子标签
-        /// </summary>
-        /// <param name="node"></param>
-        public void AddChild(Tag node)
-        {
-            if (node != null)
-            {
-                Children.Add(node);
-            }
-        }
+        ///// <summary>
+        ///// 转换为 bool 
+        ///// </summary>
+        ///// <param name="context">TemplateContext</param>
+        ///// <returns></returns>
+        //public virtual bool ToBoolean(TemplateContext context)
+        //{
+        //    object value = ParseResult(context);
+        //    return ExpressionEvaluator.CalculateBoolean(value);
+        //}
+
+        ///// <summary>
+        ///// 子标签
+        ///// </summary>
+        //public Collection<Tag> Children{ get;}
+
+        ///// <summary>
+        ///// 添加一个子标签
+        ///// </summary>
+        ///// <param name="node"></param>
+        //public void AddChild(Tag node)
+        //{
+        //    if (node != null)
+        //    {
+        //        Children.Add(node);
+        //    }
+        //}
     }
 }

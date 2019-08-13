@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 结束标签，用于if for等复合标签的结束
     /// </summary>
-    public class EndTag:TagBase
+    public class EndTag: SpecialTag
     {
         /// <summary>
         /// 解析标签
@@ -21,14 +21,14 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
 
-        /// <summary>
-        /// 获取布布值
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override bool ToBoolean(TemplateContext context)
-        {
-            return false;
-        }
+        ///// <summary>
+        ///// 获取布布值
+        ///// </summary>
+        ///// <param name="context">上下文</param>
+        //public override bool ToBoolean(TemplateContext context)
+        //{
+        //    return false;
+        //}
 
         /// <summary>
         /// 解析标签
