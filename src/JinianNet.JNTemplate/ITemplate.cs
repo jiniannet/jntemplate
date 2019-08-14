@@ -4,7 +4,9 @@
  ********************************************************************************/
 using System;
 using System.IO;
+#if !NET20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate
 {

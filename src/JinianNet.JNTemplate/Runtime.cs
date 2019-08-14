@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+#if !NET20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate
 {

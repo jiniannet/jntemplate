@@ -5,13 +5,15 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
+#if !NET20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate
 {

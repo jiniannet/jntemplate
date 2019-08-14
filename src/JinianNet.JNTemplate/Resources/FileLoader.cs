@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-#if NETCOREAPP || NETSTANDARD
+#if !NET20
 using System.Threading.Tasks;
 #endif
 
@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Resources
         public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
-            if (string.IsNullOrWhiteSpace(info.FullPath = FindResource(filename, directory)))
+            if (string.IsNullOrEmpty(info.FullPath = FindResource(filename, directory)))
             {
                 return null;
             }
@@ -65,7 +65,7 @@ namespace JinianNet.JNTemplate.Resources
             {
                 full = FindPath(directory, filename);
             }
-            if (string.IsNullOrWhiteSpace(full))
+            if (string.IsNullOrEmpty(full))
             {
                 full = FindPath(filename);
             }
@@ -255,7 +255,11 @@ namespace JinianNet.JNTemplate.Resources
             {
                 encoding = Encoding.UTF8;
             }
+#if NETSTANDARD
+            return System.IO.File.ReadAllText(fullPath, encoding);
+#else
             return await System.IO.File.ReadAllTextAsync(fullPath, encoding);
+#endif
         }
 #endif
 

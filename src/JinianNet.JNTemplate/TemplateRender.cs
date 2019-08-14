@@ -5,7 +5,7 @@
 using System;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Nodes;
-#if NETCOREAPP || NETSTANDARD
+#if !NET20
 using System.Threading.Tasks;
 #endif
 
@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         public async Task RenderAsync(System.IO.TextWriter writer)
         {
-            Tag[] ts;
+            ITag[] ts;
             if (!string.IsNullOrEmpty(this._content))
             {
                 
@@ -72,7 +72,7 @@ namespace JinianNet.JNTemplate
                 {
                     ts = await ParseTagsAsync();
                 }
-                else if ( (ts = CacheHelpers.Get<Tag[]>(this._key)) == null)
+                else if ( (ts = CacheHelpers.Get<ITag[]>(this._key)) == null)
                 {
                     ts = await ParseTagsAsync();
                     CacheHelpers.Set(this._key, ts);
@@ -80,7 +80,7 @@ namespace JinianNet.JNTemplate
             }
             else
             {
-                ts = new Tag[0];
+                ts = new ITag[0];
             }
 
             await RenderAsync(writer, ts);
@@ -92,7 +92,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="writer">TextWriter</param>
         /// <param name="collection">Tags</param>
-        public virtual async Task RenderAsync(System.IO.TextWriter writer, Tag[] collection)
+        public virtual async Task RenderAsync(System.IO.TextWriter writer, ITag[] collection)
         {
             if (writer == null)
             {
@@ -201,7 +201,7 @@ namespace JinianNet.JNTemplate
         /// 
         /// </summary>
         /// <returns></returns>
-        private async Task<Tag[]> ParseTagsAsync()
+        private async Task<ITag[]> ParseTagsAsync()
         {
             var lexer = new TemplateLexer(this._content);
             var ts = await lexer.ExecuteAsync();

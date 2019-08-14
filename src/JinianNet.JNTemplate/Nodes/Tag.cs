@@ -5,7 +5,7 @@
 using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.Collections.ObjectModel;
-#if NETCOREAPP || NETSTANDARD
+#if !NET20
 using System.Threading.Tasks;
 #endif
 

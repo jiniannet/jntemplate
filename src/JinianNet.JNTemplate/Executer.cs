@@ -3,11 +3,6 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 
-#if NETCOREAPP || NETSTANDARD
-using System.Threading.Tasks;
-#endif
-
-
 namespace JinianNet.JNTemplate
 {
     /// <summary>

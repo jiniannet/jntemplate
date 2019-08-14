@@ -3,7 +3,9 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System.Collections.ObjectModel;
+#if !NET20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -12,7 +14,6 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public interface ITag
     {
-
         /// <summary>
         /// 子标签
         /// </summary>
