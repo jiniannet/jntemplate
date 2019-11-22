@@ -56,6 +56,7 @@
     <Compile Include="Caching\DefaultCacheProvider.cs" />
     <Compile Include="Caching\ICache.cs" />
     <Compile Include="Caching\SimpleCache.cs" />
+    <Compile Include="Configuration\IConfig.cs" />
     <Compile Include="Configuration\VariableAttribute.cs" />
     <Compile Include="Configuration\VariableType.cs" />
     <Compile Include="Dynamic\CallIndexValueDelegate.cs" />

@@ -30,15 +30,9 @@ $foreach(model in list)
     <div>list:${model.Id}</div>
     <ul>
     $if(model.Id == 2)
-
-${set(aa = getList(model.id))}
-
-            <d>${aa}<d>
-        $foreach(m in aa)
-            <li>$m.Text<li>
+        $foreach(m in getList(model.id))
+            <li>$m</li>
         $end
-    $else
-        <Not>list:${model.Id}</Not>
     $end
     </ul>
 $end
@@ -55,9 +49,11 @@ $end
                     Id=3
                 }
             };
-            template.Context.TempData["getList"] = (new TemplateMethod());
+            template.Context.TempData["getList"] = new FuncHandler(args=> {
+                return new object[] { $"a{args[0]}", $"b{args[0]}", $"c{args[0]}" };
+            });
             var render = Excute(template).Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-            Assert.Equal("<li><a href=\"/Help/art001.aspx\">下单后可以修改订单吗？</a></li><li><a href=\"/Help/art001.aspx\">无货商品几天可以到货？</a></li><li><a href=\"/Help/art001.aspx\">合约机资费如何计算？</a></li><li><a href=\"/Help/art001.aspx\">可以开发票吗？</a></li>".Replace(" ", ""), render);
+            Assert.Equal("<div>list:1</div><ul></ul><div>list:2</div><ul><li>a2</li><li>b2</li><li>c2</li></ul><div>list:3</div><ul></ul>", render);
         }
 
 

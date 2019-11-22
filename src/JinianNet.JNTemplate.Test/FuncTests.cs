@@ -87,5 +87,22 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("6", render);
         }
 
+
+        /// <summary>
+        /// 测试方法参数
+        /// </summary>
+        [Fact]
+        public void TestFunctionParamer()
+        {
+            var templateContent = "${ArticleList(15,\"<div class=\\\"col-md-6 col-sm-12 col-12\\\"><div class=\\\"notice-k\\\"><div class=\\\"notice-h4\\\"><a href=\\\"/default/show/[ID]\\\">[F_Title]</a></div><p>[F_Summery]</p><div class=\\\"notice-bottom\\\"><div class=\\\"notice-bottom-left\\\">[F_AddTime]</div><div class=\\\"notice-bottom-right\\\">[F_Author]</div></div></div></div>\",4,20,60)}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.TempData["ArticleList"] = (new JinianNet.JNTemplate.FuncHandler(args =>
+            {
+                return args[0];
+            }));
+            var render = Excute(template);
+            Assert.Equal("15", render);
+        }
+
     }
 }

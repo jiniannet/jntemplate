@@ -51,6 +51,11 @@ namespace JinianNet.JNTemplate.Nodes
             return LoadResource(path, context);
         }
 
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="write">TextWriter</param>
         public override void Parse(TemplateContext context, TextWriter write)
         {
             write.Write(ParseResult(context));

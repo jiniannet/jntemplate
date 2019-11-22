@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Configuration
 {
+    /// <summary>
+    /// 配置
+    /// </summary>
     public interface IConfig
     {
         /// <summary>

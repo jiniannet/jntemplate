@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             for (int i = 0; i < Children.Count; i++)
             {
-                Children[0].Parse(context, write);
+                Children[i].Parse(context, write);
             }
         }
 
