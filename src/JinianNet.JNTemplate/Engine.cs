@@ -108,7 +108,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="conf">配置内容</param>
         /// <param name="scope">初始化全局数据</param>
-        public static void Configure(ConfigBase conf, VariableScope scope)
+        public static void Configure(IConfig conf, VariableScope scope)
         {
             if (conf == null)
             {
@@ -132,7 +132,7 @@ namespace JinianNet.JNTemplate
         /// 引擎配置
         /// </summary>
         /// <param name="conf">配置内容</param>
-        public static void Configure(ConfigBase conf)
+        public static void Configure(IConfig conf)
         {
             Configure(conf, null);
         }
@@ -346,7 +346,7 @@ namespace JinianNet.JNTemplate
         {
             return Activator.CreateInstance(type);
         }
-        private static void Initialization(ConfigBase conf)
+        private static void Initialization(IConfig conf)
         {
             var r = Runtime.Instance;
             if (conf.TagParsers == null || conf.TagParsers.Count == 0)

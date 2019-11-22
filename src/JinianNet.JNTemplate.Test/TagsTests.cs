@@ -1,7 +1,7 @@
 ﻿using Xunit;
 using System;
 using System.Collections.Generic;
-using System.IO; 
+using System.IO;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -19,6 +19,48 @@ namespace JinianNet.JNTemplate.Test
             Engine.Configure(conf);
         }
 
+        /// <summary>
+        /// 综合测试
+        /// </summary>
+        [Fact]
+        public void TestAll()
+        {
+            var templateContent = @"
+$foreach(model in list)
+    <div>list:${model.Id}</div>
+    <ul>
+    $if(model.Id == 2)
+
+${set(aa = getList(model.id))}
+
+            <d>${aa}<d>
+        $foreach(m in aa)
+            <li>$m.Text<li>
+        $end
+    $else
+        <Not>list:${model.Id}</Not>
+    $end
+    </ul>
+$end
+";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.TempData["list"] = new[] {
+                new {
+                    Id=1
+                },
+                new {
+                    Id=2
+                },
+                new {
+                    Id=3
+                }
+            };
+            template.Context.TempData["getList"] = (new TemplateMethod());
+            var render = Excute(template).Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
+            Assert.Equal("<li><a href=\"/Help/art001.aspx\">下单后可以修改订单吗？</a></li><li><a href=\"/Help/art001.aspx\">无货商品几天可以到货？</a></li><li><a href=\"/Help/art001.aspx\">合约机资费如何计算？</a></li><li><a href=\"/Help/art001.aspx\">可以开发票吗？</a></li>".Replace(" ", ""), render);
+        }
+
+
 
         /// <summary>
         /// 测试属性
@@ -31,7 +73,7 @@ namespace JinianNet.JNTemplate.Test
                         $end";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.TempData["list"] = (new TemplateMethod().GetHelpList(0, 0, 0, 0));
-            template.Context.TempData["func"]=( new TemplateMethod());
+            template.Context.TempData["func"] = (new TemplateMethod());
             var render = Excute(template).Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
             Assert.Equal("<li><a href=\"/Help/art001.aspx\">下单后可以修改订单吗？</a></li><li><a href=\"/Help/art001.aspx\">无货商品几天可以到货？</a></li><li><a href=\"/Help/art001.aspx\">合约机资费如何计算？</a></li><li><a href=\"/Help/art001.aspx\">可以开发票吗？</a></li>".Replace(" ", ""), render);
         }
@@ -44,7 +86,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$Site.Url";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["Site"]=( new
+            template.Context.TempData["Site"] = (new
             {
                 Url = "jiniannet.com"
             });
@@ -63,13 +105,13 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$set(aGroupName = \"Begin\"+value)$aGroupName";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["value"]=( 30);
+            template.Context.TempData["value"] = (30);
             var render = Excute(template);
 
             Assert.Equal("Begin30", render);
         }
 
-      
+
 
         /// <summary>
         /// 测试复合标签
@@ -79,7 +121,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$date.Year.ToString().Length";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["date"]=( DateTime.Now);
+            template.Context.TempData["date"] = (DateTime.Now);
             var render = Excute(template);
             Assert.Equal("4", render);
         }
@@ -99,7 +141,7 @@ namespace JinianNet.JNTemplate.Test
 
             var templateContent = "你好，@name,欢迎来到{$name}的世界";
             var template = (Template)Engine.CreateTemplate(templateContent);
-            template.Context.TempData["name"]=( "jntemplate");
+            template.Context.TempData["name"] = ("jntemplate");
             var render = Excute(template);
             Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
 
@@ -115,7 +157,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["name"]=( "jntemplate");
+            template.Context.TempData["name"] = ("jntemplate");
             var render = Excute(template);
             Assert.Equal("你好,欢迎使用", render);
         }
@@ -194,7 +236,7 @@ $end
             Assert.Equal("值:Han Meimei", render);
         }
 #endif
-     
+
 
 #if !NETCOREAPP2_0
         ///// <summary>
@@ -233,7 +275,7 @@ $end
         {
             var templateContent = "($a)人";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["a"]=( "1");
+            template.Context.TempData["a"] = ("1");
             var render = Excute(template);
 
             Assert.Equal("(1)人", render);
