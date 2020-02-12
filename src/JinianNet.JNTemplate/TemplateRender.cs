@@ -64,23 +64,7 @@ namespace JinianNet.JNTemplate
             Tag[] collection = null;
             if (!String.IsNullOrEmpty(this._content))
             {
-                Object value;
-                if (Engine.Cache != null && !String.IsNullOrEmpty(this._key))
-                {
-                    if ((value = Engine.Cache.Get(this._key)) != null)
-                    {
-                        collection = (Tag[])value;
-                    }
-                    else
-                    {
-                        collection = ParseTag();
-                        Engine.Cache.Set(this._key, collection);
-                    }
-                }
-                else
-                {
-                    collection = ParseTag();
-                }
+                collection = ParseTag();
             }
             else
             {
