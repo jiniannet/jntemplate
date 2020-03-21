@@ -73,7 +73,8 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext()
         {
-            return new TemplateContext(Runtime.Data
+            return new TemplateContext(
+                new VariableScope(Runtime.Data)
                 , Runtime.Actuator
                 , Runtime.Loader
                 , Runtime.Parsers

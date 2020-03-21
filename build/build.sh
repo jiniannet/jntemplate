@@ -71,14 +71,17 @@ cmdbuilall(){
     cmdncev
 
     cd ../src/JinianNet.JNTemplate
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release
     #dotnet restore JinianNet.JNTemplate.csproj
     dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netstandard2.0 --framework netstandard2.0
     echo "jntemplate for netstandard 2.0 build success!"
-    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netcoreapp2.1 
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netstandard2.1 --framework netstandard2.1
+    echo "jntemplate for netstandard 2.1 build success!"
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netcoreapp2.1 --framework netcoreapp2.1
     echo "jntemplate for netcoreapp 2.1 build success!"
     dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net46
     echo "jntemplate for net framework 4.6 build success!"
-    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net47
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net47 --framework net47
     echo "jntemplate for net framework 4.7 build success!"
 
     cd ..
