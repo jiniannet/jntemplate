@@ -9,9 +9,9 @@ using System.Collections.Generic;
 namespace JinianNet.JNTemplate.Caching
 {
     /// <summary>
-    /// 基于静态字段的简单缓存
+    /// 内存缓存
     /// </summary>
-    public class SimpleCache : ICache
+    public class MemoryCache : ICache
     {
         /*
          * 直接使用字典存储数据
@@ -19,13 +19,13 @@ namespace JinianNet.JNTemplate.Caching
          * 如需缓存大量数据请自行实现ICache接口
          */
         private Dictionary<string, object> dict = new Dictionary<string, object>();
-        private static SimpleCache defaultCache;
+        private static MemoryCache defaultCache;
         private static object initLock = new object();
 
         /// <summary>
         /// 默认缓存
         /// </summary>
-        public static SimpleCache Default
+        public static MemoryCache Instance
         {
             get
             {
@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate.Caching
                     {
                         if (defaultCache == null)
                         {
-                            defaultCache = new SimpleCache();
+                            defaultCache = new MemoryCache();
                         }
                     }
                 }
@@ -97,6 +97,22 @@ namespace JinianNet.JNTemplate.Caching
         public void Set(string key, object value)
         {
             dict[key] = value;
+        }
+
+        /// <summary>
+        /// 获取缓存并自动转换成指定类型
+        /// </summary>
+        /// <typeparam name="T">返回类型</typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public T Get<T>(string key) where T : class
+        {
+            var r = Get(key);
+            if (r != null)
+            {
+                return r as T;
+            }
+            return default(T);
         }
     }
 }

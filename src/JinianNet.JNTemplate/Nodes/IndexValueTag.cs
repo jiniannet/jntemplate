@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             object obj = this.Container.ParseResult(context);
             object index = this.Index.ParseResult(context);
-            return Engine.Runtime.CallIndexValue(obj, index);
+            return context.Actuator.CallIndexValue(obj, index);
         }
         /// <summary>
         /// 解析标签
@@ -40,7 +40,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             object obj = this.Container.ParseResult(baseValue,context);
             object index = this.Index.ParseResult(context);
-            return Engine.Runtime.CallIndexValue(obj, index);
+            return context.Actuator.CallIndexValue(obj, index);
         }
     }
 }

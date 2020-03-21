@@ -7,12 +7,11 @@ echo                         .
 echo                         .
 :cmdshow
 echo           ©°©¤©¤©¤©¤©¤©¤©¤©¤ please enter ©¤©¤©¤©¤©¤©¤©¤©¤©´
-echo           ©¦  1 build by net40 or net20   ©¦
-echo           ©¦  2 build by netcoreapp       ©¦
-echo           ©¦  3 build by netstandard      ©¦
-echo           ©¦  4 clear temporary files     ©¦
-echo           ©¦  5 core/standard setting     ©¦
-echo           ©¦  6 net framework setting     ©¦
+echo           ©¦  1 build                     ©¦
+echo           ©¦  2 build by net40 or net20   ©¦
+echo           ©¦  3 clear temporary files     ©¦
+echo           ©¦  4 core/standard setting     ©¦
+echo           ©¦  5 net framework setting     ©¦
 echo           ©¦  0 exit                      ©¦
 echo           ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¼
 echo                         .
@@ -22,8 +21,8 @@ echo                         .
 set cmdtype=0
 set /p cmdtext=input your command:
 
-if /i "%cmdtext%"=="1" goto cmdbuildnf
-if /i "%cmdtext%"=="2" goto cmdbuildnc
+if /i "%cmdtext%"=="1" goto cmdbuildall
+if /i "%cmdtext%"=="2" goto cmdbuildnf
 if /i "%cmdtext%"=="3" goto cmdbuildns
 if /i "%cmdtext%"=="4" goto cmdclearfiles
 if /i "%cmdtext%"=="5" goto cmdncev
@@ -39,6 +38,10 @@ exit
 :cmdbuildnf
 set cmdtype=1
 goto cmdnfev
+
+:cmdbuildall
+set cmdtype=1
+goto cmdncev
 
 :cmdbuildnfnext
 cd ../src/JinianNet.JNTemplate
@@ -65,35 +68,20 @@ copy ..\lib\net20\JinianNet.JNTemplate.dll ..\src\JinianNet.JNTemplate.Test\dll\
 echo copy files success.
 goto cmdinput
 
-:cmdbuildnc
-set cmdtype=1
-goto cmdncev
-
-:cmdbuildncnext
+:cmdbuild 
 cd ../src/JinianNet.JNTemplate
-
-dotnet build JinianNet.JNTemplateCore.csproj --configuration Release --output ..\..\lib\netcoreapp2.0
-
-cd ..
-cd ..
-cd build
-echo jntemplate for netcoreapp 2.0 build success!
-goto cmdinput
-
-
-:cmdbuildns
-set cmdtype=2
-goto cmdncev
-
-:cmdbuildnsnext
-cd ../src/JinianNet.JNTemplate
-
-dotnet build JinianNet.JNTemplateStandard.csproj --configuration Release --output ..\..\lib\netstandard2.0 --framework netstandard2.0
-
-cd ..
-cd ..
-cd build
+dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netstandard2.0 --framework netstandard2.0
 echo jntemplate for netStandard 2.0 build success!
+dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netcoreapp2.1 
+echo jntemplate for netcoreapp 2.1 build success!
+dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net46
+echo jntemplate for net framework 4.6 build success!
+dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net47
+echo jntemplate for net framework 4.7 build success!
+
+cd ..
+cd ..
+cd build
 goto cmdinput
 
 :cmdclearfiles
@@ -115,11 +103,11 @@ goto cmdinput
 
 :cmdncev
 echo current path:%cd%
-if exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.tmp if exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs del ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.tmp
-if exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.tmp if exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs del ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.tmp
+if exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.old if exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs del ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.old
+if exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.old if exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs del ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.old
 
-if not exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.tmp ren ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
-if not exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.tmp ren ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.tmp
+if not exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.old ren ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.old
+if not exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.old ren ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs AssemblyInfo.cs.build.old
 
 rd ..\src\JinianNet.JNTemplate\obj /s /q
 rd ..\src\JinianNet.JNTemplate\bin /s /q
@@ -128,14 +116,13 @@ rd ..\src\JinianNet.JNTemplate.Test\obj /s /q
 
 echo config net core or net Standard env success!
 
-if %cmdtype% equ 1 goto cmdbuildncnext
-if %cmdtype% equ 2 goto cmdbuildnsnext
+if %cmdtype% equ 1 goto cmdbuild
 goto cmdinput
 
 :cmdnfev 
 echo current path:%cd%
-if exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.tmp if not exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs ren ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.tmp AssemblyInfo.cs
-if exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.tmp if not exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs ren ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+if exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.old if not exist ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs ren ..\src\JinianNet.JNTemplate\Properties\AssemblyInfo.cs.build.old AssemblyInfo.cs
+if exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.old if not exist ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs ren ..\src\JinianNet.JNTemplate.Test\Properties\AssemblyInfo.cs.build.old AssemblyInfo.cs
 rd ..\src\JinianNet.JNTemplate\obj /s /q
 rd ..\src\JinianNet.JNTemplate\bin /s /q
 rd ..\src\JinianNet.JNTemplate.Test\bin /s /q

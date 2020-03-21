@@ -79,14 +79,14 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     return null;
                 }
-                object result = Engine.Runtime.CallMethod(baseValue, name.ToString(), args);
+                object result = context.Actuator.CallMethod(baseValue, name.ToString(), args);
 
                 if (result != null)
                 {
                     return result;
                 }
 
-                result = Engine.Runtime.CallPropertyOrField(baseValue, name.ToString());
+                result = context.Actuator.CallPropertyOrField(baseValue, name.ToString());
 
                 if (result != null && result is FuncHandler)
                 {
@@ -110,7 +110,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 Task task = r as Task;
                 task.GetAwaiter().GetResult();
-                return Engine.Runtime.CallPropertyOrField(task, "Result");
+                return context.Actuator.CallPropertyOrField(task, "Result");
             }
 #endif
             return r;
@@ -129,7 +129,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 Task task = r as Task;
                 await task;
-                return Engine.Runtime.CallPropertyOrField(task, "Result");
+                return context.Actuator.CallPropertyOrField(task, "Result");
             }
             return r;
         }

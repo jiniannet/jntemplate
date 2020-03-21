@@ -11,8 +11,10 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 模板实例类
     /// </summary>
-    public class Template : TemplateRender,ITemplate
+    public class Template : TemplateRender, ITemplate
     {
+
+#if NET20 || NET40
         /// <summary>
         /// Template
         /// </summary>
@@ -21,13 +23,13 @@ namespace JinianNet.JNTemplate
         {
 
         }
-
+#endif
         /// <summary>
         /// Template
         /// </summary>
         /// <param name="text">模板内容</param>
         public Template(string text)
-            : this(new TemplateContext(), text)
+            : this(Engine.CreateContext(), text)
         {
 
         }

@@ -40,7 +40,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 return null;
             }
-            return Engine.Runtime.CallPropertyOrField(baseValue, this._name);
+            return context.Actuator.CallPropertyOrField(baseValue, this._name);
         }
 
     }

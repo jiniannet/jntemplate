@@ -64,29 +64,28 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         public async Task RenderAsync(System.IO.TextWriter writer)
         {
-            ITag[] ts;
-            if (!string.IsNullOrEmpty(this._content))
-            {
-                
-                if (string.IsNullOrEmpty(this._key))
-                {
-                    ts = await ParseTagsAsync();
-                }
-                else if ( (ts = CacheHelpers.Get<ITag[]>(this._key)) == null)
-                {
-                    ts = await ParseTagsAsync();
-                    CacheHelpers.Set(this._key, ts);
-                }
-            }
-            else
-            {
-                ts = new ITag[0];
-            }
+            ITag[] ts = await ParseTagsAsync();
+            //if (!string.IsNullOrEmpty(this._content))
+            //{
 
+            //    if (string.IsNullOrEmpty(this._key))
+            //    {
+            //        ts = await ParseTagsAsync();
+            //    }
+            //    else if ((ts = CacheHelpers.Get<ITag[]>(this._key)) == null)
+            //    {
+            //        ts = await ParseTagsAsync();
+            //        CacheHelpers.Set(this._key, ts);
+            //    }
+            //}
+            //else
+            //{
+            //    ts = new ITag[0];
+            //}
             await RenderAsync(writer, ts);
         }
 
-        
+
         /// <summary>
         /// 呈现内容
         /// </summary>
@@ -163,24 +162,25 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public ITag[] ReadTags()
         {
-            if (!string.IsNullOrEmpty(this._content))
-            {
-                ITag[] ts;
-                if (string.IsNullOrEmpty(this._key))
-                {
-                    return ParseTags();
-                }
-                if ((ts = CacheHelpers.Get<ITag[]>(this._key)) == null)
-                {
-                    ts = ParseTags();
-                    CacheHelpers.Set(this._key, ts);
-                }
-                return ts;
-            }
-            else
-            {
-                return new ITag[0];
-            }
+            //if (!string.IsNullOrEmpty(this._content))
+            //{
+            //    ITag[] ts;
+            //    if (string.IsNullOrEmpty(this._key))
+            //    {
+            //        return ParseTags();
+            //    }
+            //    if ((ts = cache.Get<ITag[]>(this._key)) == null)
+            //    {
+            //        ts = ParseTags();
+            //        cache.Set(this._key, ts);
+            //    }
+            //    return ts;
+            //}
+            //else
+            //{
+            //    return new ITag[0];
+            //}
+            return ParseTags();
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace JinianNet.JNTemplate
             var lexer = new TemplateLexer(this._content);
             var ts = lexer.Execute();
 
-            var parser = new TemplateParser(ts);
+            var parser = new TemplateParser(this.Context.TagParser, ts);
             return parser.Execute();
         }
 
@@ -206,7 +206,7 @@ namespace JinianNet.JNTemplate
             var lexer = new TemplateLexer(this._content);
             var ts = await lexer.ExecuteAsync();
 
-            var parser = new TemplateParser(ts);
+            var parser = new TemplateParser(this.Context.TagParser, ts);
             return await parser.ExecuteAsync();
         }
 #endif

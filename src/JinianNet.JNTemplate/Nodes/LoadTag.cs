@@ -2,9 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.Resources;
-using System;
-using System.Collections.Generic;
+using JinianNet.JNTemplate.Resources; 
 using System.IO;
 
 namespace JinianNet.JNTemplate.Nodes
@@ -55,11 +53,17 @@ namespace JinianNet.JNTemplate.Nodes
             if (path != null)
             {
                 string[] paths = null;
-                if (!string.IsNullOrEmpty(context.CurrentPath))
+                if (string.IsNullOrEmpty(context.CurrentPath))
                 {
-                    paths = new[] { context.CurrentPath };
+                    paths = context.ResourceDirectories.ToArray();
                 }
-                ResourceInfo info = Engine.Runtime.Load(path.ToString(), context.Charset, paths);
+                else
+                {
+                    paths = new string[context.ResourceDirectories.Count + 1];
+                    paths[0] = context.CurrentPath;
+                    context.ResourceDirectories.CopyTo(paths, 1);
+                }
+                ResourceInfo info = context.Loader.Load(path.ToString(), context.Charset, paths);
                 if (info != null)
                 {
                     this.TemplateContent = info.Content;

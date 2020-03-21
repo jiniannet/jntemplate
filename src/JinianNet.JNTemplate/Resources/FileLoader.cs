@@ -65,22 +65,9 @@ namespace JinianNet.JNTemplate.Resources
             {
                 full = FindPath(directory, filename);
             }
-            if (string.IsNullOrEmpty(full))
-            {
-                full = FindPath(filename);
-            }
             return full;
         }
 
-        /// <summary>
-        /// 查找指定文件
-        /// </summary>
-        /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param> 
-        /// <returns>路径</returns>
-        private string FindPath(string filename)
-        {
-            return FindPath(Engine.Runtime.ResourceDirectories, filename);
-        }
 
         /// <summary>
         /// 查找指定文件
@@ -255,8 +242,10 @@ namespace JinianNet.JNTemplate.Resources
             {
                 encoding = Encoding.UTF8;
             }
-#if NETSTANDARD
-            return System.IO.File.ReadAllText(fullPath, encoding);
+#if NETSTANDARD && NETSTANDARD2_0
+            return await Task.Run(() => {
+                return System.IO.File.ReadAllText(fullPath, encoding);
+            });
 #else
             return await System.IO.File.ReadAllTextAsync(fullPath, encoding);
 #endif

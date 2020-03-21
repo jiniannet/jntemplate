@@ -234,7 +234,7 @@ $end
 #endif
 
 
-#if !NETCOREAPP2_0
+#if !NETCOREAPP
         ///// <summary>
         ///// 测试方法的params参数  .NET core中不支持,从.V1.3.2以上版本不再支持
         ///// </summary>

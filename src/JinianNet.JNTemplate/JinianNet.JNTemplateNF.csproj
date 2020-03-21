@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3744DD16-5A83-4C50-B711-74EA11DA6B27}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JinianNet.JNTemplate</RootNamespace>
+    <AssemblyName>JinianNet.JNTemplate</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40,NOTDNX</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\JinianNet.JNTemplate.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Caching\ICache.cs" />
+    <Compile Include="Caching\MemoryCache.cs" />
+    <Compile Include="Configuration\IConfig.cs" />
+    <Compile Include="Configuration\VariableAttribute.cs" />
+    <Compile Include="Configuration\VariableType.cs" />
+    <Compile Include="Dynamic\CallIndexValueDelegate.cs" />
+    <Compile Include="Dynamic\ExpressionActuator.cs" />
+    <Compile Include="Dynamic\DynamicHelpers.cs" />
+    <Compile Include="Dynamic\IActuator.cs" />
+    <Compile Include="Dynamic\ILActuator.cs" />
+    <Compile Include="Dynamic\OperatorConvert.cs" />
+    <Compile Include="Dynamic\ReflectionActuator.cs" />
+    <Compile Include="Executer.cs" />
+    <Compile Include="ExecuterGeneric.cs" />
+    <Compile Include="IExecuter.cs" />
+    <Compile Include="IExecuterGeneric.cs" />
+    <Compile Include="Nodes\BasisTag.cs" />
+    <Compile Include="Nodes\CommentTag.cs" />
+    <Compile Include="Nodes\ComplexTag.cs" />
+    <Compile Include="Nodes\ITag.cs" />
+    <Compile Include="Nodes\JsonTag.cs" />
+    <Compile Include="Nodes\SpecialTag.cs" />
+    <Compile Include="Parsers\CommentParser.cs" />
+    <Compile Include="Parsers\JsonParser.cs" />
+    <Compile Include="Parsers\TagParser.cs" />
+    <Compile Include="Resources\FileLoader.cs" />
+    <Compile Include="Resources\IResourceLoader.cs" />
+    <Compile Include="Runtime.cs" />
+    <Compile Include="Utility.cs" />
+    <Compile Include="Configuration\ConfigBase.cs" />
+    <Compile Include="Configuration\EngineConfig.cs" />
+    <Compile Include="Configuration\PropertyAttribute.cs" />
+    <Compile Include="Dynamic\DynamicMethodInfo.cs" />
+    <Compile Include="Dynamic\ExcuteMethodDelegate.cs" />
+    <Compile Include="Dynamic\CallPropertyOrFieldDelegate.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="Nodes\BodyTag.cs" />
+    <Compile Include="Nodes\IndexValueTag.cs" />
+    <Compile Include="Nodes\LayoutTag.cs" />
+    <Compile Include="Parsers\BodyParser.cs" />
+    <Compile Include="Parsers\IndexValueParser.cs" />
+    <Compile Include="Parsers\LayoutParser.cs" />
+    <Compile Include="Exception\CompileException.cs" />
+    <Compile Include="Exception\TemplateException.cs" />
+    <Compile Include="Exception\ParseException.cs" />
+    <Compile Include="Field.cs" />
+    <Compile Include="FuncHandler.cs" />
+    <Compile Include="ITemplate.cs" />
+    <Compile Include="Dynamic\ExpressionEvaluator.cs" />
+    <Compile Include="LexerMode.cs" />
+    <Compile Include="Operator.cs" />
+    <Compile Include="Parsers\BooleanParser.cs" />
+    <Compile Include="CharScanner.cs" />
+    <Compile Include="Parsers\ComplexParser.cs" />
+    <Compile Include="Parsers\EleseParser.cs" />
+    <Compile Include="Parsers\ElseifParser.cs" />
+    <Compile Include="Parsers\EndParser.cs" />
+    <Compile Include="Parsers\ForeachParser.cs" />
+    <Compile Include="Parsers\ForParser.cs" />
+    <Compile Include="Parsers\FunctionParser.cs" />
+    <Compile Include="Parsers\IfParser.cs" />
+    <Compile Include="Parsers\IncludeParser.cs" />
+    <Compile Include="Parsers\ITagParser.cs" />
+    <Compile Include="Parsers\LoadParser.cs" />
+    <Compile Include="Nodes\SimpleTag.cs" />
+    <Compile Include="Nodes\TypeTag.cs" />
+    <Compile Include="Nodes\BlockTag.cs" />
+    <Compile Include="Nodes\BooleanTag.cs" />
+    <Compile Include="Nodes\ElseifTag.cs" />
+    <Compile Include="Nodes\ElseTag.cs" />
+    <Compile Include="Nodes\EndTag.cs" />
+    <Compile Include="Nodes\ExpressionTag.cs" />
+    <Compile Include="Nodes\ForeachTag.cs" />
+    <Compile Include="Nodes\ForTag.cs" />
+    <Compile Include="Nodes\FunctaionTag.cs" />
+    <Compile Include="Nodes\IfTag.cs" />
+    <Compile Include="Nodes\IncludeTag.cs" />
+    <Compile Include="Nodes\LoadTag.cs" />
+    <Compile Include="Nodes\NullTag.cs" />
+    <Compile Include="Nodes\NumberTag.cs" />
+    <Compile Include="Nodes\ReferenceTag.cs" />
+    <Compile Include="Nodes\SetTag.cs" />
+    <Compile Include="Nodes\TagBase.cs" />
+    <Compile Include="Nodes\StringTag.cs" />
+    <Compile Include="Nodes\Tag.cs" />
+    <Compile Include="Nodes\TextTag.cs" />
+    <Compile Include="Nodes\Token.cs" />
+    <Compile Include="Nodes\TokenCollection.cs" />
+    <Compile Include="Nodes\VariableTag.cs" />
+    <Compile Include="Parsers\NumberParser.cs" />
+    <Compile Include="Parsers\SetParser.cs" />
+    <Compile Include="Parsers\StringParser.cs" />
+    <Compile Include="Resources\ResourceInfo.cs" />
+    <Compile Include="TemplateLexer.cs" />
+    <Compile Include="TemplateParser.cs" />
+    <Compile Include="Parsers\VariableParser.cs" />
+    <Compile Include="VariableScope.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Template.cs" />
+    <Compile Include="TemplateRender.cs" />
+    <Compile Include="TemplateContext.cs" />
+    <Compile Include="TokenKind.cs" />
+    <Compile Include="FlagMode.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

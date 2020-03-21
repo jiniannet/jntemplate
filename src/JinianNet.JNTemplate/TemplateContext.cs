@@ -5,7 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JinianNet.JNTemplate.Caching;
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Resources;
 
 namespace JinianNet.JNTemplate
 {
@@ -17,41 +20,50 @@ namespace JinianNet.JNTemplate
         : ICloneable
 #endif
     {
-        private VariableScope _variableScope;
-        private string _currentPath;
-        private Encoding _charset;
-        private bool _throwErrors;
-        private bool _stripWhiteSpace;
-        private List<System.Exception> _errors;
+        private VariableScope variableScope;
+        private string currentPath;
+        private Encoding charset;
+        private bool throwErrors;
+        private bool stripWhiteSpace;
+        private ICache cache;
+        private IActuator actuator;
+        private List<string> resourceDirectories;
+        private IResourceLoader loader;
+        private TagParser parsers;
+        private List<System.Exception> errors;
 
         /// <summary>
         /// 模板上下文
         /// </summary>
-        public TemplateContext()
-            : this(null)
+        /// <param name="data">模板数据</param>
+        /// <param name="actuator">动态访问器</param>
+        /// <param name="loader">资源加载器</param>
+        /// <param name="parsers">标签解析器</param> 
+        /// <param name="cache">缓存</param>
+        public TemplateContext(VariableScope data
+            , IActuator actuator
+            , IResourceLoader loader
+            , TagParser parsers
+            , ICache cache)
         {
-
-        }
-
-        /// <summary>
-        /// 模板上下文
-        /// </summary>
-        /// <param name="data">数据</param>
-        public TemplateContext(VariableScope data)
-        {
+            this.actuator = actuator;
+            this.loader = loader;
+            this.parsers = parsers;
+            this.cache = cache;
+            this.resourceDirectories = new List<string>();
             string charset;
-            this._variableScope = data ?? new VariableScope();
-            this._errors = new List<System.Exception>();
-            this._currentPath = null;
-            this._throwErrors = Utility.StringToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
-            this._stripWhiteSpace = Utility.StringToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
+            this.variableScope = data ?? new VariableScope();
+            this.errors = new List<System.Exception>();
+            this.currentPath = null;
+            this.throwErrors = Utility.StringToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
+            this.stripWhiteSpace = Utility.StringToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
             if (string.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
             {
-                this._charset = Encoding.UTF8;
+                this.charset = Encoding.UTF8;
             }
             else
             {
-                this._charset = Encoding.GetEncoding(charset);
+                this.charset = Encoding.GetEncoding(charset);
             }
 
         }
@@ -61,8 +73,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public bool StripWhiteSpace
         {
-            get { return _stripWhiteSpace; }
-            set { this._stripWhiteSpace = value; }
+            get { return stripWhiteSpace; }
+            set { this.stripWhiteSpace = value; }
         }
 
 
@@ -71,8 +83,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public VariableScope TempData
         {
-            get { return this._variableScope; }
-            set { this._variableScope = value; }
+            get { return this.variableScope; }
+            set { this.variableScope = value; }
         }
 
         /// <summary>
@@ -80,8 +92,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public string CurrentPath
         {
-            get { return this._currentPath; }
-            set { this._currentPath = value; }
+            get { return this.currentPath; }
+            set { this.currentPath = value; }
         }
 
         /// <summary>
@@ -89,8 +101,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Encoding Charset
         {
-            get { return this._charset; }
-            set { this._charset = value; }
+            get { return this.charset; }
+            set { this.charset = value; }
         }
 
 
@@ -99,8 +111,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public bool ThrowExceptions
         {
-            get { return this._throwErrors; }
-            set { this._throwErrors = value; }
+            get { return this.throwErrors; }
+            set { this.throwErrors = value; }
         }
 
         /// <summary>
@@ -108,7 +120,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public virtual System.Exception[] AllErrors
         {
-            get { return this._errors.ToArray(); }
+            get { return this.errors.ToArray(); }
         }
 
         /// <summary>
@@ -137,7 +149,7 @@ namespace JinianNet.JNTemplate
             {
                 throw e;
             }
-            this._errors.Add(e);
+            this.errors.Add(e);
         }
 
         /// <summary>
@@ -145,7 +157,46 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void ClearError()
         {
-            this._errors.Clear();
+            this.errors.Clear();
+        }
+
+        /// <summary>
+        /// 模板资源搜索目录
+        /// </summary>
+        /// <value></value>
+        public List<string> ResourceDirectories
+        {
+            get { return this.resourceDirectories; }
+        }
+
+        /// <summary>
+        /// 标签分析器
+        /// </summary>
+        public TagParser TagParser
+        {
+            get { return parsers; }
+        }
+
+        /// <summary>
+        /// 加载器
+        /// </summary>
+        public IResourceLoader Loader
+        {
+            get { return loader; }
+        }
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        public Caching.ICache Cache
+        {
+            get { return cache; }
+        }
+        /// <summary>
+        /// 动态调用代理
+        /// </summary>
+        public IActuator Actuator
+        {
+            get { return actuator; }
         }
 
         /// <summary>
@@ -159,8 +210,12 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
-            TemplateContext ctx = new TemplateContext();
-            ctx.TempData = new VariableScope(context.TempData);
+            TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData)
+                , context.Actuator
+                , context.Loader
+                , context.TagParser
+                , context.Cache
+                );
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
@@ -168,7 +223,7 @@ namespace JinianNet.JNTemplate
             return ctx;
         }
 
-#region ICloneable 成员
+        #region ICloneable 成员
         /// <summary>
         /// 浅克隆当前实例
         /// </summary>
@@ -178,6 +233,6 @@ namespace JinianNet.JNTemplate
             return this.MemberwiseClone();
         }
 
-#endregion
+        #endregion
     }
 }

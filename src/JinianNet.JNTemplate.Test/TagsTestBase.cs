@@ -15,7 +15,8 @@ namespace JinianNet.JNTemplate.Test
             using (StringWriter writer = new StringWriter())
             {
 #if NETCOREAPP || NETSTANDARD
-                t.RenderAsync(writer).GetAwaiter().GetResult();
+                t.Render(writer);
+                //t.RenderAsync(writer).GetAwaiter().GetResult();
 #else
                 t.Render(writer);
 #endif

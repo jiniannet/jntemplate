@@ -29,11 +29,18 @@ namespace JinianNet.JNTemplate.Nodes
             if (path != null)
             {
                 string[] paths = null;
-                if (!string.IsNullOrEmpty(context.CurrentPath))
+                if (string.IsNullOrEmpty(context.CurrentPath))
                 {
-                    paths = new[] { context.CurrentPath };
+                    paths = context.ResourceDirectories.ToArray();
                 }
-                ResourceInfo info = Engine.Runtime.Load(path.ToString(), context.Charset, paths);
+                else
+                {
+                    paths = new string[context.ResourceDirectories.Count+1];
+                    paths[0] = context.CurrentPath;
+                    context.ResourceDirectories.CopyTo(paths, 1);
+                }
+
+                ResourceInfo info = context.Loader.Load(path.ToString(), context.Charset, paths);
                 if (info != null)
                 {
                     return info.Content;

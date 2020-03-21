@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Resources;
 using System;
@@ -22,9 +23,9 @@ namespace JinianNet.JNTemplate.Configuration
         private bool _stripWhiteSpace = false;
         private bool _ignoreCase = true;
         private string _charset = "utf-8";
-        private Caching.ICacheProvider _cachingProvider;
-        private ILoaderProvider _loadProvider;
-        private IActuatorProvider _actuatorProvider;
+        private Caching.ICache _cache;
+        private IResourceLoader _loader;
+        private IActuator _actuator;
         private List<Parsers.ITagParser> _tagParsers;
         private List<string> _resourceDirectories;
 
@@ -112,28 +113,28 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 缓存提供器
         /// </summary>
-        public Caching.ICacheProvider CacheProvider
+        public Caching.ICache Cache
         {
-            get { return this._cachingProvider; }
-            set { this._cachingProvider = value; }
+            get { return this._cache; }
+            set { this._cache = value; }
         }
 
         /// <summary>
         /// 执行提供器
         /// </summary> 
-        public IActuatorProvider ActuatorProvider
+        public IActuator Actuator
         {
-            get { return this._actuatorProvider; }
-            set { this._actuatorProvider = value; }
+            get { return this._actuator; }
+            set { this._actuator = value; }
         }
 
         /// <summary>
         /// 加载提供器
         /// </summary>
-        public ILoaderProvider LoadProvider
+        public IResourceLoader Loader
         {
-            get { return this._loadProvider; }
-            set { this._loadProvider = value; }
+            get { return this._loader; }
+            set { this._loader = value; }
         }
 
         /// <summary>

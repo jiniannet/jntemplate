@@ -1,13 +1,14 @@
-/********************************************************************************
- Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
- Licensed under the MIT license. See licence.txt file in the project root for full license information.
- ********************************************************************************/
-using System;
+﻿/********************************************************************************
+ Copyright(c) jiniannet(http://www.jiniannet.com). All rights reserved.
+
+Licensed under the MIT license.See licence.txt file in the project root for full license information.
+
+********************************************************************************/
 
 namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
-    /// 动态对象执行类
+    /// 执行Provider
     /// </summary>
     public interface IActuator
     {

@@ -1,9 +1,7 @@
 ﻿using JinianNet.JNTemplate.Caching;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.Collections.Generic; 
+using System.Reflection; 
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -38,13 +36,13 @@ namespace JinianNet.JNTemplate.Dynamic
         public static MethodInfo[] GetCacheMethods(Type type, string methodName)
         {
             var cacheKey = string.Concat(type.FullName, ".", methodName);
-            var cacheValue = CacheHelpers.Get<MethodInfo[]>(cacheKey);
+            var cacheValue = MemoryCache.Instance.Get<MethodInfo[]>(cacheKey);
             if (cacheValue != null)
             {
                 return cacheValue;
             }
             var result = GetMethods(type, methodName);
-            CacheHelpers.Set(cacheKey, result);
+            MemoryCache.Instance.Set(cacheKey, result);
             return result;
         }
 
@@ -257,6 +255,27 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
             }
             return args;
+        }
+
+        /// <summary>
+        /// 创建实例 
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static T CreateInstance<T>(Type type)
+        {
+            return (T)Activator.CreateInstance(type ?? typeof(T));
+        }
+
+        /// <summary>
+        /// 创建实例 
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns>实例对象</returns>
+        private static object CreateInstance(Type type)
+        {
+            return Activator.CreateInstance(type);
         }
     }
 }

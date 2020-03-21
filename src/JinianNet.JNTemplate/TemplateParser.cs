@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Parsers;
 
 namespace JinianNet.JNTemplate
 {
@@ -14,40 +15,30 @@ namespace JinianNet.JNTemplate
     public class TemplateParser : Executer<ITag[]>, IEnumerator<ITag>
     {
         #region private field
-        private ITag _tag;//当前标签
-        private Token[] _tokens;//tokens列表
-        private int _index;//当前索引
-        private List<ITag> Tags;
+        private ITag tag;//当前标签
+        private Token[] tokens;//tokens列表
+        private int index;//当前索引
+        private List<ITag> tags;
+        private TagParser tagParse;
         #endregion
 
         #region ctox
         /// <summary>
-        /// 模板分模器
+        /// 模板分析器
         /// </summary>
+        /// <param name="parser">标签分析器</param>
         /// <param name="ts">TOKEN集合</param>
-        public TemplateParser(Token[] ts)
+        public TemplateParser(TagParser parser, Token[] ts)
+            : base()
         {
             if (ts == null)
             {
                 throw new ArgumentNullException("\"ts\" cannot be null.");
             }
-            this._tokens = ts;
+            this.tagParse = parser;
+            this.tokens = ts;
             Reset();
         }
-
-        ///// <summary>
-        ///// 模板分模器
-        ///// </summary>
-        ///// <param name="lexer">lexer</param>
-        //public TemplateParser(TemplateLexer lexer)
-        //{
-        //    if (lexer == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(lexer));
-        //    }
-        //    this._tokens = await lexer.ExecuteAsync();
-        //    Reset();
-        //}
         #endregion
 
         #region IEnumerator<Tag> 成员
@@ -56,7 +47,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public ITag Current
         {
-            get { return this._tag; }
+            get { return this.tag; }
         }
 
         #endregion
@@ -69,12 +60,12 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public bool MoveNext()
         {
-            if (this._index < this._tokens.Length)
+            if (this.index < this.tokens.Length)
             {
                 ITag t = Read();
                 if (t != null)
                 {
-                    this._tag = t;
+                    this.tag = t;
                     return true;
                 }
             }
@@ -85,8 +76,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void Reset()
         {
-            this._index = 0;
-            this._tag = null;
+            this.index = 0;
+            this.tag = null;
         }
 
         private ITag Read()
@@ -100,7 +91,7 @@ namespace JinianNet.JNTemplate
 
                 do
                 {
-                    this._index++;
+                    this.index++;
                     t2.Next = GetToken();
                     t2 = t2.Next;
 
@@ -111,7 +102,7 @@ namespace JinianNet.JNTemplate
 
                 tc.Remove(tc.Last);
 
-                this._index++;
+                this.index++;
 
                 //if (tc.Count == 1 && tc[0] != null && tc[0].TokenKind == TokenKind.Comment)
                 //{
@@ -149,7 +140,7 @@ namespace JinianNet.JNTemplate
                 t = new TextTag();
                 t.FirstToken = GetToken();
                 t.LastToken = null;
-                this._index++;
+                this.index++;
             }
             return t;
         }
@@ -164,7 +155,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
             }
-            return Engine.Resolve(this, tc);
+            return this.tagParse.Parsing(this, tc);
         }
 
 
@@ -190,7 +181,7 @@ namespace JinianNet.JNTemplate
 
         private Token GetToken()
         {
-            return this._tokens[this._index];
+            return this.tokens[this.index];
         }
 
         //private Token GetToken(int i)
@@ -235,16 +226,16 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public override ITag[] Execute()
         {
-            if (Tags == null)
+            if (tags == null)
             {
-                Tags = new List<ITag>();
+                tags = new List<ITag>();
 
                 while (MoveNext())
                 {
-                    Tags.Add(Current);
+                    tags.Add(Current);
                 }
             }
-            return Tags.ToArray();
+            return tags.ToArray();
         }
     }
 }

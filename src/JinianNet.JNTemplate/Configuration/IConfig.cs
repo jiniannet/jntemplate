@@ -54,16 +54,16 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 缓存提供器
         /// </summary>
-        Caching.ICacheProvider CacheProvider { get; set; }
+        Caching.ICache Cache { get; set; }
         /// <summary>
         /// 执行提供器
         /// </summary> 
-        IActuatorProvider ActuatorProvider { get; set; }
+        IActuator Actuator { get; set; }
 
         /// <summary>
         /// 加载提供器
         /// </summary>
-        ILoaderProvider LoadProvider { get; set; }
+        IResourceLoader Loader { get; set; }
 
         /// <summary>
         /// 标签分析器

@@ -2,6 +2,8 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Caching;
+using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
@@ -21,98 +23,133 @@ namespace JinianNet.JNTemplate
     public class Runtime
     {
         #region 字段
-        private Dictionary<string, string> _environmentVariable;
-        private VariableScope _data;
-        private List<ITagParser> _parsers;
-        private IResourceLoader _loder;
-        private static StringComparison _stringComparison;
-        private Caching.ICache _cache;
-        private static BindingFlags _bindingFlags;
-        private static StringComparer _stringComparer;
-        private IActuator _callProxy;
-        private List<string> _resourceDirectories;
-        private static Runtime _instance;
-        private static readonly object lockHelper = new object();
-        private InitializationState _state;
+        private Dictionary<string, string> environmentVariable;
+        private VariableScope data;
+        private TagParser parsers;
+        private IResourceLoader loader;
+        private StringComparison stringComparison;
+        private Caching.ICache cache;
+        private BindingFlags bindingFlags;
+        private StringComparer stringComparer;
+        private IActuator actuator;
+        private List<string> resourceDirectories;
         #endregion
 
+
+        #region 构造与初始化
         /// <summary>
-        /// 获取实例 
+        /// 引擎信息
         /// </summary>
-        /// <returns></returns>
-        public static Runtime Instance
+        /// <param name="conf">配置信息</param>
+        /// <param name="scope">全局初始数据</param>
+        internal Runtime(IConfig conf, VariableScope scope)
         {
-            get
+            if (conf == null)
             {
-                if (_instance == null)
-                {
-                    lock (lockHelper)
-                    {
-                        // 如果类的实例不存在则创建，否则直接返回
-                        if (_instance == null)
-                        {
-                            _instance = new Runtime();
-                        }
-                    }
-                }
-                return _instance;
+                throw new ArgumentNullException("\"conf\" cannot be null.");
+            }
+            this.data = scope;
+            Initialization(conf);
+            InitializationEnvironment(conf.ToDictionary());
+        }
+
+
+        /// <summary>
+        /// 初始化环境变量配置
+        /// </summary>
+        /// <param name="conf">配置内容</param>
+        private void InitializationEnvironment(IDictionary<string, string> conf)
+        {
+            foreach (KeyValuePair<string, string> node in conf)
+            {
+                environmentVariable[node.Key] = node.Value;
             }
         }
 
         /// <summary>
-        /// 引擎信息
+        /// 初始化基本数据
         /// </summary>
-        private Runtime()
+        /// <param name="conf"></param>
+        private void Initialization(IConfig conf)
         {
-            _environmentVariable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            _state = InitializationState.None;
-            _parsers = new List<ITagParser>();
+            environmentVariable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            parsers = new TagParser();
+            resourceDirectories = new List<string>();
+            if (conf.TagParsers == null || conf.TagParsers.Count == 0)
+            {
+                parsers.AddRange(LoadParsers(Field.RSEOLVER_TYPES));
+            }
+            else
+            {
+                parsers.AddRange(LoadParsers(Field.RSEOLVER_TYPES));
+            }
+            loader = conf.Loader ?? new FileLoader();
+            resourceDirectories = (conf.ResourceDirectories ?? new List<string>());
+            cache = conf.Cache ?? MemoryCache.Instance;
+#if NET20 || NET40
+            actuator = conf.Actuator ?? new ReflectionActuator();
+#else
+            actuator = conf.Actuator ?? new ILActuator(cache);
+#endif
+            if (conf.IgnoreCase)
+            {
+                bindingFlags = BindingFlags.IgnoreCase;
+                stringComparer = StringComparer.OrdinalIgnoreCase;
+                stringComparison = StringComparison.OrdinalIgnoreCase;
+            }
+            else
+            {
+                stringComparison = StringComparison.Ordinal;
+                bindingFlags = BindingFlags.DeclaredOnly;
+                stringComparer = StringComparer.Ordinal;
+            }
+
         }
 
-
-
-        #region 实列
         /// <summary>
-        /// 状态 
+        /// 加载标签分析器
         /// </summary>
-        /// <value></value>
-        public InitializationState State
+        /// <param name="arr">解析器类型</param>
+        private static ITagParser[] LoadParsers(string[] arr)
         {
-            get { return this._state; }
-            internal set { this._state = value; }
+            ITagParser[] list = new ITagParser[arr.Length];
+            for (int i = 0; i < arr.Length; i++)
+            {
+                list[i] = DynamicHelpers.CreateInstance<ITagParser>(Type.GetType(arr[i]));
+            }
+            return list;
         }
+
+
         /// <summary>
         /// 模板资源搜索目录
         /// </summary>
         /// <value></value>
         public List<string> ResourceDirectories
         {
-            get { return this._resourceDirectories; }
-            internal set { this._resourceDirectories = value; }
+            get { return this.resourceDirectories; }
         }
         /// <summary>
         /// 环境变量
         /// </summary>
         public Dictionary<string, string> EnvironmentVariable
         {
-            get { return _environmentVariable; }
+            get { return environmentVariable; }
         }
         /// <summary>
         /// 全局初始数据
         /// </summary>
-        internal VariableScope Data
+        public VariableScope Data
         {
-            get { return _data; }
-            set { _data = value; }
+            get { return data; }
         }
 
         /// <summary>
         /// 标签分析器
         /// </summary>
-        public List<ITagParser> Parsers
+        public TagParser Parsers
         {
-            get { return _parsers; }
-            internal set { _parsers = value; }
+            get { return parsers; }
         }
 
         /// <summary>
@@ -120,8 +157,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         internal IResourceLoader Loader
         {
-            private get { return _loder; }
-            set { _loder = value; }
+            get { return loader; }
         }
 
         /// <summary>
@@ -129,8 +165,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public BindingFlags BindIgnoreCase
         {
-            get { return _bindingFlags; }
-            set { _bindingFlags = value; }
+            get { return bindingFlags; }
         }
 
         /// <summary>
@@ -138,120 +173,31 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public StringComparer ComparerIgnoreCase
         {
-            get { return _stringComparer; }
-            set { _stringComparer = value; }
+            get { return stringComparer; }
         }
+
         /// <summary>
         /// 字符串大小写比较配置
         /// </summary>
         public StringComparison ComparisonIgnoreCase
         {
-            get { return _stringComparison; }
-            set { _stringComparison = value; }
+            get { return stringComparison; }
         }
         /// <summary>
         /// 缓存
         /// </summary>
         public Caching.ICache Cache
         {
-            get { return _cache; }
-            internal set { _cache = value; }
+            get { return cache; }
         }
         /// <summary>
         /// 动态调用代理
         /// </summary>
         internal IActuator Actuator
         {
-            private get { return _callProxy; }
-            set { _callProxy = value; }
-        }
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="directory">追加查找目录</param>
-        /// <returns></returns>
-        public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
-        {
-            return this.Loader.Load(filename, encoding, directory);
-
+            get { return actuator; }
         }
 
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="directory">追加查找目录</param>
-        /// <returns></returns>
-        public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
-        {
-            return await this.Loader.LoadAsync(filename, encoding, directory);
-        }
-#endif
-        /// <summary>
-        /// 获取父目录
-        /// </summary>
-        /// <param name="fullPath">完整路径</param>
-        public string GetDirectoryName(string fullPath)
-        {
-            return this.Loader.GetDirectoryName(fullPath);
-        }
-        /// <summary>
-        /// 动态执行方法
-        /// </summary>
-        /// <param name="container">对象</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="args">实参</param>
-        /// <returns>执行结果（Void返回NULL）</returns> 
-        public object CallMethod(object container, string methodName, object[] args)
-        {
-            return this.Actuator.CallMethod(container, methodName, args);
-        }
-        /// <summary>
-        /// 动态获取属性或字段
-        /// </summary>
-        /// <param name="value">对象</param>
-        /// <param name="propertyName">属性或字段名</param>
-        /// <returns>返回结果</returns> 
-        public object CallPropertyOrField(object value, string propertyName)
-        {
-            return this.Actuator.CallPropertyOrField(value, propertyName);
-        }
-
-        /// <summary>
-        /// 动态获取索引值
-        /// </summary>
-        /// <param name="value">对象</param>
-        /// <param name="index">索引</param>
-        /// <returns>返回结果</returns>
-
-        public object CallIndexValue(object value, object index)
-        {
-            return this.Actuator.CallIndexValue(value, index);
-        }
-
-        /// <summary>
-        /// 状态枚举
-        /// </summary>
-
-        public enum InitializationState
-        {
-            /// <summary>
-            /// 未初始化
-            /// </summary>
-            None,
-            /// <summary>
-            /// 初始化中
-            /// </summary>
-            Initialization,
-            /// <summary>
-            /// 初始完成
-            /// </summary>
-            Complete
-        }
         #endregion
     }
 }

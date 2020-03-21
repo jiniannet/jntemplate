@@ -18,6 +18,17 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public class ILActuator : IActuator
     {
+
+        private ICache cache;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        public ILActuator(ICache provider)
+        {
+            cache = provider;
+        }
+
         #region 获取属性或索引
         /// <summary>
         /// 获取属性或字段
@@ -40,12 +51,12 @@ namespace JinianNet.JNTemplate.Dynamic
             Type type = value.GetType();
             string key = string.Concat("p.", TypeToName(type), ".", propertyName);
             CallPropertyOrFieldDelegate gpf;
-            if ((gpf = CacheHelpers.Get<CallPropertyOrFieldDelegate>(key)) != null)
+            if ((gpf = cache.Get<CallPropertyOrFieldDelegate>(key)) != null)
             {
                 return gpf;
             }
             gpf = CreateCallPropertyOrFieldProxy(type, value, propertyName);
-            CacheHelpers.Set(key, gpf);
+            cache.Set(key, gpf);
             return gpf;
         }
 
@@ -129,7 +140,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 objectType
             };
             DynamicMethod dynamicMethod = new DynamicMethod(
-                string.Concat("i_",TypeToName(type),"_",index.GetType().Name),
+                string.Concat("i_", TypeToName(type), "_", index.GetType().Name),
                 objectType,
                 parameterTypes);
 
@@ -229,11 +240,11 @@ namespace JinianNet.JNTemplate.Dynamic
 
                 CallIndexValueDelegate d;
                 Type type = container.GetType();
-                string key = string.Concat("i.",TypeToName(type), ".", index.GetType().Name);
-                if ((d = CacheHelpers.Get<CallIndexValueDelegate>(key)) == null)
+                string key = string.Concat("i.", TypeToName(type), ".", index.GetType().Name);
+                if ((d = cache.Get<CallIndexValueDelegate>(key)) == null)
                 {
                     d = CreateCallIndexValueProxy(type, container, index);
-                    CacheHelpers.Set(key, d);
+                    cache.Set(key, d);
                 }
                 return d(container, index);
             }
@@ -296,10 +307,10 @@ namespace JinianNet.JNTemplate.Dynamic
 
             DynamicMethodInfo[] list;
 
-            if ((list = CacheHelpers.Get<DynamicMethodInfo[]>(key)) == null)
+            if ((list = cache.Get<DynamicMethodInfo[]>(key)) == null)
             {
                 list = CreateDynamicMethods(type, methodName);
-                CacheHelpers.Set(key, list);
+                cache.Set(key, list);
             }
             if (list != null && list.Length > 0)
             {

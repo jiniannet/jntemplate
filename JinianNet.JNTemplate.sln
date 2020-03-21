@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate", "src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj", "{3744DD16-5A83-4C50-B711-74EA11DA6B27}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1A18DEF-5DB0-48CD-876B-2EB28343FAC2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272-B7F5-4A30-8DCD-C8EB022BCD09}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EACD2272
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7A-4ECC-A4C3-F9EB6928E472}"
 	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		Changelog = Changelog
 		Developer-ReadMe = Developer-ReadMe
 		License = License
@@ -23,46 +25,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{9AFF50BD-BE7
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JinianNet.JNTemplate.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplate.Test.csproj", "{7F607362-0680-4751-B1DC-621219294AE3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEB61DB3-0D68-43A3-91E6-E16AE02889E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JinianNet.JNTemplateCore", "src\JinianNet.JNTemplate\JinianNet.JNTemplate.csproj", "{8FB7F9D0-2202-439F-9808-BEE50EB5E809}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JinianNet.JNTemplateCore.Test", "src\JinianNet.JNTemplate.Test\JinianNet.JNTemplate.Test.csproj", "{78F17297-1C58-4548-9B17-C027CE87CCA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|Win32 = Debug|Win32
 		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27}.Release|Win32.ActiveCfg = Release|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{7F607362-0680-4751-B1DC-621219294AE3}.Release|Win32.ActiveCfg = Release|Any CPU
+		{8FB7F9D0-2202-439F-9808-BEE50EB5E809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FB7F9D0-2202-439F-9808-BEE50EB5E809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FB7F9D0-2202-439F-9808-BEE50EB5E809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FB7F9D0-2202-439F-9808-BEE50EB5E809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78F17297-1C58-4548-9B17-C027CE87CCA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78F17297-1C58-4548-9B17-C027CE87CCA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78F17297-1C58-4548-9B17-C027CE87CCA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78F17297-1C58-4548-9B17-C027CE87CCA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3744DD16-5A83-4C50-B711-74EA11DA6B27} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
-		{7F607362-0680-4751-B1DC-621219294AE3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+		{8FB7F9D0-2202-439F-9808-BEE50EB5E809} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+		{78F17297-1C58-4548-9B17-C027CE87CCA3} = {CEB61DB3-0D68-43A3-91E6-E16AE02889E7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADF6CF90-D6B5-4A8C-9BE1-29EFDE50D632}
 	EndGlobalSection
 EndGlobal

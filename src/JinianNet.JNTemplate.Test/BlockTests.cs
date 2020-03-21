@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$load(\"public.html\")";
             var template = Engine.CreateTemplate(templateContent);
 
-#if NETCOREAPP2_0
+#if NETCOREAPP
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets";
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$include(\"include/header.txt\")";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.TempData["name"] = ("jntemplate");
-#if NETCOREAPP2_0
+#if NETCOREAPP
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
@@ -62,7 +62,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$load(\"include/header.txt\")";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.TempData["name"] = ("jntemplate");
-#if NETCOREAPP2_0
+#if NETCOREAPP
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
@@ -79,7 +79,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$layout(\"include/layout.txt\")<h1>主体内容<h1>";
             var template = Engine.CreateTemplate(templateContent);
-#if NETCOREAPP2_0
+#if NETCOREAPP
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";

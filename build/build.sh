@@ -10,12 +10,11 @@ menu(){
                   www.jiniannet.com
 
            ┌──────── please enter ────────┐
-           │  1 build by net40 or net20   │
-           │  2 build by netcoreapp       │
-           │  3 build by netstandard      │
-           │  4 clear temporary files     │
-           │  5 core/standard setting     │
-           │  6 net framework setting     │
+           │  1 build                     │
+           │  2 build by net40 or net20   │
+           │  3 clear temporary files     │
+           │  4 core/standard setting     │
+           │  5 net framework setting     │
            │  0 exit                      │
            └──────────────────────────────┘
                          "
@@ -23,16 +22,14 @@ menu(){
         read cmdtext
     fi
     if  [ "$cmdtext" = "1" ] ; then
-        cmdbuildnf
+        cmdbuilall
     elif [ "$cmdtext" = "2" ] ; then
-        cmdbuildnc
+        cmdbuildnf
     elif [ "$cmdtext" = "3" ] ; then
-        cmdbuildns
-    elif [ "$cmdtext" = "4" ] ; then
         cmdclearfiles
-    elif [ "$cmdtext" = "5" ] ; then
+    elif [ "$cmdtext" = "4" ] ; then
         cmdncev
-    elif [ "$cmdtext" = "6" ] ; then
+    elif [ "$cmdtext" = "5" ] ; then
         cmdnfev
     elif [ "$cmdtext" = "0" ] ; then
         cmdexit
@@ -67,6 +64,26 @@ cmdbuildnf(){
     cd $cur_path
     echo "jntemplate for mono build success!"
     cmdexit
+}
+
+#all
+cmdbuilall(){
+    cmdncev
+
+    cd ../src/JinianNet.JNTemplate
+    #dotnet restore JinianNet.JNTemplate.csproj
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netstandard2.0 --framework netstandard2.0
+    echo "jntemplate for netstandard 2.0 build success!"
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netcoreapp2.1 
+    echo "jntemplate for netcoreapp 2.1 build success!"
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net46
+    echo "jntemplate for net framework 4.6 build success!"
+    dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net47
+    echo "jntemplate for net framework 4.7 build success!"
+
+    cd ..
+    cd ..
+    cd build
 }
 
 #netcore
@@ -114,23 +131,23 @@ cmdclearfiles(){
 cmdncev(){
     cd ..
     cd src/JinianNet.JNTemplate/Properties
-    if [ -d "AssemblyInfo.cs.build.tmp" ] ; then
+    if [ -d "AssemblyInfo.cs.build.old" ] ; then
         if [ -d "AssemblyInfo.cs" ] ; then
-            rm -f AssemblyInfo.cs.build.tmp
+            rm -f AssemblyInfo.cs.build.old
         fi
     fi
-    mv AssemblyInfo.cs AssemblyInfo.cs.build.tmp
+    mv AssemblyInfo.cs AssemblyInfo.cs.build.old
     cd ..
     rm -rf obj
     rm -rf bin
     cd ..
     cd JinianNet.JNTemplate.Test/Properties
-    if [ -d "AssemblyInfo.cs.build.tmp" ] ; then
+    if [ -d "AssemblyInfo.cs.build.old" ] ; then
         if [ -d "AssemblyInfo.cs" ] ; then
-            rm -f AssemblyInfo.cs.build.tmp
+            rm -f AssemblyInfo.cs.build.old
         fi
     fi
-    mv AssemblyInfo.cs AssemblyInfo.cs.build.tmp
+    mv AssemblyInfo.cs AssemblyInfo.cs.build.old
     cd ..
     rm -rf obj
     rm -rf bin
@@ -146,9 +163,9 @@ cmdncev(){
 cmdnfev(){
     cd ..
     cd src/JinianNet.JNTemplate/Properties
-    if [ -d "AssemblyInfo.cs.build.tmp" ];then
+    if [ -d "AssemblyInfo.cs.build.old" ];then
         if [ ! -d "AssemblyInfo.cs" ];then
-            mv AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+            mv AssemblyInfo.cs.build.old AssemblyInfo.cs
         fi
     fi
     cd ..
@@ -156,9 +173,9 @@ cmdnfev(){
     rm -rf bin
     cd ..
     cd JinianNet.JNTemplate.Test/Properties
-    if [ -d "AssemblyInfo.cs.build.tmp" ];then
+    if [ -d "AssemblyInfo.cs.build.old" ];then
         if [ ! -d "AssemblyInfo.cs" ];then
-            mv AssemblyInfo.cs.build.tmp AssemblyInfo.cs
+            mv AssemblyInfo.cs.build.old AssemblyInfo.cs
         fi
     fi
     rm -rf obj
