@@ -11,32 +11,32 @@ namespace JinianNet.JNTemplate.Exception
     /// </summary>
     public class TemplateException : System.Exception
     {
-        private int _errorLine;
-        private int _errorColumn;
-        private string _errorCode;
+        private int errorLine;
+        private int errorColumn;
+        private string errorCode;
         /// <summary>
         /// 所在行
         /// </summary>
         public int Line
         {
-            get { return this._errorLine; }
-            set { this._errorLine = value; }
+            get { return this.errorLine; }
+            set { this.errorLine = value; }
         }
         /// <summary>
         /// 所在字符
         /// </summary>
         public int Column
         {
-            get { return this._errorColumn; }
-            set { this._errorColumn = value; }
+            get { return this.errorColumn; }
+            set { this.errorColumn = value; }
         }
         /// <summary>
         /// 错误代码
         /// </summary>
         public string Code
         {
-            get { return this._errorCode; }
-            set { this._errorCode = value; }
+            get { return this.errorCode; }
+            set { this.errorCode = value; }
         }
         /// <summary>
         /// 模板错误
@@ -61,8 +61,8 @@ namespace JinianNet.JNTemplate.Exception
                 "\r\n",
                 message))
         {
-            this._errorColumn = column;
-            this._errorLine = line;
+            this.errorColumn = column;
+            this.errorLine = line;
         }
 
         /// <summary>

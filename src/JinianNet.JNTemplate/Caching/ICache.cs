@@ -23,15 +23,23 @@ namespace JinianNet.JNTemplate.Caching
         /// </summary>
         int Count { get; }
         /// <summary>
+        /// 添加缓存（自行实现时注意设置默认过期时间）
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        void Set(string key, object value);
+
+        /// <summary>
         /// 添加缓存
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        void Set(string key, object value);
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        /// <param name="expire">过期时间</param>
+        void Set(string key, object value, TimeSpan expire);
         /// <summary>
         /// 获取键为key的缓存
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">键</param>
         /// <returns></returns>
         object Get(string key);
 
@@ -39,15 +47,20 @@ namespace JinianNet.JNTemplate.Caching
         /// 获取缓存并自动转换成指定类型
         /// </summary>
         /// <typeparam name="T">返回类型</typeparam>
-        /// <param name="key"></param>
+        /// <param name="key">键</param>
         /// <returns></returns>
         T Get<T>(string key) where T : class;
 
         /// <summary>
         /// 移除键为key的缓存
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">键</param>
         /// <returns></returns>
         object Remove(string key);
+
+        /// <summary>
+        /// 清空所有缓存
+        /// </summary>
+        void Clear();
     }
 }

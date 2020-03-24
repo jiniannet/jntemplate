@@ -4,15 +4,18 @@
  ********************************************************************************/
 using System;
 using System.IO;
+#if !NET20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// Layout标签
     /// </summary>
+    [Serializable]
     public class LayoutTag : LoadTag
     {
-
         /// <summary>
         /// 读取取签
         /// </summary>
@@ -20,6 +23,25 @@ namespace JinianNet.JNTemplate.Nodes
         protected override ITag[] ReadTags()
         {
             ITag[] tags = base.ReadTags();
+            return ProcessBody(tags);
+        }
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 读取取签
+        /// </summary>
+        /// <returns></returns>
+        protected override async Task<ITag[]> ReadTagsAsync()
+        {
+            ITag[] tags = await base.ReadTagsAsync();
+            return ProcessBody(tags);
+        }
+#endif
+        private ITag[] ProcessBody(ITag[] tags)
+        {
+            if (tags == null || tags.Length == 0)
+            {
+                return tags;
+            }
             for (int i = 0; i < tags.Length; i++)
             {
                 if (tags[i] is BodyTag)

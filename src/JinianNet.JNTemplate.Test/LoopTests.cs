@@ -1,6 +1,7 @@
 ﻿using JinianNet.JNTemplate;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace JinianNet.JNTemplate.Test
@@ -14,11 +15,11 @@ namespace JinianNet.JNTemplate.Test
         /// 测试FOR
         /// </summary>
         [Fact]
-        public void TestFor()
+        public async Task TestFor()
         {
             var templateContent = "$for(i=1;i<4;i=i+1)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
             var template = Engine.CreateTemplate(templateContent);
-            var render = Excute(template);
+            var render = await Excute(template);
 
             Assert.Equal("123", render);
         }
@@ -27,11 +28,11 @@ namespace JinianNet.JNTemplate.Test
         /// for的不同写法
         /// </summary>
         [Fact]
-        public void TestForPlusPlus()
+        public async Task TestForPlusPlus()
         {
             var templateContent = "$for(i=0;i<3;i++)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
             var template = Engine.CreateTemplate(templateContent);
-            var render = Excute(template);
+            var render = await Excute(template);
 
             Assert.Equal("012", render);
         }
@@ -40,12 +41,12 @@ namespace JinianNet.JNTemplate.Test
         /// 测试Forea 遍历对象时，Foreach应优先于for
         /// </summary>
         [Fact]
-        public void TestForeach()
+        public async Task TestForeach()
         {
             var templateContent = "$foreach(i in list)$i$end";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.TempData["list"] = (new int[] { 7, 0, 2, 0, 6 });
-            var render = Excute(template);
+            var render = await Excute(template);
             Assert.Equal("70206", render);
         }
 
@@ -53,12 +54,12 @@ namespace JinianNet.JNTemplate.Test
         /// 测试ForIn
         /// </summary>
         [Fact]
-        public void TestForIn()
+        public async Task TestForIn()
         {
             var templateContent = "$for(i in list)$i$end";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.TempData["list"] = (new int[] { 7, 0, 2, 0, 6 });
-            var render = Excute(template);
+            var render = await Excute(template);
             Assert.Equal("70206", render);
         } 
 

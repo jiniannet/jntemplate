@@ -1,6 +1,7 @@
 ﻿using JinianNet.JNTemplate;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace JinianNet.JNTemplate.Test
@@ -15,7 +16,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试索引取值与方法标签
         /// </summary>
         [Fact]
-        public void TestLoadParent()
+        public async Task TestLoadParent()
         {
             var templateContent = "$load(\"public.html\")";
             var template = Engine.CreateTemplate(templateContent);
@@ -30,7 +31,7 @@ namespace JinianNet.JNTemplate.Test
             //loader.ResourceDirectories = new List<string>(new string[] { new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" });
             //Engine.SetLodeProvider(loader);
 
-            var render = Excute(template);
+            var render = await Excute(template);
             Assert.Equal("this is public", render);
         }
 
@@ -38,7 +39,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试索引取值与方法标签
         /// </summary>
         [Fact]
-        public void TestInclub()
+        public async Task TestInclub()
         {
             var templateContent = "$include(\"include/header.txt\")";
             var template = Engine.CreateTemplate(templateContent);
@@ -48,7 +49,7 @@ namespace JinianNet.JNTemplate.Test
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #endif
-            var render = Excute(template);
+            var render = await Excute(template);
             Assert.Equal("你好，$name", render);
         }
 
@@ -57,7 +58,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试索引取值与方法标签
         /// </summary>
         [Fact]
-        public void TestLoad()
+        public async Task TestLoad()
         {
             var templateContent = "$load(\"include/header.txt\")";
             var template = Engine.CreateTemplate(templateContent);
@@ -67,7 +68,7 @@ namespace JinianNet.JNTemplate.Test
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #endif
-            var render = Excute(template);
+            var render = await Excute(template);
             Assert.Equal("你好，jntemplate", render);
         }
 
@@ -75,7 +76,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试Layout
         /// </summary>
         [Fact]
-        public void TestLayout()
+        public async Task TestLayout()
         {
             var templateContent = "$layout(\"include/layout.txt\")<h1>主体内容<h1>";
             var template = Engine.CreateTemplate(templateContent);
@@ -84,7 +85,7 @@ namespace JinianNet.JNTemplate.Test
 #else
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #endif
-            var render = Excute(template);
+            var render = await Excute(template);
             Assert.Equal("这是LAYOUT头部<h1>主体内容<h1>这是LAYOUT尾部", render);
         }
     }

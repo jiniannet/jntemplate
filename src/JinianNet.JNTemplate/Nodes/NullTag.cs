@@ -10,6 +10,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 空标签
     /// </summary>
+    [Serializable]
     public class NullTag : SpecialTag
     {
         /// <summary>

@@ -14,6 +14,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 复合标签(Parse)
     /// </summary>
+    [Serializable]
     public abstract class ComplexTag : Tag, ITag
     {
 
@@ -24,19 +25,16 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public override object ParseResult(TemplateContext context)
         {
+            if (Children.Count == 1)
+            {
+                return Children[0].ParseResult(context);
+            }
             using (var write = new StringWriter())
             {
                 Parse(context, write);
                 return write.ToString();
             }
         }
-
-        ///// <summary>
-        ///// 解析标签
-        ///// </summary>
-        ///// <param name="context">上下文</param>
-        ///// <param name="write">write</param>
-        //public abstract override void Parse(TemplateContext context, System.IO.TextWriter write);
 
 #if NETCOREAPP || NETSTANDARD
 
@@ -47,6 +45,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public override async Task<object> ParseResultAsync(TemplateContext context)
         {
+            if (Children.Count == 1)
+            {
+                return await Children[0].ParseResultAsync(context);
+            }
             using (var write = new StringWriter())
             {
                 await ParseAsync(context, write);

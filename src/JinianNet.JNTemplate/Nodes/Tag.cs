@@ -17,14 +17,14 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public abstract class Tag : ITag
     {
-        private Token _first, _last;
-        private Collection<ITag> _children = new Collection<ITag>();
+        private Token first, last;
+        private Collection<ITag> children = new Collection<ITag>();
         /// <summary>
         /// 子标签
         /// </summary>
         public Collection<ITag> Children
         {
-            get { return _children; }
+            get { return children; }
         }
 
         /// <summary>
@@ -81,66 +81,23 @@ namespace JinianNet.JNTemplate.Nodes
                 return ParseResult(context);
             });
         }
-
-
-        ///// <summary>
-        ///// 转换为 bool 
-        ///// </summary>
-        ///// <param name="context">TemplateContext</param>
-        ///// <returns></returns>
-        //public async virtual Task<bool> ToBooleanAsync(TemplateContext context)
-        //{
-        //    return await Task<object>.Run(() =>
-        //    {
-        //        return ToBoolean(context);
-        //    });
-        //}
 #endif
-
 
         /// <summary>
         /// 开始Token
         /// </summary>
         public Token FirstToken
         {
-            get { return this._first; }
-            set { this._first = value; }
+            get { return this.first; }
+            set { this.first = value; }
         }
         /// <summary>
         /// 结束Token
         /// </summary>
         public Token LastToken
         {
-            set { this._last = value; }
-            get { return this._last; }
+            set { this.last = value; }
+            get { return this.last; }
         }
-
-        ///// <summary>
-        ///// 转换为 bool 
-        ///// </summary>
-        ///// <param name="context">TemplateContext</param>
-        ///// <returns></returns>
-        //public virtual bool ToBoolean(TemplateContext context)
-        //{
-        //    object value = ParseResult(context);
-        //    return ExpressionEvaluator.CalculateBoolean(value);
-        //}
-
-        ///// <summary>
-        ///// 子标签
-        ///// </summary>
-        //public Collection<Tag> Children{ get;}
-
-        ///// <summary>
-        ///// 添加一个子标签
-        ///// </summary>
-        ///// <param name="node"></param>
-        //public void AddChild(Tag node)
-        //{
-        //    if (node != null)
-        //    {
-        //        Children.Add(node);
-        //    }
-        //}
     }
 }

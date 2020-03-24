@@ -9,6 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 布尔标签
     /// </summary>
+    [Serializable]
     public class BooleanTag : TypeTag<bool>
     {
     }

@@ -9,6 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 文本标签
     /// </summary>
+    [Serializable]
     public class CommentTag : SpecialTag
     {
 

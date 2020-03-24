@@ -3,11 +3,14 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 
+using System;
+
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// 数字标签
     /// </summary>
+    [Serializable]
     public class NumberTag : TypeTag<System.ValueType>
     {
 

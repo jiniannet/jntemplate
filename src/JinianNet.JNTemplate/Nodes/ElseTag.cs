@@ -9,6 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// else标签
     /// </summary>
+    [Serializable]
     public class ElseTag : ElseifTag
     {
         /// <summary>

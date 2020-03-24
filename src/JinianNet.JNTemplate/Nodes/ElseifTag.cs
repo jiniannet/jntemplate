@@ -3,46 +3,28 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
+#if !NET20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// ELSE if 标签
     /// </summary>
+    [Serializable]
     public class ElseifTag : ComplexTag
     {
 
-        private ITag _test;
+        private ITag test;
         /// <summary>
         /// 条件
         /// </summary>
         public virtual ITag Test
         {
-            get { return this._test; }
-            set { this._test = value; }
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            if (Children.Count == 1)
-            {
-                return Children[0].ParseResult(context);
-            }
-            else
-            {
-                using (System.IO.StringWriter write = new System.IO.StringWriter())
-                {
-                    for (int i = 0; i < Children.Count; i++)
-                    {
-                        Children[i].Parse(context, write);
-                    }
-                    return write.ToString();
-                }
-            }
-
+            get { return this.test; }
+            set { this.test = value; }
         }
 
         /// <summary>
@@ -50,7 +32,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, System.IO.TextWriter write)
+        public override void Parse(TemplateContext context, TextWriter write)
         {
             for (int i = 0; i < Children.Count; i++)
             {
@@ -64,8 +46,23 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public virtual bool ToBoolean(TemplateContext context)
         {
-            return Utility.ToBoolean(this._test.ParseResult(context));
+            return Utility.ToBoolean(this.test.ParseResult(context));
         }
 
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 异步解析结果
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <param name="writer">TextWriter</param>
+        /// <returns></returns>
+        public override async Task ParseAsync(TemplateContext context, TextWriter writer)
+        {
+            for (int i = 0; i < Children.Count; i++)
+            {
+                await Children[i].ParseAsync(context, writer);
+            }
+        }
+#endif
     }
 }

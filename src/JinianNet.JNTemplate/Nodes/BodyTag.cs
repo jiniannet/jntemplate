@@ -4,12 +4,16 @@
  ********************************************************************************/
 using System;
 using System.IO;
+#if !NET20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// Body标签（配套Layout使用）
     /// </summary>
+    [Serializable]
     public class BodyTag : ComplexTag
     {
         /// <summary>
@@ -27,5 +31,23 @@ namespace JinianNet.JNTemplate.Nodes
                 }
             }
         }
+
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="write"></param>
+        public override async Task ParseAsync(TemplateContext context, TextWriter write)
+        {
+            if (this.Children != null && this.Children.Count > 0)
+            {
+                for (int i = 0; i < this.Children.Count; i++)
+                {
+                    await this.Children[i].ParseAsync(context, write);
+                }
+            }
+        }
+#endif
     }
 }

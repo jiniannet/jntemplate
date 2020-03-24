@@ -12,16 +12,17 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 函数（方法）标签
     /// </summary>
+    [Serializable]
     public class FunctaionTag : BasisTag
     {
-        private BasisTag _func;
+        private BasisTag func;
         /// <summary>
         /// 函数
         /// </summary>
         public BasisTag Func
         {
-            get { return this._func; }
-            set { this._func = value; }
+            get { return this.func; }
+            set { this.func = value; }
         }
 
         /// <summary>
@@ -132,6 +133,30 @@ namespace JinianNet.JNTemplate.Nodes
                 return context.Actuator.CallPropertyOrField(task, "Result");
             }
             return r;
+        }
+
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        public override async Task<object> ParseResultAsync(TemplateContext context)
+        {
+            object[] args = new object[Children.Count];
+            for (int i = 0; i < this.Children.Count; i++)
+            {
+                args[i] = await Children[i].ParseResultAsync(context);
+            }
+
+            object result = await this.Func.ParseResultAsync(context);
+
+            if (result != null)
+            {
+                if (result is FuncHandler)
+                {
+                    return (result as FuncHandler).Invoke(args);
+                }
+            }
+            return null;
         }
 #endif
     }

@@ -16,18 +16,19 @@ namespace JinianNet.JNTemplate.Configuration
     /// </summary>
     public class EngineConfig : IConfig
     {
-        private char _tagFlag = '$';
-        private string _tagPrefix = "${";
-        private string _tagSuffix = "}";
-        private bool _throwExceptions = true;
-        private bool _stripWhiteSpace = false;
-        private bool _ignoreCase = true;
-        private string _charset = "utf-8";
-        private Caching.ICache _cache;
-        private IResourceLoader _loader;
-        private IActuator _actuator;
-        private List<Parsers.ITagParser> _tagParsers;
-        private List<string> _resourceDirectories;
+        private char tagFlag = '$';
+        private string tagPrefix = "${";
+        private string tagSuffix = "}";
+        private bool throwExceptions = true;
+        private bool stripWhiteSpace = false;
+        private bool enableTemplateCache = true;
+        private bool ignoreCase = true;
+        private string charset = "utf-8";
+        private Caching.ICache cache;
+        private IResourceLoader loader;
+        private IActuator actuator;
+        private List<Parsers.ITagParser> tagParsers;
+        private List<string> resourceDirectories;
 
 
         /// <summary>
@@ -35,8 +36,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         public List<string> ResourceDirectories
         {
-            get { return this._resourceDirectories; }
-            set { this._resourceDirectories = value; }
+            get { return this.resourceDirectories; }
+            set { this.resourceDirectories = value; }
         }
         /// <summary>
         /// 字符编码
@@ -44,8 +45,8 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public string Charset
         {
-            get { return this._charset; }
-            set { this._charset = value; }
+            get { return this.charset; }
+            set { this.charset = value; }
         }
         /// <summary>
         /// 标签前缀
@@ -53,8 +54,8 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public string TagPrefix
         {
-            get { return this._tagPrefix; }
-            set { this._tagPrefix = value; }
+            get { return this.tagPrefix; }
+            set { this.tagPrefix = value; }
         }
 
         /// <summary>
@@ -63,8 +64,8 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public string TagSuffix
         {
-            get { return this._tagSuffix; }
-            set { this._tagSuffix = value; }
+            get { return this.tagSuffix; }
+            set { this.tagSuffix = value; }
         }
 
 
@@ -74,8 +75,8 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public char TagFlag
         {
-            get { return this._tagFlag; }
-            set { this._tagFlag = value; }
+            get { return this.tagFlag; }
+            set { this.tagFlag = value; }
         }
 
         /// <summary>
@@ -84,8 +85,8 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public bool ThrowExceptions
         {
-            get { return this._throwExceptions; }
-            set { this._throwExceptions = value; }
+            get { return this.throwExceptions; }
+            set { this.throwExceptions = value; }
         }
 
 
@@ -95,10 +96,19 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public bool StripWhiteSpace
         {
-            get { return this._stripWhiteSpace; }
-            set { this._stripWhiteSpace = value; }
+            get { return this.stripWhiteSpace; }
+            set { this.stripWhiteSpace = value; }
         }
 
+        /// <summary>
+        /// 是否缓存模板文件
+        /// </summary>
+        [Variable]
+        public bool EnableTemplateCache
+        {
+            get { return this.enableTemplateCache; }
+            set { this.enableTemplateCache = value; }
+        }
 
         /// <summary>
         /// 是否忽略大小写
@@ -106,8 +116,8 @@ namespace JinianNet.JNTemplate.Configuration
         [Variable]
         public bool IgnoreCase
         {
-            get { return this._ignoreCase; }
-            set { this._ignoreCase = value; }
+            get { return this.ignoreCase; }
+            set { this.ignoreCase = value; }
         }
 
         /// <summary>
@@ -115,8 +125,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         public Caching.ICache Cache
         {
-            get { return this._cache; }
-            set { this._cache = value; }
+            get { return this.cache; }
+            set { this.cache = value; }
         }
 
         /// <summary>
@@ -124,8 +134,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary> 
         public IActuator Actuator
         {
-            get { return this._actuator; }
-            set { this._actuator = value; }
+            get { return this.actuator; }
+            set { this.actuator = value; }
         }
 
         /// <summary>
@@ -133,8 +143,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         public IResourceLoader Loader
         {
-            get { return this._loader; }
-            set { this._loader = value; }
+            get { return this.loader; }
+            set { this.loader = value; }
         }
 
         /// <summary>
@@ -142,8 +152,8 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         public List<Parsers.ITagParser> TagParsers
         {
-            get { return this._tagParsers; }
-            set { this._tagParsers = value; }
+            get { return this.tagParsers; }
+            set { this.tagParsers = value; }
         }
 
         /// <summary>

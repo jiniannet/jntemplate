@@ -5,25 +5,30 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
+#if !NET20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// Foreach标签
     /// </summary>
+    [Serializable]
     public class ForeachTag : ComplexTag
     {
 
-        private string _name;
-        private ITag _source;
+        private string name;
+        private ITag source;
 
         /// <summary>
         /// 节点名
         /// </summary>
         public string Name
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
 
         /// <summary>
@@ -31,11 +36,11 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         public ITag Source
         {
-            get { return this._source; }
-            set { this._source = value; }
+            get { return this.source; }
+            set { this.source = value; }
         }
 
-        private void Excute(object value, TemplateContext context, System.IO.TextWriter writer)
+        private void Excute(object value, TemplateContext context, TextWriter writer)
         {
             IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
             TemplateContext ctx;
@@ -47,14 +52,14 @@ namespace JinianNet.JNTemplate.Nodes
                 while (ienum.MoveNext())
                 {
                     i++;
-                    ctx.TempData[this._name] = ienum.Current;
+                    ctx.TempData[this.name] = ienum.Current;
                     //为了兼容以前的用户 foreachIndex 保留
                     ctx.TempData["foreachIndex"] = i;
                     for (int n = 0; n < Children.Count; n++)
                     {
                         Children[n].Parse(ctx, writer);
                     }
-                    
+
                 }
             }
         }
@@ -63,26 +68,32 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="writer">writer</param>
-        public override void Parse(TemplateContext context, System.IO.TextWriter writer)
+        public override void Parse(TemplateContext context, TextWriter writer)
         {
             if (Source != null)
             {
-                Excute(Source.ParseResult(context), context, writer);
+                object value = Source.ParseResult(context);
+                IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
+                TemplateContext ctx;
+                if (enumerable != null)
+                {
+                    IEnumerator ienum = enumerable.GetEnumerator();
+                    ctx = TemplateContext.CreateContext(context);
+                    int i = 0;
+                    while (ienum.MoveNext())
+                    {
+                        i++;
+                        ctx.TempData[this.name] = ienum.Current;
+                        //为了兼容以前的用户 foreachIndex 保留
+                        ctx.TempData["foreachIndex"] = i;
+                        for (int n = 0; n < Children.Count; n++)
+                        {
+                            Children[n].Parse(ctx, writer);
+                        }
+                    }
+                }
             }
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            using (System.IO.StringWriter write = new System.IO.StringWriter())
-            {
-                Excute(Source.ParseResult(context), context, write);
-                return write.ToString();
-            }
-        }
-
 
         #region ToIEnumerable
         /// <summary>
@@ -138,6 +149,41 @@ namespace JinianNet.JNTemplate.Nodes
 
         }
         #endregion
+
+#if NETCOREAPP || NETSTANDARD
+        /// <summary>
+        /// 异步解析结果
+        /// </summary>
+        /// <param name="context">TemplateContext</param>
+        /// <param name="writer">TextWriter</param>
+        /// <returns></returns>
+        public override async Task ParseAsync(TemplateContext context, TextWriter writer)
+        {
+            if (Source != null)
+            {
+                object value = await Source.ParseResultAsync(context);
+                IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
+                TemplateContext ctx;
+                if (enumerable != null)
+                {
+                    IEnumerator ienum = enumerable.GetEnumerator();
+                    ctx = TemplateContext.CreateContext(context);
+                    int i = 0;
+                    while (ienum.MoveNext())
+                    {
+                        i++;
+                        ctx.TempData[this.name] = ienum.Current;
+                        //为了兼容以前的用户 foreachIndex 保留
+                        ctx.TempData["foreachIndex"] = i;
+                        for (int n = 0; n < Children.Count; n++)
+                        {
+                            await Children[n].ParseAsync(ctx, writer);
+                        }
+                    }
+                }
+            }
+        }
+#endif
 
     }
 }

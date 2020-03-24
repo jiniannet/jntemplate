@@ -12,8 +12,8 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class VariableScope
     {
-        private VariableScope _parent;
-        private IDictionary<string, object> _dic;
+        private VariableScope parent;
+        private IDictionary<string, object> dic;
 
 
         /// <summary>
@@ -42,12 +42,12 @@ namespace JinianNet.JNTemplate
         /// <param name="dictionary">初始化字典</param>
         public VariableScope(VariableScope parent, IDictionary<string, object> dictionary)
         {
-            this._parent = parent;
+            this.parent = parent;
             if (dictionary == null)
             {
                 dictionary = new Dictionary<string, object>(Engine.Runtime.ComparerIgnoreCase);
             }
-            this._dic = dictionary;
+            this.dic = dictionary;
         }
 
         /// <summary>
@@ -66,11 +66,11 @@ namespace JinianNet.JNTemplate
         /// <param name="all">是否清空父数据</param>
         public void Clear(bool all)
         {
-            this._dic.Clear();
+            this.dic.Clear();
             if (all
-                && this._parent != null)
+                && this.parent != null)
             {
-                this._parent.Clear(all);
+                this.parent.Clear(all);
             }
         }
 
@@ -87,7 +87,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public VariableScope Parent
         {
-            get { return this._parent; }
+            get { return this.parent; }
         }
 
         /// <summary>
@@ -100,19 +100,19 @@ namespace JinianNet.JNTemplate
             get
             {
                 object val;
-                if (this._dic.TryGetValue(name, out val))
+                if (this.dic.TryGetValue(name, out val))
                 {
                     return val;
                 }
-                if (this._parent != null)
+                if (this.parent != null)
                 {
-                    return this._parent[name];
+                    return this.parent[name];
                 }
                 return null;
             }
             set
             {
-                this._dic[name] = value;
+                this.dic[name] = value;
             }
         }
 
@@ -124,14 +124,14 @@ namespace JinianNet.JNTemplate
         internal bool SetValue(string key, object value)
         {
 
-            if (this._dic.ContainsKey(key))
+            if (this.dic.ContainsKey(key))
             {
                 this[key] = value;
                 return true;
             }
-            if (this._parent != null)
+            if (this.parent != null)
             {
-                return this._parent.SetValue(key, value);
+                return this.parent.SetValue(key, value);
             }
             return false;
         }
@@ -143,7 +143,7 @@ namespace JinianNet.JNTemplate
         /// <param name="value">值</param>
         public void Push(string key, object value)
         {
-            this._dic.Add(key, value);
+            this.dic.Add(key, value);
         }
 
         /// <summary>
@@ -153,13 +153,13 @@ namespace JinianNet.JNTemplate
         /// <returns>bool</returns>
         public bool ContainsKey(string key)
         {
-            if (this._dic.ContainsKey(key))
+            if (this.dic.ContainsKey(key))
             {
                 return true;
             }
-            if (_parent != null)
+            if (this.parent != null)
             {
-                return this._parent.ContainsKey(key);
+                return this.parent.ContainsKey(key);
             }
 
             return false;
@@ -172,7 +172,7 @@ namespace JinianNet.JNTemplate
         /// <returns>是否移除成功</returns>
         public bool Remove(string key)
         {
-            return this._dic.Remove(key);
+            return this.dic.Remove(key);
         }
 
     }

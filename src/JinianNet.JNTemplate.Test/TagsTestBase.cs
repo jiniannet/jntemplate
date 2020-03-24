@@ -3,23 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Test
 {
     public class TagsTestBase
     {
-        public string Excute(ITemplate t)
+        public async Task<string> Excute(ITemplate t)
         {
             string document;
 
             using (StringWriter writer = new StringWriter())
             {
-#if NETCOREAPP || NETSTANDARD
-                t.Render(writer);
-                //t.RenderAsync(writer).GetAwaiter().GetResult();
-#else
-                t.Render(writer);
-#endif
+                //t.Render(writer);
+                await t.RenderAsync(writer);
                 document = writer.ToString();
             }
 

@@ -77,6 +77,8 @@ dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\
 echo jntemplate for netStandard 2.1 build success!
 dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netcoreapp2.1 --framework netcoreapp2.1
 echo jntemplate for netcoreapp 2.1 build success!
+dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\netcoreapp3.1 --framework netcoreapp3.1
+echo jntemplate for netcoreapp 3.1 build success!
 dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net46 --framework net46
 echo jntemplate for net framework 4.6 build success!
 dotnet build JinianNet.JNTemplate.csproj --configuration Release --output ..\..\lib\net47 --framework net47

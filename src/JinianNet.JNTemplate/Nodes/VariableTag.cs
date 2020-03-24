@@ -9,17 +9,18 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 变量标签
     /// </summary>
+    [Serializable]
     public class VariableTag : BasisTag
     {
 
-        private string _name;
+        private string name;
         /// <summary>
         /// 变量名
         /// </summary>
         public string Name
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
         /// <summary>
         /// 解析标签
@@ -27,7 +28,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public override object ParseResult(TemplateContext context)
         {
-            return context.TempData[this._name];
+            return context.TempData[this.name];
         }
         /// <summary>
         /// 解析标签
@@ -40,7 +41,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 return null;
             }
-            return context.Actuator.CallPropertyOrField(baseValue, this._name);
+            return context.Actuator.CallPropertyOrField(baseValue, this.name);
         }
 
     }

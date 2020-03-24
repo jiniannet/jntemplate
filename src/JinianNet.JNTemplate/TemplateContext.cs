@@ -30,6 +30,7 @@ namespace JinianNet.JNTemplate
         private List<string> resourceDirectories;
         private IResourceLoader loader;
         private TagParser parsers;
+        private bool enableTemplateCache;
         private List<System.Exception> errors;
 
         /// <summary>
@@ -51,12 +52,14 @@ namespace JinianNet.JNTemplate
             this.parsers = parsers;
             this.cache = cache;
             this.resourceDirectories = new List<string>();
-            string charset;
             this.variableScope = data ?? new VariableScope();
             this.errors = new List<System.Exception>();
             this.currentPath = null;
             this.throwErrors = Utility.StringToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
             this.stripWhiteSpace = Utility.StringToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
+            this.enableTemplateCache = Utility.StringToBoolean(Engine.GetEnvironmentVariable("EnableTemplateCache"));
+            this.stripWhiteSpace = Utility.StringToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
+            string charset;
             if (string.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
             {
                 this.charset = Encoding.UTF8;
@@ -66,6 +69,17 @@ namespace JinianNet.JNTemplate
                 this.charset = Encoding.GetEncoding(charset);
             }
 
+        }
+
+
+
+        /// <summary>
+        /// 启用模板缓存
+        /// </summary>
+        public bool EnableTemplateCache
+        {
+            get { return enableTemplateCache; }
+            set { this.enableTemplateCache = value; }
         }
 
         /// <summary>

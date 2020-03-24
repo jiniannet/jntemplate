@@ -9,46 +9,47 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// TOKEN
     /// </summary>
+    [Serializable]
     public class Token : IComparable<Token>
     {
-        private string _text;
-        private int _beginline;
-        private int _begincolumn;
-        private int _endline;
-        private int _endcolumn;
-        private TokenKind _tokenkind;
-        private Token _next;
+        private string text;
+        private int beginline;
+        private int begincolumn;
+        private int endline;
+        private int endcolumn;
+        private TokenKind tokenkind;
+        private Token next;
         /// <summary>
         /// 开始行
         /// </summary>
         public int BeginLine
         {
-            get { return this._beginline; }
-            set { this._beginline = value; }
+            get { return this.beginline; }
+            set { this.beginline = value; }
         }
         /// <summary>
         /// 开始列
         /// </summary>
         public int BeginColumn
         {
-            get { return this._begincolumn; }
-            set { this._begincolumn = value; }
+            get { return this.begincolumn; }
+            set { this.begincolumn = value; }
         }
         /// <summary>
         /// 结束行
         /// </summary>
         public int EndLine
         {
-            get { return this._endline; }
-            set { this._endline = value; }
+            get { return this.endline; }
+            set { this.endline = value; }
         }
         /// <summary>
         /// 结束列
         /// </summary>
         public int EndColumn
         {
-            get { return this._endcolumn; }
-            set { this._endcolumn = value; }
+            get { return this.endcolumn; }
+            set { this.endcolumn = value; }
         }
 
         /// <summary>
@@ -56,14 +57,14 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         public string Text
         {
-            get { return this._text; }
+            get { return this.text; }
         }
         /// <summary>
         /// TOKEN标记
         /// </summary>
         public TokenKind TokenKind
         {
-            get { return this._tokenkind; }
+            get { return this.tokenkind; }
         }
         /// <summary>
         /// TOKEN
@@ -72,16 +73,16 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="text"></param>
         public Token(TokenKind kind, string text)
         {
-            this._tokenkind = kind;
-            this._text = text;
+            this.tokenkind = kind;
+            this.text = text;
         }
         /// <summary>
         /// 下一个NEXT
         /// </summary>
         public Token Next
         {
-            get { return this._next; }
-            set { this._next = value; }
+            get { return this.next; }
+            set { this.next = value; }
         }
         /// <summary>
         /// 获取文本值

@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Dynamic
     public class ExpressionEvaluator
     {
         #region Weights Array
-        private static readonly string[] _numberWeights = new string[] {
+        private static readonly string[] numberWeights = new string[] {
                 "System.Int16",
                  "System.Int32",
                  "System.Int64",
@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Dynamic
                  "System.Double",
                  "System.Decimal"};
 
-        private static readonly string[] _uintWeights = new string[] {
+        private static readonly string[] uintWeights = new string[] {
                 "System.UInt16",
                  "System.UInt32",
                  "System.UInt64"};
@@ -374,8 +374,8 @@ namespace JinianNet.JNTemplate.Dynamic
                     int i, j;
                     if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
                     {
-                        i = Array.IndexOf<string>(_uintWeights, tX.FullName);
-                        j = Array.IndexOf<string>(_uintWeights, tY.FullName);
+                        i = Array.IndexOf<string>(uintWeights, tX.FullName);
+                        j = Array.IndexOf<string>(uintWeights, tY.FullName);
                     }
                     else
                     {
@@ -389,8 +389,8 @@ namespace JinianNet.JNTemplate.Dynamic
                             tY = Type.GetType(string.Concat("System.", tY.Name.Remove(0, 1)));
                         }
 
-                        i = Array.IndexOf<string>(_numberWeights, tX.FullName);
-                        j = Array.IndexOf<string>(_numberWeights, tY.FullName);
+                        i = Array.IndexOf<string>(numberWeights, tX.FullName);
+                        j = Array.IndexOf<string>(numberWeights, tY.FullName);
                     }
                     if (i > j)
                     {

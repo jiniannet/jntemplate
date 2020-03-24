@@ -18,17 +18,17 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class TemplateRender
     {
-        private TemplateContext _context;
-        private string _content;
-        private string _key;
+        private TemplateContext context;
+        private string content;
+        private string key;
 
         /// <summary>
         /// 模板KEY(用于缓存，默认为文路径)
         /// </summary>
         public string TemplateKey
         {
-            get { return this._key; }
-            set { this._key = value; }
+            get { return this.key; }
+            set { this.key = value; }
         }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public TemplateContext Context
         {
-            get { return this._context; }
-            set { this._context = value; }
+            get { return this.context; }
+            set { this.context = value; }
         }
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public string TemplateContent
         {
-            get { return this._content; }
-            set { this._content = value; }
+            get { return this.content; }
+            set { this.content = value; }
         }
 
         /// <summary>
@@ -64,24 +64,7 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         public async Task RenderAsync(System.IO.TextWriter writer)
         {
-            ITag[] ts = await ParseTagsAsync();
-            //if (!string.IsNullOrEmpty(this._content))
-            //{
-
-            //    if (string.IsNullOrEmpty(this._key))
-            //    {
-            //        ts = await ParseTagsAsync();
-            //    }
-            //    else if ((ts = CacheHelpers.Get<ITag[]>(this._key)) == null)
-            //    {
-            //        ts = await ParseTagsAsync();
-            //        CacheHelpers.Set(this._key, ts);
-            //    }
-            //}
-            //else
-            //{
-            //    ts = new ITag[0];
-            //}
+            ITag[] ts = await ReadTagsAsync(); 
             await RenderAsync(writer, ts);
         }
 
@@ -104,7 +87,7 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        await collection[i].ParseAsync(this._context, writer);
+                        await collection[i].ParseAsync(this.context, writer);
                     }
                     catch (Exception.TemplateException e)
                     {
@@ -139,7 +122,7 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        collection[i].Parse(this._context, writer);
+                        collection[i].Parse(this.context, writer);
                     }
                     catch (Exception.TemplateException e)
                     {
@@ -162,52 +145,60 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public ITag[] ReadTags()
         {
-            //if (!string.IsNullOrEmpty(this._content))
-            //{
-            //    ITag[] ts;
-            //    if (string.IsNullOrEmpty(this._key))
-            //    {
-            //        return ParseTags();
-            //    }
-            //    if ((ts = cache.Get<ITag[]>(this._key)) == null)
-            //    {
-            //        ts = ParseTags();
-            //        cache.Set(this._key, ts);
-            //    }
-            //    return ts;
-            //}
-            //else
-            //{
-            //    return new ITag[0];
-            //}
-            return ParseTags();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private ITag[] ParseTags()
-        {
-            var lexer = new TemplateLexer(this._content);
+            ITag[] tags = GetCacheTags();
+            if (tags != null)
+            {
+                return tags;
+            }
+            var lexer = new TemplateLexer(this.content);
             var ts = lexer.Execute();
 
             var parser = new TemplateParser(this.Context.TagParser, ts);
-            return parser.Execute();
+            tags = parser.Execute();
+            SetCacheTags(tags);
+            return tags;
+        }
+
+        private ITag[] GetCacheTags()
+        {
+            if (string.IsNullOrEmpty(this.content))
+            {
+                return new ITag[0];
+            }
+            if (context.EnableTemplateCache && !string.IsNullOrEmpty(this.key) && Context.Cache != null)
+            {
+                return Context.Cache.Get<ITag[]>(this.key);
+            }
+            return null;
+        }
+
+        private void SetCacheTags(ITag[] tags)
+        {
+            if (tags != null && context.EnableTemplateCache && !string.IsNullOrEmpty(this.key) && Context.Cache != null)
+            {
+                Context.Cache.Set(this.key, tags);
+            }
         }
 
 #if NETCOREAPP || NETSTANDARD
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        private async Task<ITag[]> ParseTagsAsync()
+        public async Task<ITag[]> ReadTagsAsync()
         {
-            var lexer = new TemplateLexer(this._content);
+            ITag[] tags = GetCacheTags();
+            if (tags != null)
+            {
+                return tags;
+            } 
+            var lexer = new TemplateLexer(this.content);
             var ts = await lexer.ExecuteAsync();
-
             var parser = new TemplateParser(this.Context.TagParser, ts);
-            return await parser.ExecuteAsync();
+            tags = await parser.ExecuteAsync();
+            SetCacheTags(tags);
+            return tags;
         }
 #endif
 
@@ -219,13 +210,13 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         private void ThrowException(Exception.TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
-            if (this._context.ThrowExceptions)
+            if (this.context.ThrowExceptions)
             {
                 throw e;
             }
             else
             {
-                this._context.AddError(e);
+                this.context.AddError(e);
                 writer.Write(tag.ToString());
             }
         }

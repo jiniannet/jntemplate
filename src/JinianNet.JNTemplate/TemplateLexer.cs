@@ -18,51 +18,51 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 标记模式
         /// </summary>
-        private FlagMode _flagMode;
+        private FlagMode flagMode;
         /// <summary>
         /// 当前文档
         /// </summary>
-        private string _document;
+        private string document;
         /// <summary>
         /// 当前列
         /// </summary>
-        private int _column;
+        private int column;
         /// <summary>
         /// 当前行
         /// </summary>
-        private int _line;
+        private int line;
         /// <summary>
         /// 当前TokenKind
         /// </summary>
-        private TokenKind _kind;
+        private TokenKind kind;
         /// <summary>
         /// 起始列
         /// </summary>
-        private int _startColumn;
+        private int startColumn;
         /// <summary>
         /// 起始行
         /// </summary>
-        private int _startLine;
+        private int startLine;
         /// <summary>
         /// 扫描器
         /// </summary>
-        private CharScanner _scanner;
+        private CharScanner scanner;
         /// <summary>
         /// token集合
         /// </summary>
-        private List<Token> _collection;
+        private List<Token> collection;
         /// <summary>
         /// 当前TOKEN
         /// </summary>
-        private Token _token;
+        private Token token;
 
         /// <summary>
         /// 符号集合
         /// </summary>
-        private Stack<string> _pos;
-        private string _prefix;
-        private char _flag;
-        private string _suffix;
+        private Stack<string> pos;
+        private string prefix;
+        private char flag;
+        private string suffix;
 
         /// <summary>
         /// TemplateLexer
@@ -70,10 +70,10 @@ namespace JinianNet.JNTemplate
         /// <param name="text">待分析内容</param>
         public TemplateLexer(string text)
         {
-            this._document = text;
-            this._prefix = Engine.GetEnvironmentVariable("TagPrefix");
-            this._flag = Engine.GetEnvironmentVariable("TagFlag")[0];
-            this._suffix = Engine.GetEnvironmentVariable("TagSuffix");
+            this.document = text;
+            this.prefix = Engine.GetEnvironmentVariable("TagPrefix");
+            this.flag = Engine.GetEnvironmentVariable("TagFlag")[0];
+            this.suffix = Engine.GetEnvironmentVariable("TagSuffix");
             Reset();
         }
         /// <summary>
@@ -81,15 +81,15 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void Reset()
         {
-            this._flagMode = FlagMode.None;
-            this._line = 1;
-            this._column = 1;
-            this._kind = TokenKind.Text;
-            this._startColumn = 1;
-            this._startLine = 1;
-            this._scanner = new CharScanner(this._document);
-            this._collection = new List<Token>();
-            this._pos = new Stack<string>();
+            this.flagMode = FlagMode.None;
+            this.line = 1;
+            this.column = 1;
+            this.kind = TokenKind.Text;
+            this.startColumn = 1;
+            this.startLine = 1;
+            this.scanner = new CharScanner(this.document);
+            this.collection = new List<Token>();
+            this.pos = new Stack<string>();
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public Token Current
         {
-            get { return _token; }
-            set { _token = value; }
+            get { return token; }
+            set { token = value; }
         }
 
         object IEnumerator.Current
@@ -115,25 +115,25 @@ namespace JinianNet.JNTemplate
             string text;
             if (tokenKind == TokenKind.StringEnd)
             {
-                text = this._scanner.GetEscapeString();
+                text = this.scanner.GetEscapeString();
             }
             else
             {
-                text = this._scanner.GetEscapeString();
+                text = this.scanner.GetEscapeString();
             }
 
-            Token token = new Token(this._kind, text ?? "");
-            this._kind = tokenKind;
+            Token token = new Token(this.kind, text ?? "");
+            this.kind = tokenKind;
             if (token.TokenKind == TokenKind.Text && text == null)
             {
                 return null;
             }
-            token.BeginLine = this._startLine;
-            token.BeginColumn = this._startColumn;
-            token.EndColumn = this._column;
-            token.BeginLine = this._line;
-            this._startColumn = this._column;
-            this._startLine = this._line;
+            token.BeginLine = this.startLine;
+            token.BeginColumn = this.startColumn;
+            token.EndColumn = this.column;
+            token.BeginLine = this.line;
+            this.startColumn = this.column;
+            this.startLine = this.line;
             return token;
         }
 
@@ -143,16 +143,16 @@ namespace JinianNet.JNTemplate
         }
         private bool Move(int i)
         {
-            if (this._scanner.Next(i))
+            if (this.scanner.Next(i))
             {
-                if (this._scanner.Read() == '\n')
+                if (this.scanner.Read() == '\n')
                 {
-                    this._line++;
-                    this._column = 1;
+                    this.line++;
+                    this.column = 1;
                 }
                 else
                 {
-                    this._column++;
+                    this.column++;
                 }
                 return true;
             }
@@ -162,14 +162,14 @@ namespace JinianNet.JNTemplate
 
         private bool IsTagStart()
         {
-            if (this._scanner.IsEnd() || this._flagMode != FlagMode.None)
+            if (this.scanner.IsEnd() || this.flagMode != FlagMode.None)
             {
                 return false;
             }
             bool find = true;
-            for (int i = 0; i < this._prefix.Length; i++)
+            for (int i = 0; i < this.prefix.Length; i++)
             {
-                if (this._prefix[i] != this._scanner.Read(i))
+                if (this.prefix[i] != this.scanner.Read(i))
                 {
                     find = false;
                     break;
@@ -177,22 +177,22 @@ namespace JinianNet.JNTemplate
             }
             if (find)
             {
-                this._flagMode = FlagMode.Full;
+                this.flagMode = FlagMode.Full;
                 return true;
             }
-            if (this._scanner.Read() == this._flag)
+            if (this.scanner.Read() == this.flag)
             {
 #if ALLOWCOMMENT
-                if (this._scanner.Read(1) == '*')
+                if (this.scanner.Read(1) == '*')
                 {
-                    this._flagMode = FlagMode.Comment;
+                    this.flagMode = FlagMode.Comment;
                     return true;
                 }
                 else
 #endif
-                    if (char.IsLetter(this._scanner.Read(1)))
+                    if (char.IsLetter(this.scanner.Read(1)))
                 {
-                    this._flagMode = FlagMode.Logogram;
+                    this.flagMode = FlagMode.Logogram;
                     return true;
                 }
             }
@@ -201,19 +201,19 @@ namespace JinianNet.JNTemplate
 
         private bool IsTagEnd()
         {
-            if (this._flagMode != FlagMode.None && this._pos.Count == 0)
+            if (this.flagMode != FlagMode.None && this.pos.Count == 0)
             {
-                if (this._scanner.IsEnd())
+                if (this.scanner.IsEnd())
                 {
                     return true;
                 }
-                if (this._scanner.Read() != '.' && this._kind != TokenKind.TagStart)
+                if (this.scanner.Read() != '.' && this.kind != TokenKind.TagStart)
                 {
-                    if (this._flagMode == FlagMode.Full)
+                    if (this.flagMode == FlagMode.Full)
                     {
-                        for (int i = 0; i < this._suffix.Length; i++)
+                        for (int i = 0; i < this.suffix.Length; i++)
                         {
-                            if (this._suffix[i] != this._scanner.Read(i))
+                            if (this.suffix[i] != this.scanner.Read(i))
                             {
                                 return false;
                             }
@@ -222,15 +222,15 @@ namespace JinianNet.JNTemplate
                         return true;
                     }
 #if ALLOWCOMMENT
-                    else if (this._flagMode == FlagMode.Comment)
+                    else if (this.flagMode == FlagMode.Comment)
                     {
-                        return this._scanner.Read() == '*' && this._scanner.Read(1) == this._flag;
+                        return this.scanner.Read() == '*' && this.scanner.Read(1) == this.flag;
                     }
 #endif
                     else
                     {
-                        char value = this._scanner.Read();
-                        char prev = this._scanner.Read(-1);
+                        char value = this.scanner.Read();
+                        char prev = this.scanner.Read(-1);
                         if (((value == '(' || Utility.AllowWord(value) || value == '[') && Utility.AllowWord(prev))
                         || (Utility.AllowWord(value) && (prev == '.')))
                         {
@@ -248,7 +248,7 @@ namespace JinianNet.JNTemplate
         private int GetPrevCharCount(char c)
         {
             int i = 1;
-            while (this._scanner.Read(-i) == c)
+            while (this.scanner.Read(-i) == c)
             {
                 i++;
             }
@@ -264,119 +264,119 @@ namespace JinianNet.JNTemplate
             do
             {
                 //处于非标签模式
-                if (this._flagMode == FlagMode.None)
+                if (this.flagMode == FlagMode.None)
                 {
                     if (IsTagStart())
                     {
                         token = GetToken(TokenKind.TagStart);
-                        if (this._flagMode == FlagMode.Full && this._prefix.Length > 1)
+                        if (this.flagMode == FlagMode.Full && this.prefix.Length > 1)
                         {
-                            Move(this._prefix.Length - 1);
+                            Move(this.prefix.Length - 1);
                         }
 #if ALLOWCOMMENT
-                        else if (this._flagMode == FlagMode.Comment)
+                        else if (this.flagMode == FlagMode.Comment)
                         {
                             Move(1);
                         }
 #endif
                         continue;
                     }
-                    if (this._kind != TokenKind.TagEnd)
+                    if (this.kind != TokenKind.TagEnd)
                     {
                         continue;
                     }
                 }
 
-                if (this._scanner.Read() == '"')
+                if (this.scanner.Read() == '"')
                 {
-                    if (this._pos.Count > 0 && this._pos.Peek() == "\"")
+                    if (this.pos.Count > 0 && this.pos.Peek() == "\"")
                     {
-                        if (this._scanner.Read(-1) != '\\'
+                        if (this.scanner.Read(-1) != '\\'
                             || GetPrevCharCount('\\') % 2 == 0)
                         {
-                            //if (this._kind == TokenKind.StringStart)
+                            //if (this.kind == TokenKind.StringStart)
                             //{
                             //    token = GetToken(TokenKind.String);
                             //}
                             token = GetToken(TokenKind.StringEnd);
-                            this._pos.Pop();
+                            this.pos.Pop();
                         }
                         continue;
                     }
                     else
                     {
-                        if (this._kind == TokenKind.TagStart
-                            || this._kind == TokenKind.LeftBracket
-                           || this._kind == TokenKind.LeftParentheses
-                           || this._kind == TokenKind.Operator
-                           || this._kind == TokenKind.Punctuation
-                           || this._kind == TokenKind.Comma
-                           || this._kind == TokenKind.Colon
-                           || this._kind == TokenKind.LeftBrace
-                           || this._kind == TokenKind.Space)
+                        if (this.kind == TokenKind.TagStart
+                            || this.kind == TokenKind.LeftBracket
+                           || this.kind == TokenKind.LeftParentheses
+                           || this.kind == TokenKind.Operator
+                           || this.kind == TokenKind.Punctuation
+                           || this.kind == TokenKind.Comma
+                           || this.kind == TokenKind.Colon
+                           || this.kind == TokenKind.LeftBrace
+                           || this.kind == TokenKind.Space)
                         {
                             token = GetToken(TokenKind.StringStart);
-                            this._pos.Push("\"");
+                            this.pos.Push("\"");
                             continue;
                         }
 
                     }
                 }
 
-                if (this._kind == TokenKind.StringStart)
+                if (this.kind == TokenKind.StringStart)
                 {
                     token = GetToken(TokenKind.String);
                     continue;
                 }
 
-                if (this._kind == TokenKind.String)
+                if (this.kind == TokenKind.String)
                 {
                     continue;
                 }
 
-                if (this._scanner.Read() == '(' || this._scanner.Read() == '[' || this._scanner.Read() == '{')
+                if (this.scanner.Read() == '(' || this.scanner.Read() == '[' || this.scanner.Read() == '{')
                 {
-                    this._pos.Push(this._scanner.Read().ToString());
+                    this.pos.Push(this.scanner.Read().ToString());
                 }
                 else if (
-                    (this._scanner.Read() == ')' && this._pos.Count > 0 && this._pos.Peek() == "(")
-                    || (this._scanner.Read() == ']' && this._pos.Count > 0 && this._pos.Peek() == "[")
-                    || (this._scanner.Read() == '}' && this._pos.Count > 0 && this._pos.Peek() == "{"))// && this.pos.Count > 2
+                    (this.scanner.Read() == ')' && this.pos.Count > 0 && this.pos.Peek() == "(")
+                    || (this.scanner.Read() == ']' && this.pos.Count > 0 && this.pos.Peek() == "[")
+                    || (this.scanner.Read() == '}' && this.pos.Count > 0 && this.pos.Peek() == "{"))// && this.pos.Count > 2
                 {
-                    this._pos.Pop();
+                    this.pos.Pop();
                 }
                 else if (IsTagEnd())
                 {
                     token = GetToken(TokenKind.TagEnd);
-                    if (this._flagMode == FlagMode.Full)
+                    if (this.flagMode == FlagMode.Full)
                     {
-                        Move(this._suffix.Length - 1);
+                        Move(this.suffix.Length - 1);
                     }
 #if ALLOWCOMMENT
-                    else if (this._flagMode == FlagMode.Comment)
+                    else if (this.flagMode == FlagMode.Comment)
                     {
                         Move(1);
                     }
 #endif
-                    else if (this._flagMode == FlagMode.Logogram)
+                    else if (this.flagMode == FlagMode.Logogram)
                     {
                         Move(-1);
                     }
-                    this._flagMode = FlagMode.None;
+                    this.flagMode = FlagMode.None;
                     continue;
                 }
 
                 TokenKind tk;
-                if (this._scanner.Read() == '+' || this._scanner.Read() == '-') //正负数符号识别
+                if (this.scanner.Read() == '+' || this.scanner.Read() == '-') //正负数符号识别
                 {
-                    if (char.IsNumber(this._scanner.Read(1)) &&
-                        (this._kind != TokenKind.Number
-                        && this._kind != TokenKind.RightBracket
-                        && this._kind != TokenKind.RightParentheses
-                        && this._kind != TokenKind.RightBrace
-                        && this._kind != TokenKind.String
-                        && this._kind != TokenKind.Tag
-                        && this._kind != TokenKind.TextData))
+                    if (char.IsNumber(this.scanner.Read(1)) &&
+                        (this.kind != TokenKind.Number
+                        && this.kind != TokenKind.RightBracket
+                        && this.kind != TokenKind.RightParentheses
+                        && this.kind != TokenKind.RightBrace
+                        && this.kind != TokenKind.String
+                        && this.kind != TokenKind.Tag
+                        && this.kind != TokenKind.TextData))
                     {
                         tk = TokenKind.Number;
                     }
@@ -387,19 +387,19 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
-                    tk = GetTokenKind(this._scanner.Read());
+                    tk = GetTokenKind(this.scanner.Read());
                 }
                 //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
                 if (
-                    ((this._kind != tk || this._kind == TokenKind.LeftParentheses || this._kind == TokenKind.RightParentheses)
-                    && (tk != TokenKind.Number || this._kind != TokenKind.TextData)
+                    ((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
+                    && (tk != TokenKind.Number || this.kind != TokenKind.TextData)
                     //&& (this.kind == TokenKind.Number && tk != TokenKind.Dot)
                     )
-                    || (this._kind == tk && (tk == TokenKind.LeftBracket || tk == TokenKind.LeftParentheses || tk == TokenKind.LeftBrace || tk == TokenKind.RightBracket || tk == TokenKind.RightParentheses || tk == TokenKind.RightBrace))
+                    || (this.kind == tk && (tk == TokenKind.LeftBracket || tk == TokenKind.LeftParentheses || tk == TokenKind.LeftBrace || tk == TokenKind.RightBracket || tk == TokenKind.RightParentheses || tk == TokenKind.RightBrace))
                     )
                 //|| (this.kind != TokenKind.Number && tk == TokenKind.Dot)
                 {
-                    if (tk == TokenKind.Dot && this._kind == TokenKind.Number)
+                    if (tk == TokenKind.Dot && this.kind == TokenKind.Number)
                     {
 
                     }
@@ -413,8 +413,8 @@ namespace JinianNet.JNTemplate
             while (Move() && token == null);
 
             if (token != null
-                || (this._flagMode != FlagMode.None && (token = new Token(TokenKind.TagEnd, string.Empty)) != null)
-                || (this._kind != TokenKind.EOF && (token = GetToken(TokenKind.EOF)) != null))
+                || (this.flagMode != FlagMode.None && (token = new Token(TokenKind.TagEnd, string.Empty)) != null)
+                || (this.kind != TokenKind.EOF && (token = GetToken(TokenKind.EOF)) != null))
             {
                 this.Current = token;
                 return true;
@@ -425,11 +425,11 @@ namespace JinianNet.JNTemplate
         }
         private TokenKind GetTokenKind(char c)
         {
-            if (this._flagMode == FlagMode.None)
+            if (this.flagMode == FlagMode.None)
             {
                 return TokenKind.Text;
             }
-            if (this._flagMode == FlagMode.Comment)
+            if (this.flagMode == FlagMode.Comment)
             {
                 return TokenKind.Comment;
             }
@@ -531,21 +531,21 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public override Token[] Execute()
         {
-            if (_collection.Count == 0)
+            if (collection.Count == 0)
             {
                 while (MoveNext())
                 {
                     if (this.Current != null)
                     {
-                        if (this._collection.Count > 0 && this._collection[this._collection.Count - 1].Next == null)
+                        if (this.collection.Count > 0 && this.collection[this.collection.Count - 1].Next == null)
                         {
-                            this._collection[this._collection.Count - 1].Next = this.Current;
+                            this.collection[this.collection.Count - 1].Next = this.Current;
                         }
-                        this._collection.Add(this.Current);
+                        this.collection.Add(this.Current);
                     }
                 }
             }
-            return _collection.ToArray();
+            return collection.ToArray();
         }
     }
 }

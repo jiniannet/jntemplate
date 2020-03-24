@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,7 +19,7 @@ namespace JinianNet.JNTemplate.Caching
          * 无过期设置，不适合缓存大量数据
          * 如需缓存大量数据请自行实现ICache接口
          */
-        private Dictionary<string, object> dict = new Dictionary<string, object>();
+        private Dictionary<string, object> dict;
         private static MemoryCache defaultCache;
         private static object initLock = new object();
 
@@ -42,6 +43,15 @@ namespace JinianNet.JNTemplate.Caching
                 return defaultCache;
             }
         }
+
+        /// <summary>
+        /// 内存缓存
+        /// </summary>
+        private MemoryCache()
+        {
+            dict = new Dictionary<string, object>();
+        }
+
         /// <summary>
         /// 当前缓存数量
         /// </summary>
@@ -113,6 +123,24 @@ namespace JinianNet.JNTemplate.Caching
                 return r as T;
             }
             return default(T);
+        }
+        /// <summary>
+        /// 添加缓存
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        /// <param name="expire">过期时间</param>
+        public void Set(string key, object value, TimeSpan expire)
+        {
+            dict[key] = value;
+        }
+
+        /// <summary>
+        /// 清空所有缓存
+        /// </summary>
+        public void Clear()
+        {
+            dict.Clear();
         }
     }
 }

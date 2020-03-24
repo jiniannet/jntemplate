@@ -3,25 +3,30 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
+#if !NET20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
     /// FOR标签
     /// </summary>
+    [Serializable]
     public class ForTag : ComplexTag
     {
-        private ITag _initial;
-        private ITag _test;
-        private ITag _dothing;
+        private ITag initial;
+        private ITag test;
+        private ITag dothing;
 
         /// <summary>
         /// 初始标签 
         /// </summary>
         public ITag Initial
         {
-            get { return this._initial; }
-            set { this._initial = value; }
+            get { return this.initial; }
+            set { this.initial = value; }
         }
 
         /// <summary>
@@ -29,8 +34,8 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         public ITag Test
         {
-            get { return this._test; }
-            set { this._test = value; }
+            get { return this.test; }
+            set { this.test = value; }
         }
 
         /// <summary>
@@ -38,23 +43,28 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         public ITag Do
         {
-            get { return this._dothing; }
-            set { this._dothing = value; }
+            get { return this.dothing; }
+            set { this.dothing = value; }
         }
 
-        private void Excute(TemplateContext context, System.IO.TextWriter writer)
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        /// <param name="writer">writer</param>
+        public override void Parse(TemplateContext context, TextWriter writer)
         {
-            this._initial.ParseResult(context);
+            this.initial.ParseResult(context);
             //如果标签为空，则直接为false,避免死循环以内存溢出
             bool run;
 
-            if (this._test == null)
+            if (this.test == null)
             {
                 run = false;
             }
             else
             {
-                run = Utility.ToBoolean(this._test.ParseResult(context));
+                run = Utility.ToBoolean(this.test.ParseResult(context));
             }
 
             while (run)
@@ -63,33 +73,51 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     Children[i].Parse(context, writer);
                 }
-                if (this._dothing != null)
+                if (this.dothing != null)
                 {
-                    this._dothing.ParseResult(context);
+                    //执行计算，不需要输出，比如i++
+                    this.dothing.ParseResult(context);
                 }
-                run = this._test == null ? true : run = Utility.ToBoolean(this._test.ParseResult(context));
+                run = this.test == null ? true : run = Utility.ToBoolean(this.test.ParseResult(context));
             }
         }
+
+#if NETCOREAPP || NETSTANDARD
         /// <summary>
-        /// 解析标签
+        /// 异步解析结果
         /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
+        /// <param name="context">TemplateContext</param>
+        /// <param name="writer">TextWriter</param>
+        /// <returns></returns>
+        public override async Task ParseAsync(TemplateContext context, TextWriter writer)
         {
-            using (System.IO.StringWriter write = new System.IO.StringWriter())
+            this.initial.ParseResult(context);
+            //如果标签为空，则直接为false,避免死循环以内存溢出
+            bool run;
+
+            if (this.test == null)
             {
-                Excute(context, write);
-                return write.ToString();
+                run = false;
+            }
+            else
+            {
+                run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
+            }
+
+            while (run)
+            {
+                for (int i = 0; i < Children.Count; i++)
+                {
+                    await Children[i].ParseAsync(context, writer);
+                }
+                if (this.dothing != null)
+                {
+                    //执行计算，不需要输出，比如i++
+                    await this.dothing.ParseResultAsync(context);
+                }
+                run = this.test == null ? true : run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
             }
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, System.IO.TextWriter write)
-        {
-            Excute(context, write);
-        }
+#endif
     }
 }
