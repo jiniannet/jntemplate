@@ -43,7 +43,11 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 if (result is FuncHandler)
                 {
-                    return (result as FuncHandler).Invoke(args);
+                    return (result as FuncHandler)(args);
+                }
+                if (result is Delegate)
+                {
+                    return (result as Delegate).DynamicInvoke(args);
                 }
             }
 
@@ -89,9 +93,9 @@ namespace JinianNet.JNTemplate.Nodes
 
                 result = context.Actuator.CallPropertyOrField(baseValue, name.ToString());
 
-                if (result != null && result is FuncHandler)
+                if (result != null && result is Delegate)
                 {
-                    return (result as FuncHandler).Invoke(args);
+                    return (result as Delegate).DynamicInvoke(args);
                 }
             }
 
@@ -153,7 +157,11 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 if (result is FuncHandler)
                 {
-                    return (result as FuncHandler).Invoke(args);
+                    return (result as FuncHandler)(args);
+                }
+                if (result is Delegate)
+                {
+                    return (result as Delegate).DynamicInvoke(args);
                 }
             }
             return null;

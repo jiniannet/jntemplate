@@ -1,4 +1,8 @@
-﻿using JinianNet.JNTemplate.Caching;
+﻿/********************************************************************************
+ Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
+ Licensed under the MIT license. See licence.txt file in the project root for full license information.
+ ********************************************************************************/
+using JinianNet.JNTemplate.Caching;
 using System;
 using System.Collections.Generic; 
 using System.Reflection; 
@@ -25,6 +29,23 @@ namespace JinianNet.JNTemplate.Dynamic
                     type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
 #endif
             return p;
+        }
+
+        /// <summary>
+        /// 获取字段
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="propName">属性名称</param>
+        /// <returns></returns>
+        public static FieldInfo GetFieldInfo(Type type, string propName)
+        {
+            FieldInfo f =
+#if NETSTANDARD
+                    type.GetRuntimeField(propName);
+#else
+                    type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+#endif
+            return f;
         }
 
         /// <summary>
@@ -130,13 +151,25 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     continue;
                 }
-                if (args[i] != pi[i].ParameterType && !args[i].IsSubclassOf(pi[i].ParameterType) && !DynamicHelpers.CanChange(args[i], pi[i].ParameterType))
+                if (!IsMatchType(args[i], pi[i].ParameterType) && !DynamicHelpers.CanChange(args[i], pi[i].ParameterType))
                 {
                     return false;
                 }
             }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="original"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool IsMatchType(Type original, Type target)
+        {
+            return original == target || target.IsSubclassOf(target);
         }
 
         /// <summary>

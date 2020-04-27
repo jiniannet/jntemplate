@@ -27,24 +27,24 @@ namespace JinianNet.JNTemplate.Parsers
                 && tc.First.TokenKind == TokenKind.TextData
                 && tc.Count > 2
                 && tc[1].TokenKind == TokenKind.LeftParentheses
-                && tc.Last.TokenKind == TokenKind.RightParentheses)
+                && tc.Last.TokenKind == TokenKind.RightParentheses
+                && tc.Split(0, tc.Count, TokenKind.Operator).Length == 1)
             {
-                 
                 FunctaionTag tag = new FunctaionTag();
 
                 //tag.Name = tc.First.Text; 
                 tag.Func = (BasisTag)parser.Read(tc[0, 1]);
- 
-                TokenCollection[] tcs = tc.Split(2, tc.Count-1, TokenKind.Comma);
+
+                TokenCollection[] tcs = tc.Split(2, tc.Count - 1, TokenKind.Comma);
                 for (int i = 0; i < tcs.Length; i++)
                 {
-                    if(tcs[i].Count==1 && tcs[i][0].TokenKind == TokenKind.Comma)
+                    if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Comma)
                     {
                         continue;
                     }
                     tag.AddChild(parser.Read(tcs[i]));
                 }
-                 
+
                 return tag;
 
             }
