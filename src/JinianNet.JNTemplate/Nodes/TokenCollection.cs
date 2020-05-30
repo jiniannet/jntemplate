@@ -223,10 +223,10 @@ namespace JinianNet.JNTemplate.Nodes
 
                 if (i == end - 1 && y >= x)
                 {
-                    if (x == 0 && y == i)
-                    {
-                        throw new Exception.ParseException(string.Concat("Unexpected  tag:", this), this[0].BeginLine, this[0].BeginColumn);
-                    }
+                    //if (x == 0 && y == i)
+                    //{
+                    //    throw new Exception.ParseException(string.Concat("Unexpected  tag:", this), this[0].BeginLine, this[0].BeginColumn);
+                    //}
                     tc.Add(this[x, y + 1]);
                     x = i + 1;
                 }
