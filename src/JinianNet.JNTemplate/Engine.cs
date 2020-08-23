@@ -3,7 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using JinianNet.JNTemplate.Configuration; 
+using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Resources;
 #if !NET20
 using System.Threading.Tasks;
@@ -73,12 +73,17 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext()
         {
-            return new TemplateContext(
+            TemplateContext ctx = new TemplateContext(
                 new VariableScope(Runtime.Data)
                 , Runtime.Actuator
                 , Runtime.Loader
                 , Runtime.Parsers
                 , Runtime.Cache);
+            if (Runtime.ResourceDirectories != null && Runtime.ResourceDirectories.Count > 0)
+            {
+                ctx.ResourceDirectories.AddRange(Runtime.ResourceDirectories);
+            }
+            return ctx;
         }
 
         /// <summary>
@@ -111,14 +116,24 @@ namespace JinianNet.JNTemplate
         /// <returns>ITemplate</returns>
         public static ITemplate LoadTemplate(string path, TemplateContext ctx)
         {
-            ResourceInfo info = ctx.Loader.Load(path, ctx.Charset);
+            var paths =
+#if NETCOREAPP || NETSTANDARD
+                    ctx.GetResourceDirectories();
+#else
+                    TemplateContextExtensions.GetResourceDirectories(ctx);
+#endif
+
+            ResourceInfo info = ctx.Loader.Load(path, ctx.Charset, paths);
             Template template;
 
             if (info != null)
             {
                 template = new Template(ctx, info.Content);
                 template.TemplateKey = info.FullPath;
-                ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
+                if (string.IsNullOrEmpty(ctx.CurrentPath))
+                {
+                    ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
+                }
             }
             else
             {
@@ -142,14 +157,23 @@ namespace JinianNet.JNTemplate
             {
                 ctx = CreateContext();
             }
-            ResourceInfo info = await ctx.Loader.LoadAsync(path, ctx.Charset);
+            var paths =
+#if NETCOREAPP || NETSTANDARD
+                    ctx.GetResourceDirectories();
+#else
+                    TemplateContextExtensions.GetResourceDirectories(ctx);
+#endif
+            ResourceInfo info = await ctx.Loader.LoadAsync(path, ctx.Charset, paths);
             Template template;
 
             if (info != null)
             {
                 template = new Template(ctx, info.Content);
                 template.TemplateKey = info.FullPath;
-                ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
+                if (string.IsNullOrEmpty(ctx.CurrentPath))
+                {
+                    ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
+                }
             }
             else
             {

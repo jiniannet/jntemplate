@@ -105,5 +105,77 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("15", render);
         }
 
+        /// <summary>
+        /// 测试方法参数
+        /// </summary>
+        [Fact]
+        public async Task TestFunctionGrammar()
+        {
+            //var templateContent = "${ArticleList(Class)}";
+            var templateContent = "${ArticleList(Nav.Class.F_Sort,10,false,20,60,true,false)}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.TempData["ArticleList"] = (new JinianNet.JNTemplate.FuncHandler(args =>
+            {
+                return args.Length;
+            }));
+            template.Context.TempData["Nav"] = new {
+                Class = new { 
+                    Sort=1
+                }
+            };
+            var render = await Excute(template);
+            Assert.Equal("7", render);
+        }
+
+        /// <summary>
+        /// 测试Func委托(1.4.0以上版本支持)
+        /// </summary>
+        [Fact]
+        public async Task TestFunctionFunc()
+        {
+            Func<string, string> func = (text) =>
+            {
+                return "input:" + text;
+            };
+            var templateContent = "${test(\"test data\")}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.TempData["test"] = func;
+            var render = await Excute(template);
+            Assert.Equal("input:test data",render);
+        }
+
+        /// <summary>
+        /// 测试Func委托(1.4.0以上版本支持)
+        /// </summary>
+        [Fact]
+        public async Task TestCoxFunc()
+        {
+            Func<string,int, string> func = (text,id) =>
+            {
+                return "input:" + text + " id:" + id;
+            };
+            var templateContent = "${test(\"test data\",9527)}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.TempData["test"] = func;
+            var render = await Excute(template);
+            Assert.Equal("input:test data id:9527", render);
+        }
+
+        /// <summary>
+        /// 测试Action委托(1.4.0以上版本支持)
+        /// </summary>
+        [Fact]
+        public async Task TestFunctionAction()
+        {
+            Action<string> func = (text) =>
+            {
+                Console.WriteLine( "你输入了:" + text);
+            };
+            var templateContent = "${test(\"test data\")}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.TempData["test"] = func;
+            var render = await Excute(template);
+
+        }
     }
 }

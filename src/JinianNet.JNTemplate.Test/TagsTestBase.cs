@@ -15,8 +15,8 @@ namespace JinianNet.JNTemplate.Test
 
             using (StringWriter writer = new StringWriter())
             {
-                //t.Render(writer);
-                await t.RenderAsync(writer);
+                t.Render(writer);
+                // await t.RenderAsync(writer);
                 document = writer.ToString();
             }
 

@@ -45,29 +45,13 @@ namespace JinianNet.JNTemplate.Resources
         public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
-            if (string.IsNullOrEmpty(info.FullPath = FindResource(filename, directory)))
+            if (string.IsNullOrEmpty(info.FullPath = FindPath(directory, filename)))
             {
                 return null;
             }
             info.Content = LoadResource(info.FullPath, encoding);
             return info;
         }
-
-        /// <summary>
-        /// 查找资源
-        /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="directory">追加查找目录</param>
-        private string FindResource(string filename, string[] directory)
-        {
-            string full = null;
-            if (directory != null && directory.Length > 0)
-            {
-                full = FindPath(directory, filename);
-            }
-            return full;
-        }
-
 
         /// <summary>
         /// 查找指定文件
@@ -86,7 +70,8 @@ namespace JinianNet.JNTemplate.Resources
 
             if (!string.IsNullOrEmpty(filename))
             {
-                if ((filename = NormalizePath(filename)) == null)  //路径非法，比如用户试图跳出当前目录时（../header.txt）
+                if ((filename = NormalizePath(filename)) == null  //路径非法，比如用户试图跳出当前目录时（../header.txt）
+                    || paths==null)  //查找目录为空时
                 {
                     return null;
                 }
@@ -221,7 +206,7 @@ namespace JinianNet.JNTemplate.Resources
         public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
-            if (string.IsNullOrWhiteSpace(info.FullPath = FindResource(filename, directory)))
+            if (string.IsNullOrWhiteSpace(info.FullPath = FindPath(directory, filename)))
             {
                 return null;
             }

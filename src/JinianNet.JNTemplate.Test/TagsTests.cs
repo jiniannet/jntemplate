@@ -313,6 +313,34 @@ $key5";
         }
 
 
+        /// <summary>
+        /// 测试基本使用方法
+        /// </summary>
+        [Fact]
+        public async Task TestBaseLoadTemplate()
+        {
+            var paths = new[] { 
+#if NETCOREAPP
+                new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName,
+#else
+                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName,
+#endif
+                "templets",
+                "default",
+                "include",
+                "header.txt"
+        };
+
+            var fileName = string.Join(System.IO.Path.DirectorySeparatorChar.ToString(),paths);
+            if (!System.IO.File.Exists(fileName))
+            {
+                throw new System.Exception($"{fileName} 不存在");
+            }
+            var template = Engine.LoadTemplate(fileName);
+            template.Context.TempData["name"] = "jntemplate";
+            var render = await Excute(template);
+            Assert.Equal("你好，jntemplate", render);
+        }
 
         ///// <summary>
         ///// 测试标签大小写

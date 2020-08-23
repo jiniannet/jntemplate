@@ -21,7 +21,7 @@ namespace JinianNet.JNTemplate
 #endif
             TemplateContext ctx)
         {
-            if (string.IsNullOrEmpty(ctx.CurrentPath))
+            if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.ResourceDirectories.Contains(ctx.CurrentPath))
             {
                 return ctx.ResourceDirectories.ToArray();
             }
