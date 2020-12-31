@@ -14,13 +14,8 @@ namespace JinianNet.JNTemplate.Nodes
     /// 索引标签
     /// </summary>
     [Serializable]
-    public class IndexValueTag : BasisTag
+    public class IndexValueTag : ChildrenTag
     {
-        /// <summary>
-        /// 容器
-        /// </summary>
-        public BasisTag Container { get; set; }
-
         /// <summary>
         /// 索引
         /// </summary>
@@ -31,18 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public override object ParseResult(TemplateContext context)
         {
-            object obj = this.Container.ParseResult(context);
-            object index = this.Index.ParseResult(context);
-            return context.Actuator.CallIndexValue(obj, index);
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="baseValue">基本值</param>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(object baseValue, TemplateContext context)
-        {
-            object obj = this.Container.ParseResult(baseValue, context);
+            object obj = this.Parent.ParseResult(context);
             object index = this.Index.ParseResult(context);
             return context.Actuator.CallIndexValue(obj, index);
         }
@@ -54,18 +38,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public override async Task<object> ParseResultAsync(TemplateContext context)
         {
-            object obj = await this.Container.ParseResultAsync(context);
-            object index = await this.Index.ParseResultAsync(context);
-            return context.Actuator.CallIndexValue(obj, index);
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="baseValue">基本值</param>
-        /// <param name="context">上下文</param>
-        public override async Task<object> ParseResultAsync(object baseValue, TemplateContext context)
-        {
-            object obj = await this.Container.ParseResultAsync(baseValue, context);
+            object obj = await this.Parent.ParseResultAsync(context);
             object index = await this.Index.ParseResultAsync(context);
             return context.Actuator.CallIndexValue(obj, index);
         }

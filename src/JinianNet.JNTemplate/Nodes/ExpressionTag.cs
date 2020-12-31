@@ -26,10 +26,10 @@ namespace JinianNet.JNTemplate.Nodes
         {
             List<object> parameters = new List<object>();
 
-            for (int i = 0; i < Children.Count; i++)
+            for (int i = 0; i < this.Children.Count; i++)
             {
-                object result = Children[i].ParseResult(context);
-                bool isOperator = Children[i] is TextTag;
+                object result = this.Children[i].ParseResult(context);
+                bool isOperator = this.Children[i] is TextTag;
                 if (Eval(parameters, isOperator, result))
                 {
                     return parameters[parameters.Count - 1];
@@ -39,18 +39,7 @@ namespace JinianNet.JNTemplate.Nodes
             var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
             return ExpressionEvaluator.Calculate(stack);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="baseValue"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override object ParseResult(object baseValue, TemplateContext context)
-        {
-            throw new TemplateException("unsupported");
-        }
-
+ 
         /// <summary>
         /// 计算
         /// </summary>
@@ -115,10 +104,10 @@ namespace JinianNet.JNTemplate.Nodes
         {
             List<object> parameters = new List<object>();
 
-            for (int i = 0; i < Children.Count; i++)
+            for (int i = 0; i < this.Children.Count; i++)
             {
-                object result = await Children[i].ParseResultAsync(context);
-                bool isOperator = Children[i] is TextTag;
+                object result = await this.Children[i].ParseResultAsync(context);
+                bool isOperator = this.Children[i] is TextTag;
                 if (Eval(parameters, isOperator, result))
                 {
                     return parameters[parameters.Count - 1];

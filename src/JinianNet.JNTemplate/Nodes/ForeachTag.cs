@@ -40,59 +40,45 @@ namespace JinianNet.JNTemplate.Nodes
             set { this.source = value; }
         }
 
-        private void Excute(object value, TemplateContext context, TextWriter writer)
-        {
-            IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
-            TemplateContext ctx;
-            if (enumerable != null)
-            {
-                IEnumerator ienum = enumerable.GetEnumerator();
-                ctx = TemplateContext.CreateContext(context);
-                int i = 0;
-                while (ienum.MoveNext())
-                {
-                    i++;
-                    ctx.TempData[this.name] = ienum.Current;
-                    //为了兼容以前的用户 foreachIndex 保留
-                    ctx.TempData["foreachIndex"] = i;
-                    for (int n = 0; n < Children.Count; n++)
-                    {
-                        Children[n].Parse(ctx, writer);
-                    }
-
-                }
-            }
-        }
         /// <summary>
         /// 解析标签
         /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="writer">writer</param>
-        public override void Parse(TemplateContext context, TextWriter writer)
+        /// <param name="context">上下文</param> 
+        public override object ParseResult(TemplateContext context)
         {
             if (Source != null)
             {
-                object value = Source.ParseResult(context);
-                IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
-                TemplateContext ctx;
-                if (enumerable != null)
+                using (var writer = new StringWriter())
                 {
-                    IEnumerator ienum = enumerable.GetEnumerator();
-                    ctx = TemplateContext.CreateContext(context);
-                    int i = 0;
-                    while (ienum.MoveNext())
+                    object value = Source.ParseResult(context);
+                    IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
+                    TemplateContext ctx;
+                    if (enumerable != null)
                     {
-                        i++;
-                        ctx.TempData[this.name] = ienum.Current;
-                        //为了兼容以前的用户 foreachIndex 保留
-                        ctx.TempData["foreachIndex"] = i;
-                        for (int n = 0; n < Children.Count; n++)
+                        IEnumerator ienum = enumerable.GetEnumerator();
+                        ctx = TemplateContext.CreateContext(context);
+                        int i = 0;
+                        while (ienum.MoveNext())
                         {
-                            Children[n].Parse(ctx, writer);
+                            i++;
+                            ctx.TempData[this.name] = ienum.Current;
+                            //为了兼容以前的用户 foreachIndex 保留
+                            ctx.TempData["foreachIndex"] = i;
+                            for (int n = 0; n < this.Children.Count; n++)
+                            {
+                                object result = this.Children[n].ParseResult(ctx);
+                                if (i == 0 && this.Children.Count == 1)
+                                {
+                                    return result;
+                                }
+                                writer.Write(result?.ToString());
+                            }
                         }
                     }
+                    return writer.ToString();
                 }
             }
+            return null;
         }
 
         #region ToIEnumerable
@@ -154,34 +140,45 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 异步解析结果
         /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <param name="writer">TextWriter</param>
+        /// <param name="context">TemplateContext</param> 
         /// <returns></returns>
-        public override async Task ParseAsync(TemplateContext context, TextWriter writer)
+        public override async Task<object> ParseResultAsync(TemplateContext context)
         {
             if (Source != null)
             {
-                object value = await Source.ParseResultAsync(context);
-                IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
-                TemplateContext ctx;
-                if (enumerable != null)
+                using (var writer = new StringWriter())
                 {
-                    IEnumerator ienum = enumerable.GetEnumerator();
-                    ctx = TemplateContext.CreateContext(context);
-                    int i = 0;
-                    while (ienum.MoveNext())
+                    object value = await Source.ParseResultAsync(context);
+                    IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
+                    TemplateContext ctx;
+                    if (enumerable != null)
                     {
-                        i++;
-                        ctx.TempData[this.name] = ienum.Current;
-                        //为了兼容以前的用户 foreachIndex 保留
-                        ctx.TempData["foreachIndex"] = i;
-                        for (int n = 0; n < Children.Count; n++)
+                        IEnumerator ienum = enumerable.GetEnumerator();
+                        ctx = TemplateContext.CreateContext(context);
+                        int i = 0;
+                        while (ienum.MoveNext())
                         {
-                            await Children[n].ParseAsync(ctx, writer);
+                            i++;
+                            ctx.TempData[this.name] = ienum.Current;
+                            //为了兼容以前的用户 foreachIndex 保留
+                            ctx.TempData["foreachIndex"] = i;
+                            for (int n = 0; n < this.Children.Count; n++)
+                            {
+                                var result = await this.Children[n].ParseResultAsync(ctx);
+                                if (i == 0 && this.Children.Count == 1)
+                                {
+                                    return result;
+                                }
+                                await writer.WriteAsync(result?.ToString());
+                            }
                         }
                     }
+
+                    return writer.ToString();
                 }
             }
+
+            return null;
         }
 #endif
 

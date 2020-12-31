@@ -50,9 +50,8 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 解析标签
         /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="writer">writer</param>
-        public override void Parse(TemplateContext context, TextWriter writer)
+        /// <param name="context">上下文</param> 
+        public override object ParseResult(TemplateContext context)
         {
             this.initial.ParseResult(context);
             //如果标签为空，则直接为false,避免死循环以内存溢出
@@ -66,19 +65,23 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 run = Utility.ToBoolean(this.test.ParseResult(context));
             }
-
-            while (run)
+            using (var writer = new StringWriter())
             {
-                for (int i = 0; i < Children.Count; i++)
+                while (run)
                 {
-                    Children[i].Parse(context, writer);
+                    for (int i = 0; i < this.Children.Count; i++)
+                    {
+                        writer.Write(this.Children[i].ParseResult(context)?.ToString());
+                    }
+
+                    if (this.dothing != null)
+                    {
+                        //执行计算，不需要输出，比如i++
+                        this.dothing.ParseResult(context);
+                    }
+                    run = Utility.ToBoolean(this.test.ParseResult(context));
                 }
-                if (this.dothing != null)
-                {
-                    //执行计算，不需要输出，比如i++
-                    this.dothing.ParseResult(context);
-                }
-                run = this.test == null ? true : run = Utility.ToBoolean(this.test.ParseResult(context));
+                return writer.ToString();
             }
         }
 
@@ -86,12 +89,11 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 异步解析结果
         /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <param name="writer">TextWriter</param>
+        /// <param name="context">TemplateContext</param> 
         /// <returns></returns>
-        public override async Task ParseAsync(TemplateContext context, TextWriter writer)
+        public override async Task<object> ParseResultAsync(TemplateContext context)
         {
-            this.initial.ParseResult(context);
+            await this.initial.ParseResultAsync(context);
             //如果标签为空，则直接为false,避免死循环以内存溢出
             bool run;
 
@@ -103,19 +105,23 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
             }
-
-            while (run)
+            using (var writer = new StringWriter())
             {
-                for (int i = 0; i < Children.Count; i++)
+                while (run)
                 {
-                    await Children[i].ParseAsync(context, writer);
+                    for (int i = 0; i < this.Children.Count; i++)
+                    {
+                        var result = await this.Children[i].ParseResultAsync(context);
+                        writer.Write(result?.ToString());
+                    }
+                    if (this.dothing != null)
+                    {
+                        //执行计算，不需要输出，比如i++
+                        await this.dothing.ParseResultAsync(context);
+                    }
+                    run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
                 }
-                if (this.dothing != null)
-                {
-                    //执行计算，不需要输出，比如i++
-                    await this.dothing.ParseResultAsync(context);
-                }
-                run = this.test == null ? true : run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
+                return writer.ToString();
             }
         }
 #endif

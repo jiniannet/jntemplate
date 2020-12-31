@@ -32,8 +32,8 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 FunctaionTag tag = new FunctaionTag();
 
-                //tag.Name = tc.First.Text; 
-                tag.Func = (BasisTag)parser.Read(tc[0, 1]);
+                tag.Name = tc.First.Text; 
+                //tag.Func = (BasisTag)parser.Read(tc[0, 1]);
 
                 TokenCollection[] tcs = tc.Split(2, tc.Count - 1, TokenKind.Comma);
                 for (int i = 0; i < tcs.Length; i++)

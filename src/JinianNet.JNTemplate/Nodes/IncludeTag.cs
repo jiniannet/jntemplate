@@ -63,16 +63,7 @@ namespace JinianNet.JNTemplate.Nodes
             object path = this.path.ParseResult(context);
             return LoadResource(path, context);
         }
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">TextWriter</param>
-        public override void Parse(TemplateContext context, TextWriter write)
-        {
-            write.Write(ParseResult(context));
-        }
+         
 
 #if NETCOREAPP || NETSTANDARD
 
@@ -104,18 +95,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             var path = await this.path.ParseResultAsync(context);
             return await LoadResourceAsync(path, context);
-        }
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">TextWriter</param>
-        public override async Task ParseAsync(TemplateContext context, TextWriter write)
-        {
-            var data = await ParseResultAsync(context);
-            await write.WriteAsync(data?.ToString());
-        }
+        } 
 #endif
     }
 }

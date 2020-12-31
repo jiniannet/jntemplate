@@ -46,18 +46,7 @@ namespace JinianNet.JNTemplate.Nodes
                 result.Add(key, value);
             }
             return result;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="write"></param>
-        public override void Parse(TemplateContext context, TextWriter write)
-        {
-            write.Write(ParseResult(context));
-        }
-
+        } 
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
         ///  解析JSON
@@ -74,18 +63,7 @@ namespace JinianNet.JNTemplate.Nodes
                 result.Add(key, value);
             }
             return result;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="write"></param>
-        public override async Task ParseAsync(TemplateContext context, TextWriter write)
-        {
-            var data = await ParseResultAsync(context);
-            await write.WriteAsync(data?.ToString());
-        }
+        } 
 #endif
     }
 }

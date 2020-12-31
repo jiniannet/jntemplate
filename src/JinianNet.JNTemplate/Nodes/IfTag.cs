@@ -17,11 +17,11 @@ namespace JinianNet.JNTemplate.Nodes
     public class IfTag : ComplexTag
     {
         /// <summary>
-        /// 
+        /// 解析结果
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="write"></param>
-        public override void Parse(TemplateContext context, TextWriter write)
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
+        public override object ParseResult(TemplateContext context)
         {
             for (int i = 0; i < Children.Count - 1; i++) //最后面一个子对象为EndTag
             {
@@ -32,19 +32,20 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 if (tag.ToBoolean(context))
                 {
-                    Children[i].Parse(context, write);
-                    break;
+                    return Children[i].ParseResult(context);
                 }
             }
+
+            return null;
         }
 
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
-        /// 
+        /// 解析结果
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="write"></param>
-        public override async Task ParseAsync(TemplateContext context, TextWriter write)
+        /// <param name="context">TemplateContext</param>
+        /// <returns></returns>
+        public override Task<object> ParseResultAsync(TemplateContext context)
         {
             for (int i = 0; i < Children.Count - 1; i++) //最后面一个子对象为EndTag
             {
@@ -55,10 +56,11 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 if (tag.ToBoolean(context))
                 {
-                    await Children[i].ParseAsync(context, write);
-                    break;
+                    return Children[i].ParseResultAsync(context);
                 }
             }
+
+            return Task<object>.FromResult((object)null);
         }
 #endif
     }

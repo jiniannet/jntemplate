@@ -17,7 +17,6 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public abstract class ComplexTag : Tag, ITag
     {
-
         /// <summary>
         /// 解析结果
         /// </summary>
@@ -25,36 +24,20 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public override object ParseResult(TemplateContext context)
         {
-            if (Children.Count == 1)
+            if (this.Children.Count == 0)
             {
-                return Children[0].ParseResult(context);
+                return null;
             }
-            using (var write = new StringWriter())
+            if (this.Children.Count == 1)
             {
-                Parse(context, write);
-                return write.ToString();
+                return this.Children[0].ParseResult(context);
             }
+            var sb = new System.Text.StringBuilder();
+            for(int i = 0; i < this.Children.Count; i++)
+            {
+                sb.Append(this.Children[i].ParseResult(context));
+            }
+            return sb.ToString();
         }
-
-#if NETCOREAPP || NETSTANDARD
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            if (Children.Count == 1)
-            {
-                return await Children[0].ParseResultAsync(context);
-            }
-            using (var write = new StringWriter())
-            {
-                await ParseAsync(context, write);
-                return write.ToString();
-            }
-        }
-#endif
     }
 }

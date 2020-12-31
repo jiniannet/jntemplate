@@ -32,18 +32,5 @@ namespace JinianNet.JNTemplate.Nodes
         {
             return this.baseValue;
         }
-
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <param name="write">TextWriter</param>
-        public override void Parse(TemplateContext context, System.IO.TextWriter write)
-        {
-            if (this.baseValue != null)
-            {
-                write.Write(this.baseValue.ToString());
-            }
-        }
     }
 }

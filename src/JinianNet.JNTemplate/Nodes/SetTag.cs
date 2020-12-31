@@ -50,16 +50,7 @@ namespace JinianNet.JNTemplate.Nodes
             }
             return null;
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, TextWriter write)
-        {
-            ParseResult(context);
-        }
-
+ 
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
         /// 解析标签
@@ -74,15 +65,7 @@ namespace JinianNet.JNTemplate.Nodes
             }
             return null;
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override async Task ParseAsync(TemplateContext context, TextWriter write)
-        {
-            await ParseResultAsync(context);
-        }
+ 
 #endif
     }
 }

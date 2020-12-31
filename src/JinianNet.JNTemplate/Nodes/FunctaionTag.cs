@@ -13,16 +13,16 @@ namespace JinianNet.JNTemplate.Nodes
     /// 函数（方法）标签
     /// </summary>
     [Serializable]
-    public class FunctaionTag : BasisTag
+    public class FunctaionTag : ChildrenTag
     {
-        private BasisTag func;
+        private string name;
         /// <summary>
         /// 函数
         /// </summary>
-        public BasisTag Func
+        public string Name
         {
-            get { return this.func; }
-            set { this.func = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
 
         /// <summary>
@@ -37,108 +37,50 @@ namespace JinianNet.JNTemplate.Nodes
                 args[i] = Children[i].ParseResult(context);
             }
 
-            object result = this.Func.ParseResult(context);
+            object parentValue;
+            if (this.Parent == null)
+            {
+                parentValue = context.TempData[this.name];
+            }
+            else
+            {
+                parentValue = this.Parent.ParseResult(context);
+            }
+
+            if (parentValue == null)
+            {
+                return null;
+            }
+            if (this.Parent == null || (this.Parent != null && string.IsNullOrEmpty(this.name)))
+            {
+                if (parentValue is FuncHandler)
+                {
+                    return (parentValue as FuncHandler)(args);
+                }
+                if (parentValue is Delegate)
+                {
+                    return (parentValue as Delegate).DynamicInvoke(args);
+                }
+                return null;
+            }
+
+            var result = context.Actuator.CallMethod(parentValue, this.name, args);
 
             if (result != null)
             {
-                if (result is FuncHandler)
-                {
-                    return (result as FuncHandler)(args);
-                }
-                if (result is Delegate)
-                {
-                    return (result as Delegate).DynamicInvoke(args);
-                }
+                return result;
+            }
+
+            result = context.Actuator.CallPropertyOrField(parentValue, this.name);
+
+            if (result != null && result is Delegate)
+            {
+                return (result as Delegate).DynamicInvoke(args);
             }
 
             return null;
         }
-
-        /// <summary>
-        /// 调用方法
-        /// </summary>
-        /// <param name="baseValue"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        private object CallMethod(object baseValue, TemplateContext context)
-        {
-            if (baseValue != null)
-            {
-                object[] args = new object[Children.Count];
-                for (int i = 0; i < Children.Count; i++)
-                {
-                    args[i] = Children[i].ParseResult(context);
-                }
-
-                object name;
-                if (this.Func is VariableTag)
-                {
-                    name = ((VariableTag)this.Func).Name;
-                }
-                else
-                {
-                    name = this.Func.ParseResult(context);
-                }
-
-                if (name == null)
-                {
-                    return null;
-                }
-                object result = context.Actuator.CallMethod(baseValue, name.ToString(), args);
-
-                if (result != null)
-                {
-                    return result;
-                }
-
-                result = context.Actuator.CallPropertyOrField(baseValue, name.ToString());
-
-                if (result != null && result is Delegate)
-                {
-                    return (result as Delegate).DynamicInvoke(args);
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// 执行标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="baseValue">baseValue</param>
-        public override object ParseResult(object baseValue, TemplateContext context)
-        {
-            object r = CallMethod(baseValue, context);
 #if NETCOREAPP || NETSTANDARD
-            if (r != null && r is Task)
-            {
-                Task task = r as Task;
-                task.GetAwaiter().GetResult();
-                return context.Actuator.CallPropertyOrField(task, "Result");
-            }
-#endif
-            return r;
-        }
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步执行标签
-        /// </summary>
-        /// <param name="baseValue"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override async Task<object> ParseResultAsync(object baseValue, TemplateContext context)
-        {
-            object r = await Task.Run<object>(() => CallMethod(baseValue, context));
-            if (r != null && r is Task)
-            {
-                Task task = r as Task;
-                await task;
-                return context.Actuator.CallPropertyOrField(task, "Result");
-            }
-            return r;
-        }
-
         /// <summary>
         /// 解析标签
         /// </summary>
@@ -151,9 +93,21 @@ namespace JinianNet.JNTemplate.Nodes
                 args[i] = await Children[i].ParseResultAsync(context);
             }
 
-            object result = await this.Func.ParseResultAsync(context);
+            object result;
+            if (this.Parent == null)
+            {
+                result = context.TempData[this.name];
+            }
+            else
+            {
+                result = await this.Parent.ParseResultAsync(context);
+            }
 
-            if (result != null)
+            if (result == null)
+            {
+                return null;
+            }
+            if (this.Parent == null || (this.Parent != null && string.IsNullOrEmpty(this.name)))
             {
                 if (result is FuncHandler)
                 {
@@ -163,7 +117,23 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     return (result as Delegate).DynamicInvoke(args);
                 }
+                return null;
             }
+
+            object method = context.Actuator.CallMethod(result, this.name, args);
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            result = context.Actuator.CallPropertyOrField(result, this.name);
+
+            if (result != null && result is Delegate)
+            {
+                return (result as Delegate).DynamicInvoke(args);
+            }
+
             return null;
         }
 #endif

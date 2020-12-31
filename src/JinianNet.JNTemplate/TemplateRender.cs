@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         public async Task RenderAsync(System.IO.TextWriter writer)
         {
-            ITag[] ts = await ReadTagsAsync(); 
+            ITag[] ts = await ReadTagsAsync();
             await RenderAsync(writer, ts);
         }
 
@@ -87,7 +87,11 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        await collection[i].ParseAsync(this.context, writer);
+                        var tagResult = await collection[i].ParseResultAsync(this.context);
+                        if (tagResult != null)
+                        {
+                            await writer.WriteAsync(tagResult.ToString());
+                        }
                     }
                     catch (Exception.TemplateException e)
                     {
@@ -122,7 +126,11 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        collection[i].Parse(this.context, writer);
+                        var tagResult = collection[i].ParseResult(this.context);
+                        if (tagResult != null)
+                        {
+                            writer.Write(tagResult.ToString());
+                        }
                     }
                     catch (Exception.TemplateException e)
                     {
@@ -192,7 +200,7 @@ namespace JinianNet.JNTemplate
             if (tags != null)
             {
                 return tags;
-            } 
+            }
             var lexer = new TemplateLexer(this.content);
             var ts = await lexer.ExecuteAsync();
             var parser = new TemplateParser(this.Context.TagParser, ts);

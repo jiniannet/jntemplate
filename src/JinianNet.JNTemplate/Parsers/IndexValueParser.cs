@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return null;
                 }
                 IndexValueTag tag = new IndexValueTag();
-                tag.Container = (BasisTag)parser.Read(tc[0, x]);
+                tag.Parent = (BasisTag)parser.Read(tc[0, x]);
                 tag.Index = parser.Read(tc[x + 1, y]);
 
                 return tag;

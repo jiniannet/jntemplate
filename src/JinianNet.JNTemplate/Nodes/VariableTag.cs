@@ -7,12 +7,11 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 变量标签
+    /// 变量标签(ParseResult)
     /// </summary>
     [Serializable]
-    public class VariableTag : BasisTag
+    public class VariableTag : ChildrenTag
     {
-
         private string name;
         /// <summary>
         /// 变量名
@@ -28,21 +27,16 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public override object ParseResult(TemplateContext context)
         {
-            return context.TempData[this.name];
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="baseValue">baseValue</param>
-        public override object ParseResult(object baseValue, TemplateContext context)
-        {
+            object baseValue = null;
+            if (this.Parent != null)
+            {
+                baseValue = this.Parent.ParseResult(context);
+            }
             if (baseValue == null)
             {
-                return null;
+                return context.TempData[this.name];
             }
             return context.Actuator.CallPropertyOrField(baseValue, this.name);
         }
-
     }
 }

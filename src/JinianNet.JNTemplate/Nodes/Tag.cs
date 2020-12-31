@@ -4,6 +4,8 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 #if !NET20
 using System.Threading.Tasks;
@@ -25,20 +27,18 @@ namespace JinianNet.JNTemplate.Nodes
         public Collection<ITag> Children
         {
             get { return children; }
-        }
-
+        } 
         /// <summary>
         /// 添加一个子标签
         /// </summary>
         /// <param name="node"></param>
-        public void AddChild(ITag node)
+        public virtual void AddChild(ITag node)
         {
             if (node != null)
             {
-                Children.Add(node);
+                children.Add(node);
             }
         }
-
 
         /// <summary>
         /// 解析结果
@@ -47,36 +47,15 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public abstract object ParseResult(TemplateContext context);
 
+#if NETCOREAPP || NETSTANDARD
         /// <summary>
         /// 解析结果
         /// </summary>
         /// <param name="context">TemplateContext</param>
-        /// <param name="write">TextWriter</param>
-        public abstract void Parse(TemplateContext context, System.IO.TextWriter write);
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <param name="write">TextWriter</param>
         /// <returns></returns>
-        public async virtual Task ParseAsync(TemplateContext context, System.IO.TextWriter write)
+        public virtual Task<object> ParseResultAsync(TemplateContext context)
         {
-            await Task.Run(() =>
-            {
-                Parse(context, write);
-            });
-        }
-
-        /// <summary>
-        /// 异步解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public async virtual Task<object> ParseResultAsync(TemplateContext context)
-        {
-            return await Task<object>.Run(() =>
+             return Task<object>.Run(() =>
             {
                 return ParseResult(context);
             });

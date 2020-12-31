@@ -12,7 +12,6 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class CommentTag : SpecialTag
     {
-
         /// <summary>
         /// 注释标签
         /// </summary>
@@ -20,15 +19,6 @@ namespace JinianNet.JNTemplate.Nodes
         public override object ParseResult(TemplateContext context)
         {
             return null;
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, System.IO.TextWriter write)
-        {
-
         }
 
         /// <summary>

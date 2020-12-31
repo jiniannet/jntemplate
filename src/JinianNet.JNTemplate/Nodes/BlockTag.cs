@@ -44,41 +44,6 @@ namespace JinianNet.JNTemplate.Nodes
             this.render = new TemplateRender();
         }
 
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            using (System.IO.StringWriter writer = new StringWriter())
-            {
-                Render(context, writer);
-
-                return writer.ToString();
-            }
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, TextWriter write)
-        {
-            Render(context, write);
-        }
-        /// <summary>
-        /// 呈现标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="writer">writer</param>
-        protected void Render(TemplateContext context, TextWriter writer)
-        {
-            this.render.Context = context;
-            var ts = ReadTags();
-            this.render.Render(writer, ts);
-        }
-
         /// <summary>
         /// 读取取签
         /// </summary>
@@ -87,6 +52,21 @@ namespace JinianNet.JNTemplate.Nodes
         {
             return this.render.ReadTags();
         }
+        /// <summary>
+        /// 解析标签
+        /// </summary>
+        /// <param name="context">上下文</param>
+        public override object ParseResult(TemplateContext context)
+        {
+            using (System.IO.StringWriter writer = new StringWriter())
+            {
+                this.render.Context = context;
+                var ts = ReadTags();
+                this.render.Render(writer, ts);
+                return writer.ToString();
+            }
+        }
+
 
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
@@ -100,14 +80,17 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 异步解析结果
         /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <param name="writer">TextWriter</param>
+        /// <param name="context">TemplateContext</param> 
         /// <returns></returns>
-        public override async Task ParseAsync(TemplateContext context, TextWriter writer)
+        public override async Task<object> ParseResultAsync(TemplateContext context)
         {
-            this.render.Context = context;
-            var ts = await ReadTagsAsync();
-            await this.render.RenderAsync(writer, ts);
+            using (System.IO.StringWriter writer = new StringWriter())
+            {
+                this.render.Context = context;
+                var ts = await ReadTagsAsync();
+                await this.render.RenderAsync(writer, ts);
+                return writer.ToString();
+            }
         }
 #endif
     }

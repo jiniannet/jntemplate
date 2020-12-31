@@ -1,4 +1,4 @@
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 组合标签
     /// 用于执于复杂的方法或变量
-    /// 类似于
+    /// 通常由属性，方法，索引组合，比如
     /// $User.CreateDate.ToString("yyyy-MM-dd")
     /// $Db.Query().Result.Count
     /// </summary>
@@ -20,35 +20,53 @@ namespace JinianNet.JNTemplate.Nodes
     public class ReferenceTag : BasisTag
     {
         /// <summary>
+        /// 子标签
+        /// </summary>
+        public ITag Child
+        {
+            get
+            {
+                if (this.Children.Count > 0)
+                {
+                    return this.Children[0];
+                }
+                return null;
+            }
+        }
+        /// <summary>
+        /// 添加子标签
+        /// </summary>
+        /// <param name="node">子标签</param>
+        public override void AddChild(ITag node)
+        {
+            if (this.Children.Count == 0)
+            {
+                base.AddChild(node);
+            }
+            else
+            {
+                ChildrenTag child = (ChildrenTag)node;
+                if (child == null)
+                {
+                    throw new ArgumentException(nameof(node));
+                }
+                var parent = this.Children[0];
+                child.Parent = (BasisTag)parent;
+                this.Children[0] = child;
+            }
+        }
+
+        /// <summary>
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
         public override object ParseResult(TemplateContext context)
         {
-            if (Children.Count > 0)
+            if (Child != null)
             {
-                object result = Children[0].ParseResult(context);
-                for (int i = 1; i < Children.Count && result != null; i++)
-                {
-                    result = ((BasisTag)Children[i]).ParseResult(result, context);
-                }
-                return result;
+                return Child.ParseResult(context);
             }
             return null;
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="baseValue">基本值</param>
-        public override object ParseResult(object baseValue, TemplateContext context)
-        {
-            object result = baseValue;
-            for (int i = 0; i < Children.Count && result != null; i++)
-            {
-                result = ((BasisTag)Children[i]).ParseResult(result, context);
-            }
-            return result;
         }
 
 #if NETCOREAPP || NETSTANDARD
@@ -56,32 +74,13 @@ namespace JinianNet.JNTemplate.Nodes
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
+        public override Task<object> ParseResultAsync(TemplateContext context)
         {
-            if (Children.Count > 0)
+            if (Child != null)
             {
-                object result = await Children[0].ParseResultAsync(context);
-                for (int i = 1; i < Children.Count && result != null; i++)
-                {
-                    result = await ((BasisTag)Children[i]).ParseResultAsync(result, context);
-                }
-                return result;
+                return Child.ParseResultAsync(context);
             }
-            return null;
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="baseValue">基本值</param>
-        public override async Task<object> ParseResultAsync(object baseValue, TemplateContext context)
-        {
-            object result = baseValue;
-            for (int i = 0; i < Children.Count && result != null; i++)
-            {
-                result = await ((BasisTag)Children[i]).ParseResultAsync(result, context);
-            }
-            return result;
+            return Task.FromResult((object)null); ;
         }
 #endif
     }

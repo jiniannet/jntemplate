@@ -13,39 +13,40 @@ namespace JinianNet.JNTemplate.Nodes
     public class TextTag : SpecialTag
     {
         /// <summary>
+        /// 标签文本
+        /// </summary>
+        public string Text
+        {
+            get
+            {
+                if (this.FirstToken != null)
+                {
+                    return this.FirstToken.ToString();
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
         /// 解析标签
         /// </summary>
         /// <param name="context">上下文</param>
         public override object ParseResult(TemplateContext context)
         {
-            if(context.StripWhiteSpace)
+            if (context.StripWhiteSpace)
             {
-                return (this.ToString() ?? string.Empty).Trim();
+                return (this.Text ?? string.Empty).Trim();
             }
             return this.ToString();
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, System.IO.TextWriter write)
-        {
-            string value = this.ToString();
-            if (context.StripWhiteSpace 
-                && value!=null)
-            {
-                value = value.Trim();
-            }
-            write.Write(value);
-        }
+
 
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>
         public override string ToString()
         {
-            return this.FirstToken.ToString();
+            return this.Text;
         }
 
     }

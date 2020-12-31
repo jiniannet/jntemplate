@@ -13,15 +13,6 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class NullTag : SpecialTag
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="write"></param>
-        public override void Parse(TemplateContext context, TextWriter write)
-        {
-
-        }
 
         /// <summary>
         /// 解析标签
@@ -31,14 +22,6 @@ namespace JinianNet.JNTemplate.Nodes
         {
             return null;
         }
-        ///// <summary>
-        ///// 获取标签的BOOLEAN
-        ///// </summary>
-        ///// <param name="context">上下文</param>
-        //public override bool ToBoolean(TemplateContext context)
-        //{
-        //    return false;
-        //}
         /// <summary>
         /// 获取对象的字符串引用
         /// </summary>

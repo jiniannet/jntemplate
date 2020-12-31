@@ -37,17 +37,6 @@ namespace JinianNet.JNTemplate.Nodes
             LoadResource(path, context);
             return base.ParseResult(context);
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override void Parse(TemplateContext context, TextWriter write)
-        {
-            object path = this.path.ParseResult(context);
-            LoadResource(path, context);
-            base.Parse(context, write);
-        }
 
         /// <summary>
         /// 加载资源
@@ -105,18 +94,7 @@ namespace JinianNet.JNTemplate.Nodes
             object path = await this.path.ParseResultAsync(context);
             await LoadResourceAsync(path, context);
             return base.ParseResultAsync(context);
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="write">write</param>
-        public override async Task ParseAsync(TemplateContext context, TextWriter write)
-        {
-            object path = await this.path.ParseResultAsync(context);
-            await LoadResourceAsync(path, context);
-            await base.ParseAsync(context, write);
-        }
+        } 
 #endif
     }
 }
