@@ -48,7 +48,7 @@ namespace JinianNet.JNTemplate.Nodes
                 ChildrenTag child = (ChildrenTag)node;
                 if (child == null)
                 {
-                    throw new ArgumentException(nameof(node));
+                    throw new ArgumentException("child cannot be null.");
                 }
                 var parent = this.Children[0];
                 child.Parent = (BasisTag)parent;
@@ -68,20 +68,5 @@ namespace JinianNet.JNTemplate.Nodes
             }
             return null;
         }
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override Task<object> ParseResultAsync(TemplateContext context)
-        {
-            if (Child != null)
-            {
-                return Child.ParseResultAsync(context);
-            }
-            return Task.FromResult((object)null); ;
-        }
-#endif
     }
 }

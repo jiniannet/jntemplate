@@ -46,24 +46,6 @@ namespace JinianNet.JNTemplate.Nodes
                 result.Add(key, value);
             }
             return result;
-        } 
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        ///  解析JSON
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            var result = new Dictionary<object, object>();
-            foreach (var kv in Dict)
-            {
-                var key = kv.Key == null ? null : await kv.Key.ParseResultAsync(context);
-                var value = kv.Value == null ? null : await kv.Value.ParseResultAsync(context);
-                result.Add(key, value);
-            }
-            return result;
-        } 
-#endif
+        }  
     }
 }

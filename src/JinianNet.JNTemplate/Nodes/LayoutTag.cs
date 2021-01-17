@@ -24,18 +24,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             ITag[] tags = base.ReadTags();
             return ProcessBody(tags);
-        }
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 读取取签
-        /// </summary>
-        /// <returns></returns>
-        protected override async Task<ITag[]> ReadTagsAsync()
-        {
-            ITag[] tags = await base.ReadTagsAsync();
-            return ProcessBody(tags);
-        }
-#endif
+        } 
         private ITag[] ProcessBody(ITag[] tags)
         {
             if (tags == null || tags.Length == 0)

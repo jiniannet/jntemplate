@@ -71,7 +71,10 @@ namespace JinianNet.JNTemplate.Nodes
                                 {
                                     return result;
                                 }
-                                writer.Write(result?.ToString());
+                                if (result != null)
+                                {
+                                    writer.Write(result.ToString());
+                                }
                             }
                         }
                     }
@@ -135,52 +138,6 @@ namespace JinianNet.JNTemplate.Nodes
 
         }
         #endregion
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param> 
-        /// <returns></returns>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            if (Source != null)
-            {
-                using (var writer = new StringWriter())
-                {
-                    object value = await Source.ParseResultAsync(context);
-                    IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
-                    TemplateContext ctx;
-                    if (enumerable != null)
-                    {
-                        IEnumerator ienum = enumerable.GetEnumerator();
-                        ctx = TemplateContext.CreateContext(context);
-                        int i = 0;
-                        while (ienum.MoveNext())
-                        {
-                            i++;
-                            ctx.TempData[this.name] = ienum.Current;
-                            //为了兼容以前的用户 foreachIndex 保留
-                            ctx.TempData["foreachIndex"] = i;
-                            for (int n = 0; n < this.Children.Count; n++)
-                            {
-                                var result = await this.Children[n].ParseResultAsync(ctx);
-                                if (i == 0 && this.Children.Count == 1)
-                                {
-                                    return result;
-                                }
-                                await writer.WriteAsync(result?.ToString());
-                            }
-                        }
-                    }
-
-                    return writer.ToString();
-                }
-            }
-
-            return null;
-        }
-#endif
 
     }
 }

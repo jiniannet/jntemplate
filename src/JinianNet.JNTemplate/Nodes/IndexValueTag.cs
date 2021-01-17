@@ -29,19 +29,6 @@ namespace JinianNet.JNTemplate.Nodes
             object obj = this.Parent.ParseResult(context);
             object index = this.Index.ParseResult(context);
             return context.Actuator.CallIndexValue(obj, index);
-        }
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            object obj = await this.Parent.ParseResultAsync(context);
-            object index = await this.Index.ParseResultAsync(context);
-            return context.Actuator.CallIndexValue(obj, index);
-        }
-#endif
+        } 
     }
 }

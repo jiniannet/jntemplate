@@ -62,39 +62,5 @@ namespace JinianNet.JNTemplate.Nodes
                 }
             }
         }
-
-#if NETCOREAPP || NETSTANDARD
-
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected async Task LoadResourceAsync(object path, TemplateContext context)
-        {
-            if (path != null)
-            {
-                var paths = context.GetResourceDirectories();
-                ResourceInfo info = await context.Loader.LoadAsync(path.ToString(), context.Charset, paths);
-                if (info != null)
-                {
-                    this.TemplateContent = info.Content;
-                    this.TemplateKey = info.FullPath;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            object path = await this.path.ParseResultAsync(context);
-            await LoadResourceAsync(path, context);
-            return base.ParseResultAsync(context);
-        } 
-#endif
     }
 }

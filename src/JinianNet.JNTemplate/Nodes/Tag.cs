@@ -47,21 +47,6 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public abstract object ParseResult(TemplateContext context);
 
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public virtual Task<object> ParseResultAsync(TemplateContext context)
-        {
-             return Task<object>.Run(() =>
-            {
-                return ParseResult(context);
-            });
-        }
-#endif
-
         /// <summary>
         /// 开始Token
         /// </summary>

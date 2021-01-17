@@ -65,33 +65,6 @@ namespace JinianNet.JNTemplate.Nodes
                 this.render.Render(writer, ts);
                 return writer.ToString();
             }
-        }
-
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 读取取签
-        /// </summary>
-        /// <returns></returns>
-        protected virtual async Task<ITag[]> ReadTagsAsync()
-        {
-            return await this.render.ReadTagsAsync();
-        }
-        /// <summary>
-        /// 异步解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param> 
-        /// <returns></returns>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            using (System.IO.StringWriter writer = new StringWriter())
-            {
-                this.render.Context = context;
-                var ts = await ReadTagsAsync();
-                await this.render.RenderAsync(writer, ts);
-                return writer.ToString();
-            }
-        }
-#endif
+        } 
     }
 }

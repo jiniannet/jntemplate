@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net46;net47</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net46;net47;net5.0</TargetFrameworks>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.4.0-beta1</Version>
+    <Version>1.4.0</Version>
     <Authors>JinianNet.com</Authors>
     <Company>JinianNet.com</Company>
     <Product>JNTemplate</Product>
@@ -34,6 +34,7 @@
     <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Debug\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Debug\net46\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Debug\net47\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Debug\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <NoWarn>1701;1702;1705</NoWarn>
@@ -44,6 +45,7 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NET40;NET46</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NET40;NET47</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NETCOREAPP;NET5</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -53,6 +55,7 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NET40;NET46</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NET40;NET47</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NETCOREAPP;NET5</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'"> 
@@ -60,21 +63,6 @@
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'"> 
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-  </ItemGroup>
-  
   <ItemGroup>
     <None Include="icon.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>

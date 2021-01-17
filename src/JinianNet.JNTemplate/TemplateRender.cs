@@ -57,56 +57,6 @@ namespace JinianNet.JNTemplate
         {
             Render(writer, ReadTags());
         }
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步呈现内容
-        /// </summary>
-        /// <param name="writer">TextWriter</param>
-        public async Task RenderAsync(System.IO.TextWriter writer)
-        {
-            ITag[] ts = await ReadTagsAsync();
-            await RenderAsync(writer, ts);
-        }
-
-
-        /// <summary>
-        /// 呈现内容
-        /// </summary>
-        /// <param name="writer">TextWriter</param>
-        /// <param name="collection">Tags</param>
-        public virtual async Task RenderAsync(System.IO.TextWriter writer, ITag[] collection)
-        {
-            if (writer == null)
-            {
-                throw new ArgumentNullException("\"writer\" cannot be null.");
-            }
-
-            if (collection != null && collection.Length > 0)
-            {
-                for (int i = 0; i < collection.Length; i++)
-                {
-                    try
-                    {
-                        var tagResult = await collection[i].ParseResultAsync(this.context);
-                        if (tagResult != null)
-                        {
-                            await writer.WriteAsync(tagResult.ToString());
-                        }
-                    }
-                    catch (Exception.TemplateException e)
-                    {
-                        ThrowException(e, collection[i], writer);
-                    }
-                    catch (System.Exception e)
-                    {
-                        System.Exception baseException = e.GetBaseException();
-                        Exception.ParseException ex = new Exception.ParseException(baseException.Message, baseException);
-                        ThrowException(ex, collection[i], writer);
-                    }
-                }
-            }
-        }
-#endif
 
         /// <summary>
         /// 呈现内容

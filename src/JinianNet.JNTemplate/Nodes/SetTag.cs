@@ -50,22 +50,5 @@ namespace JinianNet.JNTemplate.Nodes
             }
             return null;
         }
- 
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            object value = await this.Value.ParseResultAsync(context);
-            if (!context.TempData.SetValue(this.Name, value))
-            {
-                context.TempData.Push(this.Name, value);
-            }
-            return null;
-        }
- 
-#endif
     }
 }

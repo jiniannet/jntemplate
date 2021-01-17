@@ -71,7 +71,10 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     for (int i = 0; i < this.Children.Count; i++)
                     {
-                        writer.Write(this.Children[i].ParseResult(context)?.ToString());
+                        var obj = this.Children[i].ParseResult(context);
+                        if (obj != null) {
+                            writer.Write(obj.ToString());
+                        }
                     }
 
                     if (this.dothing != null)
@@ -85,45 +88,5 @@ namespace JinianNet.JNTemplate.Nodes
             }
         }
 
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param> 
-        /// <returns></returns>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            await this.initial.ParseResultAsync(context);
-            //如果标签为空，则直接为false,避免死循环以内存溢出
-            bool run;
-
-            if (this.Condition == null)
-            {
-                run = false;
-            }
-            else
-            {
-                run = Utility.ToBoolean(await this.Condition.ParseResultAsync(context));
-            }
-            using (var writer = new StringWriter())
-            {
-                while (run)
-                {
-                    for (int i = 0; i < this.Children.Count; i++)
-                    {
-                        var result = await this.Children[i].ParseResultAsync(context);
-                        writer.Write(result?.ToString());
-                    }
-                    if (this.dothing != null)
-                    {
-                        //执行计算，不需要输出，比如i++
-                        await this.dothing.ParseResultAsync(context);
-                    }
-                    run = Utility.ToBoolean(await this.Condition.ParseResultAsync(context));
-                }
-                return writer.ToString();
-            }
-        }
-#endif
     }
 }

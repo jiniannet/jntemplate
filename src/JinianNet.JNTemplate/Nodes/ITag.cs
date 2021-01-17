@@ -41,15 +41,5 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         Token LastToken { get; set; }
 
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        Task<object> ParseResultAsync(TemplateContext context);
-#endif
-
     }
 }

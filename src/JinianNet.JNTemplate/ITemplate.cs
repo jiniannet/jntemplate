@@ -29,13 +29,5 @@ namespace JinianNet.JNTemplate
         /// <param name="writer"></param>
         void Render(TextWriter writer);
 
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 结果异步呈现
-        /// </summary>
-        /// <param name="writer"></param>
-        Task RenderAsync(TextWriter writer);
-#endif
-
     }
 }

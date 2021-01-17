@@ -93,31 +93,6 @@ namespace JinianNet.JNTemplate.Nodes
                 list.Add(value);
             }
             return false;
-        }
-
-#if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override async Task<object> ParseResultAsync(TemplateContext context)
-        {
-            List<object> parameters = new List<object>();
-
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                object result = await this.Children[i].ParseResultAsync(context);
-                bool isOperator = this.Children[i] is OperatorTag;
-                if (Eval(parameters, isOperator, result))
-                {
-                    return parameters[parameters.Count - 1];
-                }
-            }
-
-            var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
-            return ExpressionEvaluator.Calculate(stack);
-        }
-#endif
-
+        }  
     }
 }
