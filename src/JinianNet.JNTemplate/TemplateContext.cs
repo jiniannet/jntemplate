@@ -15,19 +15,15 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Context
     /// </summary>
-    public class TemplateContext
+    [Serializable]
+    public class TemplateContext : Context
 #if NET20 || NET40
-        : ICloneable
+        , ICloneable
 #endif
     {
         private VariableScope variableScope;
-        private string currentPath;
-        private Encoding charset;
-        private bool throwErrors;
-        private bool stripWhiteSpace;
         private ICache cache;
         private IActuator actuator;
-        private List<string> resourceDirectories;
         private IResourceLoader loader;
         private TagParser parsers;
         private bool enableTemplateCache;
@@ -45,29 +41,15 @@ namespace JinianNet.JNTemplate
             , IActuator actuator
             , IResourceLoader loader
             , TagParser parsers
-            , ICache cache)
+            , ICache cache) : base()
         {
             this.actuator = actuator;
             this.loader = loader;
             this.parsers = parsers;
             this.cache = cache;
-            this.resourceDirectories = new List<string>();
             this.variableScope = data ?? new VariableScope();
             this.errors = new List<System.Exception>();
-            this.currentPath = null;
-            this.throwErrors = Utility.StringToBoolean(Engine.GetEnvironmentVariable("ThrowExceptions"));
-            this.stripWhiteSpace = Utility.StringToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
-            this.enableTemplateCache = Utility.StringToBoolean(Engine.GetEnvironmentVariable("EnableTemplateCache"));
-            this.stripWhiteSpace = Utility.StringToBoolean(Engine.GetEnvironmentVariable("StripWhiteSpace"));
-            string charset;
-            if (string.IsNullOrEmpty(charset = Engine.GetEnvironmentVariable("Charset")))
-            {
-                this.charset = Encoding.UTF8;
-            }
-            else
-            {
-                this.charset = Encoding.GetEncoding(charset);
-            }
+            this.enableTemplateCache = Utility.StringToBoolean(Engine.Runtime.GetEnvironmentVariable("EnableTemplateCache"));
 
         }
 
@@ -80,17 +62,7 @@ namespace JinianNet.JNTemplate
         {
             get { return enableTemplateCache; }
             set { this.enableTemplateCache = value; }
-        }
-
-        /// <summary>
-        /// 处理标签前后空格
-        /// </summary>
-        public bool StripWhiteSpace
-        {
-            get { return stripWhiteSpace; }
-            set { this.stripWhiteSpace = value; }
-        }
-
+        } 
 
         /// <summary>
         /// 模板数据
@@ -99,35 +71,7 @@ namespace JinianNet.JNTemplate
         {
             get { return this.variableScope; }
             set { this.variableScope = value; }
-        }
-
-        /// <summary>
-        /// 当前资源路径
-        /// </summary>
-        public string CurrentPath
-        {
-            get { return this.currentPath; }
-            set { this.currentPath = value; }
-        }
-
-        /// <summary>
-        /// 当前资源编码
-        /// </summary>
-        public Encoding Charset
-        {
-            get { return this.charset; }
-            set { this.charset = value; }
-        }
-
-
-        /// <summary>
-        /// 是否抛出异常(默认为true)
-        /// </summary>
-        public bool ThrowExceptions
-        {
-            get { return this.throwErrors; }
-            set { this.throwErrors = value; }
-        }
+        } 
 
         /// <summary>
         /// 当前异常集合（当ThrowExceptions为false时有效）
@@ -172,16 +116,7 @@ namespace JinianNet.JNTemplate
         public void ClearError()
         {
             this.errors.Clear();
-        }
-
-        /// <summary>
-        /// 模板资源搜索目录
-        /// </summary>
-        /// <value></value>
-        public List<string> ResourceDirectories
-        {
-            get { return this.resourceDirectories; }
-        }
+        } 
 
         /// <summary>
         /// 标签分析器

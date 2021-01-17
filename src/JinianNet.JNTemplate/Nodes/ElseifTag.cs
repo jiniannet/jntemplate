@@ -17,14 +17,14 @@ namespace JinianNet.JNTemplate.Nodes
     public class ElseifTag : ComplexTag
     {
 
-        private ITag test;
+        private ITag condition;
         /// <summary>
         /// 条件
         /// </summary>
-        public virtual ITag Test
+        public virtual ITag Condition
         {
-            get { return this.test; }
-            set { this.test = value; }
+            get { return this.condition; }
+            set { this.condition = value; }
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="context">上下文</param>
         public virtual bool ToBoolean(TemplateContext context)
         {
-            return Utility.ToBoolean(this.test.ParseResult(context));
+            return Utility.ToBoolean(this.Condition.ParseResult(context));
         }
         /// <summary>
         /// 解析结果

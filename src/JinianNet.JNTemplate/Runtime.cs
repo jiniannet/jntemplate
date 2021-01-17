@@ -33,6 +33,7 @@ namespace JinianNet.JNTemplate
         private StringComparer stringComparer;
         private IActuator actuator;
         private List<string> resourceDirectories;
+        private Encoding encoding;
         #endregion
 
 
@@ -86,11 +87,7 @@ namespace JinianNet.JNTemplate
             loader = conf.Loader ?? new FileLoader();
             resourceDirectories = (conf.ResourceDirectories ?? new List<string>());
             cache = conf.Cache ?? MemoryCache.Instance;
-#if NET20 || NET40
             actuator = conf.Actuator ?? new ReflectionActuator();
-#else
-            actuator = conf.Actuator ?? new ILActuator(cache);
-#endif
             if (conf.IgnoreCase)
             {
                 bindingFlags = BindingFlags.IgnoreCase;
@@ -103,7 +100,14 @@ namespace JinianNet.JNTemplate
                 bindingFlags = BindingFlags.DeclaredOnly;
                 stringComparer = StringComparer.Ordinal;
             }
-
+            if (string.IsNullOrEmpty(conf.Charset))
+            {
+                this.encoding = Encoding.UTF8;
+            }
+            else
+            {
+                this.encoding = Encoding.GetEncoding(conf.Charset);
+            }
         }
 
         /// <summary>
@@ -129,13 +133,7 @@ namespace JinianNet.JNTemplate
         {
             get { return this.resourceDirectories; }
         }
-        /// <summary>
-        /// 环境变量
-        /// </summary>
-        public Dictionary<string, string> EnvironmentVariable
-        {
-            get { return environmentVariable; }
-        }
+
         /// <summary>
         /// 全局初始数据
         /// </summary>
@@ -197,6 +195,55 @@ namespace JinianNet.JNTemplate
         {
             get { return actuator; }
         }
+
+        /// <summary>
+        /// Default encoding
+        /// </summary>
+        public Encoding Encoding
+        {
+            get { return encoding; }
+        }
+
+        #region 环境变量
+
+        /// <summary>
+        /// 获取环境变量
+        /// </summary>
+        /// <param name="variable">变量名称</param>
+        /// <returns></returns>
+        public string GetEnvironmentVariable(string variable)
+        {
+            string value;
+
+            if (environmentVariable.TryGetValue(variable, out value))
+            {
+                return value;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 设置环境变量
+        /// </summary>
+        /// <param name="variable">变量名</param>
+        /// <param name="value">值</param>
+        public void SetEnvironmentVariable(string variable, string value)
+        {
+            if (variable == null)
+            {
+                throw new ArgumentNullException("\"variable\" cannot be null.");
+            }
+            if (value == null)
+            {
+                environmentVariable.Remove(variable);
+            }
+            else
+            {
+                environmentVariable[variable] = value;
+            }
+        }
+
+        #endregion
 
         #endregion
     }

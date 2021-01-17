@@ -88,7 +88,7 @@ namespace JinianNet.JNTemplate.Parsers
                     }
 
                     tag.Initial = ts[0];
-                    tag.Test = ts[1];
+                    tag.Condition = ts[1];
                     tag.Do = ts[2];
 
                     while (parser.MoveNext())

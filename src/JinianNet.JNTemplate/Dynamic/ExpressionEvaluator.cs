@@ -121,13 +121,13 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "+":
                 case "-":
 
-                case "Plus":
-                case "Minus":
+                case "Add":
+                case "Subtract":
                     return 7;
                 case "%":
                 case "*":
-                case "Percent":
-                case "Times":
+                case "Remainder":
+                case "Multiply":
                 case "/":
                 case "Divided":
                     return 8;
@@ -236,6 +236,11 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 switch (value[i].ToString())
                 {
+                    //case ")":
+                    //case "RightParentheses":
+                    //case "(":
+                    //case "LeftParentheses":
+
                     case "(":
                     case "LeftParentheses":
                         stack.Push("(");
@@ -270,10 +275,10 @@ namespace JinianNet.JNTemplate.Dynamic
                     case "<=":
                     case "==":
                     case "!=":
-                    case "Plus":
-                    case "Minus":
-                    case "Times":
-                    case "Percent":
+                    case "Add":
+                    case "Subtract":
+                    case "Multiply":
+                    case "Remainder":
                     case "Divided":
                     case "LogicalOr":
                     case "Or":
@@ -291,18 +296,59 @@ namespace JinianNet.JNTemplate.Dynamic
                         }
                         else
                         {
+                            //object eX = stack.Peek();
+                            //object eY = value[i];
+                            //if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
+                            //{
+                            //    stack.Push(eY);
+                            //}
+                            //else
+                            //{
+
+                            //    if (eX.ToString() != "(")
+                            //    {
+                            //        post.Push(stack.Pop());
+                            //    }
+                            //    stack.Push(eY);
+                            //}
+
                             object eX = stack.Peek();
                             object eY = value[i];
-                            if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
+                            int pY = GetPriority(eY.ToString());
+                            int pX = GetPriority(eX.ToString());
+                            /*
+                            if (eX.ToString() == "(" && eY.ToString() != ")")
                             {
                                 stack.Push(eY);
                             }
-                            else
+                            else if (eY.ToString() == ")")
+                            {
+                                while (eX.ToString() != "(")
+                                {
+                                    post.Push(stack.Pop());
+                                }
+                                stack.Pop();
+                            }
+                            else */
+                            
+                            if (pY > pX)
+                            {
+                                stack.Push(eY);
+                            }
+                            else if (pY == pX)
+                            {
+                                post.Push(stack.Pop());
+                                stack.Push(eY);
+                            }
+                            else if (pY < pX)
                             {
 
                                 if (eX.ToString() != "(")
                                 {
-                                    post.Push(stack.Pop());
+                                    while (stack.Count > 0)
+                                    {
+                                        post.Push(stack.Pop());
+                                    }
                                 }
                                 stack.Push(eY);
                             }
@@ -322,7 +368,7 @@ namespace JinianNet.JNTemplate.Dynamic
             return post;
         }
 
- 
+
 
         #endregion
 
@@ -568,7 +614,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return stack.Pop();
         }
- 
+
         /// <summary>
         /// 计算表达式
         /// </summary>

@@ -28,8 +28,8 @@ namespace JinianNet.JNTemplate.Nodes
 
             for (int i = 0; i < this.Children.Count; i++)
             {
+                bool isOperator = this.Children[i] is OperatorTag;
                 object result = this.Children[i].ParseResult(context);
-                bool isOperator = this.Children[i] is TextTag;
                 if (Eval(parameters, isOperator, result))
                 {
                     return parameters[parameters.Count - 1];
@@ -51,7 +51,7 @@ namespace JinianNet.JNTemplate.Nodes
         {
             if (isOperator)
             {
-                Operator op = OperatorConvert.Parse(value.ToString());
+                Operator op = (Operator)value;
                 if (op == Operator.Or || op == Operator.And)
                 {
                     object result;
@@ -107,7 +107,7 @@ namespace JinianNet.JNTemplate.Nodes
             for (int i = 0; i < this.Children.Count; i++)
             {
                 object result = await this.Children[i].ParseResultAsync(context);
-                bool isOperator = this.Children[i] is TextTag;
+                bool isOperator = this.Children[i] is OperatorTag;
                 if (Eval(parameters, isOperator, result))
                 {
                     return parameters[parameters.Count - 1];

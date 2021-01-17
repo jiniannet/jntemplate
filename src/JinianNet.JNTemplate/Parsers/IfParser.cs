@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                     ElseifTag t = new ElseifTag();
                     TokenCollection coll = tc[2, -1];
-                    t.Test = parser.Read(coll);
+                    t.Condition = parser.Read(coll);
                     t.FirstToken = coll.First;
                     //t.LastToken = coll.Last;
                     tag.AddChild(t);

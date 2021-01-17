@@ -53,6 +53,18 @@ namespace JinianNet.JNTemplate.Resources
             return info;
         }
 
+
+        /// <summary>
+        /// 获取完整路径
+        /// </summary>
+        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
+        /// <param name="directory">SEARCH DIRECTORY</param>
+        /// <returns></returns>
+        public string FindFullPath(string filename, params string[] directory)
+        {
+            return FindPath(directory, filename);
+        }
+
         /// <summary>
         /// 查找指定文件
         /// </summary>

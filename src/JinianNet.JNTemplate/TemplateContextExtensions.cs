@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate
 #if NETCOREAPP || NETSTANDARD
             this
 #endif
-            TemplateContext ctx)
+            Context ctx)
         {
             if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.ResourceDirectories.Contains(ctx.CurrentPath))
             {

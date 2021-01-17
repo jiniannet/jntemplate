@@ -49,7 +49,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static bool ToBoolean(int input)
         {
-            if (input==0)
+            if (input == 0)
             {
                 return false;
             }
@@ -154,10 +154,10 @@ namespace JinianNet.JNTemplate
                     return ToBoolean(long.Parse(input.ToString()));
                 case "System.Single":
                 case "System.Decimal":
-                case "System.Double": 
-                    return ToBoolean(decimal.Parse(input.ToString())); 
+                case "System.Double":
+                    return ToBoolean(decimal.Parse(input.ToString()));
                 case "System.String":
-                    return ToBoolean(input.ToString()); 
+                    return ToBoolean(input.ToString());
                 case "System.Boolean":
                     return ToBoolean(bool.Parse(input.ToString()));
                 default:
@@ -193,6 +193,27 @@ namespace JinianNet.JNTemplate
             if (x == null || y == null)
                 return x == y;
             return string.Equals(x, y, Engine.Runtime.ComparisonIgnoreCase);
+        }
+
+        /// <summary>
+        /// MD5
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string Md5(string input)
+        {
+            using (var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
+            {
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
+                byte[] data = md5.ComputeHash(bytes);
+                string byte2String = null;
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    byte2String += data[i].ToString("x2");
+                } 
+                return byte2String;
+            }
         }
     }
 }

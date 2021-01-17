@@ -29,6 +29,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                 List<ITag> tags = new List<ITag>();
                 TokenCollection[] tcs = tc.Split(0, tc.Count, TokenKind.Dot, TokenKind.Operator);
+                bool hasLogical = false;
                 if (tcs.Length == 1)
                 {
                     return null;
@@ -38,7 +39,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                     if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Dot)
                     {
-                         if (tags.Count == 0 || i == tcs[i].Count - 1 || (tcs[i + 1].Count==1 && (tcs[i + 1][0].TokenKind == TokenKind.Dot || tcs[i + 1][0].TokenKind == TokenKind.Operator) ))
+                        if (tags.Count == 0 || i == tcs[i].Count - 1 || (tcs[i + 1].Count == 1 && (tcs[i + 1][0].TokenKind == TokenKind.Dot || tcs[i + 1][0].TokenKind == TokenKind.Operator)))
                         {
                             throw new Exception.ParseException(string.Concat("syntax error near .:", tc), tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
                         }
@@ -57,8 +58,15 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                     else if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Operator)
                     {
-                        tags.Add(new TextTag());
-                        tags[tags.Count - 1].FirstToken = tcs[i][0];
+                        tags.Add(new OperatorTag(tcs[i][0])); 
+                        if (!hasLogical)
+                        {
+                            Operator op = Dynamic.OperatorConvert.Parse(tcs[i][0].Text);
+                            if (op == Operator.Or || op == Operator.And)
+                            {
+                                hasLogical = true;
+                            }
+                        }
                     }
                     else if (tcs[i].Count > 0)
                     {
@@ -176,10 +184,30 @@ namespace JinianNet.JNTemplate.Parsers
                 if (tags.Count > 1)
                 {
                     ExpressionTag t = new ExpressionTag();
-
-                    for (int i = 0; i < tags.Count; i++)
+                    if (!hasLogical)
                     {
-                        t.AddChild(tags[i]);
+                        for (int i = 0; i < tags.Count; i++)
+                        {
+                            t.AddChild(tags[i]);
+                        }
+                    }
+                    else
+                    {
+                        t.Children.Add(new ExpressionTag());
+                        for (int i = 0; i < tags.Count; i++)
+                        {
+                            OperatorTag opt = tags[i] as OperatorTag;
+                            if (opt != null)
+                            { 
+                                if (opt.Value == Operator.Or || opt.Value == Operator.And)
+                                {
+                                    t.AddChild(tags[i]);
+                                    t.AddChild(new ExpressionTag());
+                                    continue;
+                                }
+                            }
+                            t.Children[t.Children.Count - 1].AddChild(tags[i]);
+                        }
                     }
 
                     tags.Clear();

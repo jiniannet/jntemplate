@@ -36,8 +36,8 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 SetTag tag = new SetTag();
                 tag.Name = tc[2].Text;
- 
-                tag.Value = parser.Read(tc[4,-1]);
+
+                tag.Value = parser.Read(tc[4, -1]);
                 return tag;
 
             }
@@ -56,10 +56,13 @@ namespace JinianNet.JNTemplate.Parsers
                     FirstToken = tc.First,
                     Name = tc.First.Text
                 });
-                c.AddChild(new TextTag()
-                {
-                    FirstToken = new Token(TokenKind.Operator, tc.Last.Text[0].ToString())
-                });
+                c.AddChild(new OperatorTag(new Token(TokenKind.Operator, tc.Last.Text[0].ToString())));
+
+                //c.AddChild(new TextTag()
+                //{
+                //    FirstToken = new Token(TokenKind.Operator, tc.Last.Text[0].ToString())
+                //});
+
                 c.AddChild(new NumberTag()
                 {
                     Value = 1,
@@ -75,7 +78,7 @@ namespace JinianNet.JNTemplate.Parsers
                 && tc[1].Text == "=")
             {
                 SetTag tag = new SetTag();
-                tag.Name = tc.First.Text; 
+                tag.Name = tc.First.Text;
                 tag.Value = parser.Read(tc[2, tc.Count]);
                 return tag;
             }

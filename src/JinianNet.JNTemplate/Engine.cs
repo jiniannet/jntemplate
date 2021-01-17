@@ -66,7 +66,8 @@ namespace JinianNet.JNTemplate
         }
         #endregion
 
-        #region 对外方法
+        #region 对外方法 
+
         /// <summary>
         /// 创建模板上下文
         /// </summary>
@@ -94,6 +95,7 @@ namespace JinianNet.JNTemplate
         public static ITemplate CreateTemplate(string text)
         {
             var template = new Template(CreateContext(), text);
+            template.TemplateKey = text.GetHashCode().ToString();
             template.Context.CurrentPath = System.IO.Directory.GetCurrentDirectory();
             return template;
         }
@@ -129,7 +131,7 @@ namespace JinianNet.JNTemplate
             if (info != null)
             {
                 template = new Template(ctx, info.Content);
-                template.TemplateKey = info.FullPath;
+                template.TemplateKey = info.FullPath.GetHashCode().ToString();
                 if (string.IsNullOrEmpty(ctx.CurrentPath))
                 {
                     ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
@@ -185,48 +187,6 @@ namespace JinianNet.JNTemplate
 
 
         #endregion
-
-        #region 环境变量
-
-        /// <summary>
-        /// 获取环境变量
-        /// </summary>
-        /// <param name="variable">变量名称</param>
-        /// <returns></returns>
-        public static string GetEnvironmentVariable(string variable)
-        {
-            string value;
-
-            if (Runtime.EnvironmentVariable.TryGetValue(variable, out value))
-            {
-                return value;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 设置环境变量
-        /// </summary>
-        /// <param name="variable">变量名</param>
-        /// <param name="value">值</param>
-        public static void SetEnvironmentVariable(string variable, string value)
-        {
-            if (variable == null)
-            {
-                throw new ArgumentNullException("\"variable\" cannot be null.");
-            }
-            if (value == null)
-            {
-                Runtime.EnvironmentVariable.Remove(variable);
-            }
-            else
-            {
-                Runtime.EnvironmentVariable[variable] = value;
-            }
-        }
-
-        #endregion
-
 
         #region 枚举状态
 

@@ -20,13 +20,13 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             switch (value)
             {
-                case Operator.Plus:
+                case Operator.Add:
                     return "+";
-                case Operator.Minus:
+                case Operator.Subtract:
                     return "-";
-                case Operator.Times:
+                case Operator.Multiply:
                     return "*";
-                case Operator.Percent:
+                case Operator.Remainder:
                     return "%";
                 case Operator.Divided:
                     return "/";
@@ -69,13 +69,13 @@ namespace JinianNet.JNTemplate.Dynamic
             switch (value)
             {
                 case "+":
-                    return Operator.Plus;
+                    return Operator.Add;
                 case "-":
-                    return Operator.Minus;
+                    return Operator.Subtract;
                 case "*":
-                    return Operator.Times;
+                    return Operator.Multiply;
                 case "%":
-                    return Operator.Percent;
+                    return Operator.Remainder;
                 case "/":
                     return Operator.Divided;
                 case "|":

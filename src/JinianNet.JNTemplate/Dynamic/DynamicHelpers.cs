@@ -4,8 +4,8 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.Caching;
 using System;
-using System.Collections.Generic; 
-using System.Reflection; 
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -103,9 +103,43 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             foreach (var m in ms)
             {
+
+            }
+            foreach (var m in ms)
+            {
                 if (IsMatch(m.GetParameters(), args))
                 {
                     return m;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 根据参数获取方法（请避免使用重载）
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="genericType">类型</param>
+        /// <param name="methodName">方法名</param>
+        /// <param name="args">实参</param>
+        /// <returns>MethodInfo</returns>
+        public static MethodInfo GetGenericMethod(Type type, Type[] genericType, string methodName, Type[] args)
+        {
+            MethodInfo[] ms = GetCacheMethods(type, methodName);
+            if (ms.Length == 1 && ms[0].IsGenericMethod)
+            {
+                return ms[0].MakeGenericMethod(genericType);
+            }
+            foreach (var m in ms)
+            {
+                if (!m.IsGenericMethod)
+                {
+                    continue;
+                }
+                var real = m.MakeGenericMethod(genericType);
+                if (IsMatch(real.GetParameters(), args))
+                {
+                    return real;
                 }
             }
             return null;
@@ -131,14 +165,14 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
         }
 
-
         /// <summary>
         /// 实参是否匹配形参
         /// </summary>
         /// <param name="pi">形参</param>
         /// <param name="args">实参</param>
+        /// <param name="isAllMatch">参数类型是否完全一致</param>
         /// <returns>bool</returns>
-        public static bool IsMatch(ParameterInfo[] pi, Type[] args)
+        public static bool IsMatch(ParameterInfo[] pi, Type[] args,bool isAllMatch)
         {
             if (pi.Length != args.Length)
             {
@@ -151,13 +185,25 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     continue;
                 }
-                if (!IsMatchType(args[i], pi[i].ParameterType) && !DynamicHelpers.CanChange(args[i], pi[i].ParameterType))
+                //if (!IsMatchType(args[i], pi[i].ParameterType) && !DynamicHelpers.CanChange(args[i], pi[i].ParameterType))
+                if ((isAllMatch && args[i].FullName != pi[i].ParameterType.FullName) || (!isAllMatch &&!IsMatchType(args[i], pi[i].ParameterType)) /*&& !DynamicHelpers.CanChange(args[i], pi[i].ParameterType)*/)
                 {
                     return false;
                 }
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 实参是否匹配形参
+        /// </summary>
+        /// <param name="pi">形参</param>
+        /// <param name="args">实参</param>
+        /// <returns>bool</returns>
+        public static bool IsMatch(ParameterInfo[] pi, Type[] args)
+        {
+            return IsMatch(pi,args,false);
         }
 
 
@@ -182,8 +228,8 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             switch (target.FullName)
             {
-                case "System.String"://任意类型都支持toString
-                    return true;
+                //case "System.String"://任意类型都支持toString
+                //    return true;
                 case "System.Double":
                     if (original.FullName == "System.Int16"
                         || original.FullName == "System.Int32"

@@ -10,5 +10,24 @@ namespace JinianNet.JNTemplate.Exception
     /// </summary>
     public class CompileException : System.Exception
     {
+        /// <summary>
+        /// CompileException
+        /// </summary>
+        /// <param name="exception">innexception</param>
+        public CompileException(System.Exception exception) :
+            base(exception.Message, exception)
+        {
+
+        }
+
+        /// <summary>
+        /// CompileException
+        /// </summary>
+        /// <param name="message">message</param>
+        public CompileException(string message) :
+            base(message)
+        {
+
+        }
     }
 }

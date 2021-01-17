@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate.Nodes
     public class ForTag : ComplexTag
     {
         private ITag initial;
-        private ITag test;
+        private ITag condition;
         private ITag dothing;
 
         /// <summary>
@@ -32,10 +32,10 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 逻辑标签
         /// </summary>
-        public ITag Test
+        public ITag Condition
         {
-            get { return this.test; }
-            set { this.test = value; }
+            get { return this.condition; }
+            set { this.condition = value; }
         }
 
         /// <summary>
@@ -57,13 +57,13 @@ namespace JinianNet.JNTemplate.Nodes
             //如果标签为空，则直接为false,避免死循环以内存溢出
             bool run;
 
-            if (this.test == null)
+            if (this.Condition == null)
             {
                 run = false;
             }
             else
             {
-                run = Utility.ToBoolean(this.test.ParseResult(context));
+                run = Utility.ToBoolean(this.Condition.ParseResult(context));
             }
             using (var writer = new StringWriter())
             {
@@ -79,7 +79,7 @@ namespace JinianNet.JNTemplate.Nodes
                         //执行计算，不需要输出，比如i++
                         this.dothing.ParseResult(context);
                     }
-                    run = Utility.ToBoolean(this.test.ParseResult(context));
+                    run = Utility.ToBoolean(this.Condition.ParseResult(context));
                 }
                 return writer.ToString();
             }
@@ -97,13 +97,13 @@ namespace JinianNet.JNTemplate.Nodes
             //如果标签为空，则直接为false,避免死循环以内存溢出
             bool run;
 
-            if (this.test == null)
+            if (this.Condition == null)
             {
                 run = false;
             }
             else
             {
-                run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
+                run = Utility.ToBoolean(await this.Condition.ParseResultAsync(context));
             }
             using (var writer = new StringWriter())
             {
@@ -119,7 +119,7 @@ namespace JinianNet.JNTemplate.Nodes
                         //执行计算，不需要输出，比如i++
                         await this.dothing.ParseResultAsync(context);
                     }
-                    run = Utility.ToBoolean(await this.test.ParseResultAsync(context));
+                    run = Utility.ToBoolean(await this.Condition.ParseResultAsync(context));
                 }
                 return writer.ToString();
             }
