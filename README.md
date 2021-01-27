@@ -75,8 +75,7 @@ template code(index.html):
 c# code:
 
 ```
-var template = (Template)Engine.LoadTemplate("C:\\wwwwroot\index.html");
-\\(Template)Engine.CreateTemplate("hello,$name!");
+var template = Engine.LoadTemplate("C:\\wwwwroot\index.html");
 template.Set("name", "JNTemplate");
 var result = template.Render(); 
 ```
