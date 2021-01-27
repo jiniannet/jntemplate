@@ -18,7 +18,7 @@ JNTemplate所有代码全部开源，且具有最小的依赖关系，能轻松�
 
 ### 特点:
 - 易于学习使用：有一定前后端基础，最快可以10分钟上手
-- 更方便的扩展：能轻松实现自定义标签（需要有一定IL基本）
+- 更方便的扩展：能轻松实现自定义标签（需要有一定IL基础）
 - 更快解析速度：高效的词法语法分析器，模板预编译，让运行速度接近原生体验。
 - 完全自由免费：允许商用且无须担心费用，所有代码完全开源，不依赖任何第三方DLL
 
@@ -79,7 +79,7 @@ c# 代码:
 var template = Engine.LoadTemplate("C:\\wwwwroot\index.html");
 \\在配置中配置了模板目录的情况下，可以省略目录，如：Engine.LoadTemplate("index.html");
 template.Set("name", "JNTemplate");
-var result = template.Render(); 
+template.Render(TextWriter); 
 ```
 
 输出结果:
