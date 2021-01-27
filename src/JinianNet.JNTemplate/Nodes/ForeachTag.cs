@@ -40,50 +40,6 @@ namespace JinianNet.JNTemplate.Nodes
             set { this.source = value; }
         }
 
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param> 
-        public override object ParseResult(TemplateContext context)
-        {
-            if (Source != null)
-            {
-                using (var writer = new StringWriter())
-                {
-                    object value = Source.ParseResult(context);
-                    IEnumerable enumerable = ForeachTag.ToIEnumerable(value);
-                    TemplateContext ctx;
-                    if (enumerable != null)
-                    {
-                        IEnumerator ienum = enumerable.GetEnumerator();
-                        ctx = TemplateContext.CreateContext(context);
-                        int i = 0;
-                        while (ienum.MoveNext())
-                        {
-                            i++;
-                            ctx.TempData[this.name] = ienum.Current;
-                            //为了兼容以前的用户 foreachIndex 保留
-                            ctx.TempData["foreachIndex"] = i;
-                            for (int n = 0; n < this.Children.Count; n++)
-                            {
-                                object result = this.Children[n].ParseResult(ctx);
-                                if (i == 0 && this.Children.Count == 1)
-                                {
-                                    return result;
-                                }
-                                if (result != null)
-                                {
-                                    writer.Write(result.ToString());
-                                }
-                            }
-                        }
-                    }
-                    return writer.ToString();
-                }
-            }
-            return null;
-        }
-
         #region ToIEnumerable
         /// <summary>
         /// 将对象转换为IEnumerable

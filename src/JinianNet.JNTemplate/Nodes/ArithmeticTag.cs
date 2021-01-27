@@ -2,9 +2,10 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Exception;
 using System;
-using System.Collections.ObjectModel;
-using System.IO;
+using System.Collections.Generic;
 #if !NET20
 using System.Threading.Tasks;
 #endif
@@ -12,10 +13,11 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 复合标签(Parse)
+    /// 算术表达式
     /// </summary>
     [Serializable]
-    public abstract class ComplexTag : Tag, ITag
-    { 
+    public class ArithmeticTag : BasisTag
+    {
+
     }
 }

@@ -13,24 +13,14 @@ namespace JinianNet.JNTemplate
     public class VariableScope
     {
         private VariableScope parent;
-        private IDictionary<string, object> dic;
+        private IDictionary<string, VariableElement> dic;
 
 
         /// <summary>
         /// 无参构造函数
         /// </summary>
         public VariableScope()
-            : this(null, null)
-        {
-
-        }
-
-        /// <summary>
-        /// 以字典来初始化对象
-        /// </summary>
-        /// <param name="dictionary">初始化字典</param>
-        public VariableScope(IDictionary<string, object> dictionary)
-            : this(null, dictionary)
+            : this(null)
         {
 
         }
@@ -38,25 +28,11 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 以父VariableScope与字典来初始化对象
         /// </summary>
-        /// <param name="parent">父VariableScope</param>
-        /// <param name="dictionary">初始化字典</param>
-        public VariableScope(VariableScope parent, IDictionary<string, object> dictionary)
+        /// <param name="parent">父VariableScope</param> 
+        public VariableScope(VariableScope parent)
         {
             this.parent = parent;
-            if (dictionary == null)
-            {
-                dictionary = new Dictionary<string, object>(Engine.Runtime.ComparerIgnoreCase);
-            }
-            this.dic = dictionary;
-        }
-
-        /// <summary>
-        /// 以父VariableScope来初始化对象
-        /// </summary>
-        /// <param name="parent">父VariableScope</param>
-        public VariableScope(VariableScope parent) :
-            this(parent, null)
-        {
+            this.dic = new Dictionary<string, VariableElement>(Runtime.Store.ComparerIgnoreCase);
 
         }
 
@@ -99,20 +75,24 @@ namespace JinianNet.JNTemplate
         {
             get
             {
-                object val;
-                if (this.dic.TryGetValue(name, out val))
+                VariableElement val = GetElement(name);
+                if (val != null)
                 {
-                    return val;
-                }
-                if (this.parent != null)
-                {
-                    return this.parent[name];
+                    return val.Value;
                 }
                 return null;
             }
-            set
+        }
+
+        private Type GetValueType(object value)
+        {
+            if (value != null)
             {
-                this.dic[name] = value;
+                return value.GetType();
+            }
+            else
+            {
+                return typeof(object);
             }
         }
 
@@ -121,29 +101,18 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        internal bool SetValue(string key, object value)
+        internal bool SetValue<T>(string key, T value)
         {
-
             if (this.dic.ContainsKey(key))
             {
-                this[key] = value;
+                dic[key] = new VariableElement(typeof(T), value);
                 return true;
             }
             if (this.parent != null)
             {
-                return this.parent.SetValue(key, value);
+                return this.parent.SetValue<T>(key, value);
             }
             return false;
-        }
-
-        /// <summary>
-        /// 添加数据
-        /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        public void Push(string key, object value)
-        {
-            this.dic.Add(key, value);
         }
 
         /// <summary>
@@ -175,5 +144,75 @@ namespace JinianNet.JNTemplate
             return this.dic.Remove(key);
         }
 
+
+        /// <summary>
+        /// 获取索引值
+        /// </summary>
+        /// <param name="name">索引名称</param>
+        /// <returns>VariableElement</returns>
+        private VariableElement GetElement(string name)
+        {
+            VariableElement val;
+            if (this.dic.TryGetValue(name, out val))
+            {
+                return val;
+            }
+            if (this.parent != null)
+            {
+                return this.parent.GetElement(name);
+            }
+            return null;
+        }
+        /// <summary>
+        /// 获取结果类型
+        /// </summary>
+        /// <param name="name">索引名称</param>
+        /// <returns>Type</returns>
+        public Type GetType(string name)
+        {
+            VariableElement val = GetElement(name);
+            if (val != null)
+            {
+                if (val.Type != null)
+                {
+                    return val.Type;
+                }
+                if (val.Value != null)
+                {
+                    return val.Value.GetType();
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        /// <typeparam name="T">值类型</typeparam>
+        public void Set<T>(string key, T value)
+        {
+            Set(key, value, typeof(T));
+        }
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        /// <param name="type">值类型</param>
+        public void Set(string key, object value, Type type)
+        {
+            SetElement(key, new VariableElement(type, value)); 
+        }
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="key">键</param> 
+        /// <param name="element">值</param>
+        public void SetElement(string key, VariableElement element)
+        {
+            this.dic[key] = element;
+        } 
     }
 }

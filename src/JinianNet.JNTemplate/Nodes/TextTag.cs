@@ -25,21 +25,7 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 return null;
             }
-        }
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            if (context.StripWhiteSpace)
-            {
-                return (this.Text ?? string.Empty).Trim();
-            }
-            return this.ToString();
-        }
-
+        } 
 
         /// <summary>
         /// 获取对象的字符串引用

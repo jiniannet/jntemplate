@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Dynamic
 #if NETSTANDARD
                     type.GetRuntimeProperty(propName);
 #else
-                    type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+                    type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
 #endif
             return p;
         }
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Dynamic
 #if NETSTANDARD
                     type.GetRuntimeField(propName);
 #else
-                    type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+                    type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
 #endif
             return f;
         }
@@ -57,13 +57,13 @@ namespace JinianNet.JNTemplate.Dynamic
         public static MethodInfo[] GetCacheMethods(Type type, string methodName)
         {
             var cacheKey = string.Concat(type.FullName, ".", methodName);
-            var cacheValue = MemoryCache.Instance.Get<MethodInfo[]>(cacheKey);
+            var cacheValue = Runtime.Cache.Get<MethodInfo[]>(cacheKey);
             if (cacheValue != null)
             {
                 return cacheValue;
             }
             var result = GetMethods(type, methodName);
-            MemoryCache.Instance.Set(cacheKey, result);
+            Runtime.Cache.Set(cacheKey, result);
             return result;
         }
 
@@ -75,11 +75,11 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetMethods(Type type, string methodName)
         {
-            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
             List<MethodInfo> result = new List<MethodInfo>();
             foreach (MethodInfo m in ms)
             {
-                if (m.Name.Equals(methodName, Engine.Runtime.ComparisonIgnoreCase))
+                if (m.Name.Equals(methodName, Runtime.Store.ComparisonIgnoreCase))
                 {
                     result.Add(m);
                 }
@@ -172,7 +172,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="args">实参</param>
         /// <param name="isAllMatch">参数类型是否完全一致</param>
         /// <returns>bool</returns>
-        public static bool IsMatch(ParameterInfo[] pi, Type[] args,bool isAllMatch)
+        public static bool IsMatch(ParameterInfo[] pi, Type[] args, bool isAllMatch)
         {
             if (pi.Length != args.Length)
             {
@@ -186,7 +186,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     continue;
                 }
                 //if (!IsMatchType(args[i], pi[i].ParameterType) && !DynamicHelpers.CanChange(args[i], pi[i].ParameterType))
-                if ((isAllMatch && args[i].FullName != pi[i].ParameterType.FullName) || (!isAllMatch &&!IsMatchType(args[i], pi[i].ParameterType)) /*&& !DynamicHelpers.CanChange(args[i], pi[i].ParameterType)*/)
+                if ((isAllMatch && args[i].FullName != pi[i].ParameterType.FullName) || (!isAllMatch && !IsMatchType(args[i], pi[i].ParameterType)) /*&& !DynamicHelpers.CanChange(args[i], pi[i].ParameterType)*/)
                 {
                     return false;
                 }
@@ -203,7 +203,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>bool</returns>
         public static bool IsMatch(ParameterInfo[] pi, Type[] args)
         {
-            return IsMatch(pi,args,false);
+            return IsMatch(pi, args, false);
         }
 
 
@@ -297,7 +297,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         private static object DefaultForType(Type targetType)
         {
-            return targetType.IsValueType ? Activator.CreateInstance(targetType) : null;
+            return targetType.IsValueType ? CreateInstance(targetType) : null;
         }
 
         /// <summary>
@@ -340,6 +340,25 @@ namespace JinianNet.JNTemplate.Dynamic
         /// 创建实例 
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
+        /// <param name="typeName">类型</param>
+        /// <returns></returns>
+        public static T CreateInstance<T>(string typeName)
+        {
+            if (string.IsNullOrWhiteSpace(typeName))
+            {
+                return default(T);
+            }
+            var type = Type.GetType(typeName);
+            if(type == null)
+            {
+                return default(T);
+            }
+            return (T)Activator.CreateInstance(type);
+        }
+        /// <summary>
+        /// 创建实例 
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
         /// <param name="type">类型</param>
         /// <returns></returns>
         public static T CreateInstance<T>(Type type)
@@ -352,8 +371,12 @@ namespace JinianNet.JNTemplate.Dynamic
         /// </summary>
         /// <param name="type">类型</param>
         /// <returns>实例对象</returns>
-        private static object CreateInstance(Type type)
+        public static object CreateInstance(Type type)
         {
+            if (type.IsInterface)
+            {
+                return null;
+            }
             return Activator.CreateInstance(type);
         }
     }

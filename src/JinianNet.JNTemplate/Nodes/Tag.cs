@@ -38,14 +38,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 children.Add(node);
             }
-        }
-
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public abstract object ParseResult(TemplateContext context);
+        } 
 
         /// <summary>
         /// 开始Token

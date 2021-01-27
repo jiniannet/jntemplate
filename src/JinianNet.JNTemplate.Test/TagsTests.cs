@@ -12,13 +12,8 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public partial class TagsTests : TagsTestBase
     {
-        public TagsTests()
-        {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            //开始严格大小写模式 默认忽略大小写
-            //conf.IgnoreCase = false;
-            Engine.Configure(conf);
-        }
+        public static int Value { get; set; } = 8888; 
+
 
         /// <summary>
         /// 综合测试
@@ -39,19 +34,19 @@ $foreach(model in list)
 $end
 ";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["list"] = new[] {
-                new {
+            template.Set("list",new Entity[] {
+                new Entity{
                     Id=1
                 },
-                new {
+                new Entity {
                     Id=2
                 },
-                new {
+                new  Entity{
                     Id=3
                 }
-            };
-            template.Context.TempData["getList"] = new FuncHandler(args=> {
-                return new object[] { $"a{args[0]}", $"b{args[0]}", $"c{args[0]}" };
+            });
+            template.Set<Func<int,string[]>>("getList",(id)=> {
+                return new string[] { $"a{id}", $"b{id}", $"c{id}" };
             });
             var render =(await Excute(template)).Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
             Assert.Equal("<div>list:1</div><ul></ul><div>list:2</div><ul><li>a2</li><li>b2</li><li>c2</li></ul><div>list:3</div><ul></ul>", render);
@@ -69,8 +64,8 @@ $end
                         <li><a href=""$func.GetHelpUrl(row)"">$row.Title</a></li>
                         $end";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["list"] = (new TemplateMethod().GetHelpList(0, 0, 0, 0));
-            template.Context.TempData["func"] = (new TemplateMethod());
+            template.Set("list",new TemplateMethod().GetHelpList(0, 0, 0, 0));
+            template.Set("func",new TemplateMethod());
             var render = (await Excute(template)).Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
             Assert.Equal("<li><a href=\"/Help/art001.aspx\">下单后可以修改订单吗？</a></li><li><a href=\"/Help/art001.aspx\">无货商品几天可以到货？</a></li><li><a href=\"/Help/art001.aspx\">合约机资费如何计算？</a></li><li><a href=\"/Help/art001.aspx\">可以开发票吗？</a></li>".Replace(" ", ""), render);
         }
@@ -83,7 +78,7 @@ $end
         {
             var templateContent = "$Site.Url";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["Site"] = (new
+            template.Set("Site",new Entity
             {
                 Url = "jiniannet.com"
             });
@@ -91,7 +86,18 @@ $end
             Assert.Equal("jiniannet.com", render);
         }
 
-
+        /// <summary>
+        /// 测试静态方法
+        /// </summary>
+        [Fact]
+        public async Task TestStaticProperty()
+        {
+            var templateContent = "${TagsTests.Value}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.SetStaticType("TagsTests", typeof(TagsTests));
+            var render = await Excute(template);
+            Assert.Equal("8888", render);  
+        }
 
 
         /// <summary>
@@ -102,7 +108,7 @@ $end
         {
             var templateContent = "$set(aGroupName = \"Begin\"+value)$aGroupName";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["value"] = (30);
+            template.Set("value",30);
             var render = await Excute(template);
 
             Assert.Equal("Begin30", render);
@@ -118,7 +124,7 @@ $end
         {
             var templateContent = "$date.Year.ToString().Length";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["date"] = (DateTime.Now);
+            template.Set("date",DateTime.Now);
             var render = await Excute(template);
             Assert.Equal("4", render);
         }
@@ -129,20 +135,20 @@ $end
         [Fact]
         public async Task TestConfig()
         {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            conf.TagFlag = '@';
-            conf.TagSuffix = "}";
-            conf.TagPrefix = "{$";
+            //var conf = Configuration.EngineConfig.CreateDefault();
+            //conf.TagFlag = '@';
+            //conf.TagSuffix = "}";
+            //conf.TagPrefix = "{$";
 
-            Engine.Configure(conf);
+            //Engine.Configure(conf);
 
-            var templateContent = "你好，@name,欢迎来到{$name}的世界";
-            var template = (Template)Engine.CreateTemplate(templateContent);
-            template.Context.TempData["name"] = ("jntemplate");
-            var render = await Excute(template);
-            Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
+            //var templateContent = "你好，@name,欢迎来到{$name}的世界";
+            //var template = Engine.CreateTemplate(templateContent);
+            //template.Set("name","jntemplate");
+            //var render = await Excute(template);
+            //Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
 
-            Engine.Configure(Configuration.EngineConfig.CreateDefault());
+            //Engine.Configure(Configuration.EngineConfig.CreateDefault());
             //Assert.Equal("111", "111");
         }
 
@@ -154,7 +160,7 @@ $end
         {
             var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["name"] = ("jntemplate");
+            template.Set("name","jntemplate");
             var render = await Excute(template);
             Assert.Equal("你好,欢迎使用", render);
         }
@@ -171,14 +177,14 @@ $end
             var dt = new System.Data.DataTable();
             dt.Columns.Add("name", typeof(string));
             var dr = dt.NewRow();
-            dr["name"] = "Han Meimei";
+            dr["name","Han Meimei";
 
             dt.Rows.Add(dr);
 
 
             var templateContent = "$dt.Rows.get_Item(0).get_Item(\"name\")";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["dt"]=( dt);
+            template.Set("dt"]=( dt);
             var render = Excute(template).Trim();
             Assert.Equal("Han Meimei", render);
         }
@@ -192,7 +198,7 @@ $end
             var dt = new System.Data.DataTable();
             dt.Columns.Add("name", typeof(string));
             var dr = dt.NewRow();
-            dr["name"] = "Han Meimei";
+            dr["name","Han Meimei";
 
             dt.Rows.Add(dr);
 
@@ -203,7 +209,7 @@ $foreach(dr in dt.Rows)
 $end 
 ";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["dt"]=( dt);
+            template.Set("dt"]=( dt);
             var render = Excute(template).Trim();
             Assert.Equal("Han Meimei", render);
         }
@@ -217,7 +223,7 @@ $end
             var dt = new System.Data.DataTable();
             dt.Columns.Add("name", typeof(string));
             var dr = dt.NewRow();
-            dr["name"] = "Han Meimei";
+            dr["name","Han Meimei";
 
             dt.Rows.Add(dr);
             var templateContent = @" 
@@ -228,7 +234,7 @@ $foreach(dr in dt.Rows)
 $end
 ";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["dt"]=( dt);
+            template.Set("dt"]=( dt);
             var render = Excute(template).Trim();
             Assert.Equal("值:Han Meimei", render);
         }
@@ -244,7 +250,7 @@ $end
         //{
         //    var templateContent = "$fun.TestParams(\"字符串\",1,true)";
         //    var template = Engine.CreateTemplate(templateContent);
-        //    template.Context.TempData["fun"]=( new TemplateMethod());
+        //    template.Set("fun"]=( new TemplateMethod());
         //    var render = await Excute(template);
         //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         //}
@@ -257,7 +263,7 @@ $end
         //{
         //    var templateContent = "$fun.TestParams2(\"您输入的参数是有：\",\"字符串\",1,true)";
         //    var template = Engine.CreateTemplate(templateContent);
-        //    template.Context.TempData["fun"]=( new TemplateMethod());
+        //    template.Set("fun"]=( new TemplateMethod());
         //    var render = await Excute(template);
         //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         //}
@@ -272,7 +278,7 @@ $end
         {
             var templateContent = "($a)人";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["a"] = ("1");
+            template.Set("a","1");
             var render = await Excute(template);
 
             Assert.Equal("(1)人", render);
@@ -337,7 +343,7 @@ $key5";
                 throw new System.Exception($"{fileName} 不存在");
             }
             var template = Engine.LoadTemplate(fileName);
-            template.Context.TempData["name"] = "jntemplate";
+            template.Set("name","jntemplate");
             var render = await Excute(template);
             Assert.Equal("你好，jntemplate", render);
         }
@@ -350,7 +356,7 @@ $key5";
         //{
         //    var templateContent  = "$date.Year";
         //    var template = Engine.CreateTemplate(templateContent);
-        //    template.Context.TempData["date"]=(DateTime.Now);
+        //    template.Set("date"]=(DateTime.Now);
         //    var render = await Excute(template);
         //    Assert.Equal(DateTime.Now.Year.ToString(), render);
         //}

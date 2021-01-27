@@ -5,6 +5,8 @@
 using System;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Resources;
+using JinianNet.JNTemplate.Compile;
+using JinianNet.JNTemplate.Dynamic;
 #if !NET20
 using System.Threading.Tasks;
 #endif
@@ -14,37 +16,21 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 引擎入口
     /// </summary>
-    public class Engine
+    public sealed class Engine
     {
-        #region 私有变量
-        private static object lockObject = new object();
-        private static Runtime engineRuntime;
 
         /// <summary>
-        /// 运行时
+        /// Version
         /// </summary>
-        public static Runtime Runtime
+        public static string Version => Field.Version;
+        /// <summary>
+        /// 是否启用编译模式
+        /// </summary>
+        public static bool EnableCompile
         {
-            get
-            {
-                if (engineRuntime == null)
-                {
-                    lock (lockObject)
-                    {
-                        if (engineRuntime == null)
-                        {
-                            Configure(Configuration.EngineConfig.CreateDefault());
-                        }
-                    }
-                }
-                return engineRuntime;
-            }
+            get { return Runtime.Store.EnableCompile; }
+            set { Runtime.Store.EnableCompile = value; }
         }
-
-        #endregion
-
-        #region 引擎配置
-
 
         /// <summary>
         /// 引擎配置
@@ -62,11 +48,38 @@ namespace JinianNet.JNTemplate
         /// <param name="scope">初始数据</param>
         public static void Configure(IConfig conf, VariableScope scope)
         {
-            engineRuntime = new Runtime(conf, scope);
-        }
-        #endregion
+            Runtime.Configure(conf, scope);
+        } 
 
-        #region 对外方法 
+        /// <summary>
+        /// 预编译模板
+        /// </summary>
+        /// <param name="name">模板名称 必须唯一，建议使用模板文件绝对路径</param>
+        /// <param name="fileName">模板路径</param>
+        /// <param name="action">ACTION</param>
+        /// <returns></returns>
+        public static ICompileTemplate Precompiled(string name, string fileName, Action<CompileContext> action = null)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new System.ArgumentNullException("name cannot be null.");
+            }
+            return Runtime.Templates[name] = Compiler.CompileFile(name, fileName, action);
+        }
+
+        /// <summary>
+        /// 预编译模板
+        /// </summary> 
+        /// <param name="fs">模板文件</param>
+        /// <param name="action">action</param>
+        /// <returns></returns>
+        public static void Precompiled(System.IO.FileInfo[] fs, Action<CompileContext> action = null)
+        {
+            foreach (var f in fs)
+            {
+                Runtime.Templates[f.FullName] = Compiler.CompileFile(f.FullName, f.FullName, action);
+            }
+        }
 
         /// <summary>
         /// 创建模板上下文
@@ -74,18 +87,15 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext()
         {
-            TemplateContext ctx = new TemplateContext(
-                new VariableScope(Runtime.Data)
-                , Runtime.Actuator
-                , Runtime.Loader
-                , Runtime.Parsers
-                , Runtime.Cache);
+            var data = new VariableScope(Runtime.Data);
+            TemplateContext ctx = new TemplateContext(data);
             if (Runtime.ResourceDirectories != null && Runtime.ResourceDirectories.Count > 0)
             {
                 ctx.ResourceDirectories.AddRange(Runtime.ResourceDirectories);
             }
             return ctx;
         }
+
 
         /// <summary>
         /// 从指定模板内容创建Template实例
@@ -94,8 +104,31 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static ITemplate CreateTemplate(string text)
         {
-            var template = new Template(CreateContext(), text);
-            template.TemplateKey = text.GetHashCode().ToString();
+            return CreateTemplate(null, text);
+        }
+
+        /// <summary>
+        /// 从指定模板内容创建Template实例
+        /// </summary>
+        /// <param name="name">模板名称 必须唯一</param>
+        /// <param name="text">文本</param>
+        /// <returns></returns>
+        public static ITemplate CreateTemplate(string name, string text)
+        {
+            ITemplate template;
+            if (EnableCompile)
+            {
+                template = new CompileTemplate(CreateContext(), text);
+            }
+            else
+            {
+                template = new Template(CreateContext(), text);
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                name = text.GetHashCode().ToString();
+            }
+            template.TemplateKey = name;
             template.Context.CurrentPath = System.IO.Directory.GetCurrentDirectory();
             return template;
         }
@@ -103,111 +136,81 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 从指定路径加载模板
         /// </summary>
-        /// <param name="path">模板文件</param>
+        /// <param name="fileName">模板文件</param>
         /// <returns>ITemplate</returns>
-        public static ITemplate LoadTemplate(string path)
+        public static ITemplate LoadTemplate(string fileName)
         {
-            return LoadTemplate(path, CreateContext());
+            return LoadTemplate(null, fileName);
+        }
+
+
+        /// <summary>
+        /// 从指定路径加载模板
+        /// </summary>
+        /// <param name="name">模板名称 必须唯一</param>
+        /// <param name="fileName">模板文件</param>
+        /// <returns>ITemplate</returns>
+        public static ITemplate LoadTemplate(string name, string fileName)
+        {
+            if (EnableCompile)
+            {
+                return LoadTemplate<CompileTemplate>(name, fileName, CreateContext());
+            }
+            return LoadTemplate<Template>(name, fileName, CreateContext());
         }
 
         /// <summary>
         /// 从指定路径加载模板
         /// </summary>
-        /// <param name="path">模板文件</param>
+        /// <param name="name">模板名称 必须唯一</param>
+        /// <param name="fileName">模板文件</param>
         /// <param name="ctx">模板上下文</param>
         /// <returns>ITemplate</returns>
-        public static ITemplate LoadTemplate(string path, TemplateContext ctx)
+        public static T LoadTemplate<T>(string name, string fileName, TemplateContext ctx)
+            where T : ITemplate, new()
         {
-            var paths =
-#if NETCOREAPP || NETSTANDARD
-                    ctx.GetResourceDirectories();
-#else
-                    TemplateContextExtensions.GetResourceDirectories(ctx);
-#endif
-
-            ResourceInfo info = ctx.Loader.Load(path, ctx.Charset, paths);
-            Template template;
-
-            if (info != null)
+            T template = new T();
+            template.Context = ctx;
+            template.Path = ctx.FindFullPath(fileName);
+            template.TemplateKey = name;
+            if (string.IsNullOrWhiteSpace(template.Path))
             {
-                template = new Template(ctx, info.Content);
-                template.TemplateKey = info.FullPath.GetHashCode().ToString();
-                if (string.IsNullOrEmpty(ctx.CurrentPath))
-                {
-                    ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
-                }
-            }
-            else
+                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+            } 
+            if (string.IsNullOrWhiteSpace(template.TemplateKey))
             {
-                template = new Template(ctx, string.Empty);
+                template.TemplateKey = template.Path;
             }
             return template;
         }
 
-
-
-#if NETCOREAPP || NETSTANDARD
         /// <summary>
-        /// 从指定路径加载模板
+        /// Register tag
         /// </summary>
-        /// <param name="path">模板文件</param>
-        /// <param name="ctx">模板上下文</param>
-        /// <returns>ITemplate</returns>
-        public static async Task<ITemplate> LoadTemplateAsync(string path, TemplateContext ctx = null)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parser"></param>
+        /// <param name="compileFunc"></param>
+        /// <param name="guessFunc"></param>
+        public static void Register<T>(Parsers.ITagParser parser,
+            Func<Nodes.ITag, CompileContext, System.Reflection.MethodInfo> compileFunc,
+            Func<Nodes.ITag, CompileContext, Type> guessFunc) where T : Nodes.ITag
         {
-            if (ctx == null)
-            {
-                ctx = CreateContext();
-            }
-            var paths =
-#if NETCOREAPP || NETSTANDARD
-                    ctx.GetResourceDirectories();
-#else
-                    TemplateContextExtensions.GetResourceDirectories(ctx);
-#endif
-            ResourceInfo info = await ctx.Loader.LoadAsync(path, ctx.Charset, paths);
-            Template template;
-
-            if (info != null)
-            {
-                template = new Template(ctx, info.Content);
-                template.TemplateKey = info.FullPath;
-                if (string.IsNullOrEmpty(ctx.CurrentPath))
-                {
-                    ctx.CurrentPath = ctx.Loader.GetDirectoryName(info.FullPath);
-                }
-            }
-            else
-            {
-                template = new Template(ctx, string.Empty);
-            }
-            return template;
+            Runtime.RegisterTagParser(parser, 0);
+            Compiler.Register<T>(compileFunc, guessFunc);
         }
-#endif
 
-
-        #endregion
-
-        #region 枚举状态
 
         /// <summary>
-        /// 状态枚举
+        /// Register tag
         /// </summary>
-        public enum InitializationState
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parser"></param>
+        /// <param name="func"></param> 
+        public static void Register<T>(Parsers.ITagParser parser,
+            Func<Nodes.ITag, TemplateContext, object> func) where T : Nodes.ITag
         {
-            /// <summary>
-            /// 未初始化
-            /// </summary>
-            None,
-            /// <summary>
-            /// 初始化中
-            /// </summary>
-            Initialization,
-            /// <summary>
-            /// 初始完成
-            /// </summary>
-            Complete
-        }
-        #endregion
+            Runtime.RegisterTagParser(parser, 0);
+            Executor.Register<T>(func);
+        } 
     }
 }

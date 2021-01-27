@@ -20,23 +20,6 @@ namespace JinianNet.JNTemplate.Nodes
         {
             get { return this.name; }
             set { this.name = value; }
-        }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            object baseValue = null;
-            if (this.Parent != null)
-            {
-                baseValue = this.Parent.ParseResult(context);
-            }
-            if (baseValue == null)
-            {
-                return context.TempData[this.name];
-            }
-            return context.Actuator.CallPropertyOrField(baseValue, this.name);
-        }
+        } 
     }
 }

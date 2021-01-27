@@ -22,34 +22,18 @@ namespace JinianNet.JNTemplate
 #endif
     {
         private VariableScope variableScope;
-        private ICache cache;
-        private IActuator actuator;
-        private IResourceLoader loader;
-        private TagParser parsers;
         private bool enableTemplateCache;
         private List<System.Exception> errors;
 
         /// <summary>
         /// 模板上下文
         /// </summary>
-        /// <param name="data">模板数据</param>
-        /// <param name="actuator">动态访问器</param>
-        /// <param name="loader">资源加载器</param>
-        /// <param name="parsers">标签解析器</param> 
-        /// <param name="cache">缓存</param>
-        public TemplateContext(VariableScope data
-            , IActuator actuator
-            , IResourceLoader loader
-            , TagParser parsers
-            , ICache cache) : base()
+        /// <param name="data">模板数据</param>  
+        public TemplateContext(VariableScope data) : base()
         {
-            this.actuator = actuator;
-            this.loader = loader;
-            this.parsers = parsers;
-            this.cache = cache;
             this.variableScope = data ?? new VariableScope();
             this.errors = new List<System.Exception>();
-            this.enableTemplateCache = Utility.StringToBoolean(Engine.Runtime.GetEnvironmentVariable("EnableTemplateCache"));
+            this.enableTemplateCache = Utility.StringToBoolean(Runtime.GetEnvironmentVariable("EnableTemplateCache"));
 
         }
 
@@ -62,7 +46,7 @@ namespace JinianNet.JNTemplate
         {
             get { return enableTemplateCache; }
             set { this.enableTemplateCache = value; }
-        } 
+        }
 
         /// <summary>
         /// 模板数据
@@ -71,7 +55,7 @@ namespace JinianNet.JNTemplate
         {
             get { return this.variableScope; }
             set { this.variableScope = value; }
-        } 
+        }
 
         /// <summary>
         /// 当前异常集合（当ThrowExceptions为false时有效）
@@ -116,38 +100,7 @@ namespace JinianNet.JNTemplate
         public void ClearError()
         {
             this.errors.Clear();
-        } 
-
-        /// <summary>
-        /// 标签分析器
-        /// </summary>
-        public TagParser TagParser
-        {
-            get { return parsers; }
         }
-
-        /// <summary>
-        /// 加载器
-        /// </summary>
-        public IResourceLoader Loader
-        {
-            get { return loader; }
-        }
-        /// <summary>
-        /// 缓存
-        /// </summary>
-        public Caching.ICache Cache
-        {
-            get { return cache; }
-        }
-        /// <summary>
-        /// 动态调用代理
-        /// </summary>
-        public IActuator Actuator
-        {
-            get { return actuator; }
-        }
-
         /// <summary>
         /// 从指定TemplateContext创建一个类似的实例
         /// </summary>
@@ -159,12 +112,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
-            TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData)
-                , context.Actuator
-                , context.Loader
-                , context.TagParser
-                , context.Cache
-                );
+            TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData));
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;

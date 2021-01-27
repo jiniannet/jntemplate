@@ -25,7 +25,8 @@ namespace JinianNet.JNTemplate.Parsers
 
             if (tc != null
                 && parser != null
-                && tc.Count > 3
+                && tc.Count >= 3
+                && tc[0].TokenKind == TokenKind.LeftBracket
                 && tc.Last.TokenKind == TokenKind.RightBracket)
             {
                 int y = tc.Count - 1;
@@ -58,7 +59,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return null;
                 }
                 IndexValueTag tag = new IndexValueTag();
-                tag.Parent = (BasisTag)parser.Read(tc[0, x]);
+                //tag.Parent = (BasisTag)parser.Read(tc[0, x]);
                 tag.Index = parser.Read(tc[x + 1, y]);
 
                 return tag;

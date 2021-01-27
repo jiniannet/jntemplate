@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$include(\"include/header.txt\")";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["name"] = ("jntemplate");
+            template.Set("name","jntemplate");
 #if NETCOREAPP
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else
@@ -62,7 +62,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$load(\"include/header.txt\")";
             var template = Engine.CreateTemplate(templateContent);
-            template.Context.TempData["name"] = ("jntemplate");
+            template.Set("name","jntemplate");
 #if NETCOREAPP
             template.Context.CurrentPath = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory).Parent.Parent.Parent.FullName + System.IO.Path.DirectorySeparatorChar.ToString() + "templets" + System.IO.Path.DirectorySeparatorChar.ToString() + "default";
 #else

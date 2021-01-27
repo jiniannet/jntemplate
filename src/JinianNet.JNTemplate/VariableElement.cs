@@ -2,33 +2,33 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.IO;
-#if NETCOREAPP || NETSTANDARD
-using System.Threading.Tasks;
-#endif
 
-namespace JinianNet.JNTemplate.Nodes
+using System;
+
+namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 简单JSON标签
-    /// 注意：该标签仅只支持简单的JSON解析
+    /// 变量元素
     /// </summary>
-    [Serializable]
-    public class JsonTag : ComplexTag
+    public class VariableElement
     {
         /// <summary>
-        /// JsonTag
+        /// 
         /// </summary>
-        public JsonTag()
+        /// <param name="type"></param>
+        /// <param name="value"></param>
+        public VariableElement(Type type,object value)
         {
-            this.Dict = new Dictionary<ITag, ITag>();
+            this.Type = type;
+            this.Value = value;
         }
-
         /// <summary>
-        /// 集合
+        /// 类型
         /// </summary>
-        public Dictionary<ITag, ITag> Dict { get; private set; }
+        public Type Type { get; set; }
+        /// <summary>
+        /// 值
+        /// </summary>
+        public object Value { get; set; } 
     }
 }

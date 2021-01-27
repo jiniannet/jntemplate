@@ -22,15 +22,6 @@ namespace JinianNet.JNTemplate.Nodes
         {
             get { return this.baseValue; }
             set { this.baseValue = value; }
-        }
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public override object ParseResult(TemplateContext context)
-        {
-            return this.baseValue;
-        }
+        } 
     }
 }

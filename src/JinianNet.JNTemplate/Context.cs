@@ -23,18 +23,16 @@ namespace JinianNet.JNTemplate
         private bool throwErrors;
         private bool stripWhiteSpace;
         private List<string> resourceDirectories;
-
         /// <summary>
-        ///  Context
+        /// 上下文
         /// </summary>
         public Context()
         {
             this.resourceDirectories = new List<string>();
             this.currentPath = null;
-            this.throwErrors = Utility.StringToBoolean(Engine.Runtime.GetEnvironmentVariable("ThrowExceptions"));
-            this.stripWhiteSpace = Utility.StringToBoolean(Engine.Runtime.GetEnvironmentVariable("StripWhiteSpace"));
-            this.stripWhiteSpace = Utility.StringToBoolean(Engine.Runtime.GetEnvironmentVariable("StripWhiteSpace"));
-            this.charset = Engine.Runtime.Encoding;
+            this.throwErrors = Utility.StringToBoolean(Runtime.GetEnvironmentVariable("ThrowExceptions"));
+            this.stripWhiteSpace = Utility.StringToBoolean(Runtime.GetEnvironmentVariable("StripWhiteSpace")); 
+            this.charset = Runtime.Encoding;
         }
 
         /// <summary>

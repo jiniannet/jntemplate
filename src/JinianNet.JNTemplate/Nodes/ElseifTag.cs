@@ -26,27 +26,5 @@ namespace JinianNet.JNTemplate.Nodes
             get { return this.condition; }
             set { this.condition = value; }
         }
-
-        /// <summary>
-        /// 获取布布值
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public virtual bool ToBoolean(TemplateContext context)
-        {
-            return Utility.ToBoolean(this.Condition.ParseResult(context));
-        }
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public override object ParseResult(TemplateContext context)
-        {
-            if (ToBoolean(context))
-            {
-                return base.ParseResult(context);
-            }
-            return null;
-        }
     }
 }

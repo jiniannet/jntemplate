@@ -12,14 +12,5 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class ElseTag : ElseifTag
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override bool ToBoolean(TemplateContext context)
-        {
-            return true;
-        }
     }
 }

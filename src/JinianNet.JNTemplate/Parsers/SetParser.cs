@@ -50,7 +50,7 @@ namespace JinianNet.JNTemplate.Parsers
                 SetTag tag = new SetTag();
                 tag.Name = tc.First.Text;
 
-                ExpressionTag c = new ExpressionTag();
+                var c = new ArithmeticTag();
                 c.AddChild(new VariableTag()
                 {
                     FirstToken = tc.First,

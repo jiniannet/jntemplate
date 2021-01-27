@@ -494,13 +494,13 @@ namespace JinianNet.JNTemplate.Dynamic
 
 #if NET20 || NET40
             return type.GetMethod(methodName,
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase,
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase,
                 null,
                 argsType,
                 null);
 #else
             return type.GetMethod(methodName,
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
 #endif
         }
 

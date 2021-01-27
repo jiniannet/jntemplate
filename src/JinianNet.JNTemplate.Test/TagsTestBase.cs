@@ -9,6 +9,17 @@ namespace JinianNet.JNTemplate.Test
 {
     public class TagsTestBase
     {
+
+        public TagsTestBase()
+        {
+            var conf = Configuration.EngineConfig.CreateDefault();
+            //开始严格大小写模式 默认忽略大小写
+            //conf.IgnoreCase = false;
+            //Engine.EnableCompile = false;
+            Engine.Configure(conf);
+            //Engine.EnableCompile = false;
+        }
+
         public async Task<string> Excute(ITemplate t)
         {
             string document;

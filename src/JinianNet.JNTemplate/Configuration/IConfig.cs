@@ -52,15 +52,6 @@ namespace JinianNet.JNTemplate.Configuration
         bool IgnoreCase { get; set; }
 
         /// <summary>
-        /// 缓存提供器
-        /// </summary>
-        Caching.ICache Cache { get; set; }
-        /// <summary>
-        /// 执行提供器
-        /// </summary> 
-        IActuator Actuator { get; set; }
-
-        /// <summary>
         /// 加载提供器
         /// </summary>
         IResourceLoader Loader { get; set; }

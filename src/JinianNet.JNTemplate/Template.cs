@@ -13,23 +13,11 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Template : TemplateRender, ITemplate
     {
-
-#if NET20 || NET40
         /// <summary>
         /// Template
         /// </summary>
         public Template()
-            : this(null)
-        {
-
-        }
-#endif
-        /// <summary>
-        /// Template
-        /// </summary>
-        /// <param name="text">模板内容</param>
-        public Template(string text)
-            : this(Engine.CreateContext(), text)
+            : this(Engine.CreateContext(), string.Empty)
         {
 
         }
@@ -65,28 +53,5 @@ namespace JinianNet.JNTemplate
 
             return document;
         }
-
-        /// <summary>
-        /// 设置数据
-        /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        public void Set(string key, object value)
-        {
-            Context.TempData[key] = value;
-        }
-
-        /// <summary>
-        /// 批量设置数据
-        /// </summary>
-        /// <param name="dic">字典</param>
-        public void Set(Dictionary<string, object> dic)
-        {
-            foreach (KeyValuePair<string, object> value in dic)
-            {
-                Set(value.Key, value.Value);
-            }
-        }
-
     }
 }

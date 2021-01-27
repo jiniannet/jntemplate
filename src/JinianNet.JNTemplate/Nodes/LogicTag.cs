@@ -1,4 +1,4 @@
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
@@ -13,33 +13,11 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 表达式
+    /// 逻辑表达式
     /// </summary>
     [Serializable]
-    public class ExpressionTag : BasisTag
+    public class LogicTag : BasisTag
     {
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            List<object> parameters = new List<object>();
-
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                bool isOperator = this.Children[i] is OperatorTag;
-                object result = this.Children[i].ParseResult(context);
-                if (Eval(parameters, isOperator, result))
-                {
-                    return parameters[parameters.Count - 1];
-                }
-            }
-
-            var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
-            return ExpressionEvaluator.Calculate(stack);
-        }
- 
         /// <summary>
         /// 计算
         /// </summary>
@@ -93,6 +71,6 @@ namespace JinianNet.JNTemplate.Nodes
                 list.Add(value);
             }
             return false;
-        }  
+        }
     }
 }

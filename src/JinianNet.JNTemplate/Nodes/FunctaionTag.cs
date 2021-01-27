@@ -23,62 +23,6 @@ namespace JinianNet.JNTemplate.Nodes
         {
             get { return this.name; }
             set { this.name = value; }
-        }
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            object[] args = new object[Children.Count];
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                args[i] = Children[i].ParseResult(context);
-            }
-
-            object parentValue;
-            if (this.Parent == null)
-            {
-                parentValue = context.TempData[this.name];
-            }
-            else
-            {
-                parentValue = this.Parent.ParseResult(context);
-            }
-
-            if (parentValue == null)
-            {
-                return null;
-            }
-            if (this.Parent == null || (this.Parent != null && string.IsNullOrEmpty(this.name)))
-            {
-                if (parentValue is FuncHandler)
-                {
-                    return (parentValue as FuncHandler)(args);
-                }
-                if (parentValue is Delegate)
-                {
-                    return (parentValue as Delegate).DynamicInvoke(args);
-                }
-                return null;
-            }
-
-            var result = context.Actuator.CallMethod(parentValue, this.name, args);
-
-            if (result != null)
-            {
-                return result;
-            }
-
-            result = context.Actuator.CallPropertyOrField(parentValue, this.name);
-
-            if (result != null && result is Delegate)
-            {
-                return (result as Delegate).DynamicInvoke(args);
-            }
-
-            return null;
-        }
+        } 
     }
 }

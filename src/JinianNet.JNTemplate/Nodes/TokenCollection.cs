@@ -188,10 +188,10 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     pos.Push(this[i].TokenKind);
                 }
-                else if (this[i].TokenKind == TokenKind.RightParentheses ||
-                    this[i].TokenKind == TokenKind.RightBrace
-                    || this[i].TokenKind == TokenKind.RightBracket
-                    )
+                if (this[i].TokenKind == TokenKind.RightParentheses ||
+                   this[i].TokenKind == TokenKind.RightBrace
+                   || this[i].TokenKind == TokenKind.RightBracket
+                   )
                 {
                     if (pos.Count > 0 &&
                         (
@@ -209,16 +209,25 @@ namespace JinianNet.JNTemplate.Nodes
                         throw new Exception.ParseException(string.Concat("syntax error near ", this[i].TokenKind.ToString(), this), this[i].BeginLine, this[i].BeginColumn);
                     }
                 }
-                else if (pos.Count == 0 && IsInKinds(this[i].TokenKind, kinds))
+                if ((pos.Count == 0 && IsInKinds(this[i].TokenKind, kinds))
+                    || (pos.Count == 1 && pos.Peek() == TokenKind.LeftBracket && this[i].TokenKind == TokenKind.LeftBracket))
                 {
                     if (y > x)
                     {
                         tc.Add(this[x, y]);
                     }
-                    x = i + 1;
-                    TokenCollection coll = new TokenCollection();
-                    coll.Add(this[i]);
-                    tc.Add(coll);
+                    if (this[i].TokenKind == TokenKind.LeftBracket)
+                    {
+                        x = i;
+                        continue;
+                    }
+                    else
+                    {
+                        x = i + 1;
+                        TokenCollection coll = new TokenCollection();
+                        coll.Add(this[i]);
+                        tc.Add(coll);
+                    }
                 }
 
                 if (i == end - 1 && y >= x)

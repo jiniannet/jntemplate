@@ -83,7 +83,7 @@ namespace JinianNet.JNTemplate.Test
                 null);
 #else
             return type.GetMethod(methodName,
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Engine.Runtime.BindIgnoreCase);
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
 #endif
         }
     }

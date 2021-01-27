@@ -19,23 +19,20 @@ namespace JinianNet.JNTemplate
         private Token[] tokens;//tokens列表
         private int index;//当前索引
         private List<ITag> tags;
-        private TagParser tagParse;
         #endregion
 
         #region ctox
         /// <summary>
         /// 模板分析器
-        /// </summary>
-        /// <param name="parser">标签分析器</param>
+        /// </summary> 
         /// <param name="ts">TOKEN集合</param>
-        public TemplateParser(TagParser parser, Token[] ts)
+        public TemplateParser(Token[] ts)
             : base()
         {
             if (ts == null)
             {
                 throw new ArgumentNullException("\"ts\" cannot be null.");
             }
-            this.tagParse = parser;
             this.tokens = ts;
             Reset();
         }
@@ -155,7 +152,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
             }
-            return this.tagParse.Parsing(this, tc);
+            return Runtime.Parsing(this,tc);
         }
 
 

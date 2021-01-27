@@ -54,19 +54,6 @@ namespace JinianNet.JNTemplate.Nodes
                 child.Parent = (BasisTag)parent;
                 this.Children[0] = child;
             }
-        }
-
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            if (Child != null)
-            {
-                return Child.ParseResult(context);
-            }
-            return null;
-        }
+        } 
     }
 }

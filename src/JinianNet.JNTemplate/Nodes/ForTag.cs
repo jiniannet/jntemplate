@@ -47,46 +47,5 @@ namespace JinianNet.JNTemplate.Nodes
             set { this.dothing = value; }
         }
 
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param> 
-        public override object ParseResult(TemplateContext context)
-        {
-            this.initial.ParseResult(context);
-            //如果标签为空，则直接为false,避免死循环以内存溢出
-            bool run;
-
-            if (this.Condition == null)
-            {
-                run = false;
-            }
-            else
-            {
-                run = Utility.ToBoolean(this.Condition.ParseResult(context));
-            }
-            using (var writer = new StringWriter())
-            {
-                while (run)
-                {
-                    for (int i = 0; i < this.Children.Count; i++)
-                    {
-                        var obj = this.Children[i].ParseResult(context);
-                        if (obj != null) {
-                            writer.Write(obj.ToString());
-                        }
-                    }
-
-                    if (this.dothing != null)
-                    {
-                        //执行计算，不需要输出，比如i++
-                        this.dothing.ParseResult(context);
-                    }
-                    run = Utility.ToBoolean(this.Condition.ParseResult(context));
-                }
-                return writer.ToString();
-            }
-        }
-
     }
 }

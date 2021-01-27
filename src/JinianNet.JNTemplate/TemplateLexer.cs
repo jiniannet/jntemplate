@@ -71,9 +71,9 @@ namespace JinianNet.JNTemplate
         public TemplateLexer(string text)
         {
             this.document = text;
-            this.prefix = Engine.Runtime.GetEnvironmentVariable("TagPrefix");
-            this.flag = Engine.Runtime.GetEnvironmentVariable("TagFlag")[0];
-            this.suffix = Engine.Runtime.GetEnvironmentVariable("TagSuffix");
+            this.prefix = Runtime.GetEnvironmentVariable("TagPrefix");
+            this.flag = Runtime.GetEnvironmentVariable("TagFlag")[0];
+            this.suffix = Runtime.GetEnvironmentVariable("TagSuffix");
             Reset();
         }
         /// <summary>

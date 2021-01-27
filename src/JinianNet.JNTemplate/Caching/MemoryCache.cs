@@ -14,40 +14,12 @@ namespace JinianNet.JNTemplate.Caching
     /// </summary>
     public class MemoryCache : ICache
     {
-        /*
-         * 直接使用字典存储数据
-         * 无过期设置，不适合缓存大量数据
-         * 如需缓存大量数据请自行实现ICache接口
-         */
         private Dictionary<string, object> dict;
-        private static MemoryCache defaultCache;
-        private static object initLock = new object();
-
-        /// <summary>
-        /// 默认缓存
-        /// </summary>
-        public static MemoryCache Instance
-        {
-            get
-            {
-                if (defaultCache == null)
-                {
-                    lock (initLock)
-                    {
-                        if (defaultCache == null)
-                        {
-                            defaultCache = new MemoryCache();
-                        }
-                    }
-                }
-                return defaultCache;
-            }
-        }
-
+         
         /// <summary>
         /// 内存缓存
         /// </summary>
-        private MemoryCache()
+        internal MemoryCache()
         {
             dict = new Dictionary<string, object>();
         }

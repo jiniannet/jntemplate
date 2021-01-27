@@ -19,16 +19,6 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// 索引
         /// </summary>
-        public ITag Index { get; set; }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            object obj = this.Parent.ParseResult(context);
-            object index = this.Index.ParseResult(context);
-            return context.Actuator.CallIndexValue(obj, index);
-        } 
+        public ITag Index { get; set; } 
     }
 }

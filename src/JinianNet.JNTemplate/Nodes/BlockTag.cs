@@ -50,21 +50,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         protected virtual ITag[] ReadTags()
         {
-            return this.render.ReadTags();
+            return this.render.ReadAll(this.TemplateContent);
         }
-        /// <summary>
-        /// 解析标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            using (System.IO.StringWriter writer = new StringWriter())
-            {
-                this.render.Context = context;
-                var ts = ReadTags();
-                this.render.Render(writer, ts);
-                return writer.ToString();
-            }
-        } 
     }
 }

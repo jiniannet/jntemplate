@@ -23,14 +23,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// 添加一个子标签
         /// </summary>
         /// <param name="node"></param>
-        void AddChild(ITag node); 
-
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        object ParseResult(TemplateContext context);
+        void AddChild(ITag node);  
 
         /// <summary>
         /// 开始Token

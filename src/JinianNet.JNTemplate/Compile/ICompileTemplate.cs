@@ -2,20 +2,21 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
-using System.Collections.ObjectModel;
 using System.IO;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Compile
 {
     /// <summary>
-    /// 复合标签(Parse)
+    /// Compile Template
     /// </summary>
-    [Serializable]
-    public abstract class ComplexTag : Tag, ITag
-    { 
+    public interface ICompileTemplate //: ITemplate
+    {
+        /// <summary>
+        /// Render
+        /// </summary>
+        /// <param name="writer">TextWriter</param>
+        /// <param name="context">Template Context</param>
+        void Render(TextWriter writer, TemplateContext context);
     }
+
 }

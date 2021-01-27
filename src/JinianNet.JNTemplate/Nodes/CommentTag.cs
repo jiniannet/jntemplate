@@ -13,15 +13,6 @@ namespace JinianNet.JNTemplate.Nodes
     public class CommentTag : SpecialTag
     {
         /// <summary>
-        /// 注释标签
-        /// </summary>
-        /// <param name="context">上下文</param>
-        public override object ParseResult(TemplateContext context)
-        {
-            return null;
-        }
-
-        /// <summary>
         /// 获取对象的字符串引用
         /// </summary>
         public override string ToString()

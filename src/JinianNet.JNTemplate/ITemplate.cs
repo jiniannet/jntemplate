@@ -20,14 +20,37 @@ namespace JinianNet.JNTemplate
         /// </summary>
         TemplateContext Context { get; set; }
         /// <summary>
+        /// /模板文件地址
+        /// </summary>
+        string Path { get; set; }
+
+        /// <summary>
         /// 模板内容
         /// </summary>
         string TemplateContent { get; set; }
+        /// <summary>
+        ///  模板名字
+        /// </summary>
+        string TemplateKey { get; set; }
         /// <summary>
         /// 结果呈现
         /// </summary>
         /// <param name="writer"></param>
         void Render(TextWriter writer);
 
+
+        /// <summary>
+        /// 设置实例对象
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        void Set<T>(string key, T value);
+
+        /// <summary>
+        /// 设置静态对象
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="type">静态类型</param>
+        void SetStaticType(string key, Type type);
     }
 }

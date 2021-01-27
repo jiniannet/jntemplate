@@ -5,6 +5,7 @@
 using System;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Dynamic;
 #if !NET20
 using System.Threading.Tasks;
 #endif
@@ -18,44 +19,34 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class TemplateRender
     {
-        private TemplateContext context;
-        private string content;
-        private string key;
-
         /// <summary>
         /// 模板KEY(用于缓存，默认为文路径)
         /// </summary>
-        public string TemplateKey
-        {
-            get { return this.key; }
-            set { this.key = value; }
-        }
+        public string TemplateKey { get; set; }
 
         /// <summary>
         /// 模板上下文
         /// </summary>
-        public TemplateContext Context
-        {
-            get { return this.context; }
-            set { this.context = value; }
-        }
+        public TemplateContext Context { get; set; }
 
         /// <summary>
         /// 模板内容
         /// </summary>
-        public string TemplateContent
-        {
-            get { return this.content; }
-            set { this.content = value; }
-        }
+        public string TemplateContent { get; set; }
+        /// <summary>
+        /// /模板文件地址
+        /// </summary>
+        public string Path { get; set; }
 
         /// <summary>
         /// 呈现内容
         /// </summary>
         /// <param name="writer">TextWriter</param>
-        public void Render(System.IO.TextWriter writer)
+        public virtual void Render(System.IO.TextWriter writer)
         {
-            Render(writer, ReadTags());
+            var text = ReadTemplateContent();
+            var tags = ReadAll(text);
+            Render(writer, tags);
         }
 
         /// <summary>
@@ -76,7 +67,7 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        var tagResult = collection[i].ParseResult(this.context);
+                        var tagResult = Executor.Exec(collection[i], this.Context);
                         if (tagResult != null)
                         {
                             writer.Write(tagResult.ToString());
@@ -96,69 +87,67 @@ namespace JinianNet.JNTemplate
             }
         }
 
-
         /// <summary>
-        /// read all tags
+        /// 读取模板内容
         /// </summary>
         /// <returns></returns>
-        public ITag[] ReadTags()
+        protected string ReadTemplateContent()
         {
-            ITag[] tags = GetCacheTags();
-            if (tags != null)
+            if (!string.IsNullOrWhiteSpace(this.TemplateContent))
             {
-                return tags;
+                return this.TemplateContent;
             }
-            var lexer = new TemplateLexer(this.content);
-            var ts = lexer.Execute();
-
-            var parser = new TemplateParser(this.Context.TagParser, ts);
-            tags = parser.Execute();
-            SetCacheTags(tags);
-            return tags;
-        }
-
-        private ITag[] GetCacheTags()
-        {
-            if (string.IsNullOrEmpty(this.content))
+            if (!string.IsNullOrWhiteSpace(this.Path))
             {
-                return new ITag[0];
-            }
-            if (context.EnableTemplateCache && !string.IsNullOrEmpty(this.key) && Context.Cache != null)
-            {
-                return Context.Cache.Get<ITag[]>(this.key);
+                if (this.Context == null)
+                {
+                    throw new System.ArgumentNullException(nameof(Context));
+                }
+                var res = this.Context.Load(this.Path);
+                if (res == null)
+                {
+                    throw new Exception.TemplateException($"Path:\"{this.Path}\", the file could not be found.");
+                }
+                return res.Content;
             }
             return null;
         }
 
-        private void SetCacheTags(ITag[] tags)
-        {
-            if (tags != null && context.EnableTemplateCache && !string.IsNullOrEmpty(this.key) && Context.Cache != null)
-            {
-                Context.Cache.Set(this.key, tags);
-            }
-        }
-
-#if NETCOREAPP || NETSTANDARD
 
         /// <summary>
-        /// 
+        /// read all tags
         /// </summary>
+        /// <param name="text">text content</param>
         /// <returns></returns>
-        public async Task<ITag[]> ReadTagsAsync()
+        public ITag[] ReadAll(string text)
         {
-            ITag[] tags = GetCacheTags();
-            if (tags != null)
+            if (string.IsNullOrEmpty(text))
+            {
+                return new ITag[0];
+            }
+            var findOnCache = this.Context.EnableTemplateCache
+                && !string.IsNullOrEmpty(this.TemplateKey)
+                && !Engine.EnableCompile;
+
+            ITag[] tags;
+            if (findOnCache && (tags = Runtime.Cache.Get<ITag[]>(this.TemplateKey)) != null)
             {
                 return tags;
             }
-            var lexer = new TemplateLexer(this.content);
-            var ts = await lexer.ExecuteAsync();
-            var parser = new TemplateParser(this.Context.TagParser, ts);
-            tags = await parser.ExecuteAsync();
-            SetCacheTags(tags);
+
+            var lexer = new TemplateLexer(text);
+            var ts = lexer.Execute();
+
+            var parser = new TemplateParser(ts);
+            tags = parser.Execute();
+
+            if (findOnCache)
+            {
+                Runtime.Cache.Set(this.TemplateKey, tags);
+            }
+
             return tags;
-        }
-#endif
+        } 
 
         /// <summary>
         /// 异常处理
@@ -168,15 +157,41 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         private void ThrowException(Exception.TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
-            if (this.context.ThrowExceptions)
+            if (this.Context.ThrowExceptions)
             {
                 throw e;
             }
             else
             {
-                this.context.AddError(e);
+                this.Context.AddError(e);
                 writer.Write(tag.ToString());
             }
+        }
+
+
+
+        /// <summary>
+        /// 设置数据
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        public void Set<T>(string key, T value)
+        {
+            Context.TempData.Set<T>(key, value);
+        }
+
+        /// <summary>
+        /// 设置静态对象
+        /// </summary>
+        /// <param name="key">对象名</param>
+        /// <param name="type">类型</param>
+        public void SetStaticType(string key, Type type)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                key = type.Name;
+            }
+            Context.TempData.Set(key, null, type);
         }
     }
 }

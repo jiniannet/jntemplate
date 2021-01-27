@@ -16,27 +16,6 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class IfTag : ComplexTag
     {
-        /// <summary>
-        /// 解析结果
-        /// </summary>
-        /// <param name="context">TemplateContext</param>
-        /// <returns></returns>
-        public override object ParseResult(TemplateContext context)
-        {
-            for (int i = 0; i < Children.Count - 1; i++) //最后面一个子对象为EndTag
-            {
-                var tag = (ElseifTag)Children[i];
-                if (tag == null)
-                {
-                    continue;
-                }
-                if (tag.ToBoolean(context))
-                {
-                    return Children[i].ParseResult(context);
-                }
-            }
 
-            return null;
-        } 
     }
 }
