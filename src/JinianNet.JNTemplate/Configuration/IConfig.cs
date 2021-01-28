@@ -52,6 +52,11 @@ namespace JinianNet.JNTemplate.Configuration
         bool IgnoreCase { get; set; }
 
         /// <summary>
+        /// 是否缓存模板文件
+        /// </summary> 
+        bool EnableTemplateCache { get; set; }
+
+        /// <summary>
         /// 加载提供器
         /// </summary>
         IResourceLoader Loader { get; set; }

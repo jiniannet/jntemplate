@@ -132,7 +132,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <returns></returns>
         private bool IsWindowsAbsolutePath(string path)
         {
-            return path.Length > 2 && Char.IsLetter(path[0]) && path[1] == System.IO.Path.VolumeSeparatorChar;
+            return path.Length > 2 && ((Char.IsLetter(path[0]) && path[1] == System.IO.Path.VolumeSeparatorChar) || (path[0] == System.IO.Path.DirectorySeparatorChar && path[1] == System.IO.Path.DirectorySeparatorChar));
         }
 
         /// <summary>

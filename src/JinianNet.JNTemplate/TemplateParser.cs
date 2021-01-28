@@ -4,8 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Nodes; 
 
 namespace JinianNet.JNTemplate
 {
@@ -206,16 +205,6 @@ namespace JinianNet.JNTemplate
 
         }
         #endregion
-
-        /// <summary>
-        /// 将解析结果复制到数组中
-        /// </summary>
-        /// <returns>Tag[]</returns>
-        [Obsolete("This method has been deprecated. Please use Execute() instead")]
-        public ITag[] ToArray()
-        {
-            return Execute();
-        }
 
         /// <summary>
         /// 执行TAG解析

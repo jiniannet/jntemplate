@@ -2,15 +2,9 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
-using JinianNet.JNTemplate.Parsers;
+using System; 
 using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Dynamic;
-#if !NET20
-using System.Threading.Tasks;
-#endif
-
-using JinianNet.JNTemplate.Caching;
+using JinianNet.JNTemplate.Dynamic; 
 
 namespace JinianNet.JNTemplate
 {

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Nodes;
 using System.Collections;
+using JinianNet.JNTemplate.Configuration;
 
 namespace JinianNet.JNTemplate
 {
@@ -71,9 +72,9 @@ namespace JinianNet.JNTemplate
         public TemplateLexer(string text)
         {
             this.document = text;
-            this.prefix = Runtime.GetEnvironmentVariable("TagPrefix");
-            this.flag = Runtime.GetEnvironmentVariable("TagFlag")[0];
-            this.suffix = Runtime.GetEnvironmentVariable("TagSuffix");
+            this.prefix = Runtime.GetEnvironmentVariable(nameof(IConfig.TagPrefix));
+            this.flag = Runtime.GetEnvironmentVariable(nameof(IConfig.TagFlag))[0];
+            this.suffix = Runtime.GetEnvironmentVariable(nameof(IConfig.TagSuffix));
             Reset();
         }
         /// <summary>
@@ -490,16 +491,7 @@ namespace JinianNet.JNTemplate
                 default:
                     return TokenKind.TextData;
             }
-        }
-        /// <summary>
-        /// 获取数组
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("This method has been deprecated. Please use Execute() instead")]
-        public Token[] ToArray()
-        {
-            return this.Execute();
-        }
+        } 
 
         /// <summary>
         /// 获取IEnumerator

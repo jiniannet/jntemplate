@@ -144,6 +144,16 @@ namespace JinianNet.JNTemplate
             return this.dic.Remove(key);
         }
 
+        /// <summary>
+        /// count
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                return this.dic.Count + (this.parent == null ? 0 : this.parent.Count);
+            }
+        }
 
         /// <summary>
         /// 获取索引值

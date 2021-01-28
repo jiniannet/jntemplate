@@ -30,8 +30,8 @@ namespace JinianNet.JNTemplate
         {
             this.resourceDirectories = new List<string>();
             this.currentPath = null;
-            this.throwErrors = Utility.StringToBoolean(Runtime.GetEnvironmentVariable("ThrowExceptions"));
-            this.stripWhiteSpace = Utility.StringToBoolean(Runtime.GetEnvironmentVariable("StripWhiteSpace")); 
+            this.throwErrors = Utility.StringToBoolean(Runtime.GetEnvironmentVariable(nameof(Configuration.IConfig.ThrowExceptions)));
+            this.stripWhiteSpace = Utility.StringToBoolean(Runtime.GetEnvironmentVariable(nameof(Configuration.IConfig.StripWhiteSpace))); 
             this.charset = Runtime.Encoding;
         }
 

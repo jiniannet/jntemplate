@@ -4,12 +4,9 @@
  ********************************************************************************/
 using System;
 using JinianNet.JNTemplate.Configuration;
-using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Compile;
 using JinianNet.JNTemplate.Dynamic;
-#if !NET20
-using System.Threading.Tasks;
-#endif
+using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate
 {
@@ -35,6 +32,29 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 引擎配置
         /// </summary>
+        /// <param name="action">配置内容</param>
+        public static void Configure(Action<IConfig> action)
+        {
+            var conf = Configuration.EngineConfig.CreateDefault();
+            action?.Invoke(conf);
+            Configure(conf);
+        }
+
+        /// <summary>
+        /// 引擎配置
+        /// </summary>
+        /// <param name="action">配置内容</param>
+        public static void Configure(Action<IConfig, VariableScope> action)
+        {
+            var conf = Configuration.EngineConfig.CreateDefault();
+            var score = new VariableScope();
+            action?.Invoke(conf, score);
+            Configure(conf, score);
+        }
+
+        /// <summary>
+        /// 引擎配置
+        /// </summary>
         /// <param name="conf">配置内容</param>
         public static void Configure(IConfig conf)
         {
@@ -48,8 +68,37 @@ namespace JinianNet.JNTemplate
         /// <param name="scope">初始数据</param>
         public static void Configure(IConfig conf, VariableScope scope)
         {
+            if (conf.Loader != null)
+            {
+                Runtime.SetLoader(conf.Loader);
+            }
+            if (conf.ResourceDirectories != null && conf.ResourceDirectories.Count > 0)
+            {
+                foreach (var path in conf.ResourceDirectories)
+                {
+                    Runtime.AppendResourcePath(path);
+                }
+            }
+            if (conf.TagParsers != null && conf.TagParsers.Count > 0)
+            {
+
+                foreach (var parser in conf.TagParsers)
+                {
+                    Runtime.RegisterTagParser(parser);
+                }
+            }
+            Runtime.Configure(conf.ToDictionary(), scope);
+        }
+
+        /// <summary>
+        /// 引擎配置
+        /// </summary>
+        /// <param name="conf">配置内容</param>
+        /// <param name="scope">初始数据</param>
+        public static void Configure(IDictionary<string, string> conf, VariableScope scope)
+        {
             Runtime.Configure(conf, scope);
-        } 
+        }
 
         /// <summary>
         /// 预编译模板
@@ -176,7 +225,7 @@ namespace JinianNet.JNTemplate
             if (string.IsNullOrWhiteSpace(template.Path))
             {
                 throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
-            } 
+            }
             if (string.IsNullOrWhiteSpace(template.TemplateKey))
             {
                 template.TemplateKey = template.Path;
@@ -211,6 +260,6 @@ namespace JinianNet.JNTemplate
         {
             Runtime.RegisterTagParser(parser, 0);
             Executor.Register<T>(func);
-        } 
+        }
     }
 }

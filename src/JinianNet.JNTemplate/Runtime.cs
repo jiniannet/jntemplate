@@ -57,9 +57,9 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="conf">配置内容</param>
         /// <param name="scope">初始数据</param>
-        internal static void Configure(IConfig conf, VariableScope scope)
+        internal static void Configure(IDictionary<string, string> conf, VariableScope scope)
         {
-            Store.Data = scope;
+            Store.Data = (scope == null || scope.Count == 0) ? null : scope;
             Store.Initialization(conf);
         }
 
@@ -98,6 +98,31 @@ namespace JinianNet.JNTemplate
         /// Compile Templates
         /// </summary>
         public static TemplateCollection<Compile.ICompileTemplate> Templates => Store.Templates;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loader"></param>
+        public static void SetLoader(IResourceLoader loader)
+        {
+            if (loader == null)
+            {
+                throw new ArgumentNullException(nameof(loader));
+            }
+            Runtime.Store.Loader = loader;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        public static void AppendResourcePath(string path)
+        {
+            if (!Store.ResourceDirectories.Contains(path))
+            {
+                Store.ResourceDirectories.Add(path);
+            }
+        }
 
         /// <summary>
         /// 获取环境变量
@@ -210,14 +235,14 @@ namespace JinianNet.JNTemplate
                 RuntimeStore store = new RuntimeStore();
                 store.Data = null;
                 store.Variable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                    { "Charset","utf-8" },
-                    { "TagPrefix","${" },
-                    { "TagSuffix","}" },
-                    { "TagFlag","$" },
-                    { "ThrowExceptions","True" },
-                    { "StripWhiteSpace","False" },
-                    { "EnableTemplateCache","True" },
-                    { "IgnoreCase","True" }
+                    { nameof(IConfig.Charset),"utf-8" },
+                    { nameof(IConfig.TagPrefix),"${" },
+                    { nameof(IConfig.TagSuffix),"}" },
+                    { nameof(IConfig.TagFlag),"$" },
+                    { nameof(IConfig.ThrowExceptions),"True" },
+                    { nameof(IConfig.StripWhiteSpace),"False" },
+                    { nameof(IConfig.EnableTemplateCache),"True" },
+                    { nameof(IConfig.IgnoreCase),"True" }
                 };
                 store.Actuator = new ReflectionActuator();
                 store.Cache = new MemoryCache();
@@ -237,56 +262,41 @@ namespace JinianNet.JNTemplate
                 return store;
             }
 
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="path"></param>
-            public static void AppendResourcePath(string path)
-            {
-                if (!Store.ResourceDirectories.Contains(path))
-                {
-                    Store.ResourceDirectories.Add(path);
-                }
-            }
-
             /// <summary>
             /// 初始化基本数据
             /// </summary>
             /// <param name="conf"></param>
-            public void Initialization(IConfig conf)
+            public void Initialization(IDictionary<string, string> dict)
             {
-                if (conf.Loader != null)
-                {
-                    this.Loader = new FileLoader();
-                }
-                if (conf.ResourceDirectories != null && conf.ResourceDirectories.Count > 0)
-                {
-                    foreach (string path in conf.ResourceDirectories)
-                    {
-                        AppendResourcePath(path);
-                    }
-                }
-                if (conf.IgnoreCase)
-                {
-                    this.BindIgnoreCase = BindingFlags.IgnoreCase;
-                    this.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
-                    this.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
-                }
-                else
-                {
-                    this.ComparisonIgnoreCase = StringComparison.Ordinal;
-                    this.BindIgnoreCase = BindingFlags.DeclaredOnly;
-                    this.ComparerIgnoreCase = StringComparer.Ordinal;
-                }
-                if (!string.IsNullOrEmpty(conf.Charset))
-                {
-                    this.Encoding = Encoding.GetEncoding(conf.Charset);
-                }
-                var dict = conf.ToDictionary();
                 foreach (KeyValuePair<string, string> node in dict)
                 {
-                    this.Variable[node.Key] = node.Value;
+                    if (string.IsNullOrEmpty(node.Value))
+                    {
+                        continue;
+                    }
+                    switch (node.Key.ToUpper())
+                    {
+                        case nameof(IConfig.Charset):
+                            this.Encoding = Encoding.GetEncoding(node.Value);
+                            break;
+                        case nameof(IConfig.IgnoreCase):
+                            if (Utility.StringToBoolean(node.Value))
+                            {
+                                this.BindIgnoreCase = BindingFlags.IgnoreCase;
+                                this.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
+                                this.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
+                            }
+                            else
+                            {
+                                this.ComparisonIgnoreCase = StringComparison.Ordinal;
+                                this.BindIgnoreCase = BindingFlags.DeclaredOnly;
+                                this.ComparerIgnoreCase = StringComparer.Ordinal;
+                            }
+                            break;
+                        default:
+                            this.Variable[node.Key] = node.Value;
+                            break;
+                    }
                 }
             }
 

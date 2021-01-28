@@ -36,22 +36,5 @@ namespace JinianNet.JNTemplate
             Context = ctx;
             TemplateContent = text;
         }
-
-        /// <summary>
-        /// 模板解析结果呈现
-        /// </summary>
-        /// <returns>string</returns>
-        public string Render()
-        {
-            string document;
-
-            using (StringWriter writer = new StringWriter())
-            {
-                Render(writer);
-                document = writer.ToString();
-            }
-
-            return document;
-        }
     }
 }
