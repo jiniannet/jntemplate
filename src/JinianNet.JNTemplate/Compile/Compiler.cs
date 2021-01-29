@@ -128,8 +128,13 @@ namespace JinianNet.JNTemplate.Compile
             var ps = baseType.GetProperties();
             foreach (var p in ps)
             {
+#if NET40 || NET20
+                var data = p.GetValue(value,null);
+                resultType.GetProperty(p.Name).SetValue(result, data,null);
+#else
                 var data = p.GetValue(value);
                 resultType.GetProperty(p.Name).SetValue(result, data);
+#endif
             }
             return result;
         }
@@ -168,7 +173,12 @@ namespace JinianNet.JNTemplate.Compile
         /// <returns></returns>
         public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName, string className)
         {
-            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+            AssemblyBuilder assemblyBuilder
+#if NET40 || NET20
+                =AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+#else
+                = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+#endif
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(className);
             TypeBuilder typeBuilder;
             if (parent != null)

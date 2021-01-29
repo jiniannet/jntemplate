@@ -222,11 +222,11 @@ namespace JinianNet.JNTemplate
             template.Context = ctx;
             template.Path = ctx.FindFullPath(fileName);
             template.TemplateKey = name;
-            if (string.IsNullOrWhiteSpace(template.Path))
+            if (string.IsNullOrEmpty(template.Path))
             {
                 throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
             }
-            if (string.IsNullOrWhiteSpace(template.TemplateKey))
+            if (string.IsNullOrEmpty(template.TemplateKey))
             {
                 template.TemplateKey = template.Path;
             }

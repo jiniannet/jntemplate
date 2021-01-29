@@ -23,12 +23,32 @@ namespace JinianNet.JNTemplate.Dynamic
         public static PropertyInfo GetPropertyInfo(Type type, string propName)
         {
             PropertyInfo p =
-#if NETSTANDARD
-                    type.GetRuntimeProperty(propName);
-#else
+#if NET40 || NET20
                     type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
+#else
+                    type.GetRuntimeProperty(propName);
 #endif
             return p;
+        }
+
+        /// <summary>
+        /// 获取属性的GET方法
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <param name="propName">属性名称</param>
+        /// <returns></returns>
+        public static MethodInfo GetPropertyGetMethod(Type type, string propName)
+        {
+            PropertyInfo p = GetPropertyInfo(type,propName);
+            if (p == null)
+            {
+                return null;
+            }
+#if NET40 || NET20
+            return p.GetGetMethod();
+#else
+            return p.GetMethod;
+#endif
         }
 
         /// <summary>
@@ -344,7 +364,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static T CreateInstance<T>(string typeName)
         {
-            if (string.IsNullOrWhiteSpace(typeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 return default(T);
             }

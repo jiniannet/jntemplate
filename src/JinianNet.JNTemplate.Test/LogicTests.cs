@@ -28,7 +28,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 Name = "19"
             });
-            template.Set("list",arr);
+            template.Set("list", arr);
             var render = await Excute(template);
             Assert.Equal("yesno", render);
         }
@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"${ if (entity.Name.Length > 4 && entity.Name.Substring(0, 4) == ""File"" &&  entity.Name.EndsWith(""19""))}yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("entity",new Entity
+            template.Set("entity", new Entity
             {
                 Name = "File19"
             });
@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"${if(3+5>20 && 1-2<7 && 1<2) }yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            var render =await Excute(template);
+            var render = await Excute(template);
             Assert.Equal("no", render);
         }
 
@@ -124,8 +124,8 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$if(date >= date.AddDays(-3))yes$end"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("CreteDate",DateTime.Now);
-            template.Set("date",DateTime.Now);
+            template.Set("CreteDate", DateTime.Now);
+            template.Set("date", DateTime.Now);
             var render = await Excute(template);
             Assert.Equal("yes", render);
         }
@@ -138,7 +138,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if(dd)}yes${else}no$end";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("dd",new object());
+            template.Set("dd", new object());
             var render = await Excute(template);
             Assert.Equal("yes", render);
         }
@@ -164,7 +164,7 @@ namespace JinianNet.JNTemplate.Test
             //v1 为空 false,5<2为false，整体结果 false || false 为false
             var templateContent = "$if(v1 || 5<2)yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set<object>("v1",null);
+            template.Set<object>("v1", null);
             var render = await Excute(template);
             Assert.Equal("no", render);
         }
@@ -182,7 +182,7 @@ namespace JinianNet.JNTemplate.Test
             //v1 为空 false,v2等于9，数字不等于0即为true,整体结果 false || true 为true
             var templateContent = "$if(v1 || v2)yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("v2",9);
+            template.Set("v2", 9);
             template.Set<object>("v1", null);
             var render = await Excute(template);
             Assert.Equal("yes", render);
@@ -196,9 +196,35 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if(3>5)}3>5${elif(2==2)}2=2${else}not${end}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("list",new int[] { 7, 0, 2, 0, 6 });
+            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
             var render = await Excute(template);
             Assert.Equal("2=2", render);
+        }
+        /// <summary>
+        /// 测试NULL
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task TestNull()
+        {
+            var templateContent = "${if(model==null)}true${else}false${end}";
+            var template = Engine.CreateTemplate("TestNull", templateContent);
+            template.Set<object>("model", null);
+            var render = await Excute(template);
+            Assert.Equal("true", render);
+        }
+        /// <summary>
+        /// 测试NULL
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task TestNotNull()
+        {
+            var templateContent = "${if(model==null)}true${else}false${end}";
+            var template = Engine.CreateTemplate("TestNotNull", templateContent);
+            template.Set<object>("model", new object());
+            var render = await Excute(template);
+            Assert.Equal("false", render);
         }
     }
 }

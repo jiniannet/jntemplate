@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前程序版本
         /// </summary>
-        public const string Version = "2.0.0-alpha";
+        public const string Version = "2.0.0";
         internal const string KEY_FOREACH = "foreach";
         internal const string KEY_IF = "if";
         internal const string KEY_ELSEIF = "elseif";
@@ -38,6 +38,7 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.EleseParser",
                 "JinianNet.JNTemplate.Parsers.EndParser",
                 "JinianNet.JNTemplate.Parsers.BodyParser",
+                "JinianNet.JNTemplate.Parsers.NullParser",
                 "JinianNet.JNTemplate.Parsers.VariableParser",
                 "JinianNet.JNTemplate.Parsers.IndexValueParser",
                 "JinianNet.JNTemplate.Parsers.StringParser",

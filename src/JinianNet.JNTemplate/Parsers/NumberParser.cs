@@ -22,13 +22,32 @@ namespace JinianNet.JNTemplate.Parsers
         public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
             if (tc != null
-                && tc.Count == 1 
+                && tc.Count == 1
                 && tc.First.TokenKind == TokenKind.Number)
             {
                 NumberTag tag = new NumberTag();
                 if (tc.First.Text.IndexOf('.') == -1)
                 {
-                    tag.Value = int.Parse(tc.First.Text);
+                    if (tc.First.Text.Length < 9)
+                    {
+                        tag.Value = int.Parse(tc.First.Text);
+                    }
+                    else if (tc.First.Text.Length == 9)
+                    {
+                        var value = long.Parse(tc.First.Text);
+                        if (value <= int.MaxValue)
+                        {
+                            tag.Value = int.Parse(tc.First.Text);
+                        }
+                        else
+                        {
+                            tag.Value = value;
+                        }
+                    }
+                    else
+                    {
+                        tag.Value = long.Parse(tc.First.Text);
+                    }
                 }
                 else
                 {

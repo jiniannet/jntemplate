@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate.Compile
         {
             returnDict = new Dictionary<string, Func<ITag, CompileContext, MethodInfo>>();
             renderDict = new Dictionary<string, Action<ITag, CompileContext>>();
-            getVariableScope = typeof(TemplateContext).GetProperty("TempData").GetMethod;
+            getVariableScope = DynamicHelpers.GetPropertyGetMethod(typeof(TemplateContext), "TempData");
             getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
             defaultRender = GeneralDefaultRender();
 
@@ -629,7 +629,13 @@ namespace JinianNet.JNTemplate.Compile
                     }
                     else
                     {
-                        if (!property.GetMethod.IsStatic)
+                        var getMethod =
+#if NET40
+                        property.GetGetMethod();
+#else
+                        property.GetMethod;
+#endif
+                        if (!getMethod.IsStatic)
                         {
                             var method = GetCompileMethod(t.Parent, c);
                             il.DeclareLocal(parentType);
@@ -639,7 +645,7 @@ namespace JinianNet.JNTemplate.Compile
                             il.Emit(OpCodes.Stloc, 2);
                             LoadVariable(il, parentType, 2);
                         }
-                        Call(il, parentType, property.GetMethod);
+                        Call(il, parentType, getMethod);
                         //il.Emit(OpCodes.Callvirt, property.GetMethod);
                         //il.Emit(OpCodes.Call, property.GetMethod);
                         il.Emit(OpCodes.Stloc, 1);
@@ -877,7 +883,7 @@ namespace JinianNet.JNTemplate.Compile
             });
             this.Register<FunctaionTag>((tag, c) =>
             {
-                #region
+#region
                 /*
                 var t = tag as FunctaionTag;
                 var bodyType = c.Data.GetType(t.Name);
@@ -951,7 +957,7 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition(); 
                  */
-                #endregion
+#endregion
 
                 var t = tag as FunctaionTag;
                 Type baseType;
@@ -1141,7 +1147,7 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Add);
                 il.Emit(OpCodes.Stloc_S, 5);
                 il.Emit(OpCodes.Ldloc_S, 4);
-                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyInfo(enumeratorType, "Current").GetMethod);
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(enumeratorType, "Current"));
                 if (childType[0].IsValueType)
                 {
                     il.Emit(OpCodes.Unbox_Any, childType[0]);
@@ -1928,7 +1934,7 @@ namespace JinianNet.JNTemplate.Compile
             });
             this.Register<IfTag>((tag, c) =>
             {
-                #region
+#region
                 //var t = tag as IfTag;
                 //var type = Compiler.TypeGuess.GetType(t, c);
                 //var mb = this.CreateReutrnMethod<IfTag>(c, type);
@@ -1999,7 +2005,7 @@ namespace JinianNet.JNTemplate.Compile
                 //il.MarkLabel(labelEnd);
                 //il.Emit(OpCodes.Ret);
                 //return mb.GetBaseDefinition();
-                #endregion
+#endregion
                 var t = tag as IfTag;
                 var type = Compiler.TypeGuess.GetType(t, c);
                 var mb = this.CreateReutrnMethod<IfTag>(c, type);
@@ -2244,10 +2250,10 @@ namespace JinianNet.JNTemplate.Compile
                     il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(TemplateContextExtensions), "GetResourceDirectories", new Type[] { ctxType }));
                     il.Emit(OpCodes.Stloc_2);
                     il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyInfo(ctxType, "Loader").GetMethod);
+                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(ctxType, "Loader"));
                     il.Emit(OpCodes.Ldloc_0);
                     il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyInfo(ctxType, "Charset").GetMethod);
+                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(ctxType, "Charset"));
                     il.Emit(OpCodes.Ldloc_2);
                     il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(Resources.IResourceLoader), "Load", new Type[] { strType, typeof(System.Text.Encoding), strArrType }));
                     il.Emit(OpCodes.Stloc_3);
@@ -2259,7 +2265,7 @@ namespace JinianNet.JNTemplate.Compile
                     il.Emit(OpCodes.Brfalse, labelEnd);
 
                     il.Emit(OpCodes.Ldloc_3);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyInfo(resType, "Content").GetMethod);
+                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(resType, "Content"));
                     il.Emit(OpCodes.Stloc, 5);
                     il.Emit(OpCodes.Br, labelSuccess);
 
@@ -2794,9 +2800,9 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
             });
-            #endregion
+#endregion
 
-            #region  render
+#region  render
             this.SetRenderFunc<TextTag>((tag, c) =>
             {
                 var t = tag as TextTag;
@@ -2813,7 +2819,7 @@ namespace JinianNet.JNTemplate.Compile
                 }
             });
             this.SetRenderFunc("Default");
-            #endregion
+#endregion
         }
 
         /// <summary>

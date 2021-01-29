@@ -48,11 +48,11 @@ linux:克隆完成后,运行 build/build.sh
   
 **配置**
 
-您可以使用EngineConfig类来对 JNTemplate进行配置.可配置项包括是否区分大小写，标签符号，模板工作目录，全局对象等：
+你可以使用Engine.Configure()方法来对 JNTemplate进行配置.可配置项包括是否区分大小写，标签符号，模板工作目录，全局对象等：
 ```
-var conf = Configuration.EngineConfig.CreateDefault();
-// .. 配置你的具体参数
-Engine.Configure(conf);
+Engine.Configure((conf)=>{
+    // .. 配置你的具体参数
+});
 ```
 
 **简单示例**
