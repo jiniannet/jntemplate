@@ -22,12 +22,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static PropertyInfo GetPropertyInfo(Type type, string propName)
         {
-            PropertyInfo p =
-#if NET40 || NET20
-                    type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
-#else
-                    type.GetRuntimeProperty(propName);
-#endif
+            PropertyInfo p = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
             return p;
         }
 
@@ -59,12 +54,8 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static FieldInfo GetFieldInfo(Type type, string propName)
         {
-            FieldInfo f =
-#if NETSTANDARD
-                    type.GetRuntimeField(propName);
-#else
-                    type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
-#endif
+            FieldInfo f = type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
+
             return f;
         }
 

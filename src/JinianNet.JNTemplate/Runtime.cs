@@ -265,7 +265,7 @@ namespace JinianNet.JNTemplate
             /// <summary>
             /// 初始化基本数据
             /// </summary>
-            /// <param name="conf"></param>
+            /// <param name="dict"></param>
             public void Initialization(IDictionary<string, string> dict)
             {
                 foreach (KeyValuePair<string, string> node in dict)
@@ -274,7 +274,7 @@ namespace JinianNet.JNTemplate
                     {
                         continue;
                     }
-                    switch (node.Key.ToUpper())
+                    switch (node.Key)
                     {
                         case nameof(IConfig.Charset):
                             this.Encoding = Encoding.GetEncoding(node.Value);

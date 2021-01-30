@@ -101,7 +101,12 @@ namespace JinianNet.JNTemplate.Compile
             {
                 ImplementationProperty(p.PropertyType, builder, p.Name);
             }
-            var type = builder.CreateType();
+            var type =
+#if NETSTANDARD2_0
+            builder.AsType();
+#else
+            builder.CreateType();
+#endif
             return DynamicHelpers.CreateInstance(type);
         }
 
@@ -280,7 +285,12 @@ namespace JinianNet.JNTemplate.Compile
             il.Emit(OpCodes.Ret);
 
 
-            Type type = ctx.TypeBuilder.CreateType();
+            Type type =
+#if NETSTANDARD2_0
+            ctx.TypeBuilder.AsType();
+#else
+            ctx.TypeBuilder.CreateType();
+#endif
             if (type == null)
             {
                 return null;

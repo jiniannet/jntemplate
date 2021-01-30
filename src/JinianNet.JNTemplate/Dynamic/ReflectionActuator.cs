@@ -51,25 +51,11 @@ namespace JinianNet.JNTemplate.Dynamic
                 return dic[propIndex];
             }
             Type t = container.GetType();
-#if NET20 || NET40
-            PropertyInfo info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
-            if (info != null)
-            {
-                return info.GetValue(container, new object[] { propIndex });
-            }
-#elif NETSTANDARD
-            var info = t.GetRuntimeMethod("get_Item", new Type[] { propIndex.GetType() });
+            var info = DynamicHelpers.GetPropertyGetMethod(t, "Item");
             if (info != null)
             {
                 return info.Invoke(container, new object[] { propIndex });
             }
-#else
-            var info = t.GetMethod("get_Item", new Type[] { propIndex.GetType() });
-            if (info != null)
-            {
-                return info.Invoke(container, new object[] { propIndex });
-            }
-#endif
             return null;
         }
 
@@ -147,25 +133,11 @@ namespace JinianNet.JNTemplate.Dynamic
                 return ((string)container)[(int)propIndex];
             }
             Type t = container.GetType();
-#if NET20 || NET40
-            PropertyInfo info = t.GetProperty("Item", BindingFlags.Public | BindingFlags.Instance, null, null, new Type[] { propIndex.GetType() }, null);
-            if (info != null)
-            {
-                return info.GetValue(container, new object[] { propIndex });
-            }
-#elif NETSTANDARD
-            var info = t.GetRuntimeMethod("get_Item", new Type[] { propIndex.GetType() });
+            var info = DynamicHelpers.GetPropertyGetMethod(t, "Item");
             if (info != null)
             {
                 return info.Invoke(container, new object[] { propIndex });
             }
-#else
-            var info = t.GetMethod("get_Item", new Type[] { propIndex.GetType() });
-            if (info != null)
-            {
-                return info.Invoke(container, new object[] { propIndex });
-            }
-#endif
             return null;
         }
         #endregion

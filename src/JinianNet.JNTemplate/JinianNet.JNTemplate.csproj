@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp2.1;netcoreapp3.1;net40;net45;net46;net47;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net40;net45;net46;net47;net5.0</TargetFrameworks>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
@@ -35,7 +35,7 @@
 	- 调整框架支持如下：
 	- 1. .net framework 4.0 以上
 	- 2. .net core 2.1 以上
-	- 3. .netstandard 2.1 以上
+	- 3. .netstandard 2.0 以上
 	- 4. .net 5.0</PackageReleaseNotes>
     <NeutralLanguage />
     <SignAssembly>false</SignAssembly>
@@ -76,6 +76,17 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.0'">bin\Release\netstandard2.0\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.1'">bin\Release\netstandard2.1\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Release\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Release\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Release\net20\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Release\net40\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Release\net45\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Release\net46\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Release\net47\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Release\net48\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Release\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
     <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP</DefineConstants>
