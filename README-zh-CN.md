@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/jiniannet/jntemplate.svg?branch=master)](https://travis-ci.org/jiniannet/jntemplate)
 [![GitHub stars](https://img.shields.io/nuget/v/JinianNet.JNTemplate.svg)](https://www.nuget.org/packages/JinianNet.JNTemplate/)
 [![GitHub stars](https://img.shields.io/github/stars/jiniannet/jntemplate.svg)](https://github.com/jiniannet/jntemplate/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/jiniannet/jntemplate/master/License.txt)
+[![GitHub license](https://img.shields.io/badge/license-Mit-blue.svg)](https://raw.githubusercontent.com/jiniannet/jntemplate/master/License.txt)
 [![GitHub issues](https://img.shields.io/github/issues/jiniannet/jntemplate.svg)](https://github.com/jiniannet/jntemplate/issues)
 
 [English](https://github.com/jiniannet/jntemplate/blob/master/README.md) | [中文](https://github.com/jiniannet/jntemplate/blob/master/README-zh-CN.md)
@@ -49,7 +49,7 @@ linux:克隆完成后,运行 build/build.sh
 **配置**
 
 你可以使用Engine.Configure()方法来对 JNTemplate进行配置.可配置项包括是否区分大小写，标签符号，模板工作目录，全局对象等：
-```
+```csharp
 Engine.Configure((conf)=>{
     // .. 配置你的具体参数
 });
@@ -58,12 +58,12 @@ Engine.Configure((conf)=>{
 **简单示例**
 
 模板代码(index.html):
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>JNTemplate deomo</title>
+    <title>JNTemplate demo</title>
   </head>
   <body>
       hello,$name!
@@ -74,7 +74,7 @@ Engine.Configure((conf)=>{
 ```
 
 c# 代码:
-
+csharp
 ```
 var template = Engine.LoadTemplate("C:\\wwwwroot\index.html");
 \\在配置中配置了模板目录的情况下，可以省略目录，如：Engine.LoadTemplate("index.html");
@@ -83,12 +83,12 @@ template.Render(TextWriter);
 ```
 
 输出结果:
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>JNTemplate deomo</title>
+    <title>JNTemplate demo</title>
   </head>
   <body>
       hello,JNTemplate!
@@ -99,7 +99,7 @@ template.Render(TextWriter);
 ```
 
 ### API文档
-请查看: www.jiniannet.com 
+[docs.jiniannet.com](https://docs.jiniannet.com)
 
 
 ### 授权
@@ -108,6 +108,3 @@ MIT 详细请查看 License.txt(1.4以下版本为apache 2.0)
 ### 联系方式：
 - Email:i@jiniannet.com
 - 交流Q群:5089240 欢迎加入
-
-### 注意
-- V2.0 版本为大版本更新，与1.x相比，部分接口会存在不兼容的情况，原来使用1.x的用户请综合考虑是否需要升级。
