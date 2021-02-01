@@ -61,6 +61,11 @@ namespace JinianNet.JNTemplate.Configuration
         public bool IgnoreCase { get; set; } = true;
 
         /// <summary>
+        /// 是否禁用简写标签 
+        /// </summary>
+        public bool DisableeLogogram { get; set; } = false;
+
+        /// <summary>
         /// 加载提供器
         /// </summary>
         public IResourceLoader Loader { get; set; }
@@ -69,37 +74,6 @@ namespace JinianNet.JNTemplate.Configuration
         /// 标签分析器
         /// </summary>
         public List<Parsers.ITagParser> TagParsers { get; set; }
-
-        /// <summary>
-        /// 将符合要求的配置转换为引擎环境变量
-        /// </summary>
-        /// <returns></returns>
-        public virtual Dictionary<string, string> ToDictionary()
-        {
-            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            Type type = this.GetType();
-            PropertyInfo[] properties = type.GetProperties();
-            foreach (PropertyInfo p in properties)
-            {
-                if (!p.PropertyType.IsPrimitive)
-                {
-                    continue;
-                }
-#if NET20 || NET40
-                object value = p.GetValue(this, null);
-#else
-                object value = p.GetValue(this);
-#endif
-                if (value == null)
-                {
-                    continue;
-                }
-
-                dict[p.Name] = value.ToString();
-            }
-
-            return dict;
-        }
 
         /// <summary>
         /// 创建默认配置

@@ -57,6 +57,11 @@ namespace JinianNet.JNTemplate.Configuration
         bool EnableTemplateCache { get; set; }
 
         /// <summary>
+        /// 是否禁用简写标签 
+        /// </summary>
+        bool DisableeLogogram { get; set; }
+
+        /// <summary>
         /// 加载提供器
         /// </summary>
         IResourceLoader Loader { get; set; }
@@ -66,11 +71,5 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         List<Parsers.ITagParser> TagParsers { get; set; }
 
-
-        /// <summary>
-        /// 将符合要求的配置转换为引擎环境变量
-        /// </summary>
-        /// <returns></returns>
-        Dictionary<string, string> ToDictionary();
     }
 }

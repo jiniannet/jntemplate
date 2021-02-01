@@ -20,7 +20,7 @@ var result = template.Render();
 Assert.AreEqual("hello jntemplate", render);
 ```
 
-**示例二 呈现属性：**
+**示例二 调用实例属性：**
 
 ```csharp
 var templateContent = "hello $model.Name";
@@ -30,7 +30,17 @@ var result = template.Render();
 Assert.AreEqual("hello jntemplate", render);
 ```
 
+**示例三 调用静态属性：**
+```csharp
+var templateContent = "${DateTime.Now}";
+var template = Engine.CreateTemplate(templateContent);
+template.SetStaticType("DateTime", typeof(DateTime));
+var result = template.Render();
+Assert.AreEqual("str1str2", result);
+```
+
 !> 只有编译版本才默认支持字段。
+!> 编译版不允许获取匿名对象的属性。
 
 
 ## 函数标签

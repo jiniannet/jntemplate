@@ -64,6 +64,7 @@ namespace JinianNet.JNTemplate
         private string prefix;
         private char flag;
         private string suffix;
+        private bool disableeLogogram;
 
         /// <summary>
         /// TemplateLexer
@@ -75,6 +76,7 @@ namespace JinianNet.JNTemplate
             this.prefix = Runtime.GetEnvironmentVariable(nameof(IConfig.TagPrefix));
             this.flag = Runtime.GetEnvironmentVariable(nameof(IConfig.TagFlag))[0];
             this.suffix = Runtime.GetEnvironmentVariable(nameof(IConfig.TagSuffix));
+            this.disableeLogogram = Utility.StringToBoolean(Runtime.GetEnvironmentVariable(nameof(IConfig.DisableeLogogram)));
             Reset();
         }
         /// <summary>
@@ -189,9 +191,14 @@ namespace JinianNet.JNTemplate
                     this.flagMode = FlagMode.Comment;
                     return true;
                 }
-                else
 #endif
-                    if (char.IsLetter(this.scanner.Read(1)))
+
+                if (disableeLogogram)
+                {
+                    return false;
+                }
+
+                if (char.IsLetter(this.scanner.Read(1)))
                 {
                     this.flagMode = FlagMode.Logogram;
                     return true;
@@ -491,7 +498,7 @@ namespace JinianNet.JNTemplate
                 default:
                     return TokenKind.TextData;
             }
-        } 
+        }
 
         /// <summary>
         /// 获取IEnumerator

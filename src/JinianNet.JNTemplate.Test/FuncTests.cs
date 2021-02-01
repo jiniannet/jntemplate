@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试委托方法
         /// </summary>
         [Fact]
-        public async Task TestDelegateFunction()
+        public void TestDelegateFunction()
         {
             var templateContent = "$test(\"字符串\",1,true)";
             var template = Engine.CreateTemplate(templateContent);
@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Test
                 return $"您输入的参数：{a}，{b}，{c}";
             });
 
-            var render = await Excute(template);
+            var render = template.Render();
 
             Assert.Equal("您输入的参数：字符串，1，True", render);
         }
@@ -33,12 +33,12 @@ namespace JinianNet.JNTemplate.Test
         /// 测试类方法
         /// </summary>
         [Fact]
-        public async Task TestClassFunction()
+        public void TestClassFunction()
         {
             var templateContent = "$fun.Test(\"字符串\",1,true)";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("fun", new TemplateMethod());
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
 
@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate.Test
         ///// 测试可选参数(实参以JSON格式支持)
         ///// </summary>
         //[Fact]
-        //public async Task TestJson()
+        //public void TestJson()
         //{
         //    //JSON标签在本次版本中仅仅是方便处理函数参数使用，不支持复杂格式
         //    //如果需要支持复杂JSON，可自行引用第三方JSON类库并以扩展标签的方式处理
@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate.Test
         //    var template = Engine.CreateTemplate(templateContent);
         //    template.Set("UserId", 110);
         //    template.Set("helper", new TemplateMethod());
-        //    var render = await Excute(template);
+        //    var render = template.Render();
         //    //false是布尔类型的默认值
         //    Assert.Equal("您输入的参数是有：你好 110 False ", render);
         //}
@@ -66,7 +66,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试实参带负数的函数
         /// </summary>
         [Fact]
-        public async Task TestNegativeFunc()
+        public void TestNegativeFunc()
         {
 
             var templateContent = "$test(8,-2)";
@@ -80,7 +80,7 @@ namespace JinianNet.JNTemplate.Test
                 var r = x + y;
                 return r.ToString();
             });
-            var render = await Excute(template);
+            var render = template.Render();
 
             Assert.Equal("6", render);
         }
@@ -90,7 +90,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试方法参数
         /// </summary>
         [Fact]
-        public async Task TestFunctionParamer()
+        public void TestFunctionParamer()
         {
             var templateContent = "${ArticleList(15,\"<div class=\\\"col-md-6 col-sm-12 col-12\\\"><div class=\\\"notice-k\\\"><div class=\\\"notice-h4\\\"><a href=\\\"/default/show/[ID]\\\">[F_Title]</a></div><p>[F_Summery]</p><div class=\\\"notice-bottom\\\"><div class=\\\"notice-bottom-left\\\">[F_AddTime]</div><div class=\\\"notice-bottom-right\\\">[F_Author]</div></div></div></div>\",4,20,60)}";
             var template = Engine.CreateTemplate(templateContent);
@@ -98,7 +98,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return id.ToString();
             }); 
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("15", render);
         }
 
@@ -106,7 +106,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试方法参数
         /// </summary>
         [Fact]
-        public async Task TestFunctionGrammar()
+        public void TestFunctionGrammar()
         {
             //var templateContent = "${ArticleList(Class)}";
             var templateContent = "${ArticleList(Nav.Class.Sort,10,false,20,60,true,false)}";
@@ -122,7 +122,7 @@ namespace JinianNet.JNTemplate.Test
                     Sort = 1
                 }
             });
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("1", render);
         }
          
@@ -131,7 +131,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试Func委托(1.4.0以上版本支持)
         /// </summary>
         [Fact]
-        public async Task TestFunctionFunc()
+        public void TestFunctionFunc()
         { 
             var templateContent = "${test(\"test data\")}";
             var template = Engine.CreateTemplate(templateContent);
@@ -139,7 +139,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return "input:" + text;
             });
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("input:test data", render);
         }
 
@@ -147,7 +147,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试Func委托(1.4.0以上版本支持)
         /// </summary>
         [Fact]
-        public async Task TestCoxFunc()
+        public void TestCoxFunc()
         {
             var templateContent = "${test(\"test data\",9527)}";
             var template = Engine.CreateTemplate(templateContent);
@@ -155,7 +155,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return "input:" + text + " id:" + id;
             });
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("input:test data id:9527", render);
         }
 
@@ -163,7 +163,7 @@ namespace JinianNet.JNTemplate.Test
         /// 测试Action委托(1.4.0以上版本支持)
         /// </summary>
         [Fact]
-        public async Task TestFunctionAction()
+        public void TestFunctionAction()
         {
             var templateContent = "${action(\"test data\")}";
             var template = Engine.CreateTemplate(templateContent);
@@ -171,7 +171,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 Console.WriteLine("你输入了:" + text);
             });
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("", render);
 
         }
@@ -180,12 +180,12 @@ namespace JinianNet.JNTemplate.Test
         /// 测试静态方法
         /// </summary>
         [Fact]
-        public async Task TestStaticConcat()
+        public void TestStaticConcat()
         {
             var templateContent = "${string.Concat(\"str1\",\"str2\")}";
             var template = Engine.CreateTemplate(templateContent); 
             template.SetStaticType("string", typeof(string));
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("str1str2", render);
         }
     }

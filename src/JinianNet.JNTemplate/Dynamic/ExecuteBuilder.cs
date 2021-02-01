@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// </summary>
         public ExecuteBuilder()
         {
-            dict = new Dictionary<string, Func<ITag, TemplateContext, object>>();
+            dict = new Dictionary<string, Func<ITag, TemplateContext, object>>(StringComparer.OrdinalIgnoreCase);
             Initialize();
         }
 

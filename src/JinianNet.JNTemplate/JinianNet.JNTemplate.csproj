@@ -42,7 +42,8 @@
     <PreBuildEvent></PreBuildEvent>
     <PostBuildEvent></PostBuildEvent>
     <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseFile>License.txt</PackageLicenseFile> 
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <FileVersion>2.0.0.1</FileVersion> 
   </PropertyGroup>
 
 

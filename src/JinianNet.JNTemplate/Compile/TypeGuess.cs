@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Compile
         /// </summary>
         public TypeGuess()
         {
-            dict = new Dictionary<string, Func<ITag, CompileContext, Type>>();
+            dict = new Dictionary<string, Func<ITag, CompileContext, Type>>(StringComparer.OrdinalIgnoreCase);
             Initialize();
         }
 
@@ -81,7 +81,7 @@ namespace JinianNet.JNTemplate.Compile
                     var bodyType = ctx.Data.GetType(t.Name);
                     if (bodyType.BaseType.FullName != "System.MulticastDelegate")
                     {
-                        throw new Exception.CompileException($"[FunctaionTag]: \"{bodyType.BaseType}\" is not defined");
+                        throw new Exception.CompileException($"[FunctaionTag]: \"{bodyType.BaseType}\" is not supported.");
                     }
                     var invokeMethod = bodyType.GetMethod("Invoke");
                     return invokeMethod.ReturnType;
@@ -321,7 +321,7 @@ namespace JinianNet.JNTemplate.Compile
                     return m.ReturnType;
                 }
 
-                throw new Exception.CompileException($"[IndexValueTag]: tag is not defined");
+                throw new Exception.CompileException($"[IndexValueTag]: \"{tag.ToSource()}\" is not defined");
             });
         }
 
@@ -369,9 +369,13 @@ namespace JinianNet.JNTemplate.Compile
         {
             if (dict.TryGetValue(name, out var func))
             {
-                return func(tag, ctx);
+                var type = func(tag, ctx);
+                if (type != null)
+                {
+                    return type;
+                }
             }
-            return null;
+            throw new Exception.CompileException($"[{name}]:\"{tag.ToSource()}\" is not defined!");
         }
 
         /// <summary>

@@ -15,11 +15,11 @@ namespace JinianNet.JNTemplate.Test
         /// 测试FOR
         /// </summary>
         [Fact]
-        public async Task TestFor()
+        public void TestFor()
         {
             var templateContent = "$for(i=1;i<4;i=i+1)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
             var template = Engine.CreateTemplate(templateContent);
-            var render = await Excute(template);
+            var render = template.Render();
 
             Assert.Equal("123", render);
         }
@@ -28,11 +28,11 @@ namespace JinianNet.JNTemplate.Test
         /// for的不同写法
         /// </summary>
         [Fact]
-        public async Task TestForPlusPlus()
+        public void TestForPlusPlus()
         {
             var templateContent = "$for(i=0;i<3;i++)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
             var template = Engine.CreateTemplate(templateContent);
-            var render = await Excute(template);
+            var render = template.Render();
 
             Assert.Equal("012", render);
         }
@@ -41,12 +41,12 @@ namespace JinianNet.JNTemplate.Test
         /// 测试Forea 遍历对象时，Foreach应优先于for
         /// </summary>
         [Fact]
-        public async Task TestForeach()
+        public void TestForeach()
         {
             var templateContent = "$foreach(i in list)$i$end";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("list",new int[] { 7, 0, 2, 0, 6 });
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("70206", render);
         }
 
@@ -54,12 +54,12 @@ namespace JinianNet.JNTemplate.Test
         /// 测试ForIn
         /// </summary>
         [Fact]
-        public async Task TestForIn()
+        public void TestForIn()
         {
             var templateContent = "$for(i in list)$i$end";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("list",new int[] { 7, 0, 2, 0, 6 });
-            var render = await Excute(template);
+            var render = template.Render();
             Assert.Equal("70206", render);
         } 
 

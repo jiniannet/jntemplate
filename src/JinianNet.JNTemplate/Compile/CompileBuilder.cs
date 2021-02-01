@@ -40,8 +40,8 @@ namespace JinianNet.JNTemplate.Compile
         /// </summary>
         public CompileBuilder()
         {
-            returnDict = new Dictionary<string, Func<ITag, CompileContext, MethodInfo>>();
-            renderDict = new Dictionary<string, Action<ITag, CompileContext>>();
+            returnDict = new Dictionary<string, Func<ITag, CompileContext, MethodInfo>>(StringComparer.OrdinalIgnoreCase);
+            renderDict = new Dictionary<string, Action<ITag, CompileContext>>(StringComparer.OrdinalIgnoreCase);
             getVariableScope = DynamicHelpers.GetPropertyGetMethod(typeof(TemplateContext), "TempData");
             getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
             defaultRender = GeneralDefaultRender();
@@ -796,7 +796,7 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Callvirt, getVariableScope);
                 il.Emit(OpCodes.Ldstr, t.Name);
                 il.Emit(OpCodes.Ldloc_S, 0);
-                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(typeof(VariableScope), new Type[] { retunType }, "Set", new Type[] { typeof(string), retunType }));
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(typeof(VariableScope), new Type[] { retunType }, "SetValue", new Type[] { typeof(string), retunType }));
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
             });
@@ -883,7 +883,7 @@ namespace JinianNet.JNTemplate.Compile
             });
             this.Register<FunctaionTag>((tag, c) =>
             {
-#region
+                #region
                 /*
                 var t = tag as FunctaionTag;
                 var bodyType = c.Data.GetType(t.Name);
@@ -957,7 +957,7 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition(); 
                  */
-#endregion
+                #endregion
 
                 var t = tag as FunctaionTag;
                 Type baseType;
@@ -1089,9 +1089,9 @@ namespace JinianNet.JNTemplate.Compile
                 }
                 var old = c.Data;
                 var scope = new VariableScope(old);
-                scope.SetElement(t.Name, new VariableElement(childType[0], null));
-                scope.SetElement("foreachIndex", new VariableElement(typeof(int), null));
                 c.Data = scope;
+                c.Set(t.Name, childType[0]);
+                c.Set("foreachIndex", typeof(int));
                 var mb = this.CreateReutrnMethod<ForeachTag>(c, type);
                 var il = mb.GetILGenerator();
                 Label labelEnd = il.DefineLabel();
@@ -1108,6 +1108,11 @@ namespace JinianNet.JNTemplate.Compile
                 for (var i = 0; i < t.Children.Count; i++)
                 {
                     types[i] = Compiler.TypeGuess.GetType(t.Children[i], c);
+                    if (t.Children[i] is SetTag)
+                    {
+                        var setTag = t.Children[i] as SetTag;
+                        c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                    }
                     if (types[i].FullName == "System.Void" || t.Children[i] is TextTag)
                     {
                         continue;
@@ -1778,6 +1783,11 @@ namespace JinianNet.JNTemplate.Compile
                 //il.Emit(OpCodes.Brfalse, labelEnd);
                 if (t.Children.Count == 1)
                 {
+                    if (t.Children[0] is SetTag)
+                    {
+                        var setTag = t.Children[0] as SetTag;
+                        c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                    }
                     var childMethod = GetCompileMethod(t.Children[0], c);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
@@ -1809,6 +1819,11 @@ namespace JinianNet.JNTemplate.Compile
                         }
                         else
                         {
+                            if(t.Children[i] is SetTag)
+                            {
+                                var setTag = t.Children[i] as SetTag;
+                                c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                            }
                             var m = GetCompileMethod(t.Children[i], c);
                             if (m.ReturnType.FullName != "System.Void")
                             {
@@ -1866,6 +1881,11 @@ namespace JinianNet.JNTemplate.Compile
                 }
                 if (t.Children.Count == 1)
                 {
+                    if (t.Children[0] is SetTag)
+                    {
+                        var setTag = t.Children[0] as SetTag;
+                        c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                    }
                     var childMethod = GetCompileMethod(t.Children[0], c);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
@@ -1897,6 +1917,11 @@ namespace JinianNet.JNTemplate.Compile
                         }
                         else
                         {
+                            if (t.Children[i] is SetTag)
+                            {
+                                var setTag = t.Children[i] as SetTag;
+                                c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                            }
                             var m = GetCompileMethod(t.Children[i], c);
                             if (m.ReturnType.FullName != "System.Void")
                             {
@@ -1934,7 +1959,7 @@ namespace JinianNet.JNTemplate.Compile
             });
             this.Register<IfTag>((tag, c) =>
             {
-#region
+                #region
                 //var t = tag as IfTag;
                 //var type = Compiler.TypeGuess.GetType(t, c);
                 //var mb = this.CreateReutrnMethod<IfTag>(c, type);
@@ -2005,7 +2030,7 @@ namespace JinianNet.JNTemplate.Compile
                 //il.MarkLabel(labelEnd);
                 //il.Emit(OpCodes.Ret);
                 //return mb.GetBaseDefinition();
-#endregion
+                #endregion
                 var t = tag as IfTag;
                 var type = Compiler.TypeGuess.GetType(t, c);
                 var mb = this.CreateReutrnMethod<IfTag>(c, type);
@@ -2641,6 +2666,11 @@ namespace JinianNet.JNTemplate.Compile
                         }
                         else
                         {
+                            if (t.Children[i] is SetTag)
+                            {
+                                var setTag = t.Children[i] as SetTag;
+                                c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                            }
                             il.Emit(OpCodes.Ldarg_0);
                             il.Emit(OpCodes.Ldloc_1);
                             il.Emit(OpCodes.Call, m);
@@ -2800,9 +2830,9 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
             });
-#endregion
+            #endregion
 
-#region  render
+            #region  render
             this.SetRenderFunc<TextTag>((tag, c) =>
             {
                 var t = tag as TextTag;
@@ -2819,7 +2849,7 @@ namespace JinianNet.JNTemplate.Compile
                 }
             });
             this.SetRenderFunc("Default");
-#endregion
+            #endregion
         }
 
         /// <summary>

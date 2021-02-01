@@ -101,18 +101,16 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        internal bool SetValue<T>(string key, T value)
+        public void SetValue<T>(string key, T value)
         {
-            if (this.dic.ContainsKey(key))
+            if (this.Parent != null && this.Parent.ContainsKey(key))
             {
-                dic[key] = new VariableElement(typeof(T), value);
-                return true;
+                this.Parent.Set(key, value);
             }
-            if (this.parent != null)
+            else
             {
-                return this.parent.SetValue<T>(key, value);
+                Set<T>(key, value);
             }
-            return false;
         }
 
         /// <summary>

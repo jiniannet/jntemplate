@@ -230,6 +230,10 @@ namespace JinianNet.JNTemplate
             {
                 template.TemplateKey = template.Path;
             }
+            if (string.IsNullOrEmpty(template.Context.CurrentPath))
+            {
+                template.Context.CurrentPath = Runtime.Loader.GetDirectoryName(template.Path);
+            }
             return template;
         }
 

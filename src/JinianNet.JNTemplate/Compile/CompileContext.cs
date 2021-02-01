@@ -39,13 +39,22 @@ namespace JinianNet.JNTemplate.Compile
         public VariableScope Data { get; set; }
 
         /// <summary>
-        /// set type
+        /// 设置编译参数类型
         /// </summary>
         /// <param name="name">key</param>
         /// <param name="type">type</param>
         public void Set(string name, Type type)
         {
             Data.SetElement(name, new VariableElement(type, null));
+        }
+
+        /// <summary>
+        /// 设置编译参数类型
+        /// </summary>
+        /// <param name="name">key</param>
+        public void Set<T>(string name)
+        {
+            Set(name, typeof(T));
         }
 
         /// <summary>

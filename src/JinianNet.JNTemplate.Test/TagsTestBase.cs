@@ -20,19 +20,19 @@ namespace JinianNet.JNTemplate.Test
             //Engine.EnableCompile = false;
         }
 
-        public async Task<string> Excute(ITemplate t)
-        {
-            string document;
+        //public  void <string> Excute(ITemplate t)
+        //{
+        //    string document;
 
-            using (StringWriter writer = new StringWriter())
-            {
-                t.Render(writer);
-                // await t.RenderAsync(writer);
-                document = writer.ToString();
-            }
+        //    using (StringWriter writer = new StringWriter())
+        //    {
+        //        t.Render(writer);
+        //        // await t.RenderAsync(writer);
+        //        document = writer.ToString();
+        //    }
 
-            return document;
+        //    return document;
 
-        }
+        //}
     }
 }

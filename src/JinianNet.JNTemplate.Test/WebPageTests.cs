@@ -50,7 +50,7 @@ namespace JinianNet.JNTemplate.Test
 
             string basePath =
 #if NET20 || NET40
-                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+                System.Environment.CurrentDirectory;
 #else
                 new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
@@ -143,7 +143,7 @@ namespace JinianNet.JNTemplate.Test
 
             string basePath =
 #if NET20 || NET40
-                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+                System.Environment.CurrentDirectory;
 #else
                 new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
@@ -206,7 +206,7 @@ namespace JinianNet.JNTemplate.Test
 
             string basePath =
 #if NET20 || NET40
-                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+                System.Environment.CurrentDirectory;
 #else
                 new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
@@ -273,7 +273,7 @@ namespace JinianNet.JNTemplate.Test
             ctx.TempData.Push("Site", site);
             string basePath =
 #if NET20 || NET40
-                new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+                System.Environment.CurrentDirectory;
 #else
                 new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 #endif
@@ -317,7 +317,7 @@ namespace JinianNet.JNTemplate.Test
                 site.Url += "/" + site.SiteDirectory;
             }
             site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
-            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string basePath = System.Environment.CurrentDirectory;
             string path = basePath + "\\templets\\default";
 
             string content = System.IO.File.ReadAllText(path + "\\questionlist.html");
@@ -388,7 +388,7 @@ namespace JinianNet.JNTemplate.Test
             site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
 
 
-            string basePath = new System.IO.DirectoryInfo(System.Environment.CurrentDirectory).Parent.Parent.FullName;
+            string basePath = System.Environment.CurrentDirectory;
             string path = basePath + "\\templets\\nv";
 
 

@@ -5,6 +5,11 @@ namespace JinianNet.JNTemplate.Test
 {
     public class TemplateMethod
     {
+        public string GetRequestUrl(string key)
+        {
+            return "";
+        }
+
         public string Test(string message, int id, bool result)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
