@@ -97,20 +97,22 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 为已有键设置新的值(本方法供set标签做特殊处理使用)
+        /// update data
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public void SetValue<T>(string key, T value)
+        public bool Update<T>(string key, T value)
         {
-            if (this.Parent != null && this.Parent.ContainsKey(key))
-            {
-                this.Parent.Set(key, value);
-            }
-            else
+            if (this.dic.ContainsKey(key))
             {
                 Set<T>(key, value);
+                return true;
             }
+            if(this.Parent != null)
+            {
+                return this.Parent.Update<T>(key, value);
+            }
+            return false;
         }
 
         /// <summary>

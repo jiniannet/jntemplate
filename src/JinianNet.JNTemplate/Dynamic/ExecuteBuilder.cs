@@ -561,7 +561,10 @@ namespace JinianNet.JNTemplate.Dynamic
                 object value = Executor.Exec(t.Value, context);
                 if (value != null)
                 {
-                    context.TempData.Set(t.Name, value, value.GetType());
+                    if (!context.TempData.Update(t.Name, value))
+                    {
+                        context.TempData.Set(t.Name, value, value.GetType());
+                    }
                 }
                 return null;
             });

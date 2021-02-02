@@ -2,7 +2,7 @@
 命名空间: JinianNet.JNTemplate
 程序集:JinianNet.JNTemplate.dll
 
-Jntemplate引擎的配置与使用入口
+模板对象
 
 
 ```csharp
@@ -15,7 +15,7 @@ public interface ITemplate
 Context|模板上下文
 Path|模板文件路径
 TemplateContent|模板内容
-TemplateKey|模板标识 
+TemplateKey|模板标识，必须唯一
 
 
 ## 方法

@@ -783,7 +783,9 @@ namespace JinianNet.JNTemplate.Compile
                 c.Set(t.Name, retunType);
                 var mb = this.CreateReutrnMethod<SetTag>(c, type);
                 var il = mb.GetILGenerator();
+                Label labelEnd = il.DefineLabel();
                 il.DeclareLocal(retunType);
+                il.DeclareLocal(typeof(bool));
 
                 var method = GetCompileMethod(t.Value, c);
                 il.Emit(OpCodes.Ldarg_0);
@@ -796,7 +798,22 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Callvirt, getVariableScope);
                 il.Emit(OpCodes.Ldstr, t.Name);
                 il.Emit(OpCodes.Ldloc_S, 0);
-                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(typeof(VariableScope), new Type[] { retunType }, "SetValue", new Type[] { typeof(string), retunType }));
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(typeof(VariableScope), new Type[] { retunType }, "Update", new Type[] { typeof(string), retunType }));
+
+                il.Emit(OpCodes.Ldc_I4_0);
+                il.Emit(OpCodes.Ceq);
+                il.Emit(OpCodes.Stloc, 1);
+                il.Emit(OpCodes.Ldloc, 1);
+                il.Emit(OpCodes.Brfalse_S, labelEnd);
+
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Callvirt, getVariableScope);
+                il.Emit(OpCodes.Ldstr, t.Name);
+                il.Emit(OpCodes.Ldloc_S, 0);
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(typeof(VariableScope), new Type[] { retunType }, "Set", new Type[] { typeof(string), retunType }));
+
+
+                il.MarkLabel(labelEnd);
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
             });
@@ -1748,114 +1765,72 @@ namespace JinianNet.JNTemplate.Compile
                 var stringBuilderType = typeof(System.Text.StringBuilder);
                 var mb = this.CreateReutrnMethod<ElseifTag>(c, type);
                 var il = mb.GetILGenerator();
-                //var method = GetCompileMethod(t.Condition, c);
                 Label labelEnd = il.DefineLabel();
                 il.DeclareLocal(type);
-                var index = 1;
-                if (t.Children.Count != 1)
+                il.DeclareLocal(stringBuilderType);
+                il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc_1);
+                var index = 2;
+                for (var i = 0; i < t.Children.Count; i++)
                 {
-                    il.DeclareLocal(stringBuilderType);
-                    il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc_1);
-                    index++;
-                }
-                //il.Emit(OpCodes.Ldarg_0);
-                //il.Emit(OpCodes.Ldarg_1);
-                //il.Emit(OpCodes.Call, method);
-                //if (method.ReturnType.Name != "Boolean")
-                //{
-                //    var cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { method.ReturnType });
-                //    if (cm == null)
-                //    {
-                //        cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { typeof(object) });
-                //        if (method.ReturnType.IsValueType)
-                //        {
-                //            il.Emit(OpCodes.Box, typeof(object));
-                //        }
-                //        else
-                //        {
-                //            il.Emit(OpCodes.Castclass, typeof(object));
-                //        }
-                //    }
-                //    il.Emit(OpCodes.Callvirt, cm);
-                //}
-                //il.Emit(OpCodes.Ldc_I4_1);
-                //il.Emit(OpCodes.Brfalse, labelEnd);
-                if (t.Children.Count == 1)
-                {
-                    if (t.Children[0] is SetTag)
+                    if (t.Children[i] is EndTag)
                     {
-                        var setTag = t.Children[0] as SetTag;
-                        c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                        continue;
                     }
-                    var childMethod = GetCompileMethod(t.Children[0], c);
-                    il.Emit(OpCodes.Ldarg_0);
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Call, childMethod);
-                    il.Emit(OpCodes.Stloc_0);
-                }
-                else
-                {
-                    for (var i = 0; i < t.Children.Count; i++)
+                    if (t.Children[i] is TextTag)
                     {
-                        if (t.Children[i] is EndTag)
+                        var textTag = t.Children[i] as TextTag;
+                        il.Emit(OpCodes.Ldloc_1);
+                        if (c.StripWhiteSpace)
                         {
-                            continue;
+                            il.Emit(OpCodes.Ldstr, textTag.Text.Trim());
                         }
-                        if (t.Children[i] is TextTag)
+                        else
                         {
-                            var textTag = t.Children[i] as TextTag;
+                            il.Emit(OpCodes.Ldstr, textTag.Text);
+                        }
+                        il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
+                        il.Emit(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        if (t.Children[i] is SetTag)
+                        {
+                            var setTag = t.Children[i] as SetTag;
+                            c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                        }
+                        var m = GetCompileMethod(t.Children[i], c);
+                        if (m.ReturnType.FullName != "System.Void")
+                        {
                             il.Emit(OpCodes.Ldloc_1);
-                            if (c.StripWhiteSpace)
+                            il.Emit(OpCodes.Ldarg_0);
+                            il.Emit(OpCodes.Ldarg_1);
+                            il.Emit(OpCodes.Call, m);
+                            if (m.ReturnType.FullName != "System.String")
                             {
-                                il.Emit(OpCodes.Ldstr, textTag.Text.Trim());
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Ldstr, textTag.Text);
+                                il.DeclareLocal(m.ReturnType);
+                                il.Emit(OpCodes.Stloc, index);
+                                LoadVariable(il, m.ReturnType, index);
+                                index++;
+                                //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
+                                Call(il, m.ReturnType, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
                             }
                             il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
                             il.Emit(OpCodes.Pop);
                         }
                         else
                         {
-                            if(t.Children[i] is SetTag)
-                            {
-                                var setTag = t.Children[i] as SetTag;
-                                c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
-                            }
-                            var m = GetCompileMethod(t.Children[i], c);
-                            if (m.ReturnType.FullName != "System.Void")
-                            {
-                                il.Emit(OpCodes.Ldloc_1);
-                                il.Emit(OpCodes.Ldarg_0);
-                                il.Emit(OpCodes.Ldarg_1);
-                                il.Emit(OpCodes.Call, m);
-                                if (m.ReturnType.FullName != "System.String")
-                                {
-                                    il.DeclareLocal(m.ReturnType);
-                                    il.Emit(OpCodes.Stloc, index);
-                                    LoadVariable(il, m.ReturnType, index);
-                                    index++;
-                                    //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
-                                    Call(il, m.ReturnType, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
-                                }
-                                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
-                                il.Emit(OpCodes.Pop);
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Ldarg_0);
-                                il.Emit(OpCodes.Ldarg_1);
-                                il.Emit(OpCodes.Call, m);
-                            }
+                            il.Emit(OpCodes.Ldarg_0);
+                            il.Emit(OpCodes.Ldarg_1);
+                            il.Emit(OpCodes.Call, m);
                         }
                     }
-                    il.Emit(OpCodes.Ldloc_1);
-                    //il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
-                    Call(il, stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc_0);
                 }
+                il.Emit(OpCodes.Ldloc_1);
+                //il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+                Call(il, stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc_0);
+
                 il.MarkLabel(labelEnd);
                 il.Emit(OpCodes.Ldloc_0);
                 il.Emit(OpCodes.Ret);
@@ -1868,90 +1843,70 @@ namespace JinianNet.JNTemplate.Compile
                 var stringBuilderType = typeof(System.Text.StringBuilder);
                 var mb = this.CreateReutrnMethod<ElseTag>(c, type);
                 var il = mb.GetILGenerator();
-                //var method = GetCompileMethod(t.Condition, c);
                 Label labelEnd = il.DefineLabel();
                 il.DeclareLocal(type);
-                var index = 1;
-                if (t.Children.Count != 1)
+                il.DeclareLocal(stringBuilderType);
+                il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc_1);
+                var index = 2;
+                for (var i = 0; i < t.Children.Count; i++)
                 {
-                    il.DeclareLocal(stringBuilderType);
-                    il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc_1);
-                    index++;
-                }
-                if (t.Children.Count == 1)
-                {
-                    if (t.Children[0] is SetTag)
+                    if (t.Children[i] is EndTag)
                     {
-                        var setTag = t.Children[0] as SetTag;
-                        c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                        continue;
                     }
-                    var childMethod = GetCompileMethod(t.Children[0], c);
-                    il.Emit(OpCodes.Ldarg_0);
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Call, childMethod);
-                    il.Emit(OpCodes.Stloc_0);
-                }
-                else
-                {
-                    for (var i = 0; i < t.Children.Count; i++)
+                    if (t.Children[i] is TextTag)
                     {
-                        if (t.Children[i] is EndTag)
+                        var textTag = t.Children[i] as TextTag;
+                        il.Emit(OpCodes.Ldloc_1);
+                        if (c.StripWhiteSpace)
                         {
-                            continue;
+                            il.Emit(OpCodes.Ldstr, textTag.Text.Trim());
                         }
-                        if (t.Children[i] is TextTag)
+                        else
                         {
-                            var textTag = t.Children[i] as TextTag;
+                            il.Emit(OpCodes.Ldstr, textTag.Text);
+                        }
+                        il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
+                        il.Emit(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        if (t.Children[i] is SetTag)
+                        {
+                            var setTag = t.Children[i] as SetTag;
+                            c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                        }
+                        var m = GetCompileMethod(t.Children[i], c);
+                        if (m.ReturnType.FullName != "System.Void")
+                        {
                             il.Emit(OpCodes.Ldloc_1);
-                            if (c.StripWhiteSpace)
+                            il.Emit(OpCodes.Ldarg_0);
+                            il.Emit(OpCodes.Ldarg_1);
+                            il.Emit(OpCodes.Call, m);
+                            if (m.ReturnType.FullName != "System.String")
                             {
-                                il.Emit(OpCodes.Ldstr, textTag.Text.Trim());
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Ldstr, textTag.Text);
+                                il.DeclareLocal(m.ReturnType);
+                                il.Emit(OpCodes.Stloc, index);
+                                LoadVariable(il, m.ReturnType, index);
+                                index++;
+                                il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
                             }
                             il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
                             il.Emit(OpCodes.Pop);
                         }
                         else
                         {
-                            if (t.Children[i] is SetTag)
-                            {
-                                var setTag = t.Children[i] as SetTag;
-                                c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
-                            }
-                            var m = GetCompileMethod(t.Children[i], c);
-                            if (m.ReturnType.FullName != "System.Void")
-                            {
-                                il.Emit(OpCodes.Ldloc_1);
-                                il.Emit(OpCodes.Ldarg_0);
-                                il.Emit(OpCodes.Ldarg_1);
-                                il.Emit(OpCodes.Call, m);
-                                if (m.ReturnType.FullName != "System.String")
-                                {
-                                    il.DeclareLocal(m.ReturnType);
-                                    il.Emit(OpCodes.Stloc, index);
-                                    LoadVariable(il, m.ReturnType, index);
-                                    index++;
-                                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
-                                }
-                                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
-                                il.Emit(OpCodes.Pop);
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Ldarg_0);
-                                il.Emit(OpCodes.Ldarg_1);
-                                il.Emit(OpCodes.Call, m);
-                            }
+                            il.Emit(OpCodes.Ldarg_0);
+                            il.Emit(OpCodes.Ldarg_1);
+                            il.Emit(OpCodes.Call, m);
                         }
                     }
-                    il.Emit(OpCodes.Ldloc_1);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc_0);
                 }
+                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc_0);
+
                 il.MarkLabel(labelEnd);
                 il.Emit(OpCodes.Ldloc_0);
                 il.Emit(OpCodes.Ret);

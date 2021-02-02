@@ -23,7 +23,7 @@ JNTemplate所有代码全部开源，且具有最小的依赖关系，能轻松�
 - 完全自由免费：允许商用且无须担心费用，所有代码完全开源，不依赖任何第三方类库。
 
 ## 捐赠
-如果你觉得 JNTemplate 对你有帮助，[欢迎给我捐赠](https://gitee.com/jiniannet/jntemplate)。或者全我们一个srar。
+如果你觉得 JNTemplate 对你有帮助，[欢迎给我捐赠](https://gitee.com/jiniannet/jntemplate)。或者给我们一个srar。
 
 ### 授权
 从 V1.4.0开始，jntemplate 使用 MIT 授权 ！[查看](zh-cn/license.md)

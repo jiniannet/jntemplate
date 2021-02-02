@@ -1,3 +1,4 @@
+# 文档
 * 入门
   * [介绍](zh-cn/about.md)
   * [获取](zh-cn/install.md)

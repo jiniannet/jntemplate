@@ -2,7 +2,7 @@
 命名空间: JinianNet.JNTemplate.Configuration
 程序集:JinianNet.JNTemplate.dll
 
-Jntemplate引擎的配置与使用入口
+Jntemplate引擎的配置参数
 
 
 ```csharp
@@ -31,7 +31,3 @@ TagParsers|标签解析器
 方法|说明|
 :--|:--|
 ToDictionary|将配置转换成字典(扩展方法)
-Set&lt;T&gt;(string, T)|设置呈现对象，可以在模板中调用
-SetStaticType(string, Type)|设置呈现类型，可以在模板中调用该类型的静态属性或者方法
-
-Render(TextWriter)|呈现模板内容
