@@ -526,7 +526,7 @@ namespace JinianNet.JNTemplate.Compile
         /// <param name="method"></param>
         public void Call(ILGenerator il, Type type, MethodInfo method)
         {
-            if (method.IsStatic || (!method.IsAbstract && !method.IsVirtual) || type.IsValueType)
+            if (method.IsStatic || (!method.IsAbstract && !method.IsVirtual)) // || type.IsValueType
             {
                 il.Emit(OpCodes.Call, method);
             }

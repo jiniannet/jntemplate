@@ -13,10 +13,10 @@
 JNTemplate is a .net template engine for generating html, xml, sql, or any other formatted text output.
 
 ### Features:
-- Easy to learn
-- Easy to use
-- Easy to expand
-- 100% free
+- faster
+- so easy for using
+- simpler 
+- free
 
 ### Quickstart
 
@@ -56,44 +56,13 @@ Engine.Configure((conf)=>{
 
 **Basic Example**
 
-template code(index.html):
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>JNTemplate demo</title>
-  </head>
-  <body>
-      hello,$name!
-  </body>
-</html>
-
-
-```
-
-c# code:
-
+**简单示例**
 ```csharp
-var template = Engine.LoadTemplate("C:\\wwwwroot\index.html");
-template.Set("name", "JNTemplate");
+var template = Engine.CreateTemplate("hello $model.Name");
+template.Set("model", new User{
+    Name = "jntemplate"
+});
 var result = template.Render(); 
-```
-
-output:
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>JNTemplate demo</title>
-  </head>
-  <body>
-      hello,JNTemplate!
-  </body>
-</html>
-
-
 ```
 
 ### API

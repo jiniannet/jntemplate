@@ -17,10 +17,10 @@ JNTemplate所有代码全部开源，且具有最小的依赖关系，能轻松�
 从2.0版本开始，引擎全面升级为编译型模板引擎，在性能上得到了更大的提升。
 
 ### 特点:
-- 易于学习使用：有一定前后端基础，最快可以10分钟上手
-- 更方便的扩展：能轻松实现自定义标签（需要有一定IL基础）
-- 更快解析速度：高效的词法语法分析器，模板预编译，让运行速度接近原生体验。
-- 完全自由免费：允许商用且无须担心费用，所有代码完全开源，不依赖任何第三方DLL
+- 更快速：高效的IL模板预编译机制，让运行速度接近原生体验。
+- 更简单：语法简单易学，有一定前后端基础，最快可以10分钟上手
+- 更方便：能自由配置各项参数，扩展自己的标签。
+- 更自由：支持商用无须任何费用，所有代码完全开源。
 
 ### 快速开始
 
@@ -56,50 +56,16 @@ Engine.Configure((conf)=>{
 ```
 
 **简单示例**
-
-模板代码(index.html):
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>JNTemplate demo</title>
-  </head>
-  <body>
-      hello,$name!
-  </body>
-</html>
-
-
-```
-
 c# 代码:
-csharp
+```csharp
+var template = Engine.CreateTemplate("hello $model.Name");
+template.Set("model", new User{
+    Name = "jntemplate"
+});
+var result = template.Render(); 
 ```
-var template = Engine.LoadTemplate("C:\\wwwwroot\index.html");
-\\在配置中配置了模板目录的情况下，可以省略目录，如：Engine.LoadTemplate("index.html");
-template.Set("name", "JNTemplate");
-template.Render(TextWriter); 
-```
-
-输出结果:
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>JNTemplate demo</title>
-  </head>
-  <body>
-      hello,JNTemplate!
-  </body>
-</html>
-
-
-```
-
 ### API文档
-[docs.jiniannet.com](https://docs.jiniannet.com)
+完整用法请查看：[docs.jiniannet.com](https://docs.jiniannet.com)
 
 
 ### 授权

@@ -101,6 +101,20 @@ $end
         }
 
 
+
+        /// <summary>
+        /// 测试枚举
+        /// </summary>
+        [Fact]
+        public void TestEnum()
+        {
+            var templateContent = "$Plat";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("Plat", PlatformID.Win32NT);
+            var render = template.Render();
+            Assert.Equal("Win32NT", render);
+        }
+
         /// <summary>
         /// 测试SET与字符串相加
         /// </summary>

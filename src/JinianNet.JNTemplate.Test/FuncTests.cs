@@ -71,10 +71,6 @@ namespace JinianNet.JNTemplate.Test
 
             var templateContent = "$test(8,-2)";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set<Func<string, string>>("", (x) =>
-            {
-                return "";
-            });
             template.Set<Func<int, int, string>>("test", (x, y) =>
             {
                 var r = x + y;
