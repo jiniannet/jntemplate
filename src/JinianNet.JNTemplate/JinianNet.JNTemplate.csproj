@@ -4,9 +4,9 @@
     <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net40;net45;net46;net47;net5.0</TargetFrameworks>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.0.0-beta</Version>
+    <Version>2.0.0</Version>
     <Authors>JinianNet.com</Authors>
     <Company>JinianNet.com</Company>
     <Product>JNTemplate</Product>
@@ -15,7 +15,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicense>https://github.com/jiniannet/jntemplate/blob/master/License.txt</PackageLicense>
     <PackageProjectUrl>http://www.jiniannet.com/</PackageProjectUrl>
-    <RepositoryUrl>https://gitee.com/jiniannet/jntemplate.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/jiniannet/jntemplate.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>templating engine template 模板引擎</PackageTags>
     <PackageReleaseNotes>- 功能
@@ -43,7 +43,7 @@
     <PostBuildEvent></PostBuildEvent>
     <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <FileVersion>2.0.0.1</FileVersion> 
+    <FileVersion>2.0.0.2</FileVersion> 
   </PropertyGroup>
 
 
