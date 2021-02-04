@@ -241,7 +241,6 @@ namespace JinianNet.JNTemplate
                     { nameof(IConfig.TagFlag),"$" },
                     { nameof(IConfig.ThrowExceptions),"True" },
                     { nameof(IConfig.StripWhiteSpace),"False" },
-                    { nameof(IConfig.EnableTemplateCache),"True" },
                     { nameof(IConfig.IgnoreCase),"True" }
                 };
                 store.Actuator = new ReflectionActuator();
@@ -358,10 +357,17 @@ namespace JinianNet.JNTemplate
             /// 是否启用编译模式
             /// </summary>
             public bool EnableCompile { get; set; } = true;
+
+            /// <summary>
+            /// 是否启用模板缓存
+            /// </summary>
+            public bool EnableTemplateCache { get; set; } = true;
+
             /// <summary>
             /// 
             /// </summary>
             public TemplateCollection<Compile.ICompileTemplate> Templates { get; set; }
+
         }
     }
 }

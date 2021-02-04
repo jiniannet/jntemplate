@@ -11,26 +11,9 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 基本模板呈现
     /// </summary>
-    public class TemplateRender
+    public class TemplateRender : TemplateBase
     {
-        /// <summary>
-        /// 模板KEY(用于缓存，默认为文路径)
-        /// </summary>
-        public string TemplateKey { get; set; }
 
-        /// <summary>
-        /// 模板上下文
-        /// </summary>
-        public TemplateContext Context { get; set; }
-
-        /// <summary>
-        /// 模板内容
-        /// </summary>
-        public string TemplateContent { get; set; }
-        /// <summary>
-        /// /模板文件地址
-        /// </summary>
-        public string Path { get; set; }
 
         /// <summary>
         /// 呈现内容
@@ -38,7 +21,7 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">TextWriter</param>
         public virtual void Render(System.IO.TextWriter writer)
         {
-            var text = ReadTemplateContent();
+            var text = this.TemplateContent;
             var tags = ReadAll(text);
             Render(writer, tags);
         }
@@ -80,32 +63,7 @@ namespace JinianNet.JNTemplate
                 }
             }
         }
-
-        /// <summary>
-        /// 读取模板内容
-        /// </summary>
-        /// <returns></returns>
-        protected string ReadTemplateContent()
-        {
-            if (!string.IsNullOrWhiteSpace(this.TemplateContent))
-            {
-                return this.TemplateContent;
-            }
-            if (!string.IsNullOrWhiteSpace(this.Path))
-            {
-                if (this.Context == null)
-                {
-                    throw new System.ArgumentNullException(nameof(Context));
-                }
-                var res = this.Context.Load(this.Path);
-                if (res == null)
-                {
-                    throw new Exception.TemplateException($"Path:\"{this.Path}\", the file could not be found.");
-                }
-                return res.Content;
-            }
-            return null;
-        }
+         
 
 
         /// <summary>
@@ -160,32 +118,7 @@ namespace JinianNet.JNTemplate
                 this.Context.AddError(e);
                 writer.Write(tag.ToString());
             }
-        }
+        } 
 
-
-
-        /// <summary>
-        /// 设置数据
-        /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        public void Set<T>(string key, T value)
-        {
-            Context.TempData.Set<T>(key, value);
-        }
-
-        /// <summary>
-        /// 设置静态对象
-        /// </summary>
-        /// <param name="key">对象名</param>
-        /// <param name="type">类型</param>
-        public void SetStaticType(string key, Type type)
-        {
-            if (string.IsNullOrEmpty(key))
-            {
-                key = type.Name;
-            }
-            Context.TempData.Set(key, null, type);
-        }
     }
 }

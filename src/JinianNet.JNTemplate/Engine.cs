@@ -107,13 +107,69 @@ namespace JinianNet.JNTemplate
         /// <param name="fileName">模板路径</param>
         /// <param name="action">ACTION</param>
         /// <returns></returns>
-        public static ICompileTemplate Precompiled(string name, string fileName, Action<CompileContext> action = null)
+        public static ICompileTemplate CompileFile(string name, string fileName, Action<CompileContext> action = null)
         {
+            var res = Runtime.Loader.Load(fileName, Runtime.Encoding, Runtime.ResourceDirectories.ToArray());
+            if (res == null)
+            {
+                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+            }
+
             if (string.IsNullOrEmpty(name))
             {
-                throw new System.ArgumentNullException("name cannot be null.");
+                name = res.FullPath;
             }
-            return Runtime.Templates[name] = Compiler.CompileFile(name, fileName, action);
+            return Runtime.Templates[name] = Compiler.Compile(name, res.Content, action);
+        }
+
+
+        /// <summary>
+        /// 编译并执行模板
+        /// </summary>
+        /// <param name="fileName">模板路径</param>
+        /// <param name="ctx">TemplateContext</param>
+        /// <returns></returns>
+        public static string CompileFileAndExec(string fileName, TemplateContext ctx)
+        {
+            var full = ctx.FindFullPath(fileName);
+            if (full == null)
+            {
+                throw new Exception.TemplateException($"\"{ fileName }\" cannot be found.");
+            }
+            var template = Runtime.Templates[full];
+            if (template == null)
+            {
+                template = CompileFile(full, full, (c) => ctx.CopyTo(c));
+                if (template == null)
+                {
+                    throw new Exception.TemplateException($"\"{ fileName }\" compile error.");
+                }
+            }
+            using (var sw = new System.IO.StringWriter())
+            {
+                template.Render(sw, ctx);
+                return sw.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 预编译模板
+        /// </summary>
+        /// <param name="name">模板名称 必须唯一，建议使用模板文件绝对路径</param>
+        /// <param name="content">模板内容 </param>
+        /// <param name="action">ACTION</param>
+        /// <returns></returns>
+        public static ICompileTemplate Compile(string name, string content, Action<CompileContext> action = null)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                name = content.GetHashCode().ToString();
+            }
+            return Runtime.Templates[name] = Compiler.Compile(name, content, action);
         }
 
         /// <summary>
@@ -122,11 +178,11 @@ namespace JinianNet.JNTemplate
         /// <param name="fs">模板文件</param>
         /// <param name="action">action</param>
         /// <returns></returns>
-        public static void Precompiled(System.IO.FileInfo[] fs, Action<CompileContext> action = null)
+        public static void CompileFile(System.IO.FileInfo[] fs, Action<CompileContext> action = null)
         {
             foreach (var f in fs)
             {
-                Runtime.Templates[f.FullName] = Compiler.CompileFile(f.FullName, f.FullName, action);
+                CompileFile(f.FullName, f.FullName, action);
             }
         }
 
@@ -164,6 +220,10 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static ITemplate CreateTemplate(string name, string text)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                name = text.GetHashCode().ToString();
+            }
             ITemplate template;
             if (EnableCompile)
             {
@@ -172,10 +232,6 @@ namespace JinianNet.JNTemplate
             else
             {
                 template = new Template(CreateContext(), text);
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                name = text.GetHashCode().ToString();
             }
             template.TemplateKey = name;
             template.Context.CurrentPath = System.IO.Directory.GetCurrentDirectory();
@@ -203,9 +259,50 @@ namespace JinianNet.JNTemplate
         {
             if (EnableCompile)
             {
-                return LoadTemplate<CompileTemplate>(name, fileName, CreateContext());
+                return LoadCompileTemplate(name, fileName);
             }
-            return LoadTemplate<Template>(name, fileName, CreateContext());
+
+            var ctx = CreateContext();
+            var res = ctx.Load(fileName);
+            if (res == null)
+            {
+                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+            }
+
+            var t = LoadTemplate<Template>(name, fileName, CreateContext());
+            t.TemplateContent = res.Content;
+            return t;
+        }
+
+        /// <summary>
+        /// 从指定路径加载模板
+        /// </summary>
+        /// <param name="name">模板名称 必须唯一</param>
+        /// <param name="fileName">模板文件</param> 
+        /// <returns>ITemplate</returns>
+        private static ITemplate LoadCompileTemplate(string name, string fileName)
+        {
+            var ctx = CreateContext();
+            if (string.IsNullOrEmpty(name))
+            {
+                name = ctx.FindFullPath(fileName);
+                if (string.IsNullOrEmpty(name))
+                {
+                    throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+                }
+            }
+            var template = LoadTemplate<CompileTemplate>(name, fileName, ctx);
+            if (Runtime.Templates.Keys.Contains(name))
+            {
+                return template;
+            }
+            var res = ctx.Load(fileName);
+            if (res == null)
+            {
+                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+            }
+            template.TemplateContent = res.Content;
+            return template;
         }
 
         /// <summary>
@@ -215,24 +312,19 @@ namespace JinianNet.JNTemplate
         /// <param name="fileName">模板文件</param>
         /// <param name="ctx">模板上下文</param>
         /// <returns>ITemplate</returns>
-        public static T LoadTemplate<T>(string name, string fileName, TemplateContext ctx)
+        private static T LoadTemplate<T>(string name, string fileName, TemplateContext ctx)
             where T : ITemplate, new()
         {
             T template = new T();
             template.Context = ctx;
-            template.Path = ctx.FindFullPath(fileName);
             template.TemplateKey = name;
-            if (string.IsNullOrEmpty(template.Path))
-            {
-                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
-            }
             if (string.IsNullOrEmpty(template.TemplateKey))
             {
-                template.TemplateKey = template.Path;
+                template.TemplateKey = fileName;
             }
-            if (string.IsNullOrEmpty(template.Context.CurrentPath))
+            if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
-                template.Context.CurrentPath = Runtime.Loader.GetDirectoryName(template.Path);
+                template.Context.CurrentPath = Runtime.Loader.GetDirectoryName(fileName);
             }
             return template;
         }

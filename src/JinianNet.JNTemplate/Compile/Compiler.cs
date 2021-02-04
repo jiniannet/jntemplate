@@ -338,117 +338,15 @@ namespace JinianNet.JNTemplate.Compile
             return Compile(tags, ctx);
         }
 
-        /// <summary>
-        /// 编译模板文件
-        /// </summary>
-        /// <param name="absFileName">Absolute file path</param>
-        /// <param name="ctx">Compile Context</param>
-        /// <returns></returns>
-        private static ICompileTemplate CompileFile(string absFileName, CompileContext ctx)
-        {
-            var res = Runtime.Loader.Load(absFileName, ctx.Charset, new string[0]);
-            if (res != null)
-            {
-                return Compile(res.Content, ctx);
-                //return Compile(absFileName, res.Content);
-            }
-            throw new Exception.CompileException($"cannot load resource:\"{absFileName}\".");
-        }
-
+       
         /// <summary>
         /// 获取HASHCODE
         /// </summary>
         /// <param name="name">名称</param>
         /// <returns></returns>
-        private static string ToHashCode(string name)
+        public static string ToHashCode(string name)
         {
             return name.GetHashCode().ToString();
-        }
-
-
-        /// <summary>
-        /// 生成编译模板
-        /// </summary> 
-        /// <param name="name">模板名 唯一</param>  
-        /// <param name="fileName">模板文件</param>
-        /// <param name="action">action</param>
-        /// <returns></returns>
-        public static ICompileTemplate CompileFile(string name, string fileName, Action<CompileContext> action = null)
-        {
-            CompileContext ctx;
-            if (string.IsNullOrEmpty(name))
-            {
-                ctx = GenerateContext(fileName);
-            }
-            else
-            {
-                ctx = GenerateContext(name);
-            }
-            if (action != null)
-            {
-                action(ctx);
-            }
-            var full = CompileBuilder.FindPath(fileName, ctx);
-            if (string.IsNullOrEmpty(full))
-            {
-                throw new Exception.CompileException($"\"{fileName}\" cannot be found.");
-            }
-            if (ctx.Name != name)
-            {
-                ctx.Name = full;
-            }
-            if (string.IsNullOrEmpty(ctx.CurrentPath))
-            {
-                ctx.CurrentPath = Runtime.Loader.GetDirectoryName(full);
-            }
-            return CompileFile(full, ctx);
-        }
-
-
-
-        /// <summary>
-        /// 生成编译模板
-        /// </summary> 
-        /// <param name="fileName">文件</param>
-        /// <param name="context">模板内容</param>
-        /// <returns></returns>
-        public static ICompileTemplate GenerateCompileTemplate(string fileName, TemplateContext context)
-        {
-            return GenerateCompileTemplate(fileName, (ctx) =>
-            {
-                ctx.Data = context.TempData;
-                ctx.CurrentPath = context.CurrentPath;
-                ctx.Charset = context.Charset;
-                ctx.ResourceDirectories.AddRange(context.ResourceDirectories);
-                ctx.StripWhiteSpace = context.StripWhiteSpace;
-                ctx.ThrowExceptions = context.ThrowExceptions;
-            });
-        }
-
-        /// <summary>
-        /// 生成编译模板
-        /// </summary>
-        /// <param name="name">模板名 唯一</param>
-        /// <param name="content">模板内容</param>
-        /// <param name="action">ACTION</param>
-        /// <returns></returns>
-        public static ICompileTemplate GenerateCompileTemplate(string name, string content, Action<CompileContext> action = null)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                name = ToHashCode(content);
-            }
-            var ctx = GenerateContext(name);
-            if (action != null)
-            {
-                action(ctx);
-            }
-            var t = Runtime.Templates[ctx.Name];
-            if (t != null)
-            {
-                return t as ICompileTemplate;
-            }
-            return Runtime.Templates[ctx.Name] = Compile(content, ctx);
         }
 
         /// <summary>
@@ -464,37 +362,5 @@ namespace JinianNet.JNTemplate.Compile
             TypeGuess.Register<T>(guess);
         }
 
-        /// <summary>
-        /// 生成编译模板
-        /// </summary>
-        /// <param name="fileName">模板文件</param>
-        /// <param name="action">ACTION</param>
-        /// <returns></returns>
-        public static ICompileTemplate GenerateCompileTemplate(string fileName, Action<CompileContext> action = null)
-        {
-            var name = fileName;
-
-            var ctx = GenerateContext(name);
-            if (action != null)
-            {
-                action(ctx);
-            }
-            var full = CompileBuilder.FindPath(fileName, ctx);
-            if (string.IsNullOrEmpty(full))
-            {
-                throw new Exception.CompileException($"\"{fileName}\" cannot be found.");
-            }
-            ctx.Name = full;
-            if (string.IsNullOrEmpty(ctx.CurrentPath))
-            {
-                ctx.CurrentPath = Runtime.Loader.GetDirectoryName(full);
-            }
-            var t = Runtime.Templates[ctx.Name];
-            if (t != null)
-            {
-                return t as ICompileTemplate;
-            }
-            return Runtime.Templates[ctx.Name] = CompileFile(full, ctx);
-        }
     }
 }

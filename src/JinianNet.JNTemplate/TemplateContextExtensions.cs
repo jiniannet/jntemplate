@@ -50,5 +50,26 @@ namespace JinianNet.JNTemplate
             var paths = ctx.GetResourceDirectories();
             return Runtime.Loader.FindFullPath(fileName, paths);
         }
+
+        /// <summary>
+        /// TemplateContext CopyTo CompileContext
+        /// </summary>
+        /// <param name="ctx1">TemplateContext</param>
+        /// <param name="ctx2">CompileContext</param>
+        public static void CopyTo(this TemplateContext ctx1, Compile.CompileContext ctx2)
+        {
+            if (ctx1 != null && ctx2 != null)
+            {
+                ctx2.Data = ctx1.TempData;
+                ctx2.CurrentPath = ctx1.CurrentPath;
+                ctx2.Charset = ctx1.Charset;
+                if (ctx1.ResourceDirectories != null && ctx1.ResourceDirectories.Count > 0)
+                {
+                    ctx2.ResourceDirectories.AddRange(ctx1.ResourceDirectories);
+                }
+                ctx2.StripWhiteSpace = ctx1.StripWhiteSpace;
+                ctx2.ThrowExceptions = ctx1.ThrowExceptions;
+            }
+        }
     }
 }

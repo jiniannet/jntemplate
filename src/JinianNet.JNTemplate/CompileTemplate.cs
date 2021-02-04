@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     ///  Compile Template
     /// </summary>
-    public class CompileTemplate : CompileTemplateBase
+    public class CompileTemplate : TemplateBase,ICompileTemplate, ITemplate
     {
         /// <summary>
         /// CompileTemplate
@@ -42,48 +42,34 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="writer">writer</param>
         /// <param name="context">context</param>
-        public override void Render(TextWriter writer, TemplateContext context)
+        public virtual void Render(TextWriter writer, TemplateContext context)
         {
-            if (string.IsNullOrEmpty(this.TemplateKey))
-            {
-                if (!string.IsNullOrEmpty(this.Path))
-                {
-                    var full = context.FindFullPath(this.Path);
-                    if (string.IsNullOrEmpty(full))
-                    {
-                        throw new Exception.TemplateException($"Path:\"{this.Path}\", the file could not be found.");
-                    }
-                    this.TemplateKey = full;
-                }
-                else if (!string.IsNullOrEmpty(this.TemplateContent))
-                {
-                    this.TemplateKey = this.TemplateContent.GetHashCode().ToString();
-                }
-                else
-                {
-                    throw new Exception.TemplateException("TemplateKey cannot be null.");
-                }
-            }
             var t = Runtime.Templates[this.TemplateKey];
             if (t == null)
             {
-                var text = base.ReadTemplateContent();
+                var text = this.TemplateContent;
                 t = Runtime.Templates[this.TemplateKey] = Compiler.Compile(this.TemplateKey, text, (ctx) =>
                 {
-                    ctx.Data = context.TempData;
-                    ctx.CurrentPath = context.CurrentPath;
-                    ctx.Charset = context.Charset;
-                    ctx.ResourceDirectories.AddRange(context.ResourceDirectories);
-                    ctx.StripWhiteSpace = context.StripWhiteSpace;
-                    ctx.ThrowExceptions = context.ThrowExceptions;
+                    context.CopyTo(ctx);
                 });
+                if (t == null)
+                {
+                    throw new Exception.TemplateException($"compile error.");
+                }
                 this.TemplateContent = null;
-            } 
-            if (t == null)
-            {
-                throw new Exception.CompileException("compile error.");
             }
-            t.Render(writer, context);
+            t.Render(writer, context); 
+        }
+
+         
+
+        /// <summary>
+        /// 呈现内容
+        /// </summary>
+        /// <param name="writer">TextWriter</param>
+        public virtual void Render(System.IO.TextWriter writer)
+        {
+            Render(writer, this.Context);
         }
     }
 }

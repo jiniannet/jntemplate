@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Test
     {
 
         /// <summary>
-        /// 测试索引取值与方法标签
+        /// 测试Load
         /// </summary>
         [Fact]
         public void TestLoadParent()
@@ -23,6 +23,21 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets"; 
 
+            var render = template.Render();
+            Assert.Equal("this is public", render);
+        }
+
+
+        /// <summary>
+        /// 测试索引取值与方法标签
+        /// </summary>
+        [Fact]
+        public void TestLoadVar()
+        {
+            var templateContent = "$load(path)";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets";
+            template.Set("path", $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}public.html");
             var render = template.Render();
             Assert.Equal("this is public", render);
         }
@@ -46,6 +61,20 @@ namespace JinianNet.JNTemplate.Test
         /// 测试索引取值与方法标签
         /// </summary>
         [Fact]
+        public void TestIncludeVar()
+        {
+            var templateContent = "$include(path)";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("path", "include/header.txt");
+            template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}default";
+            var render = template.Render();
+            Assert.Equal("你好，$name", render);
+        }
+
+        /// <summary>
+        /// 测试索引取值与方法标签
+        /// </summary>
+        [Fact]
         public void TestLoad()
         {
             var templateContent = "$load(\"include/header.txt\")";
@@ -55,6 +84,7 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
         }
+
 
         /// <summary>
         /// 测试Layout

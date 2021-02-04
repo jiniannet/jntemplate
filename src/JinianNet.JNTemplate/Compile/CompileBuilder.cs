@@ -2174,13 +2174,7 @@ namespace JinianNet.JNTemplate.Compile
                 var strTag = t.Path as StringTag;
                 if (strTag != null)
                 {
-                    var res = Runtime.Loader.Load(strTag.Value, Runtime.Encoding,
-#if NETCOREAPP || NETSTANDARD
-                        c.GetResourceDirectories()
-#else
-                        TemplateContextExtensions.GetResourceDirectories(c)
-#endif
-                        );
+                    var res = c.Load(strTag.Value);
                     if (res != null)
                     {
                         il.Emit(OpCodes.Ldstr, res.Content);
@@ -2193,14 +2187,12 @@ namespace JinianNet.JNTemplate.Compile
                 else
                 {
                     var strType = typeof(string);
-                    var strArrType = typeof(string[]);
                     var resType = typeof(Resources.ResourceInfo);
                     var ctxType = typeof(TemplateContext);
                     Label labelEnd = il.DefineLabel();
                     Label labelSuccess = il.DefineLabel();
                     il.DeclareLocal(strType);
                     il.DeclareLocal(typeof(bool));
-                    il.DeclareLocal(strArrType);
                     il.DeclareLocal(resType);
                     il.DeclareLocal(typeof(bool));
                     il.DeclareLocal(type);
@@ -2213,8 +2205,8 @@ namespace JinianNet.JNTemplate.Compile
                     if (m.ReturnType.FullName != "System.String")
                     {
                         il.DeclareLocal(m.ReturnType);
-                        il.Emit(OpCodes.Stloc, 6);
-                        LoadVariable(il, m.ReturnType, 6);
+                        il.Emit(OpCodes.Stloc, 5);
+                        LoadVariable(il, m.ReturnType, 5);
                         //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
                         Call(il, m.ReturnType, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
                     }
@@ -2227,35 +2219,28 @@ namespace JinianNet.JNTemplate.Compile
                     il.Emit(OpCodes.Brfalse, labelEnd);
 
                     il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(TemplateContextExtensions), "GetResourceDirectories", new Type[] { ctxType }));
-                    il.Emit(OpCodes.Stloc_2);
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(ctxType, "Loader"));
                     il.Emit(OpCodes.Ldloc_0);
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(ctxType, "Charset"));
+                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(TemplateContextExtensions), "Load", new Type[] { typeof(Context), strType }));
+                    il.Emit(OpCodes.Stloc_2);
                     il.Emit(OpCodes.Ldloc_2);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(Resources.IResourceLoader), "Load", new Type[] { strType, typeof(System.Text.Encoding), strArrType }));
-                    il.Emit(OpCodes.Stloc_3);
-                    il.Emit(OpCodes.Ldloc_3);
                     il.Emit(OpCodes.Ldnull);
                     il.Emit(OpCodes.Cgt_Un);
-                    il.Emit(OpCodes.Stloc, 4);
-                    il.Emit(OpCodes.Ldloc, 4);
+                    il.Emit(OpCodes.Stloc, 3);
+                    il.Emit(OpCodes.Ldloc, 3);
                     il.Emit(OpCodes.Brfalse, labelEnd);
 
-                    il.Emit(OpCodes.Ldloc_3);
+                    il.Emit(OpCodes.Ldloc_2);
                     il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(resType, "Content"));
-                    il.Emit(OpCodes.Stloc, 5);
+                    il.Emit(OpCodes.Stloc, 4);
                     il.Emit(OpCodes.Br, labelSuccess);
 
                     il.MarkLabel(labelEnd);
-                    il.Emit(OpCodes.Ldnull);
-                    il.Emit(OpCodes.Stloc, 5);
+                    il.Emit(OpCodes.Ldstr, $"[IncludeTag] : \"{t.Path.ToSource()}\" cannot be found.");
+                    il.Emit(OpCodes.Stloc, 4);
 
 
                     il.MarkLabel(labelSuccess);
-                    il.Emit(OpCodes.Ldloc, 5);
+                    il.Emit(OpCodes.Ldloc, 4);
                 }
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
@@ -2352,10 +2337,7 @@ namespace JinianNet.JNTemplate.Compile
                     var m = GetCompileMethod(t.Path, c);
                     il.DeclareLocal(typeof(string));
                     il.DeclareLocal(typeof(bool));
-                    il.DeclareLocal(typeof(ICompileTemplate));
-                    il.DeclareLocal(typeof(bool));
-                    il.DeclareLocal(typeof(System.IO.StringWriter));
-                    il.DeclareLocal(typeof(string));
+                    il.DeclareLocal(typeof(string)); 
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
@@ -2363,22 +2345,22 @@ namespace JinianNet.JNTemplate.Compile
                     if (m.ReturnType.FullName != "System.String")
                     {
                         il.DeclareLocal(m.ReturnType);
-                        il.Emit(OpCodes.Stloc, 6);
+                        il.Emit(OpCodes.Stloc, 3);
                         if (m.ReturnType.IsValueType)
                         {
-                            il.Emit(OpCodes.Ldloca, 6);
+                            il.Emit(OpCodes.Ldloca, 3);
                         }
                         else
                         {
-                            il.Emit(OpCodes.Ldloc, 6);
+                            il.Emit(OpCodes.Ldloc, 3);
                             il.DeclareLocal(typeof(bool));
                             il.Emit(OpCodes.Ldnull);
                             il.Emit(OpCodes.Cgt_Un);
-                            il.Emit(OpCodes.Stloc, 7);
-                            il.Emit(OpCodes.Ldloc, 7);
+                            il.Emit(OpCodes.Stloc, 4);
+                            il.Emit(OpCodes.Ldloc, 4);
                             il.Emit(OpCodes.Brfalse, labelEnd);
 
-                            il.Emit(OpCodes.Ldloc, 6);
+                            il.Emit(OpCodes.Ldloc, 3);
                         }
 
                         //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
@@ -2399,52 +2381,18 @@ namespace JinianNet.JNTemplate.Compile
 
                     il.Emit(OpCodes.Ldloc_0);
                     il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(Compiler), "GenerateCompileTemplate", new Type[] { typeof(string), typeof(TemplateContext) }));
+                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(Engine), "CompileFileAndExec", new Type[] { typeof(string), typeof(TemplateContext) }));
                     il.Emit(OpCodes.Stloc, 2);
-                    il.Emit(OpCodes.Ldloc, 2);
-                    il.Emit(OpCodes.Ldnull);
-                    il.Emit(OpCodes.Cgt_Un);
-                    il.Emit(OpCodes.Stloc, 3);
-                    il.Emit(OpCodes.Ldloc, 3);
-                    il.Emit(OpCodes.Brfalse, labelEnd);
-
-                    il.Emit(OpCodes.Newobj, typeof(System.IO.StringWriter).GetConstructor(Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc, 4);
-
-                    il.BeginExceptionBlock();
-
-                    il.Emit(OpCodes.Ldloc, 2);
-                    il.Emit(OpCodes.Ldloc, 4);
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(ICompileTemplate), "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) }));
-
-                    il.Emit(OpCodes.Ldloc, 4);
-                    //il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
-                    Call(il, typeof(object), DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc, 5);
-                    //il.Emit(OpCodes.Leave, labelSuccess);
-
-                    il.BeginFinallyBlock();
-
-                    //il.Emit(OpCodes.Ldloc, 4);
-                    //il.Emit(OpCodes.Brfalse, labelEnd);
-
-                    il.Emit(OpCodes.Ldloc, 4);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(System.IO.StringWriter), "Dispose", Type.EmptyTypes));
-
-                    //il.Emit(OpCodes.Endfinally);
-
-                    il.EndExceptionBlock();
 
                     il.Emit(OpCodes.Br, labelSuccess);
 
                     il.MarkLabel(labelEnd);
-                    il.Emit(OpCodes.Ldnull);
-                    il.Emit(OpCodes.Stloc, 5);
-
+                    il.Emit(OpCodes.Ldstr, $"[LoadTag] : \"{t.Path.ToSource()}\" cannot be found.");
+                    //il.Emit(OpCodes.Ldnull);
+                    il.Emit(OpCodes.Stloc, 2); 
 
                     il.MarkLabel(labelSuccess);
-                    il.Emit(OpCodes.Ldloc, 5);
+                    il.Emit(OpCodes.Ldloc, 2);
                 }
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
@@ -2805,22 +2753,6 @@ namespace JinianNet.JNTemplate.Compile
             });
             this.SetRenderFunc("Default");
             #endregion
-        }
-
-        /// <summary>
-        /// find path
-        /// </summary>
-        /// <param name="path">filename</param>
-        /// <param name="ctx">context</param>
-        /// <returns></returns>
-        public static string FindPath(string path, CompileContext ctx)
-        {
-#if NETCOREAPP || NETSTANDARD
-            string[] paths = ctx.GetResourceDirectories();
-#else
-            string[] paths = TemplateContextExtensions.GetResourceDirectories(ctx);
-#endif
-            return Runtime.Loader.FindFullPath(path, paths);
         }
     }
 }

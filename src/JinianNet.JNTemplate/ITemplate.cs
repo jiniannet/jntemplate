@@ -20,18 +20,13 @@ namespace JinianNet.JNTemplate
         /// </summary>
         TemplateContext Context { get; set; }
         /// <summary>
-        /// /模板文件地址
+        ///  模板名字
         /// </summary>
-        string Path { get; set; }
-
+        string TemplateKey { get; set; }
         /// <summary>
         /// 模板内容
         /// </summary>
         string TemplateContent { get; set; }
-        /// <summary>
-        ///  模板名字
-        /// </summary>
-        string TemplateKey { get; set; }
         /// <summary>
         /// 结果呈现
         /// </summary>
