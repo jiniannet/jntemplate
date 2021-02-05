@@ -184,5 +184,38 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("str1str2", render);
         }
+
+
+        /// <summary>
+        /// 测试属性方法
+        /// </summary>
+        [Fact]
+        public void TestPropertyFunc()
+        {
+            var templateContent = "${model.PropertyFunc(100)}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("model",new FuncInfo() {
+                PropertyFunc = (i)=>(i * 2).ToString()
+            });
+            var render = template.Render();
+            Assert.Equal("200", render);
+        }
+
+
+        /// <summary>
+        /// 测试字段方法
+        /// </summary>
+        [Fact]
+        public void TestFieldFunc()
+        {
+            var templateContent = "${model.FieldFunc(100)}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("model", new FuncInfo()
+            {
+                FieldFunc = (i) => (i * 2).ToString()
+            });
+            var render = template.Render();
+            Assert.Equal("200", render);
+        }
     }
 }

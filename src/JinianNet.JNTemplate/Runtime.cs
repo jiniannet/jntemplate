@@ -178,7 +178,7 @@ namespace JinianNet.JNTemplate
             }
             else
             {
-                Store.Parsers.IndexOf(parser, index);
+                Store.Parsers.Insert(index, parser);
             }
         }
 

@@ -225,7 +225,7 @@ namespace JinianNet.JNTemplate.Compile
         /// <param name="ctx">CompileContext</param>
         /// <param name="returnType">return type</param>
         /// <returns></returns>
-        private MethodBuilder CreateReutrnMethod<T>(CompileContext ctx, Type returnType)
+        public MethodBuilder CreateReutrnMethod<T>(CompileContext ctx, Type returnType)
         {
             if (returnType.FullName == "System.Void")
             {
@@ -541,6 +541,53 @@ namespace JinianNet.JNTemplate.Compile
         }
 
         /// <summary>
+        /// 调用方法
+        /// </summary>
+        /// <param name="il"></param>
+        /// <param name="type"></param> 
+        public void Ldelem(ILGenerator il, Type type)
+        {
+            switch (type.FullName)
+            {
+                case "System.Double":
+                    il.Emit(OpCodes.Ldelem_R8);
+                    break;
+                case "System.Single":
+                    il.Emit(OpCodes.Ldelem_R4);
+                    break;
+                case "System.Int64":
+                    il.Emit(OpCodes.Ldelem_I8);
+                    break;
+                case "System.Int32":
+                    il.Emit(OpCodes.Ldelem_I4);
+                    break;
+                case "System.UInt32":
+                    il.Emit(OpCodes.Ldelem_U4);
+                    break;
+                case "System.Int16":
+                    il.Emit(OpCodes.Ldelem_I2);
+                    break;
+                case "System.UInt16":
+                case "System.Char":
+                    il.Emit(OpCodes.Ldelem_U2);
+                    break;
+                case "System.Byte":
+                    il.Emit(OpCodes.Ldelem_U1);
+                    break;
+                default:
+                    if (type.IsValueType)
+                    {
+                        il.Emit(OpCodes.Ldelem, type);
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Ldelem_Ref);
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
         /// 设置编译方法
         /// </summary>
         /// <typeparam name="T">ITag</typeparam>
@@ -717,47 +764,7 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Ldloc, 1);
                 if (parentType.IsArray)
                 {
-                    switch (type.FullName)
-                    {
-                        case "System.Double":
-                            il.Emit(OpCodes.Ldelem_R8);
-                            break;
-                        case "System.Single":
-                            il.Emit(OpCodes.Ldelem_R4);
-                            break;
-                        case "System.Int64":
-                            il.Emit(OpCodes.Ldelem_I8);
-                            break;
-                        case "System.Int32":
-                            il.Emit(OpCodes.Ldelem_I4);
-                            break;
-                        case "System.UInt32":
-                            il.Emit(OpCodes.Ldelem_U4);
-                            break;
-                        case "System.Int16":
-                            il.Emit(OpCodes.Ldelem_I2);
-                            break;
-                        case "System.UInt16":
-                        case "System.Char":
-                            il.Emit(OpCodes.Ldelem_U2);
-                            break;
-                        case "System.Byte":
-                            il.Emit(OpCodes.Ldelem_U1);
-                            break;
-                        default:
-                            //il.Emit(OpCodes.Ldelem);
-                            if (type.IsValueType)
-                            {
-
-                                il.Emit(OpCodes.Ldelem, type);
-                                //il.Emit(OpCodes.Ldelema,type);
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Ldelem_Ref);
-                            }
-                            break;
-                    }
+                    Ldelem(il, type);
                     il.Emit(OpCodes.Stloc_2);
                 }
                 else
@@ -988,13 +995,46 @@ namespace JinianNet.JNTemplate.Compile
                         throw new CompileException("[FunctaionTag]:parameter error");
                     }
                 }
+
+                MethodInfo childMethd = null;
+                FieldInfo field = null;
                 if (t.Parent != null)
                 {
                     baseType = Compiler.TypeGuess.GetType(t.Parent, c);
                     method = DynamicHelpers.GetMethod(baseType, t.Name, paramType);
                     if (method == null)
                     {
-                        throw new CompileException($"[FunctaionTag]:method \"{t.Name}\" cannot be found!");
+                        var property = DynamicHelpers.GetPropertyInfo(baseType, t.Name);
+                        Type funcType = null;
+                        if (property == null)
+                        {
+                            field = DynamicHelpers.GetFieldInfo(baseType, t.Name);
+                            if (field != null)
+                            {
+                                funcType = field.FieldType;
+                            }
+                        }
+                        else
+                        {
+                            funcType = property.PropertyType;
+#if NET40 || NET20
+                            childMethd = property.GetGetMethod();
+#else
+                            childMethd = property.GetMethod;
+#endif
+                        }
+                        if (funcType != null)
+                        {
+                            if (funcType.BaseType.Name != "MulticastDelegate")
+                            {
+                                throw new ArgumentException($"[FunctaionTag]:\"{t.Name}\" must be delegate");
+                            }
+                            method = funcType.GetMethod("Invoke");
+                        }
+                        if (method == null)
+                        {
+                            throw new CompileException($"[FunctaionTag]:method \"{t.Name}\" cannot be found!");
+                        }
                     }
                 }
                 else
@@ -1022,7 +1062,9 @@ namespace JinianNet.JNTemplate.Compile
                 }
                 if (t.Parent != null)
                 {
-                    if (!method.IsStatic)
+                    if (!method.IsStatic
+                    && (childMethd == null || !childMethd.IsStatic)
+                    && (field == null || !field.IsStatic))
                     {
                         il.Emit(OpCodes.Nop);
                         var parentMethod = GetCompileMethod(t.Parent, c);
@@ -1059,9 +1101,26 @@ namespace JinianNet.JNTemplate.Compile
                     il.Emit(OpCodes.Call, m);
                     il.Emit(OpCodes.Stloc, len + i);
                 }
-                if (!method.IsStatic)
+                if (!method.IsStatic
+                    && (childMethd == null || !childMethd.IsStatic)
+                    && (field == null || !field.IsStatic))
                 {
                     LoadVariable(il, baseType, 0);
+                }
+                if (childMethd != null)
+                {
+                    il.Emit(OpCodes.Call, childMethd);
+                }
+                if (field != null)
+                {
+                    if (field.IsStatic)
+                    {
+                        il.Emit(OpCodes.Ldsfld, field);
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Ldfld, field);
+                    }
                 }
                 for (int i = 0; i < paramType.Length; i++)
                 {
@@ -1093,13 +1152,29 @@ namespace JinianNet.JNTemplate.Compile
             this.Register<ForeachTag>((tag, c) =>
             {
                 var t = tag as ForeachTag;
+                var sourceType = Compiler.TypeGuess.GetType(t.Source, c);
+                if (sourceType.IsArray)
+                {
+                    //return GetCompileMethod($"{ nameof(ForeachTag)}`Array", tag, c);
+                }
                 var type = Compiler.TypeGuess.GetType(t, c);
                 var stringBuilderType = typeof(System.Text.StringBuilder);
-                var enumerableType = typeof(System.Collections.IEnumerable);
                 var variableScopeType = typeof(VariableScope);
-                var enumeratorType = typeof(System.Collections.IEnumerator);
                 var templateContextType = typeof(TemplateContext);
-                var childType = TypeGuess.InferChildType(Compiler.TypeGuess.GetType(t.Source, c));
+                var childType = TypeGuess.InferChildType(sourceType);
+                var enumerableType = sourceType.GetInterface("IEnumerable`1");// typeof(System.Collections.IEnumerable);
+                Type enumeratorType;
+                bool mustTo = false;
+                if (enumerableType == null)
+                {
+                    enumerableType = typeof(System.Collections.IEnumerable);
+                    enumeratorType = typeof(System.Collections.IEnumerator);
+                    mustTo = true;
+                }
+                else
+                {
+                    enumeratorType = typeof(IEnumerator<>).MakeGenericType(childType);
+                }
                 if (childType.Length != 1)
                 {
                     throw new CompileException("[ForeachTag]:source error.");
@@ -1170,13 +1245,16 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Stloc_S, 5);
                 il.Emit(OpCodes.Ldloc_S, 4);
                 il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(enumeratorType, "Current"));
-                if (childType[0].IsValueType)
+                if (mustTo)
                 {
-                    il.Emit(OpCodes.Unbox_Any, childType[0]);
-                }
-                else
-                {
-                    il.Emit(OpCodes.Isinst, childType[0]);
+                    if (childType[0].IsValueType)
+                    {
+                        il.Emit(OpCodes.Unbox_Any, childType[0]);
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Isinst, childType[0]);
+                    }
                 }
                 il.Emit(OpCodes.Stloc_S, 6);
                 il.Emit(OpCodes.Ldloc, 2);
@@ -1249,7 +1327,14 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Nop);
                 il.MarkLabel(labelNext);
                 il.Emit(OpCodes.Ldloc_S, 4);
-                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(enumeratorType, "MoveNext", Type.EmptyTypes));
+                if (!mustTo)
+                {
+                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(System.Collections.IEnumerator), "MoveNext", Type.EmptyTypes));
+                }
+                else
+                {
+                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(enumeratorType, "MoveNext", Type.EmptyTypes));
+                }
                 il.Emit(OpCodes.Stloc_S, 7 + paramIndex);
                 il.Emit(OpCodes.Ldloc_S, 7 + paramIndex);
                 il.Emit(OpCodes.Brtrue, labelStart);
@@ -1263,6 +1348,225 @@ namespace JinianNet.JNTemplate.Compile
                 c.Data = old;
                 return mb.GetBaseDefinition();
             });
+
+            this.Register($"{ nameof(ForeachTag)}`Array", (tag, c) =>
+            {
+                var t = tag as ForeachTag;
+                var sourceType = Compiler.TypeGuess.GetType(t.Source, c);
+                var type = Compiler.TypeGuess.GetType(t, c);
+                var childType = TypeGuess.InferChildType(sourceType);
+                var templateContextType = typeof(TemplateContext);
+                var stringBuilderType = typeof(System.Text.StringBuilder);
+                if (childType.Length != 1)
+                {
+                    throw new CompileException("[ForeachTag]:source error.");
+                }
+
+                var old = c.Data;
+                var scope = new VariableScope(old);
+                c.Data = scope;
+                c.Set(t.Name, childType[0]);
+                c.Set("foreachIndex", typeof(int));
+
+                var mb = this.CreateReutrnMethod<ForeachTag>(c, type);
+                var il = mb.GetILGenerator();
+                Label labelNext = il.DefineLabel();
+                Label labelStart = il.DefineLabel();
+                il.DeclareLocal(stringBuilderType);
+                il.DeclareLocal(sourceType);
+                il.DeclareLocal(typeof(bool));
+                il.DeclareLocal(templateContextType);
+                il.DeclareLocal(typeof(int));
+                il.DeclareLocal(sourceType);
+                il.DeclareLocal(typeof(int));
+                il.DeclareLocal(childType[0]);
+                il.DeclareLocal(typeof(string));
+
+                //var index = 9;
+
+                var types = new Type[t.Children.Count];
+                for (var i = 0; i < t.Children.Count; i++)
+                {
+                    types[i] = Compiler.TypeGuess.GetType(t.Children[i], c);
+                    if (t.Children[i] is SetTag)
+                    {
+                        var setTag = t.Children[i] as SetTag;
+                        c.Set(setTag.Name, Compiler.TypeGuess.GetType(setTag.Value, c));
+                    }
+                    if (types[i].FullName == "System.Void" || t.Children[i] is TextTag)
+                    {
+                        continue;
+                    }
+                    il.DeclareLocal(types[i]);
+                }
+
+
+                il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc, 0);
+
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Ldarg_1);
+                var method = GetCompileMethod(t.Source, c);
+                il.Emit(OpCodes.Call, method);
+
+                il.Emit(OpCodes.Stloc_1);
+                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Ldnull);
+                //========================================================================================
+
+                /*
+.method public hidebysig 
+	instance string GetForeachTag0 (
+		class JinianNet.JNTemplate.TemplateContext P_0
+	) cil managed 
+{
+	// Method begins at RVA 0x17460
+	// Code size 174 (0xae)
+	.maxstack 3
+	.locals init (
+		[0] class [mscorlib]System.Text.StringBuilder stringBuilder,
+		[1] class ConsoleApp4.UserInfo[] variableTag,
+		[2] bool,
+		[3] class JinianNet.JNTemplate.TemplateContext templateContext,
+		[4] int32 num,
+		[5] class ConsoleApp4.UserInfo[],
+		[6] int32,
+		[7] class ConsoleApp4.UserInfo node,
+		[8] int32,
+		[9] string
+	)
+
+	IL_0000: nop
+	IL_0001: newobj instance void [mscorlib]System.Text.StringBuilder::.ctor()
+	IL_0006: stloc.0
+	IL_0007: ldarg.0
+	IL_0008: ldarg.1
+	IL_0009: call instance class ConsoleApp4.UserInfo[] ConsoleApp4.Program::bbb(class JinianNet.JNTemplate.TemplateContext)
+	IL_000e: stloc.1
+	IL_000f: ldloc.1
+	IL_0010: ldnull
+	IL_0011: cgt.un
+	IL_0013: stloc.2
+	IL_0014: ldloc.2
+	IL_0015: brfalse IL_00a1
+
+	IL_001a: nop
+	IL_001b: ldarg.1
+	IL_001c: call class JinianNet.JNTemplate.TemplateContext JinianNet.JNTemplate.TemplateContext::CreateContext(class JinianNet.JNTemplate.TemplateContext)
+	IL_0021: stloc.3
+	IL_0022: ldc.i4.0
+	IL_0023: stloc.s 4
+	IL_0025: nop
+	IL_0026: ldloc.1
+	IL_0027: stloc.s 5
+	IL_0029: ldc.i4.0
+	IL_002a: stloc.s 6
+	IL_002c: br.s IL_0098
+	// loop start (head: IL_0098)
+		IL_002e: ldloc.s 5
+		IL_0030: ldloc.s 6
+		IL_0032: ldelem.ref
+		IL_0033: stloc.s 7
+		IL_0035: nop
+		IL_0036: ldloc.s 4
+		IL_0038: ldc.i4.1
+		IL_0039: add
+		IL_003a: stloc.s 4
+		IL_003c: ldloc.3
+		IL_003d: callvirt instance class JinianNet.JNTemplate.VariableScope JinianNet.JNTemplate.TemplateContext::get_TempData()
+		IL_0042: ldstr "i"
+		IL_0047: ldloc.s 7
+		IL_0049: callvirt instance void JinianNet.JNTemplate.VariableScope::Set<class ConsoleApp4.UserInfo>(string, !!0)
+		IL_004e: nop
+		IL_004f: ldloc.3
+		IL_0050: callvirt instance class JinianNet.JNTemplate.VariableScope JinianNet.JNTemplate.TemplateContext::get_TempData()
+		IL_0055: ldstr "foreachIndex"
+		IL_005a: ldloc.s 4
+		IL_005c: callvirt instance void JinianNet.JNTemplate.VariableScope::Set<int32>(string, !!0)
+		IL_0061: nop
+		IL_0062: ldloc.0
+		IL_0063: ldstr " "
+		IL_0068: callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
+		IL_006d: pop
+		IL_006e: ldloc.0
+		IL_006f: ldarg.0
+		IL_0070: ldloc.3
+		IL_0071: call instance int32 ConsoleApp4.Program::GetReferenceTag2(class JinianNet.JNTemplate.TemplateContext)
+		IL_0076: stloc.s 8
+		IL_0078: ldloca.s 8
+		IL_007a: call instance string [mscorlib]System.Int32::ToString()
+		IL_007f: callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
+		IL_0084: pop
+		IL_0085: ldloc.0
+		IL_0086: ldstr " "
+		IL_008b: callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
+		IL_0090: pop
+		IL_0091: nop
+		IL_0092: ldloc.s 6
+		IL_0094: ldc.i4.1
+		IL_0095: add
+		IL_0096: stloc.s 6
+
+		IL_0098: ldloc.s 6
+		IL_009a: ldloc.s 5
+		IL_009c: ldlen
+		IL_009d: conv.i4
+		IL_009e: blt.s IL_002e
+	// end loop
+
+	IL_00a0: nop
+
+	IL_00a1: ldloc.0
+	IL_00a2: callvirt instance string [mscorlib]System.Object::ToString()
+	IL_00a7: stloc.s 9
+	IL_00a9: br.s IL_00ab
+
+	IL_00ab: ldloc.s 9
+	IL_00ad: ret
+} // end of method Program::GetForeachTag0
+
+                 
+                 */
+                il.Emit(OpCodes.Ldc_I4_0);
+                il.Emit(OpCodes.Stloc_2);
+
+
+                il.Emit(OpCodes.Br, labelStart);
+
+
+                il.MarkLabel(labelNext);
+                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Ldloc_2);
+                Ldelem(il, childType[0]);
+                il.Emit(OpCodes.Stloc_3);
+                //il.Emit(OpCodes.Ldloc_3);
+
+                //do...
+
+
+                il.Emit(OpCodes.Ldloc_2);
+                il.Emit(OpCodes.Ldc_I4_1);
+                il.Emit(OpCodes.Add);
+                il.Emit(OpCodes.Stloc_2);
+
+                il.MarkLabel(labelStart);
+                il.Emit(OpCodes.Ldloc_2);
+                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Ldlen);
+                il.Emit(OpCodes.Conv_I4);
+                il.Emit(OpCodes.Blt, labelNext);
+
+
+                il.Emit(OpCodes.Ldloc, 4);
+                Call(il, stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc, 5);
+                il.Emit(OpCodes.Ldloc, 5);
+                il.Emit(OpCodes.Ret);
+
+                //return mb.GetBaseDefinition();
+                return null;
+            });
+
             this.Register<LogicTag>((tag, c) =>
             {
                 var t = tag as LogicTag;
@@ -2337,7 +2641,7 @@ namespace JinianNet.JNTemplate.Compile
                     var m = GetCompileMethod(t.Path, c);
                     il.DeclareLocal(typeof(string));
                     il.DeclareLocal(typeof(bool));
-                    il.DeclareLocal(typeof(string)); 
+                    il.DeclareLocal(typeof(string));
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
@@ -2389,7 +2693,7 @@ namespace JinianNet.JNTemplate.Compile
                     il.MarkLabel(labelEnd);
                     il.Emit(OpCodes.Ldstr, $"[LoadTag] : \"{t.Path.ToSource()}\" cannot be found.");
                     //il.Emit(OpCodes.Ldnull);
-                    il.Emit(OpCodes.Stloc, 2); 
+                    il.Emit(OpCodes.Stloc, 2);
 
                     il.MarkLabel(labelSuccess);
                     il.Emit(OpCodes.Ldloc, 2);

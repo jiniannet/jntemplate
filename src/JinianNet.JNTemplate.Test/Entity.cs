@@ -21,4 +21,11 @@ namespace JinianNet.JNTemplate.Test
         }
         public ClassValue Class { get; set; }
     }
+
+    public class FuncInfo
+    {
+        public Func<int, string> PropertyFunc { get; set; }
+        public Func<int, string> FieldFunc;
+         
+    }
 }
