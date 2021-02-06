@@ -19,11 +19,11 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 资源路径
         /// </summary>
-        public List<string> ResourceDirectories { get; set; }
+        public List<string> ResourceDirectories { get; set; }= new List<string>();
         /// <summary>
         /// 字符编码
         /// </summary> 
-        public string Charset { get; set; }
+        public string Charset { get; set; } = "utf-8";
         /// <summary>
         /// 标签前缀
         /// </summary> 
@@ -73,7 +73,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// 标签分析器
         /// </summary>
-        public List<Parsers.ITagParser> TagParsers { get; set; }
+        public List<Parsers.ITagParser> TagParsers { get; set; }= new List<Parsers.ITagParser>();
 
         /// <summary>
         /// 创建默认配置

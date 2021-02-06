@@ -226,7 +226,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static bool IsMatchType(Type original, Type target)
         {
-            return original == target || target.IsSubclassOf(target);
+            return original == target || original.IsSubclassOf(target) || target.IsAssignableFrom(original);
         }
 
         /// <summary>

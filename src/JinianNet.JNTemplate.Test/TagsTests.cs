@@ -387,6 +387,20 @@ $key5";
             Assert.Equal("你好，jntemplate", render);
         }
 
+
+        /// <summary>
+        /// 测试数字标签
+        /// </summary>
+        [Fact]
+        public void TestInt()
+        {
+            var templateContent = "${12}";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+            Assert.Equal("12", render);
+
+        }
+
         ///// <summary>
         ///// 测试标签大小写
         ///// </summary>

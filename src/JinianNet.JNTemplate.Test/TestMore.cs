@@ -1,5 +1,6 @@
 ﻿using JinianNet.JNTemplate;
 using JinianNet.JNTemplate.Compile;
+using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -36,6 +37,23 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
 
             Assert.Equal("say hello", render);
+        }
+
+        /// <summary>
+        /// 测试加载器
+        /// </summary>
+        [Fact]
+        public void TestLoader()
+        {
+
+            Runtime.SetLoader(new TestLoader()); 
+            var template = Engine.LoadTemplate("11111");
+            template.Set("name","jntemplate");
+            var render = template.Render();
+
+            //还源FileLoader
+            Engine.Configure((c) => c.Loader = new FileLoader()); 
+            Assert.Equal($"当前是模板：11111 hello,jntemplate", render);
         }
     }
 }

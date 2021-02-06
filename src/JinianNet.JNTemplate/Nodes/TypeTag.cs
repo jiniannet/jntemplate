@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     /// <typeparam name="T">类型</typeparam>
     [Serializable]
-    public abstract class TypeTag<T> : SpecialTag
+    public abstract class TypeTag<T> : SpecialTag, ITypeTag<T>
     {
         private T baseValue;
         /// <summary>

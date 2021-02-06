@@ -137,48 +137,6 @@ namespace JinianNet.JNTemplate.Compile
 
                 return typeof(int);
             });
-            //this.Register<ExpressionTag>((tag, ctx) =>
-            //{
-            //    var t = tag as ExpressionTag;
-            //    var types = new List<Type>();
-            //    var opts = new List<Operator>();
-            //    for (var i = 0; i < t.Children.Count; i++)
-            //    {
-            //        var opt = t.Children[i] as OperatorTag;
-            //        if (opt == null)
-            //        {
-            //            types.Register(GetType(t.Children[i] as ITag, ctx));
-            //        }
-            //        else
-            //        {
-            //            switch (opt.Value)
-            //            {
-            //                case Operator.Or:
-            //                case Operator.And:
-            //                case Operator.GreaterThan:
-            //                case Operator.GreaterThanOrEqual:
-            //                case Operator.LessThan:
-            //                case Operator.LessThanOrEqual:
-            //                case Operator.Equal:
-            //                case Operator.NotEqual:
-            //                    return typeof(bool);
-            //                default:
-            //                    opts.Register(opt.Value);
-            //                    continue;
-            //            }
-            //        }
-            //    }
-            //    if (types.Contains(typeof(string)))
-            //    {
-            //        return typeof(string);
-            //    }
-            //    if (types.Count > 0)
-            //    {
-            //        return FindBestType(types.ToArray());
-            //    }
-
-            //    return typeof(int);
-            //});
             this.Register<ForeachTag>((tag, ctx) =>
             {
                 return typeof(string);
@@ -393,25 +351,25 @@ namespace JinianNet.JNTemplate.Compile
                     return new Type[] { methd.ReturnType };
                 }
             }
-            var types = type.GetInterfaces();
-            foreach (var t in types)
+            var gType = type.GetInterface("IEnumerable`1");
+            if (gType != null)
             {
-                if (t.IsGenericType)
-                {
-                    return t.GetGenericArguments();
-                }
+                return gType.GetGenericArguments();
             }
+            //if (type.IsGenericType)
+            //{
+            //    return type.GetGenericArguments();
+            //}
+            //var types = type.GetInterfaces();
+            //foreach (var t in types)
+            //{
+            //    if (t.IsGenericType)
+            //    {
+            //        return t.GetGenericArguments();
+            //    }
+            //}
 
             return new Type[] { typeof(object) };
-            //[1]: { Name = "IList" FullName = "System.Collections.IList"}
-            //[2]: { Name = "ICollection" FullName = "System.Collections.ICollection"}
-            //[3]: { Name = "IEnumerable" FullName = "System.Collections.IEnumerable"} 
-            //[6]: { Name = "IList`1" FullName = "System.Collections.Generic.IList`1[[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}
-            //[7]: { Name = "ICollection`1" FullName = "System.Collections.Generic.ICollection`1[[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}
-            //[8]: { Name = "IEnumerable`1" FullName = "System.Collections.Generic.IEnumerable`1[[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}
-            //[9]: { Name = "IReadOnlyList`1" FullName = "System.Collections.Generic.IReadOnlyList`1[[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}
-            //[10]: { Name = "IReadOnlyCollection`1" FullName = "System.Collections.Generic.IReadOnlyCollection`1[[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}
-
         }
 
         /// <summary>

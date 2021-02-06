@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate.Compile
             return (tag, scope) =>
             {
                 var tagType = tag.GetType();
-                if (tagType.IsSubclassOf(typeof(TypeTag<>)))
+                if (tagType.GetInterface("ITypeTag`1") != null)
                 {
                     var m = tagType.GetProperty("Value");
                     if (m == null)
@@ -95,7 +95,7 @@ namespace JinianNet.JNTemplate.Compile
                         var taskType = typeof(System.Threading.Tasks.Task);
                         MethodInfo taskAwaiterMethod = null;
                         MethodInfo resultMethod = null;
-                        if (type.FullName == taskType.FullName || type.IsSubclassOf(typeof(System.Threading.Tasks.Task)))
+                        if (DynamicHelpers.IsMatchType(type, taskType))
                         {
                             isAsync = true;
                             taskAwaiterMethod = DynamicHelpers.GetMethod(method.ReturnType, "GetAwaiter", Type.EmptyTypes);
@@ -401,7 +401,7 @@ namespace JinianNet.JNTemplate.Compile
             renderDict[name] = (tag, scope) =>
             {
                 var tagType = tag.GetType();
-                if (tagType.IsSubclassOf(typeof(TypeTag<>)))
+                if (tagType.GetInterface("ITypeTag`1") != null)
                 {
                     var m = tagType.GetProperty("Value");
                     if (m == null)
@@ -587,6 +587,74 @@ namespace JinianNet.JNTemplate.Compile
             }
         }
 
+        /// <summary>
+        /// StringBuilderAppend
+        /// </summary>
+        /// <param name="il"></param>
+        /// <param name="c"></param>
+        /// <param name="tags"></param>
+        /// <param name="sbIndex"></param>
+        /// <param name="ctxIndex"></param>
+        /// <param name="start"></param>
+        private int StringBuilderAppend(ILGenerator il, CompileContext c, IList<ITag> tags, int sbIndex, int ctxIndex, int start)
+        {
+            var stringBuilderType = typeof(System.Text.StringBuilder);
+            var index = 0;
+            for (var i = 0; i < tags.Count; i++)
+            {
+                if (tags[i] is EndTag)
+                {
+                    continue;
+                }
+                if (tags[i] is TextTag)
+                {
+                    var textTag = tags[i] as TextTag;
+                    il.Emit(OpCodes.Ldloc, sbIndex);
+                    if (c.StripWhiteSpace)
+                    {
+                        il.Emit(OpCodes.Ldstr, textTag.Text.Trim());
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Ldstr, textTag.Text);
+                    }
+                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
+                    il.Emit(OpCodes.Pop);
+                }
+                else
+                {
+                    var m = GetCompileMethod(tags[i], c);
+                    if (m.ReturnType.FullName != "System.Void")
+                    {
+                        il.Emit(OpCodes.Ldloc, sbIndex);
+                        il.Emit(OpCodes.Ldarg_0);
+                        il.Emit(OpCodes.Ldloc, ctxIndex);
+                        il.Emit(OpCodes.Call, m);
+
+                        il.Emit(OpCodes.Stloc_S, start + index);
+
+                        LoadVariable(il, m.ReturnType, start + index);
+
+                        if (m.ReturnType.FullName != "System.String")
+                        {
+
+                            Call(il, m.ReturnType, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
+                        }
+                        il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
+                        il.Emit(OpCodes.Pop);
+                        index++;
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Ldarg_0);
+                        il.Emit(OpCodes.Ldloc, ctxIndex);
+                        il.Emit(OpCodes.Call, m);
+                    }
+                }
+            }
+
+            return index;
+        }
         /// <summary>
         /// 设置编译方法
         /// </summary>
@@ -907,82 +975,6 @@ namespace JinianNet.JNTemplate.Compile
             });
             this.Register<FunctaionTag>((tag, c) =>
             {
-                #region
-                /*
-                var t = tag as FunctaionTag;
-                var bodyType = c.Data.GetType(t.Name);
-                if (bodyType.BaseType.Name != "MulticastDelegate")
-                {
-                    throw new ArgumentException("must delegate!");
-                }
-                var method = bodyType.GetMethod("Invoke");
-                var type = method.ReturnType;
-                var mb = this.CreateReutrnMethod<FunctaionTag>(c, type);
-                var il = mb.GetILGenerator();
-
-                il.DeclareLocal(typeof(object));
-                il.DeclareLocal(bodyType);
-                il.DeclareLocal(type);
-                Type[] paramType = new Type[t.Children.Count];
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    paramType[i] = Compiler.TypeGuess.GetType(t.Children[i], c);
-                    il.DeclareLocal(paramType[i]);
-                }
-
-                il.Emit(OpCodes.Nop);
-                il.Emit(OpCodes.Ldarg_1);
-                il.Emit(OpCodes.Callvirt, getVariableScope);
-                il.Emit(OpCodes.Ldstr, t.Name);
-                il.Emit(OpCodes.Callvirt, getVariableValue);
-                il.Emit(OpCodes.Stloc_0);
-                il.Emit(OpCodes.Ldloc_0);
-                il.Emit(OpCodes.Isinst, bodyType);
-                il.Emit(OpCodes.Stloc_1);
-
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    if (!returnDict.TryGetValue(t.Children[i].GetType().Name, out var func))
-                    {
-                        throw new ArgumentNullException("compile error");
-                    }
-                    il.Emit(OpCodes.Ldarg_0);
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Call, func(t.Children[i], c));
-                    il.Emit(OpCodes.Stloc, 3 + i);
-                }
-
-                il.Emit(OpCodes.Ldloc, 1);
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    il.Emit(OpCodes.Ldloc, 3 + i);
-                }
-                il.Emit(OpCodes.Callvirt, method);
-                //il.Emit(OpCodes.Ldloc_1);
-                //il.Emit(OpCodes.Ldc_I4, t.Children.Count);
-                //il.Emit(OpCodes.Newarr, typeof(object));
-
-
-                //for (int i = 0; i < t.Children.Count; i++)
-                //{
-                //    il.Emit(OpCodes.Dup);
-                //    il.Emit(OpCodes.Ldc_I4, i);
-                //    il.Emit(OpCodes.Ldloc,2+i);
-                //    if (paramType[i].IsValueType)
-                //    {
-                //        il.Emit(OpCodes.Unbox_Any, paramType[i]);
-                //    }
-                //    il.Emit(OpCodes.Stelem_Ref);
-                //}
-                //il.Emit(OpCodes.Callvirt, typeof(Delegate).GetMethod("DynamicInvoke",new[] { typeof(object[]) }));
-
-                //ChangeType(il,type);
-
-                il.Emit(OpCodes.Ret);
-                return mb.GetBaseDefinition(); 
-                 */
-                #endregion
-
                 var t = tag as FunctaionTag;
                 Type baseType;
                 MethodInfo method;
@@ -1155,7 +1147,7 @@ namespace JinianNet.JNTemplate.Compile
                 var sourceType = Compiler.TypeGuess.GetType(t.Source, c);
                 if (sourceType.IsArray)
                 {
-                    //return GetCompileMethod($"{ nameof(ForeachTag)}`Array", tag, c);
+                    return GetCompileMethod($"{ nameof(ForeachTag)}`Array", tag, c);
                 }
                 var type = Compiler.TypeGuess.GetType(t, c);
                 var stringBuilderType = typeof(System.Text.StringBuilder);
@@ -1270,60 +1262,10 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Ldloc_S, 5);
                 il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, new Type[] { typeof(int) }, "Set", new Type[] { typeof(string), typeof(int) }));
                 il.Emit(OpCodes.Nop);
-                int paramIndex = 0;
-                for (var i = 0; i < t.Children.Count; i++)
-                {
-                    if (t.Children[i] is EndTag)
-                    {
-                        continue;
-                    }
-                    if (t.Children[i] is TextTag)
-                    {
-                        var textTag = t.Children[i] as TextTag;
-                        il.Emit(OpCodes.Ldloc, 0);
-                        if (c.StripWhiteSpace)
-                        {
-                            il.Emit(OpCodes.Ldstr, textTag.Text.Trim());
-                        }
-                        else
-                        {
-                            il.Emit(OpCodes.Ldstr, textTag.Text);
-                        }
-                        il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
-                        il.Emit(OpCodes.Pop);
-                    }
-                    else
-                    {
-                        var m = GetCompileMethod(t.Children[i], c);
-                        if (m.ReturnType.FullName != "System.Void")
-                        {
-                            il.Emit(OpCodes.Ldloc, 0);
-                            il.Emit(OpCodes.Ldarg_0);
-                            il.Emit(OpCodes.Ldloc_2);
-                            il.Emit(OpCodes.Call, m);
 
-                            il.Emit(OpCodes.Stloc_S, 7 + paramIndex);
+                var index = 7;
+                index += StringBuilderAppend(il, c, t.Children, 0, 2, index);
 
-                            LoadVariable(il, m.ReturnType, 7 + paramIndex);
-
-                            if (m.ReturnType.FullName != "System.String")
-                            {
-
-                                Call(il, m.ReturnType, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
-                                //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(m.ReturnType, "ToString", Type.EmptyTypes));
-                            }
-                            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) }));
-                            il.Emit(OpCodes.Pop);
-                            paramIndex++;
-                        }
-                        else
-                        {
-                            il.Emit(OpCodes.Ldarg_0);
-                            il.Emit(OpCodes.Ldloc_2);
-                            il.Emit(OpCodes.Call, m);
-                        }
-                    }
-                }
                 il.Emit(OpCodes.Nop);
                 il.MarkLabel(labelNext);
                 il.Emit(OpCodes.Ldloc_S, 4);
@@ -1335,15 +1277,15 @@ namespace JinianNet.JNTemplate.Compile
                 {
                     il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(enumeratorType, "MoveNext", Type.EmptyTypes));
                 }
-                il.Emit(OpCodes.Stloc_S, 7 + paramIndex);
-                il.Emit(OpCodes.Ldloc_S, 7 + paramIndex);
+                il.Emit(OpCodes.Stloc_S, index);
+                il.Emit(OpCodes.Ldloc_S, index);
                 il.Emit(OpCodes.Brtrue, labelStart);
                 il.MarkLabel(labelEnd);
                 il.Emit(OpCodes.Ldloc_0);
                 Call(il, stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
                 //il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
-                il.Emit(OpCodes.Stloc_S, 7 + paramIndex + 1);
-                il.Emit(OpCodes.Ldloc_S, 7 + paramIndex + 1);
+                il.Emit(OpCodes.Stloc_S, index + 1);
+                il.Emit(OpCodes.Ldloc_S, index + 1);
                 il.Emit(OpCodes.Ret);
                 c.Data = old;
                 return mb.GetBaseDefinition();
@@ -1357,6 +1299,7 @@ namespace JinianNet.JNTemplate.Compile
                 var childType = TypeGuess.InferChildType(sourceType);
                 var templateContextType = typeof(TemplateContext);
                 var stringBuilderType = typeof(System.Text.StringBuilder);
+                var variableScopeType = typeof(VariableScope);
                 if (childType.Length != 1)
                 {
                     throw new CompileException("[ForeachTag]:source error.");
@@ -1372,6 +1315,7 @@ namespace JinianNet.JNTemplate.Compile
                 var il = mb.GetILGenerator();
                 Label labelNext = il.DefineLabel();
                 Label labelStart = il.DefineLabel();
+                Label labelEnd = il.DefineLabel();
                 il.DeclareLocal(stringBuilderType);
                 il.DeclareLocal(sourceType);
                 il.DeclareLocal(typeof(bool));
@@ -1412,159 +1356,66 @@ namespace JinianNet.JNTemplate.Compile
                 il.Emit(OpCodes.Stloc_1);
                 il.Emit(OpCodes.Ldloc_1);
                 il.Emit(OpCodes.Ldnull);
-                //========================================================================================
-
-                /*
-.method public hidebysig 
-	instance string GetForeachTag0 (
-		class JinianNet.JNTemplate.TemplateContext P_0
-	) cil managed 
-{
-	// Method begins at RVA 0x17460
-	// Code size 174 (0xae)
-	.maxstack 3
-	.locals init (
-		[0] class [mscorlib]System.Text.StringBuilder stringBuilder,
-		[1] class ConsoleApp4.UserInfo[] variableTag,
-		[2] bool,
-		[3] class JinianNet.JNTemplate.TemplateContext templateContext,
-		[4] int32 num,
-		[5] class ConsoleApp4.UserInfo[],
-		[6] int32,
-		[7] class ConsoleApp4.UserInfo node,
-		[8] int32,
-		[9] string
-	)
-
-	IL_0000: nop
-	IL_0001: newobj instance void [mscorlib]System.Text.StringBuilder::.ctor()
-	IL_0006: stloc.0
-	IL_0007: ldarg.0
-	IL_0008: ldarg.1
-	IL_0009: call instance class ConsoleApp4.UserInfo[] ConsoleApp4.Program::bbb(class JinianNet.JNTemplate.TemplateContext)
-	IL_000e: stloc.1
-	IL_000f: ldloc.1
-	IL_0010: ldnull
-	IL_0011: cgt.un
-	IL_0013: stloc.2
-	IL_0014: ldloc.2
-	IL_0015: brfalse IL_00a1
-
-	IL_001a: nop
-	IL_001b: ldarg.1
-	IL_001c: call class JinianNet.JNTemplate.TemplateContext JinianNet.JNTemplate.TemplateContext::CreateContext(class JinianNet.JNTemplate.TemplateContext)
-	IL_0021: stloc.3
-	IL_0022: ldc.i4.0
-	IL_0023: stloc.s 4
-	IL_0025: nop
-	IL_0026: ldloc.1
-	IL_0027: stloc.s 5
-	IL_0029: ldc.i4.0
-	IL_002a: stloc.s 6
-	IL_002c: br.s IL_0098
-	// loop start (head: IL_0098)
-		IL_002e: ldloc.s 5
-		IL_0030: ldloc.s 6
-		IL_0032: ldelem.ref
-		IL_0033: stloc.s 7
-		IL_0035: nop
-		IL_0036: ldloc.s 4
-		IL_0038: ldc.i4.1
-		IL_0039: add
-		IL_003a: stloc.s 4
-		IL_003c: ldloc.3
-		IL_003d: callvirt instance class JinianNet.JNTemplate.VariableScope JinianNet.JNTemplate.TemplateContext::get_TempData()
-		IL_0042: ldstr "i"
-		IL_0047: ldloc.s 7
-		IL_0049: callvirt instance void JinianNet.JNTemplate.VariableScope::Set<class ConsoleApp4.UserInfo>(string, !!0)
-		IL_004e: nop
-		IL_004f: ldloc.3
-		IL_0050: callvirt instance class JinianNet.JNTemplate.VariableScope JinianNet.JNTemplate.TemplateContext::get_TempData()
-		IL_0055: ldstr "foreachIndex"
-		IL_005a: ldloc.s 4
-		IL_005c: callvirt instance void JinianNet.JNTemplate.VariableScope::Set<int32>(string, !!0)
-		IL_0061: nop
-		IL_0062: ldloc.0
-		IL_0063: ldstr " "
-		IL_0068: callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-		IL_006d: pop
-		IL_006e: ldloc.0
-		IL_006f: ldarg.0
-		IL_0070: ldloc.3
-		IL_0071: call instance int32 ConsoleApp4.Program::GetReferenceTag2(class JinianNet.JNTemplate.TemplateContext)
-		IL_0076: stloc.s 8
-		IL_0078: ldloca.s 8
-		IL_007a: call instance string [mscorlib]System.Int32::ToString()
-		IL_007f: callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-		IL_0084: pop
-		IL_0085: ldloc.0
-		IL_0086: ldstr " "
-		IL_008b: callvirt instance class [mscorlib]System.Text.StringBuilder [mscorlib]System.Text.StringBuilder::Append(string)
-		IL_0090: pop
-		IL_0091: nop
-		IL_0092: ldloc.s 6
-		IL_0094: ldc.i4.1
-		IL_0095: add
-		IL_0096: stloc.s 6
-
-		IL_0098: ldloc.s 6
-		IL_009a: ldloc.s 5
-		IL_009c: ldlen
-		IL_009d: conv.i4
-		IL_009e: blt.s IL_002e
-	// end loop
-
-	IL_00a0: nop
-
-	IL_00a1: ldloc.0
-	IL_00a2: callvirt instance string [mscorlib]System.Object::ToString()
-	IL_00a7: stloc.s 9
-	IL_00a9: br.s IL_00ab
-
-	IL_00ab: ldloc.s 9
-	IL_00ad: ret
-} // end of method Program::GetForeachTag0
-
-                 
-                 */
-                il.Emit(OpCodes.Ldc_I4_0);
+                il.Emit(OpCodes.Cgt_Un);
                 il.Emit(OpCodes.Stloc_2);
+                il.Emit(OpCodes.Ldloc_2);
+                il.Emit(OpCodes.Brfalse, labelEnd);
 
 
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(templateContextType, "CreateContext", new Type[] { templateContextType }));
+                il.Emit(OpCodes.Stloc_3);
+                il.Emit(OpCodes.Ldc_I4_0);
+                il.Emit(OpCodes.Stloc, 4);
+                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Stloc, 5);
+                il.Emit(OpCodes.Ldc_I4_0);
+                il.Emit(OpCodes.Stloc, 6);
                 il.Emit(OpCodes.Br, labelStart);
 
-
+                // loop start
                 il.MarkLabel(labelNext);
-                il.Emit(OpCodes.Ldloc_1);
-                il.Emit(OpCodes.Ldloc_2);
+                il.Emit(OpCodes.Ldloc, 5);
+                il.Emit(OpCodes.Ldloc, 6);
                 Ldelem(il, childType[0]);
-                il.Emit(OpCodes.Stloc_3);
-                //il.Emit(OpCodes.Ldloc_3);
-
-                //do...
-
-
-                il.Emit(OpCodes.Ldloc_2);
+                il.Emit(OpCodes.Stloc, 7);
+                il.Emit(OpCodes.Ldloc, 4);
                 il.Emit(OpCodes.Ldc_I4_1);
                 il.Emit(OpCodes.Add);
-                il.Emit(OpCodes.Stloc_2);
+                il.Emit(OpCodes.Stloc, 4);
+                il.Emit(OpCodes.Ldloc, 3);
+                il.Emit(OpCodes.Callvirt, getVariableScope);
+                il.Emit(OpCodes.Ldstr, t.Name);
+                il.Emit(OpCodes.Ldloc, 7);
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, childType, "Set", new Type[] { typeof(string), childType[0] }));
+                il.Emit(OpCodes.Ldloc, 3);
+                il.Emit(OpCodes.Callvirt, getVariableScope);
+                il.Emit(OpCodes.Ldstr, "foreachIndex");
+                il.Emit(OpCodes.Ldloc, 4);
+                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, new Type[] { typeof(int) }, "Set", new Type[] { typeof(string), typeof(int) }));
 
+                var index = StringBuilderAppend(il, c, t.Children, 0, 3, 9);
+                il.Emit(OpCodes.Ldloc, 6);
+                il.Emit(OpCodes.Ldc_I4_1);
+                il.Emit(OpCodes.Add);
+                il.Emit(OpCodes.Stloc, 6);
                 il.MarkLabel(labelStart);
-                il.Emit(OpCodes.Ldloc_2);
-                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Ldloc, 6);
+                il.Emit(OpCodes.Ldloc, 5);
                 il.Emit(OpCodes.Ldlen);
                 il.Emit(OpCodes.Conv_I4);
                 il.Emit(OpCodes.Blt, labelNext);
+                // end loop
 
-
-                il.Emit(OpCodes.Ldloc, 4);
+                il.MarkLabel(labelEnd);
+                il.Emit(OpCodes.Ldloc_0);
                 Call(il, stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
-                il.Emit(OpCodes.Stloc, 5);
-                il.Emit(OpCodes.Ldloc, 5);
+                il.Emit(OpCodes.Stloc, 8);
+                il.Emit(OpCodes.Ldloc, 8);
                 il.Emit(OpCodes.Ret);
 
-                //return mb.GetBaseDefinition();
-                return null;
+                return mb.GetBaseDefinition();
+
             });
 
             this.Register<LogicTag>((tag, c) =>
