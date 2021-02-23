@@ -10,63 +10,103 @@
 
 ### What is JNTemplate?
 
-JNTemplate is a .net template engine for generating html, xml, sql, or any other formatted text output.
+JNTemplate is fast, lightweight, extensible .net template engine for generating html, xml, sql, or any other formatted text output. 
 
-### Features:
-- faster
-- so easy for using
-- simpler 
-- free
+Special placeholders in the template allow writing code similar to c# syntax. Then the template is passed data to render the final document.
 
-### Quickstart
 
-**Get it on NuGet!**
+### Installation
+
+Install and update using NuGet:
 ```
-PM> Install-Package JinianNet.JNTemplate
+PM&gt; Install-Package JinianNet.JNTemplate
 
 ```
 or
+
 ```
-> dotnet add package JinianNet.JNTemplate
-```
-
-
-
-
-**Building the source**
+&gt; dotnet add package JinianNet.JNTemplate
 ```
 
-git clone https://github.com/jiniannet/jntemplate.git
+
+### Quickstart
+
+**Basics**
+
+Rendering a basic html template with a predefined data model.
+
+c# code
+
+```csharp
+var template = Engine.LoadTemplate(@"c:\wwwroot\view\index.html"); ;
+template.Set("name", "jntemplate");
+var result = template.Render(); 
+```
+default.html
+
+```html
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello, $name&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 ```
 
-Windows:After cloning the repository, run build/build.bat
+output:
 
-Linux:After cloning the repository, run build/build.sh
+```html
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello, jntemplate&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+```
 
-  
-  
+**Iteration**
+
+Iteration is achieved by using the foreach binding on the element you wish to iterate.
+
+c# code
+
+```csharp
+var template = Engine.LoadTemplate(@"c:\wwwroot\view\view.html"); ;
+template.Set("list", new string[] { "github","jntemplate" });
+var result = template.Render(); 
+```
+view.html
+
+```html
+&lt;ul&gt;
+${foreach(name in list)}
+	&lt;li&gt;${name}&lt;/li&gt;
+${end}
+&lt;/ul&gt;
+```
+
+output:
+
+```html
+&lt;ul&gt;
+	&lt;li&gt;github&lt;/li&gt;
+	&lt;li&gt;jntemplate&lt;/li&gt;
+&lt;/ul&gt;
+```
+
 **Configuration**
 
-You can configure JNTemplate with the EngineConfig class.
+You can configure JNTemplate with the `EngineConfig` class.
 ```csharp
-Engine.Configure((conf)=>{
+Engine.Configure((conf)=&gt;{
 // .. configure your instance
 });
 ```
 
-**Basic Example**
-
-**简单示例**
-```csharp
-var template = Engine.CreateTemplate("hello $model.Name");
-template.Set("model", new User{
-    Name = "jntemplate"
-});
-var result = template.Render(); 
-```
-
-### API
-see: www.jiniannet.com
+### Links
+Website: https://www.jiniannet.com
+Documentation: https://docs-en.jiniannet.com
+Code: https://github.com/jiniannet/jntemplate
 
 
 ### Licenses

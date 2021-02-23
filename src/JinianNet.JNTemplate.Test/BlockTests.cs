@@ -98,5 +98,25 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("这是LAYOUT头部<h1>主体内容<h1>这是LAYOUT尾部", render);
         }
+
+
+
+
+        /// <summary>
+        /// 测试Layout
+        /// </summary>
+        [Fact]
+        public void TestLoadTemplate()
+        {
+            var path = string.Join(Path.DirectorySeparatorChar, 
+                new string[] {
+                    Environment.CurrentDirectory,
+                    "templets","default","include","header.txt"
+                });
+            var template = Engine.LoadTemplate(path); 
+            template.Set("name", "jntemplate");
+            var render = template.Render();
+            Assert.Equal("你好，jntemplate", render);
+        }
     }
 }
