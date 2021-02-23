@@ -19,13 +19,13 @@ Special placeholders in the template allow writing code similar to c# syntax. Th
 
 Install and update using NuGet:
 ```
-PM&gt; Install-Package JinianNet.JNTemplate
+PM> Install-Package JinianNet.JNTemplate
 
 ```
 or
 
 ```
-&gt; dotnet add package JinianNet.JNTemplate
+> dotnet add package JinianNet.JNTemplate
 ```
 
 
@@ -45,23 +45,23 @@ var result = template.Render();
 default.html
 
 ```html
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
-  &lt;h1&gt;Hello, $name&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Hello, $name</h1>
+</body>
+</html>
 ```
 
 output:
 
 ```html
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
-  &lt;h1&gt;Hello, jntemplate&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Hello, jntemplate</h1>
+</body>
+</html>
 ```
 
 **Iteration**
@@ -78,34 +78,37 @@ var result = template.Render();
 view.html
 
 ```html
-&lt;ul&gt;
+<ul>
 ${foreach(name in list)}
-	&lt;li&gt;${name}&lt;/li&gt;
+	<li>${name}</li>
 ${end}
-&lt;/ul&gt;
+</ul>
 ```
 
 output:
 
 ```html
-&lt;ul&gt;
-	&lt;li&gt;github&lt;/li&gt;
-	&lt;li&gt;jntemplate&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+	<li>github</li>
+	<li>jntemplate</li>
+</ul>
 ```
 
 **Configuration**
 
 You can configure JNTemplate with the `EngineConfig` class.
 ```csharp
-Engine.Configure((conf)=&gt;{
+Engine.Configure((conf)=>{
 // .. configure your instance
 });
 ```
 
 ### Links
+
 Website: https://www.jiniannet.com
+
 Documentation: https://docs-en.jiniannet.com
+
 Code: https://github.com/jiniannet/jntemplate
 
 
