@@ -105,11 +105,9 @@ Engine.Configure((conf)=>{
 
 ### Links
 
-Website: https://www.jiniannet.com
-
-Documentation: https://docs-en.jiniannet.com
-
-Code: https://github.com/jiniannet/jntemplate
+- Website: https://www.jiniannet.com
+- Documentation: https://docs-en.jiniannet.com
+- Code: https://github.com/jiniannet/jntemplate
 
 
 ### Licenses
