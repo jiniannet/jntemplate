@@ -49,6 +49,150 @@ namespace JinianNet.JNTemplate.Compile
             Initialize();
         }
 
+        private void DefineRender(ITag tag, CompileContext scope, Type tagType)
+        {
+            MethodInfo method = null;
+            if (tag is ReferenceTag)
+            {
+                method = GetCompileMethod((tag as ReferenceTag).Child, scope);
+            }
+            else
+            {
+                method = GetCompileMethod(tag, scope);
+            }
+            if (method == null)
+            {
+                throw new Exception.CompileException($"cannot compile the tag! type:{tag?.GetType().FullName}");
+            }
+
+            var type = method.ReturnType;
+            var isAsync = false;
+            var taskType = typeof(System.Threading.Tasks.Task);
+            MethodInfo taskAwaiterMethod = null;
+            MethodInfo resultMethod = null;
+
+            var mb = CreateRenderMethod(scope, tagType.Name);
+            var il = mb.GetILGenerator();
+            var exBlock = il.BeginExceptionBlock();
+            var lableThrow = il.DefineLabel();
+            var labelPass = il.DefineLabel();
+
+            var index = 0;
+
+
+            if (DynamicHelpers.IsMatchType(type, taskType))
+            {
+                isAsync = true;
+                taskAwaiterMethod = DynamicHelpers.GetMethod(method.ReturnType, "GetAwaiter", Type.EmptyTypes);
+                resultMethod = DynamicHelpers.GetMethod(taskAwaiterMethod.ReturnType, "GetResult", Type.EmptyTypes);
+                type = resultMethod.ReturnType;
+            }
+            if (type.FullName != "System.Void")
+            {
+                bool needChange = false;
+                il.DeclareLocal(typeof(string));
+                index = 1;
+                if (type.FullName != "System.String")
+                {
+                    il.DeclareLocal(type);
+                    il.DeclareLocal(typeof(bool));
+                    index = 3;
+                    needChange = true;
+                }
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Ldarg_2);
+                il.Emit(OpCodes.Call, method);
+
+                if (isAsync)
+                {
+                    il.DeclareLocal(taskAwaiterMethod.ReturnType);
+                    il.Emit(OpCodes.Callvirt, taskAwaiterMethod);
+                    il.Emit(OpCodes.Stloc, index);
+                    il.Emit(OpCodes.Ldloca, index);
+                    il.Emit(OpCodes.Call, resultMethod);
+                    index++;
+                }
+
+                if (needChange)
+                {
+                    il.Emit(OpCodes.Stloc_1);
+                    if (!method.ReturnType.IsValueType)
+                    {
+                        il.Emit(OpCodes.Ldloc_1);
+                        il.Emit(OpCodes.Ldnull);
+                        il.Emit(OpCodes.Cgt_Un);
+                        il.Emit(OpCodes.Stloc_2);
+                        il.Emit(OpCodes.Ldloc_2);
+                        il.Emit(OpCodes.Brfalse_S, labelPass);
+                        il.Emit(OpCodes.Ldloc_1);
+                    }
+                    else
+                    {
+                        il.Emit(OpCodes.Ldloca_S, 1);
+                    }
+                    Call(il, type, method.ReturnType.GetMethod("ToString", Type.EmptyTypes));
+                    il.Emit(OpCodes.Stloc_0);
+                }
+                else
+                {
+                    il.Emit(OpCodes.Stloc_0);
+                }
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Ldloc_0);
+                il.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
+            }
+            else
+            {
+                if (isAsync)
+                {
+                    il.DeclareLocal(taskAwaiterMethod.ReturnType);
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldarg_2);
+                    il.Emit(OpCodes.Call, method);
+                    il.Emit(OpCodes.Callvirt, taskAwaiterMethod);
+                    il.Emit(OpCodes.Stloc_0);
+                    il.Emit(OpCodes.Ldloca, 0);
+                    il.Emit(OpCodes.Call, resultMethod);
+                    index = 1;
+                }
+                else
+                {
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldarg_2);
+                    il.Emit(OpCodes.Call, method);
+                }
+            }
+
+            il.DeclareLocal(typeof(System.Exception));
+            il.DeclareLocal(typeof(bool));
+
+            il.BeginCatchBlock(typeof(System.Exception));
+            il.Emit(OpCodes.Stloc, index);
+            il.Emit(OpCodes.Ldarg_2);
+            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(typeof(Context), "ThrowExceptions"));
+            il.Emit(OpCodes.Stloc, index + 1);
+            il.Emit(OpCodes.Ldloc, index + 1);
+            il.Emit(OpCodes.Brfalse, lableThrow);
+
+            il.Emit(OpCodes.Ldloc, index);
+            il.Emit(OpCodes.Throw);
+
+            il.MarkLabel(lableThrow);
+            il.Emit(OpCodes.Ldarg_2);
+            il.Emit(OpCodes.Ldloc, index);
+            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(TemplateContext), "AddError", new Type[] { typeof(System.Exception) }));
+            //il.Emit(OpCodes.Leave_S, labelPass);
+            il.EndExceptionBlock();
+
+            il.MarkLabel(labelPass);
+            il.Emit(OpCodes.Ret);
+
+            scope.Generator.Emit(OpCodes.Ldarg_0);
+            scope.Generator.Emit(OpCodes.Ldarg_1);
+            scope.Generator.Emit(OpCodes.Ldarg_2);
+            scope.Generator.Emit(OpCodes.Call, mb.GetBaseDefinition());
+        }
+
         private Action<ITag, CompileContext> GeneralDefaultRender()
         {
             return (tag, scope) =>
@@ -75,125 +219,7 @@ namespace JinianNet.JNTemplate.Compile
                 }
                 else
                 {
-                    MethodInfo method = null;
-                    if (tag is ReferenceTag)
-                    {
-                        method = GetCompileMethod((tag as ReferenceTag).Child, scope);
-                    }
-                    else
-                    {
-                        method = GetCompileMethod(tag, scope);
-                    }
-                    if (method == null)
-                    {
-                        throw new Exception.CompileException($"cannot compile the tag! type:{tag?.GetType().FullName}");
-                    }
-                    else
-                    {
-                        var type = method.ReturnType;
-                        var isAsync = false;
-                        var taskType = typeof(System.Threading.Tasks.Task);
-                        MethodInfo taskAwaiterMethod = null;
-                        MethodInfo resultMethod = null;
-                        if (DynamicHelpers.IsMatchType(type, taskType))
-                        {
-                            isAsync = true;
-                            taskAwaiterMethod = DynamicHelpers.GetMethod(method.ReturnType, "GetAwaiter", Type.EmptyTypes);
-                            resultMethod = DynamicHelpers.GetMethod(taskAwaiterMethod.ReturnType, "GetResult", Type.EmptyTypes);
-                            type = resultMethod.ReturnType;
-                        }
-                        if (type.FullName != "System.Void")
-                        {
-                            bool needChange = false;
-                            var mb = CreateRenderMethod(scope, tagType.Name);
-                            var il = mb.GetILGenerator();
-                            il.DeclareLocal(typeof(string));
-                            var index = 1;
-                            if (type.FullName != "System.String")
-                            {
-                                il.DeclareLocal(type);
-                                il.DeclareLocal(typeof(bool));
-                                index = 3;
-                                needChange = true;
-                            }
-                            il.Emit(OpCodes.Ldarg_0);
-                            il.Emit(OpCodes.Ldarg_2);
-                            il.Emit(OpCodes.Call, method);
-
-                            if (isAsync)
-                            {
-                                il.DeclareLocal(taskAwaiterMethod.ReturnType);
-                                il.Emit(OpCodes.Callvirt, taskAwaiterMethod);
-                                il.Emit(OpCodes.Stloc, index);
-                                il.Emit(OpCodes.Ldloca, index);
-                                il.Emit(OpCodes.Call, resultMethod);
-                                index++;
-                            }
-
-                            Label labelPass = il.DefineLabel();
-                            if (needChange)
-                            {
-                                il.Emit(OpCodes.Stloc_1);
-                                if (!method.ReturnType.IsValueType)
-                                {
-                                    il.Emit(OpCodes.Ldloc_1);
-                                    il.Emit(OpCodes.Ldnull);
-                                    il.Emit(OpCodes.Cgt_Un);
-                                    il.Emit(OpCodes.Stloc_2);
-                                    il.Emit(OpCodes.Ldloc_2);
-                                    il.Emit(OpCodes.Brfalse_S, labelPass);
-                                    il.Emit(OpCodes.Ldloc_1);
-                                }
-                                else
-                                {
-                                    il.Emit(OpCodes.Ldloca_S, 1);
-                                }
-                                Call(il, type, method.ReturnType.GetMethod("ToString", Type.EmptyTypes));
-                                il.Emit(OpCodes.Stloc_0);
-                            }
-                            else
-                            {
-                                il.Emit(OpCodes.Stloc_0);
-                            }
-                            il.Emit(OpCodes.Ldarg_1);
-                            il.Emit(OpCodes.Ldloc_0);
-                            il.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
-                            il.MarkLabel(labelPass);
-
-                            il.Emit(OpCodes.Ret);
-                            scope.Generator.Emit(OpCodes.Ldarg_0);
-                            scope.Generator.Emit(OpCodes.Ldarg_1);
-                            scope.Generator.Emit(OpCodes.Ldarg_2);
-                            scope.Generator.Emit(OpCodes.Call, mb.GetBaseDefinition());
-                        }
-                        else
-                        {
-                            if (isAsync)
-                            {
-                                var mb = CreateRenderMethod(scope, tagType.Name);
-                                var il = mb.GetILGenerator();
-                                il.DeclareLocal(taskAwaiterMethod.ReturnType);
-                                il.Emit(OpCodes.Ldarg_0);
-                                il.Emit(OpCodes.Ldarg_2);
-                                il.Emit(OpCodes.Call, method);
-                                il.Emit(OpCodes.Callvirt, taskAwaiterMethod);
-                                il.Emit(OpCodes.Stloc_0);
-                                il.Emit(OpCodes.Ldloca, 0);
-                                il.Emit(OpCodes.Call, resultMethod);
-                                il.Emit(OpCodes.Ret);
-                                scope.Generator.Emit(OpCodes.Ldarg_0);
-                                scope.Generator.Emit(OpCodes.Ldarg_1);
-                                scope.Generator.Emit(OpCodes.Ldarg_2);
-                                scope.Generator.Emit(OpCodes.Call, mb.GetBaseDefinition());
-                            }
-                            else
-                            {
-                                scope.Generator.Emit(OpCodes.Ldarg_0);
-                                scope.Generator.Emit(OpCodes.Ldarg_2);
-                                scope.Generator.Emit(OpCodes.Call, method);
-                            }
-                        }
-                    }
+                    DefineRender(tag, scope, tagType);
                 }
             };
         }

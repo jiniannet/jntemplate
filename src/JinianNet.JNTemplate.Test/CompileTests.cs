@@ -37,11 +37,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestCompiledText()
         {
             var name = "hello";
-            Engine.Compile("hello", "hello,$name", (ctx) =>
+            Engine.Compile(name, "hello,$name", (ctx) =>
             {
                 ctx.Set("name", typeof(string));
             });
             Assert.NotNull(Runtime.Templates[name]);
+            Runtime.Templates.Clear();
         }
     }
 }
