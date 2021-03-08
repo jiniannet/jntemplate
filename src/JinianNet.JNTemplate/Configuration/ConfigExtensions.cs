@@ -26,7 +26,8 @@ namespace JinianNet.JNTemplate.Configuration
             PropertyInfo[] properties = type.GetProperties();
             foreach (PropertyInfo p in properties)
             {
-                if (!p.PropertyType.IsPrimitive)
+                if (!p.PropertyType.IsPrimitive
+                     && p.PropertyType.FullName != "System.String")
                 {
                     continue;
                 }

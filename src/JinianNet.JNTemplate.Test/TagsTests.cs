@@ -145,29 +145,6 @@ $end
         }
 
         /// <summary>
-        /// 自定义标签前后缀测试
-        /// </summary>
-        [Fact]
-        public void TestConfig()
-        {
-            //var conf = Configuration.EngineConfig.CreateDefault();
-            //conf.TagFlag = '@';
-            //conf.TagSuffix = "}";
-            //conf.TagPrefix = "{$";
-
-            //Engine.Configure(conf);
-
-            //var templateContent = "你好，@name,欢迎来到{$name}的世界";
-            //var template = Engine.CreateTemplate(templateContent);
-            //template.Set("name","jntemplate");
-            //var render = template.Render();
-            //Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
-
-            //Engine.Configure(Configuration.EngineConfig.CreateDefault());
-            //Assert.Equal("111", "111");
-        }
-
-        /// <summary>
         /// 注释
         /// </summary>
         [Fact]
@@ -334,6 +311,18 @@ $end
             var render = template.Render();
             Assert.Equal("3845254\\\"3366845\\", render);
 
+        }
+
+        /// <summary>
+        /// 测试字符串2（可以当前端转义使用）
+        /// </summary>
+        [Fact]
+        public void TestEncodeString()
+        {
+            var templateContent = "var ${\"$\"}a =34;";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+            Assert.Equal("var $a =34;", render);
         }
 
         /// <summary>
