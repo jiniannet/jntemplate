@@ -146,7 +146,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 object baseValue = null;
                 if (t.Parent != null)
                 {
-                    baseValue = Executor.Exec(t.Parent, context);
+                    baseValue = TagExecutor.Exec(t.Parent, context);
                 }
                 if (baseValue == null)
                 {
@@ -169,7 +169,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     }
                     else
                     {
-                        parameters.Add(Executor.Exec(t.Children[i], context));
+                        parameters.Add(TagExecutor.Exec(t.Children[i], context));
                     }
                 }
                 var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
@@ -185,12 +185,12 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 if (t.Children.Count == 1)
                 {
-                    return Executor.Exec(t.Children[0], context);
+                    return TagExecutor.Exec(t.Children[0], context);
                 }
                 var sb = new System.Text.StringBuilder();
                 for (int i = 0; i < t.Children.Count; i++)
                 {
-                    sb.Append(Executor.Exec(t.Children[i], context));
+                    sb.Append(TagExecutor.Exec(t.Children[i], context));
                 }
                 return sb.ToString();
             });
@@ -211,7 +211,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<ElseifTag>((tag, context) =>
             {
                 var t = tag as ElseifTag;
-                var condition = Executor.Exec(t.Condition, context);
+                var condition = TagExecutor.Exec(t.Condition, context);
                 if (Utility.ToBoolean(condition))
                 {
                     if (t.Children.Count == 0)
@@ -220,12 +220,12 @@ namespace JinianNet.JNTemplate.Dynamic
                     }
                     if (t.Children.Count == 1)
                     {
-                        return Executor.Exec(t.Children[0], context);
+                        return TagExecutor.Exec(t.Children[0], context);
                     }
                     var sb = new System.Text.StringBuilder();
                     for (int i = 0; i < t.Children.Count; i++)
                     {
-                        sb.Append(Executor.Exec(t.Children[i], context));
+                        sb.Append(TagExecutor.Exec(t.Children[i], context));
                     }
                     return sb.ToString();
                 }
@@ -241,12 +241,12 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 if (t.Children.Count == 1)
                 {
-                    return Executor.Exec(t.Children[0], context);
+                    return TagExecutor.Exec(t.Children[0], context);
                 }
                 var sb = new System.Text.StringBuilder();
                 for (int i = 0; i < t.Children.Count; i++)
                 {
-                    sb.Append(Executor.Exec(t.Children[i], context));
+                    sb.Append(TagExecutor.Exec(t.Children[i], context));
                 }
                 return sb.ToString();
             });
@@ -264,7 +264,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     using (var writer = new StringWriter())
                     {
-                        object value = Executor.Exec(t.Source, context);
+                        object value = TagExecutor.Exec(t.Source, context);
                         var enumerable = ForeachTag.ToIEnumerable(value);
                         TemplateContext ctx;
                         if (enumerable != null)
@@ -280,7 +280,7 @@ namespace JinianNet.JNTemplate.Dynamic
                                 ctx.TempData.Set("foreachIndex", i);
                                 for (int n = 0; n < t.Children.Count; n++)
                                 {
-                                    object result = Executor.Exec(t.Children[n], ctx);
+                                    object result = TagExecutor.Exec(t.Children[n], ctx);
                                     if (i == 0 && t.Children.Count == 1)
                                     {
                                         return result;
@@ -301,7 +301,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<ForTag>((tag, context) =>
             {
                 var t = tag as ForTag;
-                Executor.Exec(t.Initial, context);
+                TagExecutor.Exec(t.Initial, context);
                 //如果标签为空，则直接为false,避免死循环以内存溢出
                 bool run;
 
@@ -311,7 +311,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 else
                 {
-                    run = Utility.ToBoolean(Executor.Exec(t.Condition, context));
+                    run = Utility.ToBoolean(TagExecutor.Exec(t.Condition, context));
                 }
                 using (var writer = new StringWriter())
                 {
@@ -319,7 +319,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     {
                         for (int i = 0; i < t.Children.Count; i++)
                         {
-                            var obj = Executor.Exec(t.Children[i], context);
+                            var obj = TagExecutor.Exec(t.Children[i], context);
                             if (obj != null)
                             {
                                 writer.Write(obj.ToString());
@@ -329,9 +329,9 @@ namespace JinianNet.JNTemplate.Dynamic
                         if (t.Do != null)
                         {
                             //执行计算，不需要输出，比如i++
-                            Executor.Exec(t.Do, context);
+                            TagExecutor.Exec(t.Do, context);
                         }
-                        run = Utility.ToBoolean(Executor.Exec(t.Condition, context));
+                        run = Utility.ToBoolean(TagExecutor.Exec(t.Condition, context));
                     }
                     return writer.ToString();
                 }
@@ -343,7 +343,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 object[] args = new object[t.Children.Count];
                 for (int i = 0; i < t.Children.Count; i++)
                 {
-                    args[i] = Executor.Exec(t.Children[i], context);
+                    args[i] = TagExecutor.Exec(t.Children[i], context);
                 }
 
                 object parentValue;
@@ -353,7 +353,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 else
                 {
-                    parentValue = Executor.Exec(t.Parent, context);
+                    parentValue = TagExecutor.Exec(t.Parent, context);
                 }
 
                 if (parentValue == null)
@@ -362,13 +362,13 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 if (t.Parent == null || (t.Parent != null && string.IsNullOrEmpty(t.Name)))
                 {
-                    if (parentValue is FuncHandler)
+                    if (parentValue is FuncHandler funcHandler)
                     {
-                        return (parentValue as FuncHandler)(args);
+                        return funcHandler(args);
                     }
-                    if (parentValue is Delegate)
+                    if (parentValue is Delegate func)
                     {
-                        return (parentValue as Delegate).DynamicInvoke(args);
+                        return func.DynamicInvoke(args);
                     }
                     return null;
                 }
@@ -402,13 +402,13 @@ namespace JinianNet.JNTemplate.Dynamic
                     }
                     if (t.Children[i] is ElseTag)
                     {
-                        return Executor.Exec(t.Children[i], context);
+                        return TagExecutor.Exec(t.Children[i], context);
                     }
 
-                    var condition = Executor.Exec(c.Condition, context);
+                    var condition = TagExecutor.Exec(c.Condition, context);
                     if (Utility.ToBoolean(condition))
                     {
-                        return Executor.Exec(t.Children[i], context);
+                        return TagExecutor.Exec(t.Children[i], context);
                     }
                 }
                 return null;
@@ -417,7 +417,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<IncludeTag>((tag, context) =>
             {
                 var t = tag as IncludeTag;
-                object path = Executor.Exec(t.Path, context);
+                object path = TagExecutor.Exec(t.Path, context);
                 if (path == null)
                 {
                     return null;
@@ -433,8 +433,8 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<IndexValueTag>((tag, context) =>
             {
                 var t = tag as IndexValueTag;
-                object obj = Executor.Exec(t.Parent, context);
-                object index = Executor.Exec(t.Index, context);
+                object obj = TagExecutor.Exec(t.Parent, context);
+                object index = TagExecutor.Exec(t.Index, context);
                 return Runtime.Actuator.CallIndexValue(obj, index);
             });
 
@@ -444,8 +444,8 @@ namespace JinianNet.JNTemplate.Dynamic
                 var result = new Dictionary<object, object>();
                 foreach (var kv in t.Dict)
                 {
-                    var key = kv.Key == null ? null : Executor.Exec(kv.Key, context);
-                    var value = kv.Value == null ? null : Executor.Exec(kv.Value, context);
+                    var key = kv.Key == null ? null : TagExecutor.Exec(kv.Key, context);
+                    var value = kv.Value == null ? null : TagExecutor.Exec(kv.Value, context);
                     result.Add(key, value);
                 }
                 return result;
@@ -454,7 +454,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<LayoutTag>((tag, context) =>
             {
                 var t = tag as LayoutTag;
-                object path = Executor.Exec(t.Path, context);
+                object path = TagExecutor.Exec(t.Path, context);
                 if (path == null)
                 {
                     return null;
@@ -490,7 +490,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<LoadTag>((tag, context) =>
             {
                 var t = tag as LoadTag;
-                object path = Executor.Exec(t.Path, context);
+                object path = TagExecutor.Exec(t.Path, context);
                 if (path == null)
                 {
                     return null;
@@ -517,7 +517,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 for (int i = 0; i < t.Children.Count; i++)
                 {
                     bool isOperator = t.Children[i] is OperatorTag;
-                    object result = Executor.Exec(t.Children[i], context);
+                    object result = TagExecutor.Exec(t.Children[i], context);
                     if (Eval(parameters, isOperator, result))
                     {
                         return parameters[parameters.Count - 1];
@@ -550,7 +550,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 var t = tag as ReferenceTag;
                 if (t.Child != null)
                 {
-                    return Executor.Exec(t.Child, context);
+                    return TagExecutor.Exec(t.Child, context);
                 }
                 return null;
             });
@@ -558,7 +558,7 @@ namespace JinianNet.JNTemplate.Dynamic
             Register<SetTag>((tag, context) =>
             {
                 var t = tag as SetTag;
-                object value = Executor.Exec(t.Value, context);
+                object value = TagExecutor.Exec(t.Value, context);
                 if (value != null)
                 {
                     if (!context.TempData.Update(t.Name, value))

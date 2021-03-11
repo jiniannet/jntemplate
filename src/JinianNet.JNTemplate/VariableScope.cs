@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 变量域
+    /// Variable Scope
     /// </summary>
     public class VariableScope
     {
@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate
 
 
         /// <summary>
-        /// 无参构造函数
+        /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
         public VariableScope()
             : this(null)
@@ -26,9 +26,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 以父VariableScope与字典来初始化对象
+        /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
-        /// <param name="parent">父VariableScope</param> 
+        /// <param name="parent">The parent <see cref="VariableScope"/>.</param> 
         public VariableScope(VariableScope parent)
         {
             this.parent = parent;
@@ -37,9 +37,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 清空数据
+        /// Removes all items from the <see cref="VariableScope"/>.
         /// </summary>
-        /// <param name="all">是否清空父数据</param>
+        /// <param name="all">is removes all</param>
         public void Clear(bool all)
         {
             this.dic.Clear();
@@ -51,7 +51,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 清空数据
+        /// Removes all items from the <see cref="VariableScope"/>.
         /// </summary>
         public void Clear()
         {
@@ -59,7 +59,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 父对象
+        /// gets the parent from the <see cref="VariableScope"/>.
         /// </summary>
         public VariableScope Parent
         {
@@ -67,15 +67,15 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 获取索引值
+        /// Gets the element with the specified key.
         /// </summary>
-        /// <param name="name">索引名称</param>
-        /// <returns>object</returns>
-        public object this[string name]
+        /// <param name="key">The key of the element to get.</param>
+        /// <returns>The element with the specified key.</returns>
+        public object this[string key]
         {
             get
             {
-                VariableElement val = GetElement(name);
+                VariableElement val = GetElement(key);
                 if (val != null)
                 {
                     return val.Value;
@@ -97,10 +97,11 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// update data
+        /// update the element with the specified key from the <see cref="VariableScope"/>.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
+        /// <param name="key">The key to locate in the <see cref="VariableScope"/>.</param>
+        /// <param name="value">The value with the specified key.</param>
+        /// <returns>true if the element is successfully updated; otherwise, false.</returns>
         public bool Update<T>(string key, T value)
         {
             if (this.dic.ContainsKey(key))
@@ -108,7 +109,7 @@ namespace JinianNet.JNTemplate
                 Set<T>(key, value);
                 return true;
             }
-            if(this.Parent != null)
+            if (this.Parent != null)
             {
                 return this.Parent.Update<T>(key, value);
             }
@@ -116,10 +117,10 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 是否包含指定键
+        /// Determines whether the <see cref="VariableScope"/>. contains an element with the specified key.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <returns>bool</returns>
+        /// <param name="key">The key to locate in the <see cref="VariableScope"/>.</param>
+        /// <returns>true if the <see cref="VariableScope"/> contains an element with the key; otherwise, false.</returns>
         public bool ContainsKey(string key)
         {
             if (this.dic.ContainsKey(key))
@@ -135,52 +136,46 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 移除指定对象
+        /// Removes the element with the specified key from the <see cref="VariableScope"/>.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns>是否移除成功</returns>
+        /// <param name="key">The key of the element to remove.</param>
+        /// <returns>true if the element is successfully removed; otherwise, false. This method also returns false if key was not found in the original <see cref="VariableScope"/>.</returns>
         public bool Remove(string key)
         {
             return this.dic.Remove(key);
         }
 
         /// <summary>
-        /// count
+        /// Gets the number of elements contained in the <see cref="VariableScope"/>.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return this.dic.Count + (this.parent == null ? 0 : this.parent.Count);
-            }
-        }
+        public int Count => this.dic.Count + (this.parent == null ? 0 : this.parent.Count);
 
         /// <summary>
-        /// 获取索引值
+        /// Get a <see cref="VariableElement"/> for variables
         /// </summary>
-        /// <param name="name">索引名称</param>
-        /// <returns>VariableElement</returns>
-        private VariableElement GetElement(string name)
+        /// <param name="key">The key of the element to get</param> 
+        /// <returns>The <see cref="VariableElement"/> with the specified key.</returns>
+        private VariableElement GetElement(string key)
         {
             VariableElement val;
-            if (this.dic.TryGetValue(name, out val))
+            if (this.dic.TryGetValue(key, out val))
             {
                 return val;
             }
             if (this.parent != null)
             {
-                return this.parent.GetElement(name);
+                return this.parent.GetElement(key);
             }
             return null;
         }
         /// <summary>
-        /// 获取结果类型
+        /// Get a <see cref="Type"/> for variables
         /// </summary>
-        /// <param name="name">索引名称</param>
-        /// <returns>Type</returns>
-        public Type GetType(string name)
+        /// <param name="key">The key of the element to get</param> 
+        /// <returns>The <see cref="Type"/> with the specified key.</returns>
+        public Type GetType(string key)
         {
-            VariableElement val = GetElement(name);
+            VariableElement val = GetElement(key);
             if (val != null)
             {
                 if (val.Type != null)
@@ -196,33 +191,34 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 添加数据
+        /// Set a new value for variables.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        /// <typeparam name="T">值类型</typeparam>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
+        /// <typeparam name="T">The type of elements in the  <see cref="VariableScope"/>.</typeparam>
         public void Set<T>(string key, T value)
         {
             Set(key, value, typeof(T));
         }
+
         /// <summary>
-        /// 添加数据
+        /// Set a new <see cref="object"/> for variables
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        /// <param name="type">值类型</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
+        /// <param name="type"><see cref="Type"/> of the value.</param>
         public void Set(string key, object value, Type type)
         {
-            SetElement(key, new VariableElement(type, value)); 
+            SetElement(key, new VariableElement(type, value));
         }
         /// <summary>
-        /// 添加数据
+        /// Set a new <see cref="VariableElement"/> for variables
         /// </summary>
-        /// <param name="key">键</param> 
-        /// <param name="element">值</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="element">The element with the specified key.</param>
         public void SetElement(string key, VariableElement element)
         {
             this.dic[key] = element;
-        } 
+        }
     }
 }

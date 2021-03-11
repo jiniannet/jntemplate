@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 词素分析器
     /// </summary>
-    public class TemplateLexer : Executer<Token[]>, IEnumerable<Token>, IEnumerator<Token>
+    public class TemplateLexer : Executor<Token[]>, IEnumerable<Token>, IEnumerator<Token>
     {
         /// <summary>
         /// 标记模式

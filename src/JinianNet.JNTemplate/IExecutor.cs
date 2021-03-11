@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+
 #if !NET20
 using System.Threading.Tasks;
 #endif
@@ -10,21 +11,20 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 泛型执行器
+    /// 执行器
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IExecuter<T>
+    public interface IExecutor
     {
         /// <summary>
         /// 执行结果
         /// </summary>
         /// <returns></returns>
-        T Execute();
+        object Execute();
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
         /// 异步执行
         /// </summary>
-        Task<T> ExecuteAsync();
+        Task<object> ExecuteAsync();
 #endif
     }
 }

@@ -11,5 +11,6 @@ namespace JinianNet.JNTemplate
     /// </summary>
     /// <param name="args">方法参数</param>
     /// <returns>object</returns>
+    [Obsolete("This delegate is obsolete; use Action<T...> or Func<T..> ")]
     public delegate object FuncHandler(params object[] args);
 }

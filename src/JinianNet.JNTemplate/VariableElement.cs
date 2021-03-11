@@ -8,26 +8,26 @@ using System;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 变量元素
+    /// Defines a variable element.
     /// </summary>
     public class VariableElement
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="VariableElement"/> class
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="value"></param>
+        /// <param name="type">type for data.</param>
+        /// <param name="value">data value.</param>
         public VariableElement(Type type,object value)
         {
             this.Type = type;
             this.Value = value;
         }
         /// <summary>
-        /// 类型
+        /// a type for data.
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
-        /// 值
+        /// data value.
         /// </summary>
         public object Value { get; set; } 
     }

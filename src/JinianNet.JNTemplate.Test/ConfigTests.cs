@@ -17,11 +17,11 @@ namespace JinianNet.JNTemplate.Test
             Engine.Configure((c) =>
             {
                 c.TagFlag = '@';
-                c.TagSuffix = "}";
+                c.TagSuffix = "}}";
                 c.TagPrefix = "{{";
             });
 
-            var templateContent = "你好，@name,欢迎来到{{name}的世界";
+            var templateContent = "你好，@name,欢迎来到{{name}}的世界";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("name", "jntemplate");
             var render = template.Render();

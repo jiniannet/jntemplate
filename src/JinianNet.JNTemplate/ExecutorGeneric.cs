@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
     /// 泛型执行器
     /// </summary>
     /// <typeparam name="T">泛型</typeparam>
-    public abstract class Executer<T> : IExecuter, IExecuter<T>
+    public abstract class Executor<T> : IExecutor, IExecutor<T>
     {
         /// <summary>
         /// 执行结果
@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate
         /// 执行结果
         /// </summary>
         /// <returns></returns>
-        object IExecuter.Execute()
+        object IExecutor.Execute()
         {
             return this.Execute();
         }
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate
         /// 异步执行
         /// </summary>
         /// <returns></returns>
-        async Task<object> IExecuter.ExecuteAsync()
+        async Task<object> IExecutor.ExecuteAsync()
         {
             return await this.ExecuteAsync();
         }

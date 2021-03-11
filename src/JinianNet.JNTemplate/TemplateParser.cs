@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// TemplateParser
     /// </summary>
-    public class TemplateParser : Executer<ITag[]>, IEnumerator<ITag>
+    public class TemplateParser : Executor<ITag[]>, IEnumerator<ITag>
     {
         #region private field
         private ITag tag;//当前标签

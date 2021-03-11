@@ -7,16 +7,16 @@ using System;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 变量元素
+    /// Defines a variable element.
     /// </summary>
     public class VariableElement<T>
     {
         /// <summary>
-        /// 类型
+        /// a type for data.
         /// </summary>
         public Type Type { get; set; }
         /// <summary>
-        /// 值
+        /// data value.
         /// </summary>
         public T Value { get; set; }
     }

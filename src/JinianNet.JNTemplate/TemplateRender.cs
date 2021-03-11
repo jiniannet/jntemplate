@@ -44,7 +44,7 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        var tagResult = Executor.Exec(collection[i], this.Context);
+                        var tagResult = TagExecutor.Exec(collection[i], this.Context);
                         if (tagResult != null)
                         {
                             writer.Write(tagResult.ToString());

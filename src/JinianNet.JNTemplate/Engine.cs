@@ -355,7 +355,7 @@ namespace JinianNet.JNTemplate
             Func<Nodes.ITag, TemplateContext, object> func) where T : Nodes.ITag
         {
             Runtime.RegisterTagParser(parser, 0);
-            Executor.Register<T>(func);
+            TagExecutor.Register<T>(func);
         }
     }
 }

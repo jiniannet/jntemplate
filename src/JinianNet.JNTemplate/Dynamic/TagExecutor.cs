@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 
     /// </summary>
-    public class Executor
+    public class TagExecutor
     {
         private static Lazy<ExecuteBuilder> builder;
 
@@ -26,7 +26,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <summary>
         /// ctor
         /// </summary>
-        static Executor()
+        static TagExecutor()
         {
             builder = new Lazy<ExecuteBuilder>();
         }
