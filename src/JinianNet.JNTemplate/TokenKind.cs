@@ -11,103 +11,103 @@ namespace JinianNet.JNTemplate
     public enum TokenKind
     {
         /// <summary>
-        /// 无
+        /// None
         /// </summary>
         None,
         /// <summary>
-        /// 非标签文本
+        /// The text.
         /// </summary>
         Text,
         /// <summary>
-        /// 标签内文本
+        /// The text inside the tags 
         /// </summary>
         TextData,
         /// <summary>
-        /// 标签
+        /// tag
         /// </summary>
         Tag,
         /// <summary>
-        /// 标签开始标记
+        /// Start tag ${
         /// </summary>
         TagStart,
         /// <summary>
-        /// 标签结束标记
+        /// End tag }
         /// </summary>
         TagEnd,
         /// <summary>
-        /// 字符串
+        /// string.
         /// </summary>
         String,
         /// <summary>
-        /// 数字
+        /// number
         /// </summary>
         Number,
         /// <summary>
-        /// 左中括号
+        /// Left Bracket (
         /// </summary>
         LeftBracket,
         /// <summary>
-        /// 右中括号
+        /// Right Bracket )
         /// </summary>
         RightBracket,
         /// <summary>
-        /// 左圆括号
+        /// Left Parentheses [
         /// </summary>
         LeftParentheses,
         /// <summary>
-        /// 右圆括号
+        /// Right Parentheses ]
         /// </summary>
         RightParentheses,
         /// <summary>
-        /// 左大括号
+        /// Left Brace {
         /// </summary>
         LeftBrace,
         /// <summary>
-        /// 右大括号
+        /// Right Brace }
         /// </summary>
         RightBrace,
         /// <summary>
-        /// 新行（换行符）
+        /// New Line
         /// </summary>
         NewLine,
         /// <summary>
-        /// 点
+        /// Dot .
         /// </summary>
         Dot,
         /// <summary>
-        /// 字符串开始
+        /// Start String "
         /// </summary>
         StringStart,
         /// <summary>
-        /// 字符串结束
+        /// End String "
         /// </summary>
         StringEnd,
         /// <summary>
-        /// 空格
+        /// Space
         /// </summary>
         Space,
         /// <summary>
-        /// 标点
+        /// Punctuation (,:...)
         /// </summary>
         Punctuation,
         /// <summary>
-        /// 运算符
+        /// Operator (+,-,*,/,%..)
         /// </summary>
         Operator,
         /// <summary>
-        /// 逗号
+        /// Comma (,)
         /// </summary>
         Comma,
         /// <summary>
-        /// 冒号
+        /// Colon (:)
         /// </summary>
         Colon,
         /// <summary>
-        /// 注释
+        /// Comment ($* comment *$)
         /// </summary>
         Comment,
         /// <summary>
-        /// 结束
+        /// eof
         /// </summary>
         EOF
     }

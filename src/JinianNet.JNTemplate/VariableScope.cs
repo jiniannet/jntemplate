@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate
         /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
         public VariableScope()
-            : this(null)
+            : this(Runtime.Storage.Data)
         {
 
         }
@@ -32,7 +32,7 @@ namespace JinianNet.JNTemplate
         public VariableScope(VariableScope parent)
         {
             this.parent = parent;
-            this.dic = new Dictionary<string, VariableElement>(Runtime.Store.ComparerIgnoreCase);
+            this.dic = new Dictionary<string, VariableElement>(Runtime.Storage.ComparerIgnoreCase);
 
         }
 

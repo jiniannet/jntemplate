@@ -678,9 +678,9 @@ namespace JinianNet.JNTemplate.Dynamic
             switch (value)
             {
                 case "==":
-                    return x.Equals(y, Runtime.Store.ComparisonIgnoreCase);
+                    return x.Equals(y, Runtime.Storage.ComparisonIgnoreCase);
                 case "!=":
-                    return !x.Equals(y, Runtime.Store.ComparisonIgnoreCase);
+                    return !x.Equals(y, Runtime.Storage.ComparisonIgnoreCase);
                 case "+":
                     return string.Concat(x, y);
                 default:

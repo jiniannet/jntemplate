@@ -8,6 +8,7 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public class ConfigTests
     {
+#if testconfig
         /// <summary>
         /// 自定义标签前后缀测试
         /// </summary>
@@ -32,8 +33,6 @@ namespace JinianNet.JNTemplate.Test
 
         }
 
-
-
         /// <summary>
         /// 测试配置
         /// </summary>
@@ -50,7 +49,7 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("var $a =34;", render);
             Engine.Configure(Configuration.EngineConfig.CreateDefault());
         }
-
+#endif
 
     }
 }

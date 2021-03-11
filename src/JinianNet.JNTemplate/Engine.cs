@@ -25,8 +25,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public static bool EnableCompile
         {
-            get { return Runtime.Store.EnableCompile; }
-            set { Runtime.Store.EnableCompile = value; }
+            get { return Runtime.Storage.EnableCompile; }
+            set { Runtime.Storage.EnableCompile = value; }
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate
         public static void Configure(Action<IConfig, VariableScope> action)
         {
             var conf = Configuration.EngineConfig.CreateDefault();
-            var score = new VariableScope();
+            var score = new VariableScope(null);
             action?.Invoke(conf, score);
             Configure(conf, score);
         }
@@ -192,7 +192,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static TemplateContext CreateContext()
         {
-            var data = new VariableScope(Runtime.Data);
+            var data = new VariableScope();
             TemplateContext ctx = new TemplateContext(data);
             if (Runtime.ResourceDirectories != null && Runtime.ResourceDirectories.Count > 0)
             {

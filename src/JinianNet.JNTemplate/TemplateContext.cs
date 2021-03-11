@@ -31,9 +31,9 @@ namespace JinianNet.JNTemplate
         /// <param name="data">模板数据</param>  
         public TemplateContext(VariableScope data) : base()
         {
-            this.variableScope = data ?? new VariableScope();
+            this.variableScope = data ?? new VariableScope(null);
             this.errors = new List<System.Exception>();
-            this.enableTemplateCache = Runtime.Store.EnableTemplateCache;
+            this.enableTemplateCache = Runtime.Storage.EnableTemplateCache;
 
         }
 

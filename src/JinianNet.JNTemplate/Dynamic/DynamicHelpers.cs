@@ -4,6 +4,7 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.Caching;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -22,7 +23,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static PropertyInfo GetPropertyInfo(Type type, string propName)
         {
-            PropertyInfo p = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
+            PropertyInfo p = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Storage.BindIgnoreCase);
             return p;
         }
 
@@ -54,7 +55,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static FieldInfo GetFieldInfo(Type type, string propName)
         {
-            FieldInfo f = type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
+            FieldInfo f = type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Storage.BindIgnoreCase);
 
             return f;
         }
@@ -86,11 +87,11 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetMethods(Type type, string methodName)
         {
-            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Store.BindIgnoreCase);
+            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Storage.BindIgnoreCase);
             List<MethodInfo> result = new List<MethodInfo>();
             foreach (MethodInfo m in ms)
             {
-                if (m.Name.Equals(methodName, Runtime.Store.ComparisonIgnoreCase))
+                if (m.Name.Equals(methodName, Runtime.Storage.ComparisonIgnoreCase))
                 {
                     result.Add(m);
                 }
@@ -151,26 +152,6 @@ namespace JinianNet.JNTemplate.Dynamic
                 if (IsMatch(real.GetParameters(), args))
                 {
                     return real;
-                }
-            }
-            return null;
-        }
-
-
-        /// <summary>
-        /// 根据参数获取动态方法（请尽量避免使用重载）
-        /// </summary>
-        /// <param name="ms">动态方法数组</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="args">实参</param>
-        /// <returns>MethodInfo</returns>
-        public static DynamicMethodInfo GetDynamicMethod(string methodName, DynamicMethodInfo[] ms, Type[] args)
-        {
-            foreach (var m in ms)
-            {
-                if (IsMatch(m.Parameters, args))
-                {
-                    return m;
                 }
             }
             return null;
@@ -389,6 +370,167 @@ namespace JinianNet.JNTemplate.Dynamic
                 return null;
             }
             return Activator.CreateInstance(type);
+        }
+
+        /// <summary>
+        /// 获取属性或字段的值
+        /// </summary>
+        /// <param name="container">原对象</param>
+        /// <param name="propName">属性或字段名，有参数属性为参数值</param>
+        /// <returns></returns>
+        public static object CallPropertyOrField(object container, string propName)
+        {
+            Type t = container.GetType();
+            //此处的属性包括有参属性（索引）与无参属性（属性）
+            //if (propName.IndexOfAny(indexExprStartChars) < 0)
+            //因属性与字段均不可能以数字开头，如第一个字符为数字则直接跳过属性判断以加快处理速度
+            if (!char.IsDigit(propName[0]))
+            {
+#if !NET20_NOTUSER
+                PropertyInfo p = DynamicHelpers.GetPropertyInfo(t, propName);
+                //取属性
+                if (p != null)
+                {
+                    return p.GetValue(container, null);
+                }
+#if NEEDFIELD
+                //取字段
+                FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
+                if (f != null)
+                {
+                    return f.GetValue(container);
+                }
+#endif
+#else
+                System.Linq.Expressions.MemberExpression exp;
+#if NEEDFIELD
+                exp = System.Linq.Expressions.Expression.PropertyOrField(System.Linq.Expressions.Expression.Constant(container), propName);
+#else
+                exp = System.Linq.Expressions.Expression.Property(System.Linq.Expressions.Expression.Constant(container), propName);
+#endif
+                if (exp != null)
+                {
+                    return System.Linq.Expressions.Expression.Lambda(exp).Compile().DynamicInvoke();
+                }
+#endif
+            }
+
+            return null;
+        }
+
+
+        /// <summary>
+        /// 调用实例方法
+        /// </summary>
+        /// <param name="container">实例对象</param>
+        /// <param name="methodName">方法名</param>
+        /// <param name="args">形参</param>
+        /// <returns>object</returns>
+        public static object CallMethod(object container, string methodName, object[] args)
+        {
+            Type[] types = new Type[args.Length];
+            bool hasNullValue = false;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] != null)
+                {
+                    types[i] = args[i].GetType();
+                }
+                else
+                {
+                    hasNullValue = true;
+                }
+            }
+
+            Type t = container.GetType();
+            MethodInfo method = DynamicHelpers.GetMethod(t, methodName, types);
+
+            if (method != null)
+            {
+                //if (hasParam)
+                //{
+                //    Array arr;
+                //    if (types.Length - 1 == args.Length)
+                //    {
+                //        arr = null;
+                //    }
+                //    else
+                //    {
+                //        arr = Array.CreateInstance(types[types.Length - 1].GetElementType(), args.Length - types.Length + 1);
+                //        for (int i = types.Length - 1; i < args.Length; i++)
+                //        {
+                //            arr.SetValue(args[i], i - (types.Length - 1));
+                //        }
+
+                //        object[] newArgs = new object[types.Length];
+
+                //        for (int i = 0; i < newArgs.Length - 1; i++)
+                //        {
+                //            newArgs[i] = args[i];
+                //        }
+                //        newArgs[newArgs.Length - 1] = arr;
+
+                //        return method.Invoke(container, newArgs);
+                //    }
+                //}
+
+                ParameterInfo[] pi = method.GetParameters();
+                //处理可选参数
+                if (types.Length == 1 && types[0] == typeof(Dictionary<object, object>)
+                    && (pi.Length != 1 || !pi[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
+                {
+                    //实参
+                    args = DynamicHelpers.ChangeParameters((Dictionary<object, object>)args[0], pi);
+                }
+                else if (hasNullValue)
+                {
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        if (args[i] == null && pi[i].DefaultValue != null)
+                        {
+                            args[i] = pi[i].DefaultValue;
+                        }
+                        //else
+                        //{
+                        //    args[i] = DefaultForType(pi[i].ParameterType);
+                        //}
+                    }
+                }
+                return method.Invoke(container, args);
+
+            }
+
+            return null;
+        }
+        /// <summary>
+        /// 动态获取索引值
+        /// </summary>
+        /// <param name="container">对象</param>
+        /// <param name="propIndex">索引</param>
+        /// <returns>返回结果</returns>
+        public static object CallIndexValue(object container, object propIndex)
+        {
+            IList list;
+            if (propIndex is int && (list = container as IList) != null)
+            {
+                return list[(int)propIndex];
+            }
+            IDictionary dic;
+            if ((dic = container as IDictionary) != null)
+            {
+                return dic[propIndex];
+            }
+            if (propIndex is int && container is string)
+            {
+                return ((string)container)[(int)propIndex];
+            }
+            Type t = container.GetType();
+            var info = DynamicHelpers.GetPropertyGetMethod(t, "Item");
+            if (info != null)
+            {
+                return info.Invoke(container, new object[] { propIndex });
+            }
+            return null;
         }
     }
 }

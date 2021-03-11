@@ -152,7 +152,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     return context.TempData[t.Name];
                 }
-                return Runtime.Actuator.CallPropertyOrField(baseValue, t.Name);
+                return DynamicHelpers.CallPropertyOrField(baseValue, t.Name);
             });
 
             Register<ArithmeticTag>((tag, context) =>
@@ -373,14 +373,14 @@ namespace JinianNet.JNTemplate.Dynamic
                     return null;
                 }
 
-                var result = Runtime.Actuator.CallMethod(parentValue, t.Name, args);
+                var result = DynamicHelpers.CallMethod(parentValue, t.Name, args);
 
                 if (result != null)
                 {
                     return result;
                 }
 
-                result = Runtime.Actuator.CallPropertyOrField(parentValue, t.Name);
+                result = DynamicHelpers.CallPropertyOrField(parentValue, t.Name);
 
                 if (result != null && result is Delegate)
                 {
@@ -435,7 +435,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 var t = tag as IndexValueTag;
                 object obj = TagExecutor.Exec(t.Parent, context);
                 object index = TagExecutor.Exec(t.Index, context);
-                return Runtime.Actuator.CallIndexValue(obj, index);
+                return DynamicHelpers.CallIndexValue(obj, index);
             });
 
             Register<JsonTag>((tag, context) =>

@@ -23,13 +23,13 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public sealed class Runtime
     {
-        private static RuntimeStore store;
+        private static RuntimeStorage store;
         private static volatile object state;
 
         /// <summary>
         /// config store
         /// </summary>
-        internal static RuntimeStore Store
+        internal static RuntimeStorage Storage
         {
             get
             {
@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate
                 {
                     lock (state)
                     {
-                        store = RuntimeStore.CreateStore();
+                        store = RuntimeStorage.CreateStore();
                     }
                 }
                 return store;
@@ -59,45 +59,41 @@ namespace JinianNet.JNTemplate
         /// <param name="scope">初始数据</param>
         internal static void Configure(IDictionary<string, string> conf, VariableScope scope)
         {
-            Store.Data = (scope == null || scope.Count == 0) ? null : scope;
-            Store.Initialization(conf);
+            Storage.Data = (scope == null || scope.Count == 0) ? null : scope;
+            Storage.Initialization(conf);
         }
 
         /// <summary>
         /// 模板资源搜索目录
         /// </summary>
         /// <value></value>
-        public static List<string> ResourceDirectories => Store.ResourceDirectories;
+        public static List<string> ResourceDirectories => Storage.ResourceDirectories;
 
 
         /// <summary>
         /// 全局初始数据
         /// </summary>
-        public static VariableScope Data => Store.Data;
+        public static VariableScope Data => Storage.Data;
 
         /// <summary>
         /// 加载器
         /// </summary>
-        public static IResourceLoader Loader => Store.Loader;
+        public static IResourceLoader Loader => Storage.Loader;
         /// <summary>
         /// Default encoding
         /// </summary>
-        public static Encoding Encoding => Store.Encoding;
+        public static Encoding Encoding => Storage.Encoding;
 
         /// <summary>
         /// Cache
         /// </summary>
 
-        public static ICache Cache => Store.Cache;
-        /// <summary>
-        /// Actuator
-        /// </summary>
-        public static IActuator Actuator => Store.Actuator;
+        public static ICache Cache => Storage.Cache;
 
         /// <summary>
         /// Compile Templates
         /// </summary>
-        public static TemplateCollection<Compile.ICompileTemplate> Templates => Store.Templates;
+        public static TemplateCollection<Compile.ICompileTemplate> Templates => Storage.Templates;
 
         /// <summary>
         /// 
@@ -109,7 +105,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException(nameof(loader));
             }
-            Runtime.Store.Loader = loader;
+            Runtime.Storage.Loader = loader;
         }
 
         /// <summary>
@@ -118,9 +114,9 @@ namespace JinianNet.JNTemplate
         /// <param name="path"></param>
         public static void AppendResourcePath(string path)
         {
-            if (!Store.ResourceDirectories.Contains(path))
+            if (!Storage.ResourceDirectories.Contains(path))
             {
-                Store.ResourceDirectories.Add(path);
+                Storage.ResourceDirectories.Add(path);
             }
         }
 
@@ -133,7 +129,7 @@ namespace JinianNet.JNTemplate
         {
             string value;
 
-            if (Store.Variable.TryGetValue(variable, out value))
+            if (Storage.Variable.TryGetValue(variable, out value))
             {
                 return value;
             }
@@ -153,11 +149,11 @@ namespace JinianNet.JNTemplate
             }
             if (value == null)
             {
-                Store.Variable.Remove(variable);
+                Storage.Variable.Remove(variable);
             }
             else
             {
-                Store.Variable[variable] = value;
+                Storage.Variable[variable] = value;
             }
         }
 
@@ -168,17 +164,17 @@ namespace JinianNet.JNTemplate
         /// <param name="index">索引</param>
         public static void RegisterTagParser(ITagParser parser, int index = -1)
         {
-            if (Store.Parsers.Contains(parser))
+            if (Storage.Parsers.Contains(parser))
             {
                 return;
             }
             if (index < 0)
             {
-                Store.Parsers.Add(parser);
+                Storage.Parsers.Add(parser);
             }
             else
             {
-                Store.Parsers.Insert(index, parser);
+                Storage.Parsers.Insert(index, parser);
             }
         }
 
@@ -195,7 +191,7 @@ namespace JinianNet.JNTemplate
                 return null;
             }
 
-            var parsers = Store.Parsers;
+            var parsers = Storage.Parsers;
             ITag t;
             for (int i = 0; i < parsers.Count; i++)
             {
@@ -224,15 +220,15 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// core
         /// </summary>
-        internal class RuntimeStore
+        internal class RuntimeStorage
         {
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            internal static RuntimeStore CreateStore()
+            internal static RuntimeStorage CreateStore()
             {
-                RuntimeStore store = new RuntimeStore();
+                RuntimeStorage store = new RuntimeStorage();
                 store.Data = null;
                 store.Variable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
                     { nameof(IConfig.Charset),"utf-8" },
@@ -243,7 +239,6 @@ namespace JinianNet.JNTemplate
                     { nameof(IConfig.StripWhiteSpace),"False" },
                     { nameof(IConfig.IgnoreCase),"True" }
                 };
-                store.Actuator = new ReflectionActuator();
                 store.Cache = new MemoryCache();
                 store.Parsers = new List<ITagParser>();
                 store.ResourceDirectories = new List<string>();
@@ -334,10 +329,6 @@ namespace JinianNet.JNTemplate
             /// </summary>
 
             public ICache Cache { set; get; }
-            /// <summary>
-            /// Actuator
-            /// </summary>
-            public IActuator Actuator { set; get; }
 
             /// <summary>
             /// 模板资源搜索目录

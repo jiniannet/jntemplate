@@ -164,7 +164,7 @@ namespace JinianNet.JNTemplate.Compile
         /// <returns></returns>
         private static CompileContext GenerateContext(string name)
         {
-            return GenerateContext(name, new VariableScope(Runtime.Data));
+            return GenerateContext(name, new VariableScope());
         }
 
 
@@ -214,7 +214,7 @@ namespace JinianNet.JNTemplate.Compile
         {
             if (scope == null)
             {
-                scope = new VariableScope(Runtime.Data);
+                scope = new VariableScope();
             }
             var type = typeof(ICompileTemplate);
             TypeBuilder typeBuilder = DefineType(type, null, typeof(Compiler).Namespace, $"Template{ToHashCode(name)}");
