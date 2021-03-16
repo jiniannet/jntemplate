@@ -362,10 +362,10 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
                 if (t.Parent == null || (t.Parent != null && string.IsNullOrEmpty(t.Name)))
                 {
-                    if (parentValue is FuncHandler funcHandler)
-                    {
-                        return funcHandler(args);
-                    }
+                    //if (parentValue is FuncHandler funcHandler)
+                    //{
+                    //    return funcHandler(args);
+                    //}
                     if (parentValue is Delegate func)
                     {
                         return func.DynamicInvoke(args);

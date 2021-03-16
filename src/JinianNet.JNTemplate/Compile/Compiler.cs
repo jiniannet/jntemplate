@@ -200,10 +200,8 @@ namespace JinianNet.JNTemplate.Compile
             {
                 typeBuilder.AddInterfaceImplementation(interfaceType);
             }
-            a = assemblyBuilder;
             return typeBuilder;
         }
-        static AssemblyBuilder a;
 
         /// <summary>
         /// Generate Context
