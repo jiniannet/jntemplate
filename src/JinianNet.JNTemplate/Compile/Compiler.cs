@@ -200,9 +200,10 @@ namespace JinianNet.JNTemplate.Compile
             {
                 typeBuilder.AddInterfaceImplementation(interfaceType);
             }
+            a = assemblyBuilder;
             return typeBuilder;
         }
-
+        static AssemblyBuilder a;
 
         /// <summary>
         /// Generate Context
@@ -216,18 +217,8 @@ namespace JinianNet.JNTemplate.Compile
             {
                 scope = new VariableScope();
             }
-            var type = typeof(ICompileTemplate);
-            TypeBuilder typeBuilder = DefineType(type, null, typeof(Compiler).Namespace, $"Template{ToHashCode(name)}");
-            var targetMethod = DynamicHelpers.GetMethod(type, "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
-
-            MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
-            //MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, targetMethod.Attributes & (~MethodAttributes.Abstract), targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
-            //MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, targetMethod.Attributes & (~MethodAttributes.Abstract) | MethodAttributes.Final, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
-            ILGenerator methodGenerator = method.GetILGenerator();
             var ctx = new CompileContext();
             ctx.Data = scope;
-            ctx.Generator = methodGenerator;
-            ctx.TypeBuilder = typeBuilder;
             ctx.Name = name;
             return ctx;
 
@@ -241,7 +232,13 @@ namespace JinianNet.JNTemplate.Compile
         /// <returns></returns>
         private static ICompileTemplate Compile(ITag[] tags, CompileContext ctx)
         {
-            var il = ctx.Generator;
+            var interfaceType = typeof(ICompileTemplate);
+            TypeBuilder typeBuilder = DefineType(interfaceType, null, typeof(Compiler).Namespace, $"Template{ToHashCode(ctx.Name)}");
+            var targetMethod = DynamicHelpers.GetMethod(interfaceType, "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
+            MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
+            ILGenerator methodGenerator = method.GetILGenerator();
+            ctx.TypeBuilder = typeBuilder;
+            var il = ctx.Generator = methodGenerator;
             Label labelPass = il.DefineLabel();
 
             il.Emit(OpCodes.Ldarg_1);
@@ -258,20 +255,28 @@ namespace JinianNet.JNTemplate.Compile
 
             for (var i = 0; i < tags.Length; i++)
             {
-                if (tags[i] is TextTag)
+                if (tags[i] is TextTag text)
                 {
-                    var t = tags[i] as TextTag;
-                    if (!string.IsNullOrEmpty(t.Text))
+                    if (!string.IsNullOrEmpty(text.Text))
                     {
                         il.Emit(OpCodes.Ldarg_1);
                         if (ctx.StripWhiteSpace)
                         {
-                            il.Emit(OpCodes.Ldstr, t.Text.Trim());
+                            il.Emit(OpCodes.Ldstr, text.Text.Trim());
                         }
                         else
                         {
-                            il.Emit(OpCodes.Ldstr, t.Text);
+                            il.Emit(OpCodes.Ldstr, text.Text);
                         }
+                        il.Emit(OpCodes.Callvirt, write);
+                    }
+                }
+                else if (tags[i] is ITypeTag value)
+                {
+                    if (value != null)
+                    {
+                        il.Emit(OpCodes.Ldarg_1);
+                        il.Emit(OpCodes.Ldstr, value.Value.ToString());
                         il.Emit(OpCodes.Callvirt, write);
                     }
                 }
@@ -291,6 +296,8 @@ namespace JinianNet.JNTemplate.Compile
 #else
             ctx.TypeBuilder.CreateType();
 #endif
+            ctx.Dispose();
+
             if (type == null)
             {
                 return null;
@@ -338,7 +345,7 @@ namespace JinianNet.JNTemplate.Compile
             return Compile(tags, ctx);
         }
 
-       
+
         /// <summary>
         /// 获取HASHCODE
         /// </summary>

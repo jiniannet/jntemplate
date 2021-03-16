@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestMockPage()
         {
             var path = string.Join(Path.DirectorySeparatorChar, new string[] { Environment.CurrentDirectory, "templets", "default", "questionlist.html" });
-            var template = Engine.LoadTemplate(path);
+            var template = Engine.LoadTemplate("TestMockPage", path);
             FillData(template);
             var result = template.Render();
             //将生成的文件放到result目录下可以查看实际生成效果

@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     /// <typeparam name="T">类型</typeparam>
     [Serializable]
-    public abstract class TypeTag<T> : SpecialTag, ITypeTag<T>
+    public abstract class TypeTag<T> : SpecialTag, ITypeTag
     {
         private T baseValue;
         /// <summary>
@@ -22,6 +22,15 @@ namespace JinianNet.JNTemplate.Nodes
         {
             get { return this.baseValue; }
             set { this.baseValue = value; }
-        } 
+        }
+
+        /// <summary>
+        /// 值
+        /// </summary>
+        object ITypeTag.Value
+        {
+            get { return this.baseValue; }
+            set { this.baseValue = (T)value; }
+        }
     }
 }

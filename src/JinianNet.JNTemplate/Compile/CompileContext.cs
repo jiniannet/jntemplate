@@ -3,6 +3,8 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace JinianNet.JNTemplate.Compile
@@ -10,7 +12,7 @@ namespace JinianNet.JNTemplate.Compile
     /// <summary>
     /// Compile Context
     /// </summary>
-    public class CompileContext : Context
+    public class CompileContext : Context, IDisposable
     {
         private int seed = 0;
         /// <summary>
@@ -19,7 +21,7 @@ namespace JinianNet.JNTemplate.Compile
         public CompileContext()
             : base()
         {
-
+            Methods = new Dictionary<string, MethodInfo>();
         }
         /// <summary>
         /// template name
@@ -37,6 +39,10 @@ namespace JinianNet.JNTemplate.Compile
         /// data
         /// </summary>
         public VariableScope Data { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<string, MethodInfo> Methods { get; set; }
 
         /// <summary>
         /// 设置编译参数类型
@@ -55,6 +61,16 @@ namespace JinianNet.JNTemplate.Compile
         public void Set<T>(string name)
         {
             Set(name, typeof(T));
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Methods?.Clear();
+            TypeBuilder = null;
+            Data = null;
+            Methods = null;
+            Generator = null;
         }
 
         /// <summary>

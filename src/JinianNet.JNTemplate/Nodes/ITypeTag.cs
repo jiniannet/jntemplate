@@ -1,4 +1,7 @@
-﻿
+﻿/********************************************************************************
+ Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
+ Licensed under the MIT license. See licence.txt file in the project root for full license information.
+ ********************************************************************************/
 using System;
 
 namespace JinianNet.JNTemplate.Nodes
@@ -6,12 +9,11 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 基本类型标签
     /// </summary>
-    /// <typeparam name="T">类型</typeparam>
-    public interface ITypeTag<T>
+    public interface ITypeTag
     {
         /// <summary>
         /// 值
         /// </summary>
-        T Value { get; set; }
+        object Value { get; set; }
     }
 }

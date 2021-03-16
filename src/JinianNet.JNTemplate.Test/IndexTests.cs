@@ -77,7 +77,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestIndexValue()
         {
-            var templateContent = "$data.Get(0)"; //数组取值用get即可取到 List<Int32>用get_Item  原因见.NET的索引实现原理
+            var templateContent = "$data.Get(0)";  
             var template = Engine.CreateTemplate(templateContent);
 
             template.Set("data",new int[] { 7, 0, 2, 0, 6 });
@@ -92,8 +92,8 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestDict()
         {
-            var templateContent = "$data[\"name\"]";//索引也可以和属性一样取值，不过推荐用get_Item，且如果索引是数字时，请尽量使用$data.get_Item(index)
-            var template = Engine.CreateTemplate(templateContent);
+            var templateContent = "$data[\"name\"]";
+            var template = Engine.CreateTemplate("TestDict",templateContent);
             var dic = new System.Collections.Generic.Dictionary<string, string>();
             dic["name"] = "你好！jntemplate";
             dic["age"] = "1";
@@ -103,12 +103,42 @@ namespace JinianNet.JNTemplate.Test
         }
 
         /// <summary>
+        /// 测试字典
+        /// </summary>
+        [Fact]
+        public void TestDictAndObject()
+        {
+            var templateContent = "$data[\"name\"]";
+            var template = Engine.CreateTemplate(templateContent);
+            var dic = new Dictionary<string, object>();
+            dic["name"] = "你好！jntemplate";
+            dic["age"] = "1";
+            template.Set("data", dic);
+            var render = template.Render();
+            Assert.Equal("你好！jntemplate", render);
+        }
+
+
+        /// <summary>
+        /// 测试字典
+        /// </summary>
+        [Fact]
+        public void TestDictOutput()
+        {
+            var templateContent = "$dict";
+            var template = Engine.CreateTemplate("TestDictOutput",templateContent); 
+            template.Set("dict", new Dictionary<string, object>());
+            var render = template.Render();
+            Assert.StartsWith("System.Collections.Generic.Dictionary`2", render);
+        }
+
+        /// <summary>
         /// 通过get_Item获取索引(数字索引)
         /// </summary>
         [Fact]
         public void TestGetItemInt()
         {
-            var templateContent = "$data.get_Item(0)"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
+            var templateContent = "$data.get_Item(0)"; 
             var template = Engine.CreateTemplate(templateContent);
 
             template.Set("data",new System.Collections.Generic.List<int>(new int[] { 7, 0, 2, 0, 6 }));

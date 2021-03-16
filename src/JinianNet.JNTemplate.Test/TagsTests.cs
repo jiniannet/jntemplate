@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using JinianNet.JNTemplate.Test.ViewModel;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -85,6 +86,24 @@ $end
             });
             var render = template.Render();
             Assert.Equal("jiniannet.com", render);
+        }
+
+        /// <summary>
+        /// 测试枚举属性
+        /// </summary>
+        [Fact]
+        public void TestEnumProperty()
+        {
+            var templateContent = "$model.Type";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("model", new DemoEntity
+            {
+                Id=100, 
+                Title = "jiniannet.com",
+                Type = DemoType.Yes
+            });
+            var render = template.Render();
+            Assert.Equal("Yes", render);
         }
 
         /// <summary>
@@ -388,6 +407,19 @@ $key5";
             var render = template.Render();
             Assert.Equal("12", render);
 
+        }
+
+        /// <summary>
+        /// 测试字典
+        /// </summary>
+        [Fact]
+        public void TestListOfTOutput()
+        {
+            var templateContent = "$data";
+            var template = Engine.CreateTemplate("TestListOfTOutput",templateContent);
+            template.Set("data", new List<object>());
+            var render = template.Render();
+            Assert.StartsWith("System.Collections.Generic.List`1", render);
         }
 
         ///// <summary>
