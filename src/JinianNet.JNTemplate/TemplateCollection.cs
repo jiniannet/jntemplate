@@ -8,13 +8,13 @@ using System.Collections.Concurrent;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    ///TemplatesCollection
+    ///Provides the class for a template collection.
     /// </summary>
     public class TemplateCollection<T> where T : Compile.ICompileTemplate
     {
         private ConcurrentDictionary<string, T> dict;
         /// <summary>
-        /// ctor
+        /// Initializes a new instance of the <see cref="TemplateCollection{T}"/> class
         /// </summary>
         public TemplateCollection()
         {
@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// template count
+        /// Gets the number of elements actually contained in the <see cref="TemplateCollection{T}"/>.
         /// </summary>
         public int Count
         {
@@ -30,10 +30,10 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// get or set template
+        /// Gets or sets the element at the specified name.
         /// </summary>
-        /// <param name="name">template name</param>
-        /// <returns></returns>
+        /// <param name="name">The name of the element to get or set.</param>
+        /// <returns>The element at the specified name.</returns>
         public T this[string name]
         {
             get
@@ -52,18 +52,17 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// remove template
+        /// Removes the element at the specified name of the <see cref="TemplateCollection{T}"/>.
         /// </summary>
-        /// <param name="name">template name</param>
-        /// <returns></returns>
+        /// <param name="name">The name of the element to remove.</param>
+        /// <returns>true if the element is successfully removed; otherwise, false. </returns>
         public bool Remove(string name)
         {
-            T output;
-            return dict.TryRemove(name, out output);
+            return dict.TryRemove(name, out T output);
         }
 
         /// <summary>
-        /// keys
+        /// Gets a collection containing the keys in the <see cref="TemplateCollection{T}"/>.
         /// </summary>
         public System.Collections.Generic.ICollection<string> Keys
         {
@@ -74,7 +73,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// clear data
+        /// Removes all elements from the <see cref="TemplateCollection{T}"/>.
         /// </summary>
         public void Clear()
         {

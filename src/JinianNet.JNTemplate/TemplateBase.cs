@@ -10,40 +10,40 @@ using System.IO;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 基本模板
+    /// The base class of template.
     /// </summary>
-    public abstract class TemplateBase 
+    public abstract class TemplateBase
     {
         /// <summary>
-        /// 模板KEY(用于缓存，默认为文路径)
+        /// Gets or sets the key(unique) of the template.
         /// </summary>
         public string TemplateKey { get; set; }
 
         /// <summary>
-        /// 模板上下文
+        /// Gets or sets the context of the template.
         /// </summary>
         public TemplateContext Context { get; set; }
 
         /// <summary>
-        /// 模板内容
+        /// Gets or sets the content of the template.
         /// </summary>
         public string TemplateContent { get; set; }
 
         /// <summary>
-        /// 设置数据
+        /// Set a new value for variables.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
         public void Set<T>(string key, T value)
         {
             Context.TempData.Set<T>(key, value);
         }
 
         /// <summary>
-        /// 设置静态对象
+        /// Set a static type for variables.
         /// </summary>
-        /// <param name="key">对象名</param>
-        /// <param name="type">类型</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="type">The type with the specified key.</param>
         public void SetStaticType(string key, Type type)
         {
             if (string.IsNullOrEmpty(key))

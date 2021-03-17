@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 当前程序版本
         /// </summary>
-        public const string Version = "2.0.0";
+        public const string Version = "2.0.1";
         internal const string KEY_FOREACH = "foreach";
         internal const string KEY_IF = "if";
         internal const string KEY_ELSEIF = "elseif";

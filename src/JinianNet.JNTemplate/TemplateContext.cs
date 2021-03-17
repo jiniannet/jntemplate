@@ -13,7 +13,7 @@ using JinianNet.JNTemplate.Resources;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// Context
+    /// Context for template execution.
     /// </summary>
     [Serializable]
     public class TemplateContext : Context
@@ -26,21 +26,18 @@ namespace JinianNet.JNTemplate
         private List<System.Exception> errors;
 
         /// <summary>
-        /// 模板上下文
+        /// Initializes a new instance of the <see cref="TemplateContext"/> class
         /// </summary>
-        /// <param name="data">模板数据</param>  
+        /// <param name="data">The <see cref="VariableScope"/>.</param>  
         public TemplateContext(VariableScope data) : base()
         {
             this.variableScope = data ?? new VariableScope(null);
             this.errors = new List<System.Exception>();
             this.enableTemplateCache = Runtime.Storage.EnableTemplateCache;
-
         }
 
-
-
         /// <summary>
-        /// 启用模板缓存
+        /// Enable or Disenable the cache.
         /// </summary>
         public bool EnableTemplateCache
         {
@@ -49,7 +46,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 模板数据
+        /// Gets or sets the <see cref="TemplateContext"/> of the context.
         /// </summary>
         public VariableScope TempData
         {
@@ -58,7 +55,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 当前异常集合（当ThrowExceptions为false时有效）
+        /// Gets the <see cref="Exception"/> of the context.
         /// </summary>
         public virtual System.Exception[] AllErrors
         {
@@ -66,7 +63,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 获取当前第一个异常信息（当ThrowExceptions为false时有效）
+        /// Gets the first <see cref="Exception"/>.
         /// </summary>
         public virtual System.Exception Error
         {
@@ -82,9 +79,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 将异常添加到当前 异常集合中。
+        /// Adds an <see cref="Exception"/> to the end of the context.
         /// </summary>
-        /// <param name="e">异常</param>
+        /// <param name="e">The <see cref="Exception"/>.</param>
         public void AddError(System.Exception e)
         {
             if (this.ThrowExceptions)
@@ -95,17 +92,18 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 清除所有异常
+        /// Removes all <see cref="Exception"/> from context.
         /// </summary>
         public void ClearError()
         {
             this.errors.Clear();
         }
+
         /// <summary>
-        /// 从指定TemplateContext创建一个类似的实例
+        /// Creates an instance from the specified <see cref="TemplateContext"/>.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns>TemplateContext</returns>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <returns>A new instance.</returns>
         public static TemplateContext CreateContext(TemplateContext context)
         {
             if (context == null)
@@ -120,16 +118,13 @@ namespace JinianNet.JNTemplate
             return ctx;
         }
 
-        #region ICloneable 成员
         /// <summary>
-        /// 浅克隆当前实例
+        /// Creates a shallow copy of the <see cref="TemplateContext"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A shallow copy of the current <see cref="TemplateContext"/>.</returns>
         public object Clone()
         {
             return this.MemberwiseClone();
         }
-
-        #endregion
     }
 }

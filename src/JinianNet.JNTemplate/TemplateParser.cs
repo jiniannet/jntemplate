@@ -9,22 +9,19 @@ using JinianNet.JNTemplate.Nodes;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// TemplateParser
+    /// Provides methods for parsing template strings.
     /// </summary>
     public class TemplateParser : Executor<ITag[]>, IEnumerator<ITag>
     {
-        #region private field
-        private ITag tag;//当前标签
-        private Token[] tokens;//tokens列表
-        private int index;//当前索引
+        private ITag tag;
+        private Token[] tokens;
+        private int index;
         private List<ITag> tags;
-        #endregion
 
-        #region ctox
         /// <summary>
-        /// 模板分析器
+        /// Initializes a new instance of the <see cref="TemplateParser"/> class
         /// </summary> 
-        /// <param name="ts">TOKEN集合</param>
+        /// <param name="ts">The collection of tokens.</param>
         public TemplateParser(Token[] ts)
             : base()
         {
@@ -35,25 +32,12 @@ namespace JinianNet.JNTemplate
             this.tokens = ts;
             Reset();
         }
-        #endregion
-
-        #region IEnumerator<Tag> 成员
-        /// <summary>
-        /// 当前标签
-        /// </summary>
+        /// <inheritdoc />
         public ITag Current
         {
             get { return this.tag; }
         }
-
-        #endregion
-
-        #region IEnumerator 成员
-
-        /// <summary>
-        /// 读取下一个标签
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public bool MoveNext()
         {
             if (this.index < this.tokens.Length)
@@ -68,7 +52,7 @@ namespace JinianNet.JNTemplate
             return false;
         }
         /// <summary>
-        /// 重置
+        /// Reset the <see cref="TemplateParser"/>.
         /// </summary>
         public void Reset()
         {
@@ -76,6 +60,9 @@ namespace JinianNet.JNTemplate
             this.tag = null;
         }
 
+        /// <summary>
+        /// Reads the next tag from the tokens.
+        /// </summary>
         private ITag Read()
         {
             ITag t = null;
@@ -141,9 +128,9 @@ namespace JinianNet.JNTemplate
             return t;
         }
         /// <summary>
-        /// 读取一个标签
+        /// Reads the next tag from the tokens.
         /// </summary>
-        /// <param name="tc">TOKEN集合</param>
+        /// <param name="tc">The collection of tokens.</param>
         /// <returns></returns>
         public ITag Read(TokenCollection tc)
         {
@@ -153,7 +140,6 @@ namespace JinianNet.JNTemplate
             }
             return Runtime.Parsing(this,tc);
         }
-
 
         private bool IsTagEnd()
         {
@@ -185,31 +171,20 @@ namespace JinianNet.JNTemplate
         //    return tokens[this.index + 1];
         //}
 
-        #endregion
-
-        #region IEnumerator 成员
-
+   
+        /// <inheritdoc />
         object System.Collections.IEnumerator.Current
         {
             get { return Current; }
         }
 
-        #endregion
-
-        #region IDispose 成员
-        /// <summary>
-        /// Dispose
-        /// </summary>
+        /// <inheritdoc />
         public void Dispose()
         {
 
         }
-        #endregion
 
-        /// <summary>
-        /// 执行TAG解析
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override ITag[] Execute()
         {
             if (tags == null)

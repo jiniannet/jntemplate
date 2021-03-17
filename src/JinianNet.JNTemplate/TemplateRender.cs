@@ -9,16 +9,16 @@ using JinianNet.JNTemplate.Dynamic;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 基本模板呈现
+    /// A template for Render
     /// </summary>
     public class TemplateRender : TemplateBase
     {
 
 
         /// <summary>
-        /// 呈现内容
+        /// Performs the render for a template.
         /// </summary>
-        /// <param name="writer">TextWriter</param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
         public virtual void Render(System.IO.TextWriter writer)
         {
             var text = this.TemplateContent;
@@ -27,10 +27,10 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 呈现内容
+        /// Performs the render for a tags.
         /// </summary>
-        /// <param name="writer">TextWriter</param>
-        /// <param name="collection">Tags</param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        /// <param name="collection">The tags collection.</param>
         public virtual void Render(System.IO.TextWriter writer, ITag[] collection)
         {
             if (writer == null)
@@ -63,13 +63,13 @@ namespace JinianNet.JNTemplate
                 }
             }
         }
-         
+
 
 
         /// <summary>
-        /// read all tags
+        /// Rreads the contents of the text into a tag array.
         /// </summary>
-        /// <param name="text">text content</param>
+        /// <param name="text">The text for reading.</param>
         /// <returns></returns>
         public ITag[] ReadAll(string text)
         {
@@ -99,14 +99,14 @@ namespace JinianNet.JNTemplate
             }
 
             return tags;
-        } 
+        }
 
         /// <summary>
-        /// 异常处理
+        /// Throw exception.
         /// </summary>
-        /// <param name="e">异常信息</param>
-        /// <param name="tag">影响标签</param>
-        /// <param name="writer">TextWriter</param>
+        /// <param name="e">Represents errors that occur during application execution.</param>
+        /// <param name="tag">Represents errors tag.</param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
         private void ThrowException(Exception.TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
             if (this.Context.ThrowExceptions)

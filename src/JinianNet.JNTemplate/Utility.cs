@@ -7,7 +7,7 @@ using System;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 公用类
+    /// Contains utilities that the jntemplate uses.
     /// </summary>
     public class Utility
     {

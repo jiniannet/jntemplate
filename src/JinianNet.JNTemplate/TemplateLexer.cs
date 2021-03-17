@@ -12,54 +12,20 @@ using JinianNet.JNTemplate.Configuration;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 词素分析器
+    /// The lexer of template.
     /// </summary>
     public class TemplateLexer : Executor<Token[]>, IEnumerable<Token>, IEnumerator<Token>
     {
-        /// <summary>
-        /// 标记模式
-        /// </summary>
         private FlagMode flagMode;
-        /// <summary>
-        /// 当前文档
-        /// </summary>
         private string document;
-        /// <summary>
-        /// 当前列
-        /// </summary>
         private int column;
-        /// <summary>
-        /// 当前行
-        /// </summary>
         private int line;
-        /// <summary>
-        /// 当前TokenKind
-        /// </summary>
         private TokenKind kind;
-        /// <summary>
-        /// 起始列
-        /// </summary>
         private int startColumn;
-        /// <summary>
-        /// 起始行
-        /// </summary>
         private int startLine;
-        /// <summary>
-        /// 扫描器
-        /// </summary>
         private CharScanner scanner;
-        /// <summary>
-        /// token集合
-        /// </summary>
         private List<Token> collection;
-        /// <summary>
-        /// 当前TOKEN
-        /// </summary>
         private Token token;
-
-        /// <summary>
-        /// 符号集合
-        /// </summary>
         private Stack<string> pos;
         private string prefix;
         private char flag;
@@ -67,9 +33,9 @@ namespace JinianNet.JNTemplate
         private bool disableeLogogram;
 
         /// <summary>
-        /// TemplateLexer
+        /// Initializes a new instance of the <see cref="TemplateLexer"/> class
         /// </summary>
-        /// <param name="text">待分析内容</param>
+        /// <param name="text">The template contents.</param>
         public TemplateLexer(string text)
         {
             this.document = text;
@@ -80,7 +46,7 @@ namespace JinianNet.JNTemplate
             Reset();
         }
         /// <summary>
-        /// 重置分析器
+        /// Reset the <see cref="TemplateLexer"/>.
         /// </summary>
         public void Reset()
         {
@@ -95,15 +61,13 @@ namespace JinianNet.JNTemplate
             this.pos = new Stack<string>();
         }
 
-        /// <summary>
-        /// 当前TOKEN
-        /// </summary>
+        /// <inheritdoc />
         public Token Current
         {
             get { return token; }
             set { token = value; }
         }
-
+        /// <inheritdoc />
         object IEnumerator.Current
         {
             get
@@ -262,16 +226,14 @@ namespace JinianNet.JNTemplate
             }
             return --i;
         }
-        /// <summary>
-        /// 获取下一个TOKEN
-        /// </summary>
-        /// <returns></returns>
+
+        /// <inheritdoc />
         public bool MoveNext()
         {
             Token token = null;
             do
             {
-                //处于非标签模式
+                //
                 if (this.flagMode == FlagMode.None)
                 {
                     if (IsTagStart())
@@ -375,7 +337,7 @@ namespace JinianNet.JNTemplate
                 }
 
                 TokenKind tk;
-                if (this.scanner.Read() == '+' || this.scanner.Read() == '-') //正负数符号识别
+                if (this.scanner.Read() == '+' || this.scanner.Read() == '-') 
                 {
                     if (char.IsNumber(this.scanner.Read(1)) &&
                         (this.kind != TokenKind.Number
@@ -431,6 +393,7 @@ namespace JinianNet.JNTemplate
             return false;
 
         }
+
         private TokenKind GetTokenKind(char c)
         {
             if (this.flagMode == FlagMode.None)
@@ -500,34 +463,23 @@ namespace JinianNet.JNTemplate
             }
         }
 
-        /// <summary>
-        /// 获取IEnumerator
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IEnumerator<Token> GetEnumerator()
         {
             return this;
         }
-        /// <summary>
-        /// 获取IEnumerator
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
-        /// <summary>
-        /// 释放资源
-        /// </summary>
+        /// <inheritdoc />
         public void Dispose()
         {
 
         }
 
-        /// <summary>
-        /// 执行解析
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override Token[] Execute()
         {
             if (collection.Count == 0)

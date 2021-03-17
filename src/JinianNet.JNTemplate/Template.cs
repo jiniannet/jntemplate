@@ -9,12 +9,12 @@ using System.IO;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 模板实例类
+    /// An template object.
     /// </summary>
     public class Template : TemplateRender, ITemplate
     {
         /// <summary>
-        /// Template
+        /// Initializes a new instance of the <see cref="Template"/> class
         /// </summary>
         public Template()
             : this(Engine.CreateContext(), string.Empty)
@@ -23,10 +23,10 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Template
+        /// Initializes a new instance of the <see cref="Template"/> class
         /// </summary>
-        /// <param name="ctx">TemplateContext 对象</param>
-        /// <param name="text">模板内容</param>
+        /// <param name="ctx">The <see cref="TemplateContext"/>.</param>
+        /// <param name="text">The contents of template.</param>
         public Template(TemplateContext ctx, string text)
         {
             if (ctx == null)

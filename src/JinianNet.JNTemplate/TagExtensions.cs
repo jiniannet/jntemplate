@@ -8,15 +8,15 @@ using JinianNet.JNTemplate.Nodes;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// tag Extensions
+    /// Extensions methods for <see cref="ITag"/>.
     /// </summary>
     public static class TagExtensions
     {
         /// <summary>
-        /// 获取标签的源代码
+        /// Returns a source code that represents the current tag.
         /// </summary>
-        /// <param name="tag">标签</param>
-        /// <returns>string</returns>
+        /// <param name="tag">The <see cref="ITag"/>.</param>
+        /// <returns>The source code.</returns>
         public static string ToSource(this ITag tag)
         {
             if (tag == null)

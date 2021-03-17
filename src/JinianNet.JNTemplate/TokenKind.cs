@@ -6,7 +6,7 @@
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// Token种类
+    /// The token kind.
     /// </summary>
     public enum TokenKind
     {

@@ -6,7 +6,7 @@
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Authors>JinianNet.com</Authors>
     <Company>JinianNet.com</Company>
     <Product>JNTemplate</Product>
@@ -18,32 +18,14 @@
     <RepositoryUrl>https://github.com/jiniannet/jntemplate.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>templating engine template 模板引擎</PackageTags>
-    <PackageReleaseNotes>- 功能
-	- 1.架构调整，接口调整，由原来解释型模板引擎重构为编译型模板引擎
-	- 2.支持预编译，未预编译模板，在第一次执行时自动编译。
-	- 3.增加加载器概念,通过自定义加载器,可以从文件,FTP,HTTP,DB等多种方式与途迳加载模板
-	- 4.增加了layout标签,功能类似于razor中的layout或aspx中的母版页（其它模板引擎中的block），
-	- 5.增加了索引语法,比如row["name"],为了保持向后兼容，原row.name在当前版本中将继续支持。
-	- 6.增加异步方法支持，允许模板调用异步方法。
-	- 7.增加静态方法支持，允许模板调用静态方法。
-
-- 优化
-	- 1.结构优化，性能提升。
-
-- 其它
-	- 注意，本次为大版本升级，部分接口与以前不兼容，如选择升级，请注意相关风险
-	- 调整框架支持如下：
-	- 1. .net framework 4.0 以上
-	- 2. .net core 2.1 以上
-	- 3. .netstandard 2.0 以上
-	- 4. .net 5.0</PackageReleaseNotes>
+    <PackageReleaseNotes>- fix bugs.</PackageReleaseNotes>
     <NeutralLanguage />
     <SignAssembly>false</SignAssembly>
     <PreBuildEvent></PreBuildEvent>
     <PostBuildEvent></PostBuildEvent>
     <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <FileVersion>2.0.0.3</FileVersion> 
+    <FileVersion>2.0.1.0</FileVersion> 
   </PropertyGroup>
 
 

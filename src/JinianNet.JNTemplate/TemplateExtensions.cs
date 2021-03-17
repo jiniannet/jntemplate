@@ -9,16 +9,16 @@ using System.IO;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// Template Extensions
+    /// Extensions methods for <see cref="ITemplate"/>.
     /// </summary>
     public static class TemplateExtensions
     {
 
         /// <summary>
-        /// 模板解析结果呈现
+        /// Renders the template.
         /// </summary>
-        /// <param name="template">template</param>
-        /// <returns>string</returns>
+        /// <param name="template">The <see cref="ITemplate"/>.</param>
+        /// <returns>The template contents.</returns>
         public static string Render(this ITemplate template)
         {
             string document;
