@@ -11,41 +11,30 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 泛型执行器
+    /// Represents an executor.
     /// </summary>
-    /// <typeparam name="T">泛型</typeparam>
+    /// <typeparam name="T">The type of return object.</typeparam>
     public abstract class Executor<T> : IExecutor, IExecutor<T>
     {
-        /// <summary>
-        /// 执行结果
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public abstract T Execute();
-        /// <summary>
-        /// 执行结果
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         object IExecutor.Execute()
         {
             return this.Execute();
         }
 #if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步执行
-        /// </summary>
+        /// <inheritdoc />
         public virtual async Task<T> ExecuteAsync()
         {
             return await Task<T>.Run(()=> {
                 return this.Execute();
             });
         }
-        /// <summary>
-        /// 异步执行
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         async Task<object> IExecutor.ExecuteAsync()
         {
-            return await this.ExecuteAsync();
+            return (object)(await this.ExecuteAsync());
         }
 #endif
     }

@@ -7,12 +7,12 @@ using System;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 系统常用字段
+    /// System fields.
     /// </summary>
     public class Field
     {
         /// <summary>
-        /// 当前程序版本
+        /// Varsion
         /// </summary>
         public const string Version = "2.0.1";
         internal const string KEY_FOREACH = "foreach";
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate
         internal const string KEY_LAYOUT = "layout";
         internal const string KEY_BODY = "BODY";
         /// <summary>
-        /// 默认标签解析器
+        /// default parsers
         /// </summary>
         internal static readonly string[] RSEOLVER_TYPES = new string[] {
                 "JinianNet.JNTemplate.Parsers.CommentParser",

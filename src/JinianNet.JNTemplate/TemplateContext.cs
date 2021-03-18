@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate
         {
             this.variableScope = data ?? new VariableScope(null);
             this.errors = new List<System.Exception>();
-            this.enableTemplateCache = Runtime.Storage.EnableTemplateCache;
+            this.enableTemplateCache = Runtime.Options.EnableTemplateCache;
         }
 
         /// <summary>

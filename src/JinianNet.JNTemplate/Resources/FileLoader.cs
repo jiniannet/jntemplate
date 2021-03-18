@@ -13,35 +13,18 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// 文件加载器
+    /// 
     /// </summary>
     public class FileLoader : IResourceLoader
     {
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        public FileLoader()
-        {
 
-        }
-
-        /// <summary>
-        /// 获取父目录
-        /// </summary>
-        /// <param name="fullPath"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public string GetDirectoryName(string fullPath)
         {
             return System.IO.Path.GetDirectoryName(fullPath);
         }
 
-        /// <summary>
-        /// 加载资源
-        /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="directory">追加查找目录</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
@@ -54,36 +37,31 @@ namespace JinianNet.JNTemplate.Resources
         }
 
 
-        /// <summary>
-        /// 获取完整路径
-        /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="directory">SEARCH DIRECTORY</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public string FindFullPath(string filename, params string[] directory)
         {
             return FindPath(directory, filename);
         }
 
         /// <summary>
-        /// 查找指定文件
+        /// Find the specified file
         /// </summary>
-        /// <param name="paths">检索路径</param>
-        /// <param name="filename">文件名 允许相对路径.路径分隔符只能使用/</param>
-        /// <returns>路径索引</returns>
+        /// <param name="paths">The resource search directory.</param>
+        /// <param name="filename">The file name.</param>
+        /// <returns>The full path.</returns>
         private string FindPath(IEnumerable<string> paths, string filename)
         {
             if (IsAbsolutePath(filename) && System.IO.File.Exists(filename))
             {
                 return filename;
             }
-            //filename 允许单纯的文件名或相对路径
+            //filename  
             string fullPath = null;
 
             if (!string.IsNullOrEmpty(filename))
             {
-                if ((filename = NormalizePath(filename)) == null  //路径非法，比如用户试图跳出当前目录时（../header.txt）
-                    || paths==null)  //查找目录为空时
+                if ((filename = NormalizePath(filename)) == null  // illegal path（../header.txt）
+                    || paths==null) 
                 {
                     return null;
                 }
@@ -111,11 +89,11 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <summary>
-        /// 载入文件
+        /// Load the resource
         /// </summary>
-        /// <param name="fullPath">完整文件路径</param>
-        /// <param name="encoding">编码</param>
-        /// <returns>文本内容</returns>
+        /// <param name="fullPath">The fully qualified path or file name to load.</param>
+        /// <param name="encoding">The <see cref="Encoding"/>.</param> 
+        /// <returns>An string.</returns>
         private string LoadResource(string fullPath, Encoding encoding)
         {
             if (encoding == null)
@@ -126,7 +104,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <summary>
-        /// 是否WIN风格绝对路径
+        /// Whether the windows path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -136,7 +114,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <summary>
-        /// 是否Unix风格绝对路径
+        /// Whether the unix path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -146,7 +124,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <summary>
-        /// 是否绝对路径表达形式
+        /// Whether the absolute path
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
@@ -169,10 +147,10 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <summary>
-        /// 路径处理
+        /// 
         /// </summary>
-        /// <param name="filename">待处理文件</param>
-        /// <returns>处理后的路径</returns>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         private string NormalizePath(string filename)
         {
             if (string.IsNullOrEmpty(filename) || filename.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
@@ -208,13 +186,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
 #if NETCOREAPP || NETSTANDARD
-        /// <summary>
-        /// 异步资源
-        /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="directory">追加查找目录</param>
-        /// <returns>ResourceInfo</returns>
+        /// <inheritdoc />
         public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
@@ -228,11 +200,11 @@ namespace JinianNet.JNTemplate.Resources
 
 
         /// <summary>
-        /// 载入文件
+        /// Load the resource
         /// </summary>
-        /// <param name="fullPath">完整文件路径</param>
-        /// <param name="encoding">编码</param>
-        /// <returns>文本内容</returns>
+        /// <param name="fullPath">The fully qualified path or file name to load.</param>
+        /// <param name="encoding">The <see cref="Encoding"/>.</param> 
+        /// <returns>An string.</returns>
         private async Task<string> LoadResourceAsync(string fullPath, Encoding encoding)
         {
             if (encoding == null)

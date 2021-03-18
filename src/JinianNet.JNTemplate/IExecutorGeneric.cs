@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 泛型执行器
+    /// Represents an executor.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of return object.</typeparam>
     public interface IExecutor<T>
     {
         /// <summary>
-        /// 执行结果
+        /// Execute the object.
         /// </summary>
         /// <returns></returns>
         T Execute();
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
-        /// 异步执行
+        /// Asynchronously execute the object.
         /// </summary>
         Task<T> ExecuteAsync();
 #endif

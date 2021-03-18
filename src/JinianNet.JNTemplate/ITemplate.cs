@@ -11,41 +11,41 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// Template 接口
+    /// A interface for template
     /// </summary>
     public interface ITemplate
     {
         /// <summary>
-        /// 模板上下文
+        /// Gets or sets the context of the template.
         /// </summary>
         TemplateContext Context { get; set; }
         /// <summary>
-        ///  模板名字
+        /// Gets or sets the key(unique) of the template.
         /// </summary>
         string TemplateKey { get; set; }
         /// <summary>
-        /// 模板内容
+        /// Gets or sets the content of the template.
         /// </summary>
         string TemplateContent { get; set; }
         /// <summary>
-        /// 结果呈现
+        /// Performs the render for a template.
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">See the <see cref="TextWriter"/>.</param>
         void Render(TextWriter writer);
 
 
         /// <summary>
-        /// 设置实例对象
+        /// Set a new value for variables.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
         void Set<T>(string key, T value);
 
         /// <summary>
-        /// 设置静态对象
+        /// Set a static type for variables.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="type">静态类型</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="type">The type with the specified key.</param>
         void SetStaticType(string key, Type type);
     }
 }

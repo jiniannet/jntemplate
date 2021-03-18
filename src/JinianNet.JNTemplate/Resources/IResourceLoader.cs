@@ -11,42 +11,42 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// 资源加载器
+    /// The resource loader
     /// </summary>
     public interface IResourceLoader
     {
         /// <summary>
-        /// 加载资源
+        /// Loads the resource on the specified path.
         /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="directory">追加查找目录</param>
-        /// <returns>ResourceInfo</returns>
+        /// <param name="filename">The fully qualified path or file name of the file to load.</param>
+        /// <param name="encoding">The <see cref="Encoding"/>.</param>
+        /// <param name="directory">The resource search directory.</param>
+        /// <returns>An instance of a resource.</returns>
         ResourceInfo Load(string filename, Encoding encoding, params string[] directory);
 
         /// <summary>
-        /// 获取完整路径
+        /// Search for file full path.
         /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="directory">SEARCH DIRECTORY</param>
-        /// <returns></returns>
+        /// <param name="filename">The fully qualified path or file name of the file to load.</param>
+        /// <param name="directory">The resource search directory.</param>
+        /// <returns>The file full path of the resource.</returns>
         string FindFullPath(string filename, params string[] directory);
 
         /// <summary>
-        /// 获取父目录
+        /// Returns the directory information for the specified path string.
         /// </summary>
-        /// <param name="fullPath">完整路径</param>
-        /// <returns></returns>
+        /// <param name="fullPath">The path of a file.</param>
+        /// <returns>Directory information for path, or null if path denotes a root directory or is null.</returns>
         string GetDirectoryName(string fullPath);
 
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
-        /// 异步资源
+        /// Loads the resource on the specified path.
         /// </summary>
-        /// <param name="filename">文件名,可以是纯文件名,也可以是完整的路径</param>
-        /// <param name="encoding">编码</param>
-        /// <param name="directory">追加查找目录</param>
-        /// <returns>ResourceInfo</returns>
+        /// <param name="filename">The fully qualified path or file name of the file to load.</param>
+        /// <param name="encoding">The <see cref="Encoding"/>.</param>
+        /// <param name="directory">The resource search directory.</param>
+        /// <returns>An instance of a resource.</returns>
         Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory);
 #endif
     }

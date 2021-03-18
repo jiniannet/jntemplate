@@ -11,28 +11,29 @@ using System.Collections.Generic;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 引擎入口
+    /// The template engine
     /// </summary>
     public sealed class Engine
     {
 
         /// <summary>
-        /// Version
+        /// The engine version.
         /// </summary>
         public static string Version => Field.Version;
+
         /// <summary>
-        /// 是否启用编译模式
+        /// Enable or disenable the cache.
         /// </summary>
         public static bool EnableCompile
         {
-            get { return Runtime.Storage.EnableCompile; }
-            set { Runtime.Storage.EnableCompile = value; }
+            get { return Runtime.Options.EnableCompile; }
+            set { Runtime.Options.EnableCompile = value; }
         }
 
         /// <summary>
-        /// 引擎配置
+        /// Configuration engine which <see cref="Action{IConfig}"/>.
         /// </summary>
-        /// <param name="action">配置内容</param>
+        /// <param name="action">The <see cref="Action{IConfig}"/>.</param>
         public static void Configure(Action<IConfig> action)
         {
             var conf = Configuration.EngineConfig.CreateDefault();
@@ -41,9 +42,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 引擎配置
+        /// Configuration engine which <see cref="Action{IConfig, VariableScope}"/>.
         /// </summary>
-        /// <param name="action">配置内容</param>
+        /// <param name="action">The <see cref="Action{IConfig, VariableScope}"/>.</param>
         public static void Configure(Action<IConfig, VariableScope> action)
         {
             var conf = Configuration.EngineConfig.CreateDefault();
@@ -53,19 +54,20 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 引擎配置
+        /// Configuration engine which <see cref="IConfig"/>.
         /// </summary>
-        /// <param name="conf">配置内容</param>
+        /// <param name="conf">The <see cref="IConfig"/>.</param>
         public static void Configure(IConfig conf)
         {
             Configure(conf, null);
         }
 
+
         /// <summary>
-        /// 引擎配置
+        /// Configuration engine which <see cref="IConfig"/>.
         /// </summary>
-        /// <param name="conf">配置内容</param>
-        /// <param name="scope">初始数据</param>
+        /// <param name="conf">The <see cref="IConfig"/>.</param>
+        /// <param name="scope">The global <see cref="VariableScope"/>.</param>
         public static void Configure(IConfig conf, VariableScope scope)
         {
             if (conf.Loader != null)
@@ -91,28 +93,28 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 引擎配置
+        /// Configuration engine which <see cref="IDictionary{Tkey,TValue}"/>.
         /// </summary>
-        /// <param name="conf">配置内容</param>
-        /// <param name="scope">初始数据</param>
+        /// <param name="conf">The <see cref="IDictionary{Tkey,TValue}"/>.</param>
+        /// <param name="scope">The global <see cref="VariableScope"/>.</param>
         public static void Configure(IDictionary<string, string> conf, VariableScope scope)
         {
             Runtime.Configure(conf, scope);
         }
 
         /// <summary>
-        /// 预编译模板
+        /// Compile a template with a given file
         /// </summary>
-        /// <param name="name">模板名称 必须唯一，建议使用模板文件绝对路径</param>
-        /// <param name="fileName">模板路径</param>
-        /// <param name="action">ACTION</param>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        public static ICompileTemplate CompileFile(string name, string fileName, Action<CompileContext> action = null)
+        public static ICompileTemplate CompileFile(string name, string path, Action<CompileContext> action = null)
         {
-            var res = Runtime.Loader.Load(fileName, Runtime.Encoding, Runtime.ResourceDirectories.ToArray());
+            var res = Runtime.Loader.Load(path, Runtime.Encoding, Runtime.ResourceDirectories.ToArray());
             if (res == null)
             {
-                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+                throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
             }
 
             if (string.IsNullOrEmpty(name))
@@ -124,40 +126,40 @@ namespace JinianNet.JNTemplate
 
 
         /// <summary>
-        /// 编译并执行模板
+        /// Compiles and renders a template.
         /// </summary>
-        /// <param name="fileName">模板路径</param>
-        /// <param name="ctx">TemplateContext</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <returns></returns>
-        public static string CompileFileAndExec(string fileName, TemplateContext ctx)
+        public static string CompileFileAndExec(string path, TemplateContext context)
         {
-            var full = ctx.FindFullPath(fileName);
+            var full = context.FindFullPath(path);
             if (full == null)
             {
-                throw new Exception.TemplateException($"\"{ fileName }\" cannot be found.");
+                throw new Exception.TemplateException($"\"{ path }\" cannot be found.");
             }
             var template = Runtime.Templates[full];
             if (template == null)
             {
-                template = CompileFile(full, full, (c) => ctx.CopyTo(c));
+                template = CompileFile(full, full, (c) => context.CopyTo(c));
                 if (template == null)
                 {
-                    throw new Exception.TemplateException($"\"{ fileName }\" compile error.");
+                    throw new Exception.TemplateException($"\"{ path }\" compile error.");
                 }
             }
             using (var sw = new System.IO.StringWriter())
             {
-                template.Render(sw, ctx);
+                template.Render(sw, context);
                 return sw.ToString();
             }
         }
 
         /// <summary>
-        /// 预编译模板
+        /// Compile a template with a given contents
         /// </summary>
-        /// <param name="name">模板名称 必须唯一，建议使用模板文件绝对路径</param>
-        /// <param name="content">模板内容 </param>
-        /// <param name="action">ACTION</param>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="content">The template contents.</param>
+        /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
         public static ICompileTemplate Compile(string name, string content, Action<CompileContext> action = null)
         {
@@ -173,10 +175,10 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 预编译模板
+        /// Compile a template with a given files
         /// </summary> 
-        /// <param name="fs">模板文件</param>
-        /// <param name="action">action</param>
+        /// <param name="fs">The files.</param>
+        /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
         public static void CompileFile(System.IO.FileInfo[] fs, Action<CompileContext> action = null)
         {
@@ -187,37 +189,33 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 创建模板上下文
+        /// Creates template context.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An instance of a <see cref="TemplateContext"/>.</returns>
         public static TemplateContext CreateContext()
         {
             var data = new VariableScope();
-            TemplateContext ctx = new TemplateContext(data);
-            if (Runtime.ResourceDirectories != null && Runtime.ResourceDirectories.Count > 0)
-            {
-                ctx.ResourceDirectories.AddRange(Runtime.ResourceDirectories);
-            }
+            var ctx = new TemplateContext(data);
             return ctx;
         }
 
 
         /// <summary>
-        /// 从指定模板内容创建Template实例
+        /// Creates template with specified text.
         /// </summary>
-        /// <param name="text">文本</param>
-        /// <returns></returns>
+        /// <param name="text">The template contents.</param>
+        /// <returns>An instance of a template.</returns>
         public static ITemplate CreateTemplate(string text)
         {
             return CreateTemplate(null, text);
         }
 
         /// <summary>
-        /// 从指定模板内容创建Template实例
+        /// Creates template with specified text.
         /// </summary>
-        /// <param name="name">模板名称 必须唯一</param>
-        /// <param name="text">文本</param>
-        /// <returns></returns>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="text">The template contents.</param>
+        /// <returns>An instance of a template.</returns>
         public static ITemplate CreateTemplate(string name, string text)
         {
             if (string.IsNullOrEmpty(name))
@@ -239,103 +237,104 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 从指定路径加载模板
+        /// Loads the template on the specified path.
         /// </summary>
-        /// <param name="fileName">模板文件</param>
-        /// <returns>ITemplate</returns>
-        public static ITemplate LoadTemplate(string fileName)
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <returns>An instance of a template.</returns>
+        public static ITemplate LoadTemplate(string path)
         {
-            return LoadTemplate(null, fileName);
+            return LoadTemplate(null, path);
         }
 
 
         /// <summary>
-        /// 从指定路径加载模板
+        /// Loads the template on the specified path.
         /// </summary>
-        /// <param name="name">模板名称 必须唯一</param>
-        /// <param name="fileName">模板文件</param>
-        /// <returns>ITemplate</returns>
-        public static ITemplate LoadTemplate(string name, string fileName)
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <returns>An instance of a template.</returns>
+        public static ITemplate LoadTemplate(string name, string path)
         {
             if (EnableCompile)
             {
-                return LoadCompileTemplate(name, fileName);
+                return LoadCompileTemplate(name, path);
             }
 
             var ctx = CreateContext();
-            var res = ctx.Load(fileName);
+            var res = ctx.Load(path);
             if (res == null)
             {
-                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+                throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
             }
 
-            var t = LoadTemplate<Template>(name, fileName, CreateContext());
+            var t = LoadTemplate<Template>(name, path, CreateContext());
             t.TemplateContent = res.Content;
             return t;
         }
 
         /// <summary>
-        /// 从指定路径加载模板
+        /// Loads the template on the specified path.
         /// </summary>
-        /// <param name="name">模板名称 必须唯一</param>
-        /// <param name="fileName">模板文件</param> 
-        /// <returns>ITemplate</returns>
-        private static ITemplate LoadCompileTemplate(string name, string fileName)
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <returns>An instance of a template.</returns>
+        private static ITemplate LoadCompileTemplate(string name, string path)
         {
             var ctx = CreateContext();
             if (string.IsNullOrEmpty(name))
             {
-                name = ctx.FindFullPath(fileName);
+                name = ctx.FindFullPath(path);
                 if (string.IsNullOrEmpty(name))
                 {
-                    throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+                    throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
                 }
             }
-            var template = LoadTemplate<CompileTemplate>(name, fileName, ctx);
+            var template = LoadTemplate<CompileTemplate>(name, path, ctx);
             if (Runtime.Templates.Keys.Contains(name))
             {
                 return template;
             }
-            var res = ctx.Load(fileName);
+            var res = ctx.Load(path);
             if (res == null)
             {
-                throw new Exception.TemplateException($"Path:\"{fileName}\", the file could not be found.");
+                throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
             }
             template.TemplateContent = res.Content;
             return template;
         }
 
         /// <summary>
-        /// 从指定路径加载模板
+        /// Loads the template on the specified path.
         /// </summary>
-        /// <param name="name">模板名称 必须唯一</param>
-        /// <param name="fileName">模板文件</param>
-        /// <param name="ctx">模板上下文</param>
-        /// <returns>ITemplate</returns>
-        private static T LoadTemplate<T>(string name, string fileName, TemplateContext ctx)
+        /// <typeparam name="T">Type of template. </typeparam>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <returns>An instance of a template.</returns>
+        private static T LoadTemplate<T>(string name, string path, TemplateContext context)
             where T : ITemplate, new()
         {
             T template = new T();
-            template.Context = ctx;
+            template.Context = context;
             template.TemplateKey = name;
             if (string.IsNullOrEmpty(template.TemplateKey))
             {
-                template.TemplateKey = fileName;
+                template.TemplateKey = path;
             }
             if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
-                template.Context.CurrentPath = Runtime.Loader.GetDirectoryName(fileName);
+                template.Context.CurrentPath = Runtime.Loader.GetDirectoryName(path);
             }
             return template;
         }
 
         /// <summary>
-        /// Register tag
+        /// Register an new tag.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parser"></param>
-        /// <param name="compileFunc"></param>
-        /// <param name="guessFunc"></param>
+        /// <typeparam name="T">Type of the new tag. </typeparam>
+        /// <param name="parser">parser of the new tag.</param>
+        /// <param name="compileFunc">compile method of the new tag.</param>
+        /// <param name="guessFunc">guess method of the new tag.</param>
         public static void Register<T>(Parsers.ITagParser parser,
             Func<Nodes.ITag, CompileContext, System.Reflection.MethodInfo> compileFunc,
             Func<Nodes.ITag, CompileContext, Type> guessFunc) where T : Nodes.ITag
@@ -346,11 +345,11 @@ namespace JinianNet.JNTemplate
 
 
         /// <summary>
-        /// Register tag
+        /// Register an new tag.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parser"></param>
-        /// <param name="func"></param> 
+        /// <typeparam name="T">Type of the new tag. </typeparam>
+        /// <param name="parser">parser of the new tag.</param>
+        /// <param name="func">parse method of the new tag.</param>
         public static void Register<T>(Parsers.ITagParser parser,
             Func<Nodes.ITag, TemplateContext, object> func) where T : Nodes.ITag
         {

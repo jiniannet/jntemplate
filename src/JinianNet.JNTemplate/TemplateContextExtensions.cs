@@ -17,13 +17,13 @@ namespace JinianNet.JNTemplate
         /// <returns>An array of the full names (including paths) of directories in the <see cref="Context"/>.</returns>
         public static string[] GetResourceDirectories(this Context ctx)
         {
-            if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.ResourceDirectories.Contains(ctx.CurrentPath))
+            if (string.IsNullOrEmpty(ctx.CurrentPath) || Runtime.ResourceDirectories.Contains(ctx.CurrentPath))
             {
-                return ctx.ResourceDirectories.ToArray();
+                return Runtime.ResourceDirectories.ToArray();
             }
-            string[] paths = new string[ctx.ResourceDirectories.Count + 1];
+            string[] paths = new string[Runtime.ResourceDirectories.Count + 1];
             paths[0] = ctx.CurrentPath;
-            ctx.ResourceDirectories.CopyTo(paths, 1);
+            Runtime.ResourceDirectories.CopyTo(paths, 1);
             return paths;
         }
 
@@ -63,10 +63,6 @@ namespace JinianNet.JNTemplate
                 ctx2.Data = ctx1.TempData;
                 ctx2.CurrentPath = ctx1.CurrentPath;
                 ctx2.Charset = ctx1.Charset;
-                if (ctx1.ResourceDirectories != null && ctx1.ResourceDirectories.Count > 0)
-                {
-                    ctx2.ResourceDirectories.AddRange(ctx1.ResourceDirectories);
-                }
                 ctx2.StripWhiteSpace = ctx1.StripWhiteSpace;
                 ctx2.ThrowExceptions = ctx1.ThrowExceptions;
             }

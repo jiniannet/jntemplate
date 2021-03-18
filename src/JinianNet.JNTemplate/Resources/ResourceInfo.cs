@@ -7,16 +7,16 @@ using System;
 namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// 资源信息
+    /// The resource info.
     /// </summary>
     public class ResourceInfo
     {
         /// <summary>
-        /// 内容
+        /// Gets or sets the contents of the resource.
         /// </summary>
         public string Content { get; set; }
         /// <summary>
-        /// 完整路径
+        /// Gets or sets the fully qualified path of the resource.
         /// </summary>
         public string FullPath { get; set; }
     }

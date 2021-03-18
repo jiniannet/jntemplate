@@ -9,12 +9,12 @@ using System.IO;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    ///  Compile Template
+    ///  The compile template.
     /// </summary>
     public class CompileTemplate : TemplateBase,ICompileTemplate, ITemplate
     {
         /// <summary>
-        /// CompileTemplate
+        /// Initializes a new instance of the <see cref="CompileTemplate"/> class
         /// </summary> 
         public CompileTemplate()
             : this(Engine.CreateContext(), null)
@@ -23,25 +23,21 @@ namespace JinianNet.JNTemplate
 
 
         /// <summary>
-        /// CompileTemplate
+        /// Initializes a new instance of the <see cref="CompileTemplate"/> class
         /// </summary>
-        /// <param name="ctx">TemplateContext 对象</param>
-        /// <param name="text">模板内容</param>
-        public CompileTemplate(TemplateContext ctx, string text)
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <param name="text">The template contents.</param>
+        public CompileTemplate(TemplateContext context, string text)
         {
-            if (ctx == null)
+            if (context == null)
             {
-                throw new ArgumentNullException("\"ctx\" cannot be null.");
+                throw new ArgumentNullException("\"context\" cannot be null.");
             }
-            Context = ctx;
+            Context = context;
             TemplateContent = text;
         }
 
-        /// <summary>
-        /// 呈现模板
-        /// </summary>
-        /// <param name="writer">writer</param>
-        /// <param name="context">context</param>
+        /// <inheritdoc />
         public virtual void Render(TextWriter writer, TemplateContext context)
         {
             var t = Runtime.Templates[this.TemplateKey];
@@ -61,12 +57,9 @@ namespace JinianNet.JNTemplate
             t.Render(writer, context); 
         }
 
-         
 
-        /// <summary>
-        /// 呈现内容
-        /// </summary>
-        /// <param name="writer">TextWriter</param>
+
+        /// <inheritdoc />
         public virtual void Render(System.IO.TextWriter writer)
         {
             Render(writer, this.Context);

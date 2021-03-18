@@ -7,10 +7,10 @@ using System;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 方法标签委托
+    /// Encapsulates a method that returns a value.
     /// </summary>
-    /// <param name="args">方法参数</param>
-    /// <returns>object</returns>
+    /// <param name="args">The parameters.</param>
+    /// <returns>The return value of the method that this delegate encapsulates.</returns>
     [Obsolete("This delegate is obsolete; use Action<T...> or Func<T..> ")]
     public delegate object FuncHandler(params object[] args);
 }

@@ -6,23 +6,23 @@
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 表示词法分析模式的枚举值。
+    /// Represents an enumeration value for a lexical analysis pattern.
     /// </summary>
     /// <remarks></remarks>
     public enum LexerMode
     {
         /// <summary>
-        /// 未定义状态。
+        /// None。
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// 进入标签。
+        /// Enter。
         /// </summary>
         EnterLabel,
 
         /// <summary>
-        /// 脱离标签。
+        /// Leave。
         /// </summary>
         LeaveLabel,
 

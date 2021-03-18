@@ -13,7 +13,7 @@ using JinianNet.JNTemplate.Resources;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// Context
+    /// Base class with Context.
     /// </summary>
     [Serializable]
     public class Context
@@ -23,8 +23,9 @@ namespace JinianNet.JNTemplate
         private bool throwErrors;
         private bool stripWhiteSpace;
         private List<string> resourceDirectories;
+
         /// <summary>
-        /// 上下文
+        /// Initializes a new instance of the <see cref="Context"/> class
         /// </summary>
         public Context()
         {
@@ -36,7 +37,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 处理标签前后空格
+        /// Strip white-space characters from the template
         /// </summary>
         public bool StripWhiteSpace
         {
@@ -45,7 +46,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 当前资源路径
+        /// Gets or sets the current path.
         /// </summary>
         public string CurrentPath
         {
@@ -54,7 +55,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 当前资源编码
+        /// Gets or sets the encoding.
         /// </summary>
         public Encoding Charset
         {
@@ -63,21 +64,12 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 是否抛出异常(默认为true)
+        /// Gets or sets the exception handling.
         /// </summary>
         public bool ThrowExceptions
         {
             get { return this.throwErrors; }
             set { this.throwErrors = value; }
-        }
-
-        /// <summary>
-        /// 模板资源搜索目录
-        /// </summary>
-        /// <value></value>
-        public List<string> ResourceDirectories
-        {
-            get { return this.resourceDirectories; }
         }
     }
 }

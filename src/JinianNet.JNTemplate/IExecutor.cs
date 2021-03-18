@@ -7,22 +7,21 @@
 using System.Threading.Tasks;
 #endif
 
-
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 执行器
+    /// Represents an executor.
     /// </summary>
     public interface IExecutor
     {
         /// <summary>
-        /// 执行结果
+        /// Execute the object.
         /// </summary>
         /// <returns></returns>
         object Execute();
 #if NETCOREAPP || NETSTANDARD
         /// <summary>
-        /// 异步执行
+        /// Asynchronously execute the object.
         /// </summary>
         Task<object> ExecuteAsync();
 #endif

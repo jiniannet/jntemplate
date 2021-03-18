@@ -6,7 +6,7 @@
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 执行器
+    /// Executor
     /// </summary>
     public abstract class Executor : Executor<object>,IExecutor, IExecutor<object>
     {

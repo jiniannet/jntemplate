@@ -6,7 +6,7 @@
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 操作符
+    /// Operator
     /// </summary>
     public enum Operator
     {

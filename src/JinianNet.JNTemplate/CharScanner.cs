@@ -8,34 +8,33 @@ using System.Collections.Generic;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 字符扫描器
+    /// The char scanner.
     /// </summary>
     public class CharScanner
     {
-        /// <summary>
-        /// 结束字符
-        /// </summary>
         private const char EOF = '\0';
         private int index;
         private int start;
         private string document;
+
         /// <summary>
-        /// CharScanner
+        /// Initializes a new instance of the <see cref="CharScanner"/> class
         /// </summary>
-        /// <param name="text">扫描内容</param>
+        /// <param name="text">The contents.</param>
         public CharScanner(string text)
         {
             this.document = (text ?? string.Empty);
         }
         /// <summary>
-        /// 当前索引
+        /// The zero-based index in the <see cref="CharScanner"/> at which scanned.
         /// </summary>
         public int Index
         {
             get { return this.index; }
         }
+
         /// <summary>
-        /// 前进1个字符
+        /// Forward
         /// </summary>
         /// <returns></returns>
         public bool Next()
@@ -43,9 +42,9 @@ namespace JinianNet.JNTemplate
             return Next(1);
         }
         /// <summary>
-        /// 前进指定介字符
+        /// Forward specified character
         /// </summary>
-        /// <param name="i">数目</param>
+        /// <param name="i">Forward number</param>
         /// <returns></returns>
         public bool Next(int i)
         {
@@ -57,7 +56,7 @@ namespace JinianNet.JNTemplate
             return true;
         }
         /// <summary>
-        /// 后退一个字符
+        /// Back
         /// </summary>
         /// <returns></returns>
         public bool Back()
@@ -65,9 +64,9 @@ namespace JinianNet.JNTemplate
             return Back(1);
         }
         /// <summary>
-        /// 后退指定字符
+        /// Back specified character.
         /// </summary>
-        /// <param name="i">数目</param>
+        /// <param name="i">Back number.</param>
         /// <returns></returns>
         public bool Back(int i)
         {
@@ -79,18 +78,18 @@ namespace JinianNet.JNTemplate
             return true;
         }
         /// <summary>
-        /// 读取当前字符
+        /// Reads the characters from the current string.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A char. </returns>
         public char Read()
         {
             return Read(0);
         }
         /// <summary>
-        /// 读取当前索引位开始后第i个字符
+        /// Reads the characters from the current string.
         /// </summary>
-        /// <param name="i">数目</param>
-        /// <returns></returns>
+        /// <param name="i">The start index.</param>
+        /// <returns>A char. </returns>
         public char Read(int i)
         {
             if (this.index + i >= this.document.Length)
@@ -100,16 +99,16 @@ namespace JinianNet.JNTemplate
             return this.document[this.index + i];
         }
         /// <summary>
-        /// 当前是否匹配指定对象
+        /// Indicates whether finds a match in a specified input chars.
         /// </summary>
-        /// <param name="list">匹配对象</param>
-        /// <returns></returns>
+        /// <param name="list">The chars to search for a match.</param> 
+        /// <returns>true if the chars finds a match; otherwise, false.</returns>
         public bool IsMatch(char[] list)
         {
             return IsMatch(list, 0);
         }
         /// <summary>
-        /// 是否扫描结束
+        /// Indicates whether is end.
         /// </summary>
         /// <returns></returns>
         public bool IsEnd()
@@ -117,11 +116,11 @@ namespace JinianNet.JNTemplate
             return this.index >= this.document.Length;
         }
         /// <summary>
-        /// 是否匹配指定对象
+        /// Indicates whether finds a match in a specified input chars.
         /// </summary>
-        /// <param name="list">匹配对象</param>
-        /// <param name="n">从当前索引后第N位开始</param>
-        /// <returns></returns>
+        /// <param name="list">The chars to search for a match.</param>
+        /// <param name="n">The start index.</param>
+        /// <returns>true if the chars finds a match; otherwise, false.</returns>
         public bool IsMatch(char[] list, int n)
         {
             n = this.index + n;
@@ -140,9 +139,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 获取当前start到index的字符串(会处理转义符)
+        /// Retrieves a substring from this instance.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string.</returns>
         public string GetEscapeString()
         {
             string value = GetEscapeString(this.start, this.index);
@@ -151,9 +150,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 截取start到index的字符串
+        /// Retrieves a substring from this instance.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string.</returns>
         public string GetString()
         {
             string value = GetString(this.start,this.index);
@@ -161,11 +160,11 @@ namespace JinianNet.JNTemplate
             return value;
         }
         /// <summary>
-        /// 截取x到y的转义字符串
+        /// Retrieves a substring from this instance. 
         /// </summary>
-        /// <param name="x">开始索引</param>
-        /// <param name="y">结束索引</param>
-        /// <returns></returns>
+        /// <param name="x">The zero-based starting character position of a substring in this instance.</param>
+        /// <param name="y">The zero-based ended character position of a substring in this instance.</param>
+        /// <returns>A string.</returns>
         public string GetEscapeString(int x, int y)
         {
             List<char> cs = new List<char>();
@@ -228,11 +227,11 @@ namespace JinianNet.JNTemplate
             return new string(cs.ToArray());
         }
         /// <summary>
-        /// 截取x到y的字符串
+        /// Retrieves a substring from this instance. The substring starts at a specified character position and continues to the end of the string.
         /// </summary>
-        /// <param name="x">开始索引</param>
-        /// <param name="y">结束索引</param>
-        /// <returns></returns>
+        /// <param name="x">The zero-based starting character position of a substring in this instance.</param>
+        /// <param name="y">The zero-based ended character position of a substring in this instance.</param>
+        /// <returns>A string.</returns>
         public string GetString(int x, int y)
         {
             return this.document.Substring(x, y - x);

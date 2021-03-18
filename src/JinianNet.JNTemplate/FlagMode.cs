@@ -6,27 +6,27 @@
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 标记模式
+    /// Tag flag.
     /// </summary>
     public enum FlagMode
     {
         /// <summary>
-        /// 无。
+        /// default
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// 简写
+        /// Logogram Tag: $text
         /// </summary>
         Logogram,
 
         /// <summary>
-        /// 完整
+        /// Full Tag:${text}
         /// </summary>
         Full,
 
         /// <summary>
-        /// 注释
+        /// Comment tag:$* text *$
         /// </summary>
         Comment
     }

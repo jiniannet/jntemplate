@@ -3,14 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Caching;
-using JinianNet.JNTemplate.Configuration;
-using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 #if !NET20
 using System.Threading.Tasks;
@@ -19,33 +16,33 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// 提供运行时的通用方法与属性
+    /// Engine runtime
     /// </summary>
-    public sealed class Runtime
+    public sealed partial class Runtime
     {
-        private static RuntimeStorage store;
+        private static RuntimeOptions options;
         private static volatile object state;
 
         /// <summary>
-        /// config store
+        /// Gets the <see cref="RuntimeOptions"/>.
         /// </summary>
-        internal static RuntimeStorage Storage
+        internal static RuntimeOptions Options
         {
             get
             {
-                if (store == null)
+                if (options == null)
                 {
                     lock (state)
                     {
-                        store = RuntimeStorage.CreateStore();
+                        options = RuntimeOptions.Create();
                     }
                 }
-                return store;
+                return options;
             }
         }
 
         /// <summary>
-        /// ctor
+        /// Initializes a static instance of the <see cref="Runtime"/>.
         /// </summary>
         static Runtime()
         {
@@ -53,83 +50,88 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 引擎配置
+        /// Configuration engine which <see cref="IDictionary{TKey, TValue}"/>.
         /// </summary>
-        /// <param name="conf">配置内容</param>
-        /// <param name="scope">初始数据</param>
+        /// <param name="conf">The <see cref="IDictionary{TKey, TValue}"/>.</param>
+        /// <param name="scope">The global <see cref="VariableScope"/>.</param>
         internal static void Configure(IDictionary<string, string> conf, VariableScope scope)
         {
-            Storage.Data = (scope == null || scope.Count == 0) ? null : scope;
-            Storage.Initialization(conf);
+            Options.Data = (scope == null || scope.Count == 0) ? null : scope;
+            Options.Initialization(conf);
         }
 
         /// <summary>
-        /// 模板资源搜索目录
+        /// Gets the resource directories.
         /// </summary>
         /// <value></value>
-        public static List<string> ResourceDirectories => Storage.ResourceDirectories;
+        public static List<string> ResourceDirectories => Options.ResourceDirectories;
 
 
         /// <summary>
-        /// 全局初始数据
+        /// Gets the global data.
         /// </summary>
-        public static VariableScope Data => Storage.Data;
+        public static VariableScope Data => Options.Data;
 
         /// <summary>
-        /// 加载器
+        /// Gets the <see cref="IResourceLoader"/>.
         /// </summary>
-        public static IResourceLoader Loader => Storage.Loader;
-        /// <summary>
-        /// Default encoding
-        /// </summary>
-        public static Encoding Encoding => Storage.Encoding;
+        public static IResourceLoader Loader => Options.Loader;
 
         /// <summary>
-        /// Cache
+        /// Gets the <see cref="Encoding"/>.
         /// </summary>
-
-        public static ICache Cache => Storage.Cache;
-
-        /// <summary>
-        /// Compile Templates
-        /// </summary>
-        public static TemplateCollection<Compile.ICompileTemplate> Templates => Storage.Templates;
+        public static Encoding Encoding => Options.Encoding;
 
         /// <summary>
-        /// 
+        /// Gets the cache object.
         /// </summary>
-        /// <param name="loader"></param>
+
+        public static ICache Cache => Options.Cache;
+
+        /// <summary>
+        /// Gets the <see cref="TemplateCollection{T}"/>.
+        /// </summary>
+        public static TemplateCollection<Compile.ICompileTemplate> Templates => Options.Templates;
+
+        /// <summary>
+        /// Sets an <see cref="IResourceLoader"/> values from engine.
+        /// </summary>
+        /// <param name="loader">The <see cref="IResourceLoader"/> to add set.</param> 
         public static void SetLoader(IResourceLoader loader)
         {
             if (loader == null)
             {
                 throw new ArgumentNullException(nameof(loader));
             }
-            Runtime.Storage.Loader = loader;
+            Runtime.Options.Loader = loader;
         }
 
         /// <summary>
-        /// 
+        /// Appends the specified directory name to the resource path list.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">The name of the directory to be appended to the resource path.</param>
         public static void AppendResourcePath(string path)
         {
-            if (!Storage.ResourceDirectories.Contains(path))
+            if (!Options.ResourceDirectories.Contains(path))
             {
-                Storage.ResourceDirectories.Add(path);
+                Options.ResourceDirectories.Add(path);
             }
         }
 
         /// <summary>
-        /// 获取环境变量
+        /// Gets an value from environment variables.
         /// </summary>
-        /// <param name="variable">变量名称</param>
-        /// <returns></returns>
-        public static string GetEnvironmentVariable(string variable)
+        /// <param name="key">The key of the value to get.</param>
+        /// <returns>The value associated with the specified key.</returns>
+        public static string GetEnvironmentVariable(string key)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException($"\"{nameof(key)}\" cannot be null.");
+            }
             string value;
 
-            if (Storage.Variable.TryGetValue(variable, out value))
+            if (Options.Variable.TryGetValue(key, out value))
             {
                 return value;
             }
@@ -137,52 +139,52 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// 设置环境变量
+        /// Sets an value from environment variables.
         /// </summary>
-        /// <param name="variable">变量名</param>
-        /// <param name="value">值</param>
-        public static void SetEnvironmentVariable(string variable, string value)
+        /// <param name="key">The key of the value to set.</param>
+        /// <param name="value">The variable to add to.</param>
+        public static void SetEnvironmentVariable(string key, string value)
         {
-            if (variable == null)
+            if (key == null)
             {
-                throw new ArgumentNullException("\"variable\" cannot be null.");
+                throw new ArgumentNullException($"\"{nameof(key)}\" cannot be null.");
             }
             if (value == null)
             {
-                Storage.Variable.Remove(variable);
+                Options.Variable.Remove(key);
             }
             else
             {
-                Storage.Variable[variable] = value;
+                Options.Variable[key] = value;
             }
         }
 
         /// <summary>
-        /// 装载标签解析器
+        /// Register a tag parser.
         /// </summary>
-        /// <param name="parser">ITagParser</param>
-        /// <param name="index">索引</param>
+        /// <param name="parser">The <see cref="ITagParser"/>.</param>
+        /// <param name="index">Inserts an parser into the parser collections at the specified index.</param>
         public static void RegisterTagParser(ITagParser parser, int index = -1)
         {
-            if (Storage.Parsers.Contains(parser))
+            if (Options.Parsers.Contains(parser))
             {
                 return;
             }
             if (index < 0)
             {
-                Storage.Parsers.Add(parser);
+                Options.Parsers.Add(parser);
             }
             else
             {
-                Storage.Parsers.Insert(index, parser);
+                Options.Parsers.Insert(index, parser);
             }
         }
 
         /// <summary>
-        /// 分析标签
+        /// Parsing the tag from the tokens.
         /// </summary>
-        /// <param name="parser"></param>
-        /// <param name="tc"></param>
+        /// <param name="parser">The <see cref="TemplateParser"/>.</param>
+        /// <param name="tc">The <see cref="TokenCollection"/>.</param>
         /// <returns></returns>
         public static ITag Parsing(TemplateParser parser, TokenCollection tc)
         {
@@ -191,7 +193,7 @@ namespace JinianNet.JNTemplate
                 return null;
             }
 
-            var parsers = Storage.Parsers;
+            var parsers = Options.Parsers;
             ITag t;
             for (int i = 0; i < parsers.Count; i++)
             {
@@ -214,151 +216,6 @@ namespace JinianNet.JNTemplate
                 }
             }
             return null;
-        }
-
-
-        /// <summary>
-        /// core
-        /// </summary>
-        internal class RuntimeStorage
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <returns></returns>
-            internal static RuntimeStorage CreateStore()
-            {
-                RuntimeStorage store = new RuntimeStorage();
-                store.Data = null;
-                store.Variable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                    { nameof(IConfig.Charset),"utf-8" },
-                    { nameof(IConfig.TagPrefix),"${" },
-                    { nameof(IConfig.TagSuffix),"}" },
-                    { nameof(IConfig.TagFlag),"$" },
-                    { nameof(IConfig.ThrowExceptions),"True" },
-                    { nameof(IConfig.StripWhiteSpace),"False" },
-                    { nameof(IConfig.IgnoreCase),"True" }
-                };
-                store.Cache = new MemoryCache();
-                store.Parsers = new List<ITagParser>();
-                store.ResourceDirectories = new List<string>();
-                store.Loader = new FileLoader();
-                store.Encoding = Encoding.UTF8;
-                store.Templates = new TemplateCollection<Compile.ICompileTemplate>();
-                store.BindIgnoreCase = BindingFlags.IgnoreCase;
-                store.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
-                store.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
-                foreach (var type in Field.RSEOLVER_TYPES)
-                {
-                    var parser = DynamicHelpers.CreateInstance<ITagParser>(type);
-                    store.Parsers.Add(parser);
-                }
-                return store;
-            }
-
-            /// <summary>
-            /// 初始化基本数据
-            /// </summary>
-            /// <param name="dict"></param>
-            public void Initialization(IDictionary<string, string> dict)
-            {
-                foreach (KeyValuePair<string, string> node in dict)
-                {
-                    if (string.IsNullOrEmpty(node.Value))
-                    {
-                        continue;
-                    }
-                    switch (node.Key)
-                    {
-                        case nameof(IConfig.Charset):
-                            this.Encoding = Encoding.GetEncoding(node.Value);
-                            break;
-                        case nameof(IConfig.IgnoreCase):
-                            if (Utility.StringToBoolean(node.Value))
-                            {
-                                this.BindIgnoreCase = BindingFlags.IgnoreCase;
-                                this.ComparerIgnoreCase = StringComparer.OrdinalIgnoreCase;
-                                this.ComparisonIgnoreCase = StringComparison.OrdinalIgnoreCase;
-                            }
-                            else
-                            {
-                                this.ComparisonIgnoreCase = StringComparison.Ordinal;
-                                this.BindIgnoreCase = BindingFlags.DeclaredOnly;
-                                this.ComparerIgnoreCase = StringComparer.Ordinal;
-                            }
-                            break;
-                        default:
-                            this.Variable[node.Key] = node.Value;
-                            break;
-                    }
-                }
-            }
-
-            /// <summary>
-            /// 全局初始数据
-            /// </summary>
-            public VariableScope Data { set; get; }
-
-            /// <summary>
-            /// 加载器
-            /// </summary>
-            public IResourceLoader Loader { set; get; }
-
-            /// <summary>
-            /// 绑定大小写配置
-            /// </summary>
-            public BindingFlags BindIgnoreCase { set; get; }
-
-            /// <summary>
-            /// 字符串大小写比较配置
-            /// </summary>
-            public StringComparer ComparerIgnoreCase { set; get; }
-
-            /// <summary>
-            /// 字符串大小写比较配置
-            /// </summary>
-            public StringComparison ComparisonIgnoreCase { set; get; }
-
-            /// <summary>
-            /// Default encoding
-            /// </summary>
-            public Encoding Encoding { set; get; }
-
-            /// <summary>
-            /// Cache
-            /// </summary>
-
-            public ICache Cache { set; get; }
-
-            /// <summary>
-            /// 模板资源搜索目录
-            /// </summary>
-            /// <value></value>
-            public List<string> ResourceDirectories { set; get; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public Dictionary<string, string> Variable { set; get; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public List<ITagParser> Parsers { set; get; }
-
-            /// <summary>
-            /// 是否启用编译模式
-            /// </summary>
-            public bool EnableCompile { get; set; } = true;
-
-            /// <summary>
-            /// 是否启用模板缓存
-            /// </summary>
-            public bool EnableTemplateCache { get; set; } = true;
-
-            /// <summary>
-            /// 
-            /// </summary>
-            public TemplateCollection<Compile.ICompileTemplate> Templates { get; set; }
-
         }
     }
 }

@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static PropertyInfo GetPropertyInfo(Type type, string propName)
         {
-            PropertyInfo p = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Storage.BindIgnoreCase);
+            PropertyInfo p = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Options.BindIgnoreCase);
             return p;
         }
 
@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static FieldInfo GetFieldInfo(Type type, string propName)
         {
-            FieldInfo f = type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Storage.BindIgnoreCase);
+            FieldInfo f = type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Options.BindIgnoreCase);
 
             return f;
         }
@@ -87,11 +87,11 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetMethods(Type type, string methodName)
         {
-            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Storage.BindIgnoreCase);
+            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Options.BindIgnoreCase);
             List<MethodInfo> result = new List<MethodInfo>();
             foreach (MethodInfo m in ms)
             {
-                if (m.Name.Equals(methodName, Runtime.Storage.ComparisonIgnoreCase))
+                if (m.Name.Equals(methodName, Runtime.Options.ComparisonIgnoreCase))
                 {
                     result.Add(m);
                 }
