@@ -7,7 +7,7 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 布尔标签
+    /// BooleanTag
     /// </summary>
     [Serializable]
     public class BooleanTag : TypeTag<bool>

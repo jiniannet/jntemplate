@@ -7,12 +7,12 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 基本类型标签
+    /// ITypeTag
     /// </summary>
     public interface ITypeTag
     {
         /// <summary>
-        /// 值
+        /// Gets or sets the value of the tag.
         /// </summary>
         object Value { get; set; }
     }

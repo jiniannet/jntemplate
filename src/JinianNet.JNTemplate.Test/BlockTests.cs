@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestLoadParent()
         {
             var templateContent = "$load(\"public.html\")";
-            var template = Engine.CreateTemplate(templateContent);
+            var template = Engine.CreateTemplate("TestLoadParent",templateContent);
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets"; 
 
             var render = template.Render();
@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestLoadVar()
         {
             var templateContent = "$load(path)";
-            var template = Engine.CreateTemplate(templateContent);
+            var template = Engine.CreateTemplate("TestLoadVar", templateContent);
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets";
             template.Set("path", $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}public.html");
             var render = template.Render();

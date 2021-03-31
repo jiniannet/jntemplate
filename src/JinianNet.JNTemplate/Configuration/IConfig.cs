@@ -5,71 +5,62 @@
 
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Resources;
+using System;
 using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Configuration
 {
     /// <summary>
-    /// 配置
+    /// The config of the engine.
     /// </summary>
     public interface IConfig
     {
         /// <summary>
-        /// 资源路径
+        /// Gets or sets the global resource directories of the engine.
         /// </summary>
         List<string> ResourceDirectories { get; set; }
         /// <summary>
-        /// 字符编码
+        /// Gets or sets the charset of the engine.
         /// </summary>
         string Charset { get; set; }
         /// <summary>
-        /// 标签前缀
+        /// Gets or sets the tag prefix .
         /// </summary>
         string TagPrefix { get; set; }
         /// <summary>
-        /// 标签后缀
+        /// Gets or sets the tag suffix.
         /// </summary>
         string TagSuffix { get; set; }
 
         /// <summary>
-        /// 简写标签前缀
+        /// Gets or sets the tag flag.
         /// </summary>
         char TagFlag { get; set; }
 
         /// <summary>
-        /// 是否抛出异常
+        /// Gets or sets whether throw exceptions.
         /// </summary>
         bool ThrowExceptions { get; set; }
 
         /// <summary>
-        /// 是否处理标签前后空白字符
+        /// Gets or sets whether strip white-space.
         /// </summary>
         bool StripWhiteSpace { get; set; }
 
         /// <summary>
-        /// 是否忽略大小写
+        /// IgnoreCase
         /// </summary>
+        [Obsolete]
         bool IgnoreCase { get; set; }
 
         /// <summary>
-        /// 是否缓存模板文件
+        /// Enable or disenable the cache.
         /// </summary> 
         bool EnableTemplateCache { get; set; }
 
         /// <summary>
-        /// 是否禁用简写标签 
+        /// Gets or sets whether disablee logogram .
         /// </summary>
-        bool DisableeLogogram { get; set; }
-
-        /// <summary>
-        /// 加载提供器
-        /// </summary>
-        IResourceLoader Loader { get; set; }
-
-        /// <summary>
-        /// 标签分析器
-        /// </summary>
-        List<Parsers.ITagParser> TagParsers { get; set; }
-
+        bool DisableeLogogram { get; set; } 
     }
 }

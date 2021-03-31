@@ -4,7 +4,8 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Nodes; 
+using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Parsers;
 
 namespace JinianNet.JNTemplate
 {
@@ -17,18 +18,21 @@ namespace JinianNet.JNTemplate
         private Token[] tokens;
         private int index;
         private List<ITag> tags;
+        private TagParser tagParser;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateParser"/> class
         /// </summary> 
+        /// <param name="p">The <see cref="TagParser"/>.</param>
         /// <param name="ts">The collection of tokens.</param>
-        public TemplateParser(Token[] ts)
+        public TemplateParser(TagParser p, Token[] ts)
             : base()
         {
             if (ts == null)
             {
                 throw new ArgumentNullException("\"ts\" cannot be null.");
             }
+            this.tagParser = p;
             this.tokens = ts;
             Reset();
         }
@@ -138,7 +142,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
             }
-            return Runtime.Parsing(this,tc);
+            return tagParser.Parsing(this, tc);
         }
 
         private bool IsTagEnd()
@@ -171,7 +175,7 @@ namespace JinianNet.JNTemplate
         //    return tokens[this.index + 1];
         //}
 
-   
+
         /// <inheritdoc />
         object System.Collections.IEnumerator.Current
         {

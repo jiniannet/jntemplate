@@ -7,7 +7,7 @@ using System;
 namespace JinianNet.JNTemplate.Exception
 {
     /// <summary>
-    /// 常规性错误
+    /// Represents errors that occur during application execution.
     /// </summary>
     public class TemplateException : System.Exception
     {
@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Exception
         private int errorColumn;
         private string errorCode;
         /// <summary>
-        /// 所在行
+        /// The line of the exception.
         /// </summary>
         public int Line
         {
@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Exception
             set { this.errorLine = value; }
         }
         /// <summary>
-        /// 所在字符
+        /// The column of the exception.
         /// </summary>
         public int Column
         {
@@ -31,7 +31,7 @@ namespace JinianNet.JNTemplate.Exception
             set { this.errorColumn = value; }
         }
         /// <summary>
-        /// 错误代码
+        /// The error code of the exception.
         /// </summary>
         public string Code
         {
@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Exception
             set { this.errorCode = value; }
         }
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="TemplateException"/> class.
         /// </summary>
         public TemplateException()
             : base()
@@ -48,27 +48,22 @@ namespace JinianNet.JNTemplate.Exception
         }
 
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="TemplateException"/> class.
         /// </summary>
-        /// <param name="message">异常信息</param>
-        /// <param name="line">行</param>
-        /// <param name="column">字符</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="line">The line on error.</param>
+        /// <param name="column">The column on error.</param>
         public TemplateException(string message, int line, int column)
-            : base(string.Concat("Line:",
-                line.ToString(),
-                " Column:",
-                column.ToString(),
-                "\r\n",
-                message))
+            : base($"Line:{line} Column:{ column}\r\n{message}")
         {
             this.errorColumn = column;
             this.errorLine = line;
         }
 
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="TemplateException"/> class.
         /// </summary>
-        /// <param name="message">错误信息</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
         public TemplateException(string message)
             : base(message)
         {
@@ -76,10 +71,10 @@ namespace JinianNet.JNTemplate.Exception
         }
 
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="TemplateException"/> class.
         /// </summary>
-        /// <param name="message">错误信息</param>
-        /// <param name="innerException">基础信息</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
         public TemplateException(string message, System.Exception innerException)
             : base(message, innerException)
         {

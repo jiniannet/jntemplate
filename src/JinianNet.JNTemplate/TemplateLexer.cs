@@ -32,19 +32,29 @@ namespace JinianNet.JNTemplate
         private string suffix;
         private bool disableeLogogram;
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateLexer"/> class
         /// </summary>
         /// <param name="text">The template contents.</param>
-        public TemplateLexer(string text)
+        /// <param name="tagPrefix">the tag prefix .</param>
+        /// <param name="tagSuffix">the tag suffix.</param>
+        /// <param name="tagflag">the tag flag.</param>
+        /// <param name="disableFlag">whether disablee logogram</param>
+        public TemplateLexer(string text,
+            string tagPrefix,
+            string tagSuffix,
+            char tagflag,
+            bool disableFlag)
         {
             this.document = text;
-            this.prefix = Runtime.GetEnvironmentVariable(nameof(IConfig.TagPrefix));
-            this.flag = Runtime.GetEnvironmentVariable(nameof(IConfig.TagFlag))[0];
-            this.suffix = Runtime.GetEnvironmentVariable(nameof(IConfig.TagSuffix));
-            this.disableeLogogram = Utility.StringToBoolean(Runtime.GetEnvironmentVariable(nameof(IConfig.DisableeLogogram)));
+            this.prefix = tagPrefix;
+            this.flag = tagflag;
+            this.suffix = tagSuffix;
+            this.disableeLogogram = disableFlag;
             Reset();
         }
+
         /// <summary>
         /// Reset the <see cref="TemplateLexer"/>.
         /// </summary>

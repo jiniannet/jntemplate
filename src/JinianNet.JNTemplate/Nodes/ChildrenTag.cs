@@ -6,13 +6,13 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 基本标签(ParseResult)
+    /// ChildrenTag
     /// </summary>
     [Serializable]
     public abstract class ChildrenTag : BasisTag
     {
         /// <summary>
-        /// 父标签
+        /// Gets or sets the parent tag of the tag.
         /// </summary>
         public BasisTag Parent { get; set; }
     }

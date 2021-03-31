@@ -7,13 +7,13 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 文本标签
+    /// TextTag
     /// </summary>
     [Serializable]
     public class TextTag : SpecialTag
     {
         /// <summary>
-        /// 标签文本
+        ///  Gets the text of the tag.
         /// </summary>
         public string Text
         {
@@ -25,11 +25,8 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 return null;
             }
-        } 
-
-        /// <summary>
-        /// 获取对象的字符串引用
-        /// </summary>
+        }
+        /// <inheritdoc />
         public override string ToString()
         {
             return this.Text;

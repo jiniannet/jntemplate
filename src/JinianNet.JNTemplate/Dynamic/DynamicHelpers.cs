@@ -2,7 +2,6 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.Caching;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,31 +10,32 @@ using System.Reflection;
 namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
-    /// 反射HELPERS
+    /// DynamicHelpers
     /// </summary>
     public class DynamicHelpers
     {
+        private static Dictionary<string, MethodInfo[]> dict = new Dictionary<string, MethodInfo[]>(StringComparer.OrdinalIgnoreCase);
         /// <summary>
-        /// 获取属性
+        /// Searches for the public property with the specified name.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="propName">属性名称</param>
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the public property to get.</param>
         /// <returns></returns>
-        public static PropertyInfo GetPropertyInfo(Type type, string propName)
+        public static PropertyInfo GetPropertyInfo(Type type, string name)
         {
-            PropertyInfo p = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Options.BindIgnoreCase);
+            PropertyInfo p = type.GetProperty(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
             return p;
         }
 
         /// <summary>
-        /// 获取属性的GET方法
+        /// Returns the public get accessor for specified property.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="propName">属性名称</param>
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the public property to get.</param>
         /// <returns></returns>
-        public static MethodInfo GetPropertyGetMethod(Type type, string propName)
+        public static MethodInfo GetPropertyGetMethod(Type type, string name)
         {
-            PropertyInfo p = GetPropertyInfo(type,propName);
+            PropertyInfo p = GetPropertyInfo(type, name);
             if (p == null)
             {
                 return null;
@@ -48,50 +48,49 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 获取字段
+        /// Searches for the public field with the specified name.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="propName">属性名称</param>
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the data field to get.</param>
         /// <returns></returns>
-        public static FieldInfo GetFieldInfo(Type type, string propName)
+        public static FieldInfo GetFieldInfo(Type type, string name)
         {
-            FieldInfo f = type.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Options.BindIgnoreCase);
+            FieldInfo f = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
 
             return f;
         }
 
         /// <summary>
-        /// 根据方法名查找方法(缓存)
+        /// Returns all the public members of the specified name.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="methodName">方法名</param>
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the method to get.</param>
         /// <returns></returns>
-        public static MethodInfo[] GetCacheMethods(Type type, string methodName)
+        public static MethodInfo[] GetCacheMethods(Type type, string name)
         {
-            var cacheKey = string.Concat(type.FullName, ".", methodName);
-            var cacheValue = Runtime.Cache.Get<MethodInfo[]>(cacheKey);
-            if (cacheValue != null)
+            var cacheKey = string.Concat(type.FullName, ".", name);
+            if (dict.TryGetValue(cacheKey, out var result))
             {
-                return cacheValue;
+                return result;
             }
-            var result = GetMethods(type, methodName);
-            Runtime.Cache.Set(cacheKey, result);
+            result = GetMethods(type, name);
+            dict[cacheKey] = result;
             return result;
         }
 
         /// <summary>
-        /// 根据方法名查找方法（无缓存）
+        ///Returns all the public members of the specified name.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="methodName">方法名</param>
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the method to get.</param>
         /// <returns></returns>
-        public static MethodInfo[] GetMethods(Type type, string methodName)
+        public static MethodInfo[] GetMethods(Type type, string name)
         {
-            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | Runtime.Options.BindIgnoreCase);
+            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
             List<MethodInfo> result = new List<MethodInfo>();
             foreach (MethodInfo m in ms)
             {
-                if (m.Name.Equals(methodName, Runtime.Options.ComparisonIgnoreCase))
+                if (m.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
                     result.Add(m);
                 }
@@ -99,27 +98,25 @@ namespace JinianNet.JNTemplate.Dynamic
             return result.ToArray();
         }
 
+
         /// <summary>
-        /// 根据参数获取方法（请避免使用重载）
+        /// Searches for the public or private method with the specified name.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="args">实参</param>
-        /// <returns>MethodInfo</returns>
-        public static MethodInfo GetMethod(Type type, string methodName, Type[] args)
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the method to get.</param>
+        /// <param name="args">An array of <see cref="Type"/> objects representing the number, order, and type of the parameters for the method to get.</param>
+        /// <param name="isStrict">Whether the parameter types are identical.</param>
+        /// <returns>The <see cref="MethodInfo"/>.</returns>
+        public static MethodInfo GetMethod(Type type, string name, Type[] args, bool isStrict)
         {
-            MethodInfo[] ms = GetCacheMethods(type, methodName);
+            MethodInfo[] ms = GetCacheMethods(type, name);
             if (ms.Length == 1)
             {
                 return ms[0];
             }
             foreach (var m in ms)
             {
-
-            }
-            foreach (var m in ms)
-            {
-                if (IsMatch(m.GetParameters(), args))
+                if (IsMatch(m.GetParameters(), args, isStrict))
                 {
                     return m;
                 }
@@ -128,16 +125,28 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 根据参数获取方法（请避免使用重载）
+        /// Searches for the public or private method with the specified name.
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <param name="genericType">类型</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="args">实参</param>
-        /// <returns>MethodInfo</returns>
-        public static MethodInfo GetGenericMethod(Type type, Type[] genericType, string methodName, Type[] args)
+        /// <param name="type">The type of object.</param>
+        /// <param name="name">The string containing the name of the method to get.</param>
+        /// <param name="args">An array of <see cref="Type"/> objects representing the number, order, and type of the parameters for the method to get.</param>
+        /// <returns>The <see cref="MethodInfo"/>.</returns>
+        public static MethodInfo GetMethod(Type type, string name, Type[] args)
         {
-            MethodInfo[] ms = GetCacheMethods(type, methodName);
+            return GetMethod(type, name, args, true);
+        }
+
+        /// <summary>
+        /// Searches for the public or private generic method with the specified name.
+        /// </summary>
+        /// <param name="type">The type of object.</param>
+        /// <param name="genericType">The generic types of method.</param>
+        /// <param name="name">The string containing the name of the method to get.</param>
+        /// <param name="args">An array of <see cref="Type"/> objects representing the number, order, and type of the parameters for the method to get.</param>
+        /// <returns>The <see cref="MethodInfo"/>.</returns>
+        public static MethodInfo GetGenericMethod(Type type, Type[] genericType, string name, Type[] args)
+        {
+            MethodInfo[] ms = GetMethods(type, name);
             if (ms.Length == 1 && ms[0].IsGenericMethod)
             {
                 return ms[0].MakeGenericMethod(genericType);
@@ -158,11 +167,11 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 实参是否匹配形参
+        /// Whether the parameter types are identical
         /// </summary>
-        /// <param name="pi">形参</param>
-        /// <param name="args">实参</param>
-        /// <param name="isAllMatch">参数类型是否完全一致</param>
+        /// <param name="pi">The parameter array.</param>
+        /// <param name="args">An array of <see cref="Type"/> objects representing the number, order, and type of the parameters for the method to get.</param>
+        /// <param name="isAllMatch"></param>
         /// <returns>bool</returns>
         public static bool IsMatch(ParameterInfo[] pi, Type[] args, bool isAllMatch)
         {
@@ -170,15 +179,13 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return false;
             }
-            //暂不考虑可选参数,默认参数,param参数
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] == null)
                 {
                     continue;
                 }
-                //if (!IsMatchType(args[i], pi[i].ParameterType) && !DynamicHelpers.CanChange(args[i], pi[i].ParameterType))
-                if ((isAllMatch && args[i].FullName != pi[i].ParameterType.FullName) || (!isAllMatch && !IsMatchType(args[i], pi[i].ParameterType)) /*&& !DynamicHelpers.CanChange(args[i], pi[i].ParameterType)*/)
+                if ((isAllMatch && args[i] != pi[i].ParameterType) || (!isAllMatch && !IsMatchType(args[i], pi[i].ParameterType)) /*&& !DynamicHelpers.CanChange(args[i], pi[i].ParameterType)*/)
                 {
                     return false;
                 }
@@ -188,10 +195,10 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 实参是否匹配形参
+        /// Whether the parameter types are identical
         /// </summary>
-        /// <param name="pi">形参</param>
-        /// <param name="args">实参</param>
+        /// <param name="pi">The parameter array.</param>
+        /// <param name="args">An array of <see cref="Type"/> objects representing the number, order, and type of the parameters for the method to get.</param>
         /// <returns>bool</returns>
         public static bool IsMatch(ParameterInfo[] pi, Type[] args)
         {
@@ -200,10 +207,10 @@ namespace JinianNet.JNTemplate.Dynamic
 
 
         /// <summary>
-        /// 
+        /// Indicates whether finds a match in a specified input type.
         /// </summary>
-        /// <param name="original"></param>
-        /// <param name="target"></param>
+        /// <param name="original">The original tag.</param>
+        /// <param name="target">The target tag.</param>
         /// <returns></returns>
         public static bool IsMatchType(Type original, Type target)
         {
@@ -211,16 +218,16 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 原始类型是否可以向目标类型转换
+        /// Whether the original type can be converted to the target type
         /// </summary>
-        /// <param name="original">原始类型</param>
-        /// <param name="target">目标类型</param>
+        /// <param name="original">The original type.</param>
+        /// <param name="target">The target type.</param>
         /// <returns>bool</returns>
         public static bool CanChange(Type original, Type target)
         {
             switch (target.FullName)
             {
-                //case "System.String"://任意类型都支持toString
+                //case "System.String"://
                 //    return true;
                 case "System.Double":
                     if (original.FullName == "System.Int16"
@@ -283,9 +290,9 @@ namespace JinianNet.JNTemplate.Dynamic
 
 
         /// <summary>
-        /// 获取类型默认值
+        /// Gets the default value for the specified type.
         /// </summary>
-        /// <param name="targetType"></param>
+        /// <param name="targetType">The <see cref="Type"/>.</param>
         /// <returns></returns>
         private static object DefaultForType(Type targetType)
         {
@@ -293,16 +300,14 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 参数转换
+        /// Convert dict to matching parameters
         /// </summary>
-        /// <param name="dict">数据</param>
-        /// <param name="pis">参数</param>
+        /// <param name="dict">The dictionary. </param>
+        /// <param name="pis">The parameter types.</param>
         /// <returns>object[]</returns>
         public static object[] ChangeParameters(Dictionary<object, object> dict, ParameterInfo[] pis)
         {
-            //实参
             var args = new object[pis.Length];
-            //处理实参
             for (int i = 0; i < pis.Length; i++)
             {
                 foreach (var kv in dict)
@@ -329,10 +334,10 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 创建实例 
+        /// Creates an instance of the type whose name is specified. 
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="typeName">类型</param>
+        /// <typeparam name="T">The result of type.</typeparam>
+        /// <param name="typeName">Thpe type name.</param>
         /// <returns></returns>
         public static T CreateInstance<T>(string typeName)
         {
@@ -341,17 +346,17 @@ namespace JinianNet.JNTemplate.Dynamic
                 return default(T);
             }
             var type = Type.GetType(typeName);
-            if(type == null)
+            if (type == null)
             {
                 return default(T);
             }
             return (T)Activator.CreateInstance(type);
         }
         /// <summary>
-        /// 创建实例 
+        /// Creates an instance of the specified type. 
         /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="type">类型</param>
+        /// <typeparam name="T">The result of type.</typeparam>
+        /// <param name="type">The type.</param>
         /// <returns></returns>
         public static T CreateInstance<T>(Type type)
         {
@@ -359,10 +364,10 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 创建实例 
+        /// Creates an instance of the specified type. 
         /// </summary>
-        /// <param name="type">类型</param>
-        /// <returns>实例对象</returns>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         public static object CreateInstance(Type type)
         {
             if (type.IsInterface)
@@ -373,29 +378,26 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 获取属性或字段的值
+        /// Gets the property or field value of the object.
         /// </summary>
-        /// <param name="container">原对象</param>
-        /// <param name="propName">属性或字段名，有参数属性为参数值</param>
+        /// <param name="container">The object.</param>
+        /// <param name="name">The property or field name. </param>
         /// <returns></returns>
-        public static object CallPropertyOrField(object container, string propName)
+        public static object CallPropertyOrField(object container, string name)
         {
             Type t = container.GetType();
-            //此处的属性包括有参属性（索引）与无参属性（属性）
-            //if (propName.IndexOfAny(indexExprStartChars) < 0)
-            //因属性与字段均不可能以数字开头，如第一个字符为数字则直接跳过属性判断以加快处理速度
-            if (!char.IsDigit(propName[0]))
+            if (!char.IsDigit(name[0]))
             {
 #if !NET20_NOTUSER
-                PropertyInfo p = DynamicHelpers.GetPropertyInfo(t, propName);
-                //取属性
+                PropertyInfo p = DynamicHelpers.GetPropertyInfo(t, name);
+                //Property
                 if (p != null)
                 {
                     return p.GetValue(container, null);
                 }
 #if NEEDFIELD
-                //取字段
-                FieldInfo f = t.GetField(propName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
+                //Field
+                FieldInfo f = t.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
                 if (f != null)
                 {
                     return f.GetValue(container);
@@ -404,9 +406,9 @@ namespace JinianNet.JNTemplate.Dynamic
 #else
                 System.Linq.Expressions.MemberExpression exp;
 #if NEEDFIELD
-                exp = System.Linq.Expressions.Expression.PropertyOrField(System.Linq.Expressions.Expression.Constant(container), propName);
+                exp = System.Linq.Expressions.Expression.PropertyOrField(System.Linq.Expressions.Expression.Constant(container), name);
 #else
-                exp = System.Linq.Expressions.Expression.Property(System.Linq.Expressions.Expression.Constant(container), propName);
+                exp = System.Linq.Expressions.Expression.Property(System.Linq.Expressions.Expression.Constant(container), name);
 #endif
                 if (exp != null)
                 {
@@ -420,13 +422,13 @@ namespace JinianNet.JNTemplate.Dynamic
 
 
         /// <summary>
-        /// 调用实例方法
+        /// Calls the specified method and returns the result of execution
         /// </summary>
-        /// <param name="container">实例对象</param>
-        /// <param name="methodName">方法名</param>
-        /// <param name="args">形参</param>
-        /// <returns>object</returns>
-        public static object CallMethod(object container, string methodName, object[] args)
+        /// <param name="container">Then Instance objects.</param>
+        /// <param name="name">The name of the method.</param>
+        /// <param name="args">The parameter of the method.</param>
+        /// <returns>The result of execution.</returns>
+        public static object CallMethod(object container, string name, object[] args)
         {
             Type[] types = new Type[args.Length];
             bool hasNullValue = false;
@@ -443,7 +445,7 @@ namespace JinianNet.JNTemplate.Dynamic
             }
 
             Type t = container.GetType();
-            MethodInfo method = DynamicHelpers.GetMethod(t, methodName, types);
+            MethodInfo method = DynamicHelpers.GetMethod(t, name, types);
 
             if (method != null)
             {
@@ -474,12 +476,10 @@ namespace JinianNet.JNTemplate.Dynamic
                 //    }
                 //}
 
-                ParameterInfo[] pi = method.GetParameters();
-                //处理可选参数
+                var pi = method.GetParameters();
                 if (types.Length == 1 && types[0] == typeof(Dictionary<object, object>)
                     && (pi.Length != 1 || !pi[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
                 {
-                    //实参
                     args = DynamicHelpers.ChangeParameters((Dictionary<object, object>)args[0], pi);
                 }
                 else if (hasNullValue)
@@ -503,11 +503,11 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
         }
         /// <summary>
-        /// 动态获取索引值
+        /// Get the index value.
         /// </summary>
-        /// <param name="container">对象</param>
-        /// <param name="propIndex">索引</param>
-        /// <returns>返回结果</returns>
+        /// <param name="container">The object.</param>
+        /// <param name="propIndex"> The zero-based index in the object. </param>
+        /// <returns></returns>
         public static object CallIndexValue(object container, object propIndex)
         {
             IList list;

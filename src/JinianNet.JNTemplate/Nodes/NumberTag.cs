@@ -8,7 +8,7 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 数字标签
+    /// NumberTag
     /// </summary>
     [Serializable]
     public class NumberTag : TypeTag<System.ValueType>

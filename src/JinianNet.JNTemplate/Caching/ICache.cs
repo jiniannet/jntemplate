@@ -8,58 +8,54 @@ using System.Collections;
 namespace JinianNet.JNTemplate.Caching
 {
     /// <summary>
-    /// 缓存提供者
+    /// Cache
     /// </summary>
     public interface ICache : IEnumerable, IDisposable
     {
-        ///// <summary>
-        ///// 创建缓存
-        ///// </summary>
-        ///// <returns></returns>
-        //ICache CreateCache();
-
         /// <summary>
-        /// 当前缓存数量
+        /// The count of the cache item.
         /// </summary>
         int Count { get; }
+
         /// <summary>
-        /// 添加缓存（自行实现时注意设置默认过期时间）
+        /// Adds the cache item.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
+        /// <param name="key">The key of the cache.</param>
+        /// <param name="value">The value of the cache.</param>
         void Set(string key, object value);
 
         /// <summary>
-        /// 添加缓存
+        /// Adds the cache item.
         /// </summary>
-        /// <param name="key">键</param>
-        /// <param name="value">值</param>
-        /// <param name="expire">过期时间</param>
+        /// <param name="key">The key of the cache.</param>
+        /// <param name="value">The value of the cache.</param>
+        /// <param name="expire">The expiration</param>
         void Set(string key, object value, TimeSpan expire);
+
         /// <summary>
-        /// 获取键为key的缓存
+        /// Gets a object of the specify key.
         /// </summary>
-        /// <param name="key">键</param>
+        /// <param name="key">The key.</param>
         /// <returns></returns>
         object Get(string key);
 
         /// <summary>
-        /// 获取缓存并自动转换成指定类型
+        /// Gets a object of the specify key.
         /// </summary>
-        /// <typeparam name="T">返回类型</typeparam>
-        /// <param name="key">键</param>
+        /// <typeparam name="T">The type of the return.</typeparam>
+        /// <param name="key">The key of the cache.</param>
         /// <returns></returns>
         T Get<T>(string key) where T : class;
 
         /// <summary>
-        /// 移除键为key的缓存
+        /// Remove a cache with specify key.
         /// </summary>
-        /// <param name="key">键</param>
+        /// <param name="key">the specify key.</param>
         /// <returns></returns>
         object Remove(string key);
 
         /// <summary>
-        /// 清空所有缓存
+        /// Clear all cached objects 
         /// </summary>
         void Clear();
     }

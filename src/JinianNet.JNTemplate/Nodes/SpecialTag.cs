@@ -8,7 +8,7 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 特殊标签
+    /// SpecialTag
     /// </summary>
     [Serializable]
     public abstract class SpecialTag : BasisTag

@@ -7,14 +7,12 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 文本标签
+    /// CommentTag
     /// </summary>
     [Serializable]
     public class CommentTag : SpecialTag
     {
-        /// <summary>
-        /// 获取对象的字符串引用
-        /// </summary>
+        /// <inheritdoc />
         public override string ToString()
         {
             return this.FirstToken.ToString();

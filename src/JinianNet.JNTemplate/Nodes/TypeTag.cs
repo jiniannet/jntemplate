@@ -8,15 +8,15 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 基本类型标签
+    /// The tag of base type .
     /// </summary>
-    /// <typeparam name="T">类型</typeparam>
+    /// <typeparam name="T"></typeparam>
     [Serializable]
     public abstract class TypeTag<T> : SpecialTag, ITypeTag
     {
         private T baseValue;
         /// <summary>
-        /// 值
+        /// Gets or sets the value of the tag.
         /// </summary>
         public T Value
         {
@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 值
+        /// Gets or sets the value of the tag.
         /// </summary>
         object ITypeTag.Value
         {

@@ -9,13 +9,13 @@ using System.Reflection;
 namespace JinianNet.JNTemplate.Configuration
 {
     /// <summary>
-    /// 配置扩展类
+    /// Extension methods.
     /// </summary>
     public static class ConfigExtensions
     {
 
         /// <summary>
-        /// 将符合要求的配置转换为引擎环境变量
+        /// Creates a <see cref="Dictionary{TKey, TValue}"/> from an <see cref="IConfig"/>.
         /// </summary>
         /// <param name="config">config</param>
         /// <returns></returns>

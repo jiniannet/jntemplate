@@ -3,24 +3,17 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 组合标签
-    /// 用于执于复杂的方法或变量
-    /// 通常由属性，方法，索引组合，比如
-    /// $User.CreateDate.ToString("yyyy-MM-dd")
-    /// $Db.Query().Result.Count
+    /// ReferenceTag
     /// </summary>
     [Serializable]
     public class ReferenceTag : BasisTag
     {
         /// <summary>
-        /// 子标签
+        ///  Gets the child of the tag.
         /// </summary>
         public ITag Child
         {
@@ -33,10 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
                 return null;
             }
         }
-        /// <summary>
-        /// 添加子标签
-        /// </summary>
-        /// <param name="node">子标签</param>
+        /// <inheritdoc />
         public override void AddChild(ITag node)
         {
             if (this.Children.Count == 0)

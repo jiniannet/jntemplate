@@ -3,15 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// FOR标签
+    /// ForTag
     /// </summary>
     [Serializable]
     public class ForTag : ComplexTag
@@ -21,7 +17,7 @@ namespace JinianNet.JNTemplate.Nodes
         private ITag dothing;
 
         /// <summary>
-        /// 初始标签 
+        /// Gets or sets the initial of the tag.
         /// </summary>
         public ITag Initial
         {
@@ -30,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 逻辑标签
+        /// Gets or sets the condition of the tag.
         /// </summary>
         public ITag Condition
         {
@@ -39,7 +35,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// Do 
+        /// do things.
         /// </summary>
         public ITag Do
         {

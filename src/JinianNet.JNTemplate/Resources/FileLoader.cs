@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// 
+    /// The resource loader
     /// </summary>
     public class FileLoader : IResourceLoader
     {

@@ -3,12 +3,9 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.Text;
 using JinianNet.JNTemplate.Caching;
-using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Parsers;
-using JinianNet.JNTemplate.Resources;
+using JinianNet.JNTemplate.Runtime;
 
 namespace JinianNet.JNTemplate
 {
@@ -18,58 +15,32 @@ namespace JinianNet.JNTemplate
     [Serializable]
     public class Context
     {
-        private string currentPath;
-        private Encoding charset;
-        private bool throwErrors;
-        private bool stripWhiteSpace;
-        private List<string> resourceDirectories;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Context"/> class
-        /// </summary>
-        public Context()
-        {
-            this.resourceDirectories = new List<string>();
-            this.currentPath = null;
-            this.throwErrors = Utility.StringToBoolean(Runtime.GetEnvironmentVariable(nameof(Configuration.IConfig.ThrowExceptions)));
-            this.stripWhiteSpace = Utility.StringToBoolean(Runtime.GetEnvironmentVariable(nameof(Configuration.IConfig.StripWhiteSpace))); 
-            this.charset = Runtime.Encoding;
-        }
-
         /// <summary>
         /// Strip white-space characters from the template
         /// </summary>
-        public bool StripWhiteSpace
-        {
-            get { return stripWhiteSpace; }
-            set { this.stripWhiteSpace = value; }
-        }
+        public bool StripWhiteSpace { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the current path.
         /// </summary>
-        public string CurrentPath
-        {
-            get { return this.currentPath; }
-            set { this.currentPath = value; }
-        }
+        public string CurrentPath { get; set; }
 
         /// <summary>
         /// Gets or sets the encoding.
         /// </summary>
-        public Encoding Charset
-        {
-            get { return this.charset; }
-            set { this.charset = value; }
-        }
+        public Encoding Charset { get; set; } = Encoding.UTF8;
 
         /// <summary>
         /// Gets or sets the exception handling.
         /// </summary>
-        public bool ThrowExceptions
-        {
-            get { return this.throwErrors; }
-            set { this.throwErrors = value; }
-        }
+        public bool ThrowExceptions { get; set; } = true;
+        /// <summary>
+        /// Gets or sets the cache of the context.
+        /// </summary>
+        internal RuntimeOptions Options { get; set; }
+        /// <summary>
+        /// Gets the cache of the engine.
+        /// </summary>
+        public ICache Cache => Options.Cache;
     }
 }

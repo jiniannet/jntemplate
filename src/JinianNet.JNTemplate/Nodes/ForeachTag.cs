@@ -5,15 +5,11 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.IO;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// Foreach标签
+    /// ForeachTag
     /// </summary>
     [Serializable]
     public class ForeachTag : ComplexTag
@@ -23,7 +19,7 @@ namespace JinianNet.JNTemplate.Nodes
         private ITag source;
 
         /// <summary>
-        /// 节点名
+        /// Gets or sets node name of the tag.
         /// </summary>
         public string Name
         {
@@ -32,7 +28,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 源对象
+        /// Gets or sets data source of the tag.
         /// </summary>
         public ITag Source
         {

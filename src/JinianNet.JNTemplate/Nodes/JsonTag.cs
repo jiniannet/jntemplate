@@ -4,22 +4,17 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
-#if NETCOREAPP || NETSTANDARD
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 简单JSON标签
-    /// 注意：该标签仅只支持简单的JSON解析
+    /// JsonTag
     /// </summary>
     [Serializable]
     public class JsonTag : ComplexTag
     {
         /// <summary>
-        /// JsonTag
+        /// Initializes a new instance of the <see cref="JsonTag"/> class
         /// </summary>
         public JsonTag()
         {
@@ -27,7 +22,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 集合
+        /// Gets or sets the data of the tag.
         /// </summary>
         public Dictionary<ITag, ITag> Dict { get; private set; }
     }

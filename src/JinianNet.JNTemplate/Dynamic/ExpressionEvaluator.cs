@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Dynamic
 {
 
     /// <summary>
-    /// 计算器
+    /// Expression calculation
     /// </summary>
     public class ExpressionEvaluator
     {
@@ -32,32 +32,32 @@ namespace JinianNet.JNTemplate.Dynamic
 
         #region LetterType
         /// <summary>
-        /// 字符类型
+        /// LetterType
         /// </summary>
         public enum LetterType
         {
             /// <summary>
-            /// 无
+            /// None
             /// </summary>
             None = 0,
             /// <summary>
-            /// 操作符
+            /// Operator
             /// </summary>
             Operator = 1,
             /// <summary>
-            /// 左圆括号
+            /// (
             /// </summary>
             LeftParentheses = 2,
             /// <summary>
-            /// 右中括号
+            /// ]
             /// </summary>
             RightParentheses = 3,
             /// <summary>
-            /// 数字
+            /// number
             /// </summary>
             Number = 4,
             /// <summary>
-            /// 其它
+            /// other
             /// </summary>
             Other = 5
         }
@@ -158,9 +158,9 @@ namespace JinianNet.JNTemplate.Dynamic
 
         #region ProcessExpression
         /// <summary>
-        /// 处理表达式
+        /// process expression.
         /// </summary>
-        /// <param name="value">表达式</param>
+        /// <param name="value">The expression.</param>
         /// <returns></returns>
         public static Stack<object> ProcessExpression(string value)
         {
@@ -208,9 +208,9 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 处理表达式
+        /// process expression.
         /// </summary>
-        /// <param name="value">表达式</param>
+        /// <param name="value">The expression.</param>
         /// <returns></returns>
         public static Stack<object> ProcessExpression(object[] value)
         {
@@ -374,10 +374,10 @@ namespace JinianNet.JNTemplate.Dynamic
 
         #region Calculate
         /// <summary>
-        /// 获取类型
+        /// Gets the type of the specified object.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">The object.</param>
+        /// <returns>A type.</returns>
         private static Type GetType(object value)
         {
             if (value == null)
@@ -387,11 +387,11 @@ namespace JinianNet.JNTemplate.Dynamic
             return value.GetType();
         }
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The result of expression.</param>
         /// <returns></returns>
         public static object Calculate(object x, object y, string value)
         {
@@ -584,9 +584,9 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算后缀表达式
+        /// Evaluating reverse polish notation
         /// </summary>
-        /// <param name="value">后缀表达式</param>
+        /// <param name="value">The reverse polish notation.</param>
         /// <returns></returns>
         public static object Calculate(Stack<object> value)
         {
@@ -616,9 +616,9 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算表达式
+        /// Computational mathematical expression.
         /// </summary>
-        /// <param name="value">表达式</param>
+        /// <param name="value">The expression.</param>
         /// <returns></returns>
         public static object Calculate(object[] value)
         {
@@ -628,9 +628,9 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算表达式
+        /// Computational mathematical expression.
         /// </summary>
-        /// <param name="value">表达式</param>
+        /// <param name="value">The expression.</param>
         /// <returns></returns>
         public static object Calculate(string value)
         {
@@ -642,14 +642,13 @@ namespace JinianNet.JNTemplate.Dynamic
         #endregion
 
         #region  Calculate
-
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(bool x, bool y, string value)
         {
             switch (value)
@@ -666,21 +665,22 @@ namespace JinianNet.JNTemplate.Dynamic
                     throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"bool\" and \"bool\""));
             }
         }
+        
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(string x, string y, string value)
         {
             switch (value)
             {
                 case "==":
-                    return x.Equals(y, Runtime.Options.ComparisonIgnoreCase);
+                    return x.Equals(y, StringComparison.OrdinalIgnoreCase);
                 case "!=":
-                    return !x.Equals(y, Runtime.Options.ComparisonIgnoreCase);
+                    return !x.Equals(y, StringComparison.OrdinalIgnoreCase);
                 case "+":
                     return string.Concat(x, y);
                 default:
@@ -689,12 +689,12 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(DateTime x, DateTime y, string value)
         {
             switch (value)
@@ -715,13 +715,14 @@ namespace JinianNet.JNTemplate.Dynamic
                     throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"DateTime\" and \"DateTime\""));
             }
         }
+
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(Double x, Double y, string value)
         {
             switch (value)
@@ -754,12 +755,12 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(Single x, Single y, string value)
         {
             switch (value)
@@ -792,12 +793,12 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(Decimal x, Decimal y, string value)
         {
             switch (value)
@@ -829,14 +830,13 @@ namespace JinianNet.JNTemplate.Dynamic
             }
         }
 
-
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(int x, int y, string value)
         {
             switch (value)
@@ -874,12 +874,12 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(Int64 x, Int64 y, string value)
         {
             switch (value)
@@ -917,12 +917,12 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(Int16 x, Int16 y, string value)
         {
             switch (value)
@@ -958,15 +958,16 @@ namespace JinianNet.JNTemplate.Dynamic
                     throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
             }
         }
-        #region 以下参数类型因不符合CLS，故取消
+        #region 
         /*
+        
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(UInt32 x, UInt32 y, string value)
         {
             switch (value)
@@ -997,14 +998,14 @@ namespace JinianNet.JNTemplate.Dynamic
                     throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt32\" and \"UInt32\""));
             }
         }
-
+        
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(UInt64 x, UInt64 y, string value)
         {
             switch (value)
@@ -1035,14 +1036,14 @@ namespace JinianNet.JNTemplate.Dynamic
                     throw new Exception.TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt64\" and \"UInt64\""));
             }
         }
-
+        
         /// <summary>
-        /// 计算结果
+        /// Calculates the value of objects
         /// </summary>
-        /// <param name="x">值一</param>
-        /// <param name="y">值二</param>
-        /// <param name="value">操作符</param>
-        /// <returns></returns>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The operator.</param> 
+        /// <returns>The result of expression.</returns>
         public static object Calculate(UInt16 x, UInt16 y, string value)
         {
             switch (value)

@@ -7,14 +7,14 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 变量标签(ParseResult)
+    /// variable
     /// </summary>
     [Serializable]
     public class VariableTag : ChildrenTag
     {
         private string name;
         /// <summary>
-        /// 变量名
+        /// The name of tag.
         /// </summary>
         public string Name
         {

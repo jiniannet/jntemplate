@@ -4,11 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Text;
-using JinianNet.JNTemplate.Caching;
-using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Parsers;
-using JinianNet.JNTemplate.Resources;
+using System.Linq;
 
 namespace JinianNet.JNTemplate
 {
@@ -21,62 +17,36 @@ namespace JinianNet.JNTemplate
         , ICloneable
 #endif
     {
-        private VariableScope variableScope;
-        private bool enableTemplateCache;
-        private List<System.Exception> errors;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateContext"/> class
         /// </summary>
         /// <param name="data">The <see cref="VariableScope"/>.</param>  
-        public TemplateContext(VariableScope data) : base()
+        internal TemplateContext(VariableScope data) : base()
         {
-            this.variableScope = data ?? new VariableScope(null);
-            this.errors = new List<System.Exception>();
-            this.enableTemplateCache = Runtime.Options.EnableTemplateCache;
+            this.TempData = data ?? new VariableScope(null);
+            this.AllErrors = new List<System.Exception>();
         }
 
         /// <summary>
         /// Enable or Disenable the cache.
         /// </summary>
-        public bool EnableTemplateCache
-        {
-            get { return enableTemplateCache; }
-            set { this.enableTemplateCache = value; }
-        }
+        public bool EnableTemplateCache { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="TemplateContext"/> of the context.
         /// </summary>
-        public VariableScope TempData
-        {
-            get { return this.variableScope; }
-            set { this.variableScope = value; }
-        }
+        public VariableScope TempData { get; set; }
 
         /// <summary>
         /// Gets the <see cref="Exception"/> of the context.
         /// </summary>
-        public virtual System.Exception[] AllErrors
-        {
-            get { return this.errors.ToArray(); }
-        }
+        public virtual List<System.Exception> AllErrors { get; set; }
 
         /// <summary>
         /// Gets the first <see cref="Exception"/>.
         /// </summary>
-        public virtual System.Exception Error
-        {
-            get
-            {
-                if (this.AllErrors.Length > 0)
-                {
-                    return this.AllErrors[0];
-                }
-
-                return null;
-            }
-        }
+        public virtual System.Exception Error => AllErrors.FirstOrDefault();
 
         /// <summary>
         /// Adds an <see cref="Exception"/> to the end of the context.
@@ -88,7 +58,7 @@ namespace JinianNet.JNTemplate
             {
                 throw e;
             }
-            this.errors.Add(e);
+            this.AllErrors.Add(e);
         }
 
         /// <summary>
@@ -96,7 +66,16 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void ClearError()
         {
-            this.errors.Clear();
+            this.AllErrors.Clear();
+        }
+
+        /// <summary>
+        /// Creates a shallow copy of the <see cref="TemplateContext"/>.
+        /// </summary>
+        /// <returns>A shallow copy of the current <see cref="TemplateContext"/>.</returns>
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
 
         /// <summary>
@@ -116,15 +95,6 @@ namespace JinianNet.JNTemplate
             ctx.ThrowExceptions = context.ThrowExceptions;
             ctx.StripWhiteSpace = context.StripWhiteSpace;
             return ctx;
-        }
-
-        /// <summary>
-        /// Creates a shallow copy of the <see cref="TemplateContext"/>.
-        /// </summary>
-        /// <returns>A shallow copy of the current <see cref="TemplateContext"/>.</returns>
-        public object Clone()
-        {
-            return this.MemberwiseClone();
         }
     }
 }

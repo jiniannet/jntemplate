@@ -6,14 +6,14 @@
 namespace JinianNet.JNTemplate.Exception
 {
     /// <summary>
-    /// 编译错误
+    /// Represents errors that occur during application execution.
     /// </summary>
     public class CompileException : System.Exception
     {
         /// <summary>
-        /// CompileException
+        /// Initializes a new instance of the <see cref="CompileException"/> class.
         /// </summary>
-        /// <param name="exception">innexception</param>
+        /// <param name="exception">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
         public CompileException(System.Exception exception) :
             base(exception.Message, exception)
         {
@@ -21,9 +21,9 @@ namespace JinianNet.JNTemplate.Exception
         }
 
         /// <summary>
-        /// CompileException
+        /// Initializes a new instance of the <see cref="CompileException"/> class.
         /// </summary>
-        /// <param name="message">message</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
         public CompileException(string message) :
             base(message)
         {

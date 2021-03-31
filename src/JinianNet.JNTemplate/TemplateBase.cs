@@ -3,9 +3,6 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Dynamic;
-using System.IO;
 
 namespace JinianNet.JNTemplate
 {

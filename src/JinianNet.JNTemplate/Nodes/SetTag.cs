@@ -4,14 +4,11 @@
  ********************************************************************************/
 using System;
 using System.IO;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 赋值标签
+    /// SetTag
     /// </summary>
     [Serializable]
     public class SetTag : ComplexTag
@@ -20,7 +17,7 @@ namespace JinianNet.JNTemplate.Nodes
         private ITag value;
 
         /// <summary>
-        /// 变量名
+        ///  Gets the name of the tag.
         /// </summary>
         public string Name
         {
@@ -29,7 +26,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 值
+        ///  Gets the value of the tag.
         /// </summary>
         public ITag Value
         {

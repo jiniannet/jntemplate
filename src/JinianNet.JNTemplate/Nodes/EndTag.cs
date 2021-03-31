@@ -7,7 +7,7 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 结束标签，用于if for等复合标签的结束
+    /// EndTag
     /// </summary>
     [Serializable]
     public class EndTag : SpecialTag

@@ -7,7 +7,7 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 字符串标签
+    /// StringTag
     /// </summary>
     [Serializable]
     public class StringTag : TypeTag<string>

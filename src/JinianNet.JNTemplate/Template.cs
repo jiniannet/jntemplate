@@ -3,8 +3,6 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace JinianNet.JNTemplate
 {
@@ -17,7 +15,7 @@ namespace JinianNet.JNTemplate
         /// Initializes a new instance of the <see cref="Template"/> class
         /// </summary>
         public Template()
-            : this(Engine.CreateContext(), string.Empty)
+            : this(null, string.Empty)
         {
 
         }
@@ -29,10 +27,6 @@ namespace JinianNet.JNTemplate
         /// <param name="text">The contents of template.</param>
         public Template(TemplateContext ctx, string text)
         {
-            if (ctx == null)
-            {
-                throw new ArgumentNullException("\"ctx\" cannot be null.");
-            }
             Context = ctx;
             TemplateContent = text;
         }

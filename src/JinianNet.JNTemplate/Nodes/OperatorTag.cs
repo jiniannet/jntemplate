@@ -7,21 +7,21 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// Operator tag
+    /// OperatorTag
     /// </summary>
     public class OperatorTag: TypeTag<Operator>
     {
         /// <summary>
-        /// ctor
+        /// Initializes a new instance of the <see cref="OperatorTag"/> class
         /// </summary>
         public OperatorTag()
         { 
         }
 
         /// <summary>
-        /// ctor
+        /// Initializes a new instance of the <see cref="OperatorTag"/> class
         /// </summary>
-        /// <param name="token">First Token</param>
+        /// <param name="token">The <see cref="Token"/>.</param>
         public OperatorTag(Token token)
         {
             this.FirstToken = token;

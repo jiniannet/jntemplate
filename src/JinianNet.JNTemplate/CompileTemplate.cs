@@ -2,7 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.Compile;
+using JinianNet.JNTemplate.CodeCompilation;
 using System;
 using System.IO;
 
@@ -11,13 +11,13 @@ namespace JinianNet.JNTemplate
     /// <summary>
     ///  The compile template.
     /// </summary>
-    public class CompileTemplate : TemplateBase,ICompileTemplate, ITemplate
+    public class CompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompileTemplate"/> class
         /// </summary> 
         public CompileTemplate()
-            : this(Engine.CreateContext(), null)
+            : this(null, null)
         {
         }
 
@@ -29,10 +29,6 @@ namespace JinianNet.JNTemplate
         /// <param name="text">The template contents.</param>
         public CompileTemplate(TemplateContext context, string text)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("\"context\" cannot be null.");
-            }
             Context = context;
             TemplateContent = text;
         }
@@ -40,21 +36,26 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public virtual void Render(TextWriter writer, TemplateContext context)
         {
-            var t = Runtime.Templates[this.TemplateKey];
+            var text = this.TemplateContent;
+            var t = context.Options.CompilerResults.GetOrAdd(this.TemplateKey, (key) =>
+            {
+                return TemplateCompiler.Compile(key, text, context.Options, (ctx) =>
+                 {
+                     context.CopyTo(ctx);
+                 });
+            });
             if (t == null)
             {
-                var text = this.TemplateContent;
-                t = Runtime.Templates[this.TemplateKey] = Compiler.Compile(this.TemplateKey, text, (ctx) =>
-                {
-                    context.CopyTo(ctx);
-                });
-                if (t == null)
-                {
-                    throw new Exception.TemplateException($"compile error.");
-                }
-                this.TemplateContent = null;
+                throw new Exception.TemplateException($"compile error.");
             }
-            t.Render(writer, context); 
+            try
+            {
+                t.Render(writer, context);
+            }
+            catch(System.Exception e)
+            {
+                context.AddError(e);
+            }
         }
 
 

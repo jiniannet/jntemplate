@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         TemplateContext Context { get; set; }
         /// <summary>
-        /// Gets or sets the key(unique) of the template.
+        /// Gets or sets the Unique key of the template.
         /// </summary>
         string TemplateKey { get; set; }
         /// <summary>

@@ -7,7 +7,7 @@ using System;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// else标签
+    /// ElseTag
     /// </summary>
     [Serializable]
     public class ElseTag : ElseifTag

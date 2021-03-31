@@ -4,7 +4,8 @@
  ********************************************************************************/
 using System; 
 using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Dynamic; 
+using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Runtime;
 
 namespace JinianNet.JNTemplate
 {
@@ -78,24 +79,22 @@ namespace JinianNet.JNTemplate
                 return new ITag[0];
             }
             var findOnCache = this.Context.EnableTemplateCache
-                && !string.IsNullOrEmpty(this.TemplateKey)
-                && !Engine.EnableCompile;
+                && !string.IsNullOrEmpty(this.TemplateKey);
 
             ITag[] tags;
-            if (findOnCache && (tags = Runtime.Cache.Get<ITag[]>(this.TemplateKey)) != null)
+            if (findOnCache && (tags = Context.Cache.Get<ITag[]>(this.TemplateKey)) != null)
             {
                 return tags;
             }
 
-            var lexer = new TemplateLexer(text);
-            var ts = lexer.Execute();
-
-            var parser = new TemplateParser(ts);
+            var lexer = Context.CreateTemplateLexer(text);
+            var ts = lexer.Execute(); 
+            var parser = Context.CreateTemplateParser(ts);
             tags = parser.Execute();
 
             if (findOnCache)
             {
-                Runtime.Cache.Set(this.TemplateKey, tags);
+                Context.Cache.Set(this.TemplateKey, tags);
             }
 
             return tags;

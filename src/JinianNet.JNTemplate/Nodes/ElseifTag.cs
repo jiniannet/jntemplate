@@ -3,15 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// ELSE if 标签
+    /// ElseifTag
     /// </summary>
     [Serializable]
     public class ElseifTag : ComplexTag
@@ -19,7 +15,7 @@ namespace JinianNet.JNTemplate.Nodes
 
         private ITag condition;
         /// <summary>
-        /// 条件
+        /// Gets or sets the condition of the tag.
         /// </summary>
         public virtual ITag Condition
         {

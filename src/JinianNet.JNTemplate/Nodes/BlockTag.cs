@@ -3,15 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
-#if !NET20
-using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// 标签块
+    /// BlockTag
     /// </summary>
     [Serializable]
     public class BlockTag : ComplexTag
@@ -19,7 +15,7 @@ namespace JinianNet.JNTemplate.Nodes
         private TemplateRender render;
 
         /// <summary>
-        /// 模板KEY(用于缓存，默认为文路径)
+        /// Gets or sets the context of the template.
         /// </summary>
         public string TemplateKey
         {
@@ -28,7 +24,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 模板内容
+        /// Gets or sets the content of the template.
         /// </summary>
         public string TemplateContent
         {
@@ -37,7 +33,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 标签块
+        /// Initializes a new instance of the <see cref="BlockTag"/> class
         /// </summary>
         public BlockTag()
         {
@@ -45,7 +41,7 @@ namespace JinianNet.JNTemplate.Nodes
         }
 
         /// <summary>
-        /// 读取取签
+        /// Rreads the contents of the text into a tag array.
         /// </summary>
         /// <returns></returns>
         protected virtual ITag[] ReadTags()

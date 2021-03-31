@@ -15,16 +15,6 @@ namespace JinianNet.JNTemplate
         private VariableScope parent;
         private IDictionary<string, VariableElement> dic;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VariableScope"/> class
-        /// </summary>
-        public VariableScope()
-            : this(Runtime.Options.Data)
-        {
-
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
@@ -32,7 +22,7 @@ namespace JinianNet.JNTemplate
         public VariableScope(VariableScope parent)
         {
             this.parent = parent;
-            this.dic = new Dictionary<string, VariableElement>(Runtime.Options.ComparerIgnoreCase);
+            this.dic = new Dictionary<string, VariableElement>(StringComparer.OrdinalIgnoreCase);
 
         }
 

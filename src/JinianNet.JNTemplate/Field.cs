@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.Reflection;
 
 namespace JinianNet.JNTemplate
 {
@@ -12,7 +13,7 @@ namespace JinianNet.JNTemplate
     public class Field
     {
         /// <summary>
-        /// Varsion
+        /// Version
         /// </summary>
         public const string Version = "2.0.1";
         internal const string KEY_FOREACH = "foreach";
@@ -27,33 +28,6 @@ namespace JinianNet.JNTemplate
         internal const string KEY_FOR = "for";
         internal const string KEY_IN = "in";
         internal const string KEY_LAYOUT = "layout";
-        internal const string KEY_BODY = "BODY";
-        /// <summary>
-        /// default parsers
-        /// </summary>
-        internal static readonly string[] RSEOLVER_TYPES = new string[] {
-                "JinianNet.JNTemplate.Parsers.CommentParser",
-                "JinianNet.JNTemplate.Parsers.BooleanParser",
-                "JinianNet.JNTemplate.Parsers.NumberParser",
-                "JinianNet.JNTemplate.Parsers.EleseParser",
-                "JinianNet.JNTemplate.Parsers.EndParser",
-                "JinianNet.JNTemplate.Parsers.BodyParser",
-                "JinianNet.JNTemplate.Parsers.NullParser",
-                "JinianNet.JNTemplate.Parsers.VariableParser",
-                "JinianNet.JNTemplate.Parsers.IndexValueParser",
-                "JinianNet.JNTemplate.Parsers.StringParser",
-                "JinianNet.JNTemplate.Parsers.ForeachParser",
-                "JinianNet.JNTemplate.Parsers.ForParser",
-                "JinianNet.JNTemplate.Parsers.SetParser",
-                "JinianNet.JNTemplate.Parsers.IfParser",
-                "JinianNet.JNTemplate.Parsers.ElseifParser",
-                "JinianNet.JNTemplate.Parsers.LayoutParser",
-                "JinianNet.JNTemplate.Parsers.LoadParser",
-                "JinianNet.JNTemplate.Parsers.IncludeParser",
-                "JinianNet.JNTemplate.Parsers.FunctionParser",
-                "JinianNet.JNTemplate.Parsers.JsonParser",
-                "JinianNet.JNTemplate.Parsers.ComplexParser" };
+        internal const string KEY_BODY = "body";
     }
-
-
 }

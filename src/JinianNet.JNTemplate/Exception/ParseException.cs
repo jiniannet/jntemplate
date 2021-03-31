@@ -7,12 +7,12 @@ using System;
 namespace JinianNet.JNTemplate.Exception
 {
     /// <summary>
-    /// 分析异常类
+    /// Represents errors that occur during application execution.
     /// </summary>
     public class ParseException : TemplateException
     {
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="ParseException"/> class.
         /// </summary>
         public ParseException()
             : base()
@@ -21,11 +21,11 @@ namespace JinianNet.JNTemplate.Exception
 
 
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="ParseException"/> class.
         /// </summary>
-        /// <param name="message">异常信息</param>
-        /// <param name="line">行</param>
-        /// <param name="column">字符</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="line">The line on error.</param>
+        /// <param name="column">The column on error.</param>
         public ParseException(string message, int line, int column)
             : base(message, line,column)
         {
@@ -34,9 +34,9 @@ namespace JinianNet.JNTemplate.Exception
         }
 
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="ParseException"/> class.
         /// </summary>
-        /// <param name="message">错误信息</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
         public ParseException(string message)
             : base(message)
         {
@@ -44,10 +44,10 @@ namespace JinianNet.JNTemplate.Exception
         }
 
         /// <summary>
-        /// 模板错误
+        /// Initializes a new instance of the <see cref="ParseException"/> class.
         /// </summary>
-        /// <param name="message">错误信息</param>
-        /// <param name="innerException">基础信息</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
         public ParseException(string message, System.Exception innerException)
             : base(message, innerException)
         {

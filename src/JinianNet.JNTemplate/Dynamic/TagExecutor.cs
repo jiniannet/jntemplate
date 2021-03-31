@@ -3,20 +3,19 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Resources;
 using System;
 
 namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
-    /// 
+    /// TagExecutor
     /// </summary>
     public class TagExecutor
     {
         private static Lazy<ExecuteBuilder> builder;
 
         /// <summary>
-        /// Compile builder
+        /// Gets or sets the builder of the object.
         /// </summary>
         public static ExecuteBuilder Builder
         {
@@ -24,17 +23,17 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// ctor
+        /// Initializes a new instance of the <see cref="TagExecutor"/> class.
         /// </summary>
         static TagExecutor()
         {
             builder = new Lazy<ExecuteBuilder>();
         }
         /// <summary>
-        /// 
+        /// Execute the tags.
         /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="ctx"></param>
+        /// <param name="tag">The <see cref="ITag"/>.</param>
+        /// <param name="ctx">The <see cref="TemplateContext"/>.</param>
         /// <returns></returns>
         public static object Exec(ITag tag, TemplateContext ctx)
         {
@@ -49,17 +48,17 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="tag"></param>
         /// <param name="ctx"></param>
         /// <returns></returns>
-        public static object Parse(string name, ITag tag, TemplateContext ctx)
+        private static object Exec(string name, ITag tag, TemplateContext ctx)
         {
             var func = Builder.Build(name);
             return func(tag, ctx);
         }
 
         /// <summary>
-        /// 注册执行方法
+        /// Register a parse mehtod.
         /// </summary>
-        /// <typeparam name="T">ITag</typeparam>
-        /// <param name="func">func</param>
+        /// <typeparam name="T">The type of itag.</typeparam>
+        /// <param name="func">The parse method.</param>
         public static void Register<T>(Func<ITag, TemplateContext, object> func) where T : ITag
         {
             Builder.Register<T>(func);

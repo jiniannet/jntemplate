@@ -184,7 +184,7 @@ namespace JinianNet.JNTemplate
         {
             if (x == null || y == null)
                 return x == y;
-            return string.Equals(x, y, Runtime.Options.ComparisonIgnoreCase);
+            return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

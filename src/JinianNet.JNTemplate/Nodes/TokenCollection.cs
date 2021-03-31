@@ -10,21 +10,21 @@ using System.Collections;
 namespace JinianNet.JNTemplate.Nodes
 {
     /// <summary>
-    /// TOKEN集合
+    /// The collection of token.
     /// </summary>
     [Serializable]
     public class TokenCollection : IList<Token>, IEquatable<TokenCollection>
     {
         private List<Token> list;
         /// <summary>
-        /// TOKEN集合
+        /// Initializes a new instance of the <see cref="TokenCollection"/> class
         /// </summary>
         public TokenCollection()
         {
             this.list = new List<Token>();
         }
         /// <summary>
-        /// TOKEN集合
+        /// Initializes a new instance of the <see cref="TokenCollection"/> class
         /// </summary>
         /// <param name="capacity"></param>
         public TokenCollection(int capacity)
@@ -32,19 +32,19 @@ namespace JinianNet.JNTemplate.Nodes
             this.list = new List<Token>(capacity);
         }
         /// <summary>
-        /// TOKEN集合
+        /// Initializes a new instance of the <see cref="TokenCollection"/> class
         /// </summary>
-        /// <param name="collection">集合</param>
+        /// <param name="collection"></param>
         public TokenCollection(IEnumerable<Token> collection)
         {
             this.list = new List<Token>(collection);
         }
-        /// <summary>
-        /// TOKEN集合
+        /// <summary> 
+        /// Initializes a new instance of the <see cref="TokenCollection"/> class that contains elements copied from the specified collection.
         /// </summary>
-        /// <param name="collection"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
+        /// <param name="collection">The <see cref="IList{Token}"/>.</param>
+        /// <param name="start">The zero-based index in collection at which copying begins.</param>
+        /// <param name="end">The zero-based index in collection at which copying ended.</param>
         public TokenCollection(IList<Token> collection, int start, int end)
         {
             this.list = new List<Token>(end + 1 - start);
@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate.Nodes
             }
         }
         /// <summary>
-        /// 获取第一个FTOKEN
+        /// Returns the first element of a collection.
         /// </summary>
         public Token First
         {
@@ -68,7 +68,7 @@ namespace JinianNet.JNTemplate.Nodes
             }
         }
         /// <summary>
-        /// 获取最后一个FTOKEN
+        /// Returns the last element of a collection.
         /// </summary>
         public Token Last
         {
@@ -81,24 +81,8 @@ namespace JinianNet.JNTemplate.Nodes
                 return this[Count - 1];
             }
         }
-        ///// <summary>
-        ///// 添加多个TOKEN
-        ///// </summary>
-        ///// <param name="list"></param>
-        ///// <param name="start"></param>
-        ///// <param name="end"></param>
-        //public void Add(IList<Token> list, int start, int end)
-        //{
-        //    for (int i = start; i <= end && i < list.Count; i++)
-        //    {
-        //        Add(list[i]);
-        //    }
-        //}
 
-        /// <summary>
-        /// 获取所有TOKEN的字符串值
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -109,21 +93,13 @@ namespace JinianNet.JNTemplate.Nodes
             return sb.ToString();
         }
 
-        #region IList<Token> 成员
-        /// <summary>
-        /// 搜索指定的对象，并返回整个集合中第一个匹配项的从零开始的索引。
-        /// </summary>
-        /// <param name="item">要在集合中查找的对象。对于引用类型，该值可以为 null。</param>
-        /// <returns>如果在整个集合中找到 item 的第一个匹配项，则为该项的从零开始的索引；否则为-1</returns>
+        /// <inheritdoc />
         public int IndexOf(Token item)
         {
             return this.list.IndexOf(item);
         }
-        /// <summary>
-        /// 将元素插入集合的指定索引处。
-        /// </summary>
-        /// <param name="index">从零开始的索引，应在该位置插入 item。</param>
-        /// <param name="item">要插入的对象。对于引用类型，该值可以为 null。</param>
+
+        /// <inheritdoc />
         public void Insert(int index, Token item)
         {
             if (item.TokenKind != TokenKind.Space)
@@ -131,20 +107,19 @@ namespace JinianNet.JNTemplate.Nodes
                 this.list.Insert(index, item);
             }
         }
-        /// <summary>
-        /// 移除集合的指定索引处的元素。
-        /// </summary>
-        /// <param name="index">要移除的元素的从零开始的索引。</param>
+
+        /// <inheritdoc />
         public void RemoveAt(int index)
         {
             this.list.RemoveAt(index);
         }
+
         /// <summary>
-        /// 获取指定数量的TOKEN
+        /// Creates a copy of a range of elements in the source <see cref="TokenCollection"/>.
         /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
+        /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
+        /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
+        /// <returns>A copy of a range of elements in the source <see cref="TokenCollection"/>.</returns>
         public TokenCollection this[int start, int end]
         {
             get
@@ -162,11 +137,11 @@ namespace JinianNet.JNTemplate.Nodes
 
 
         /// <summary>
-        /// 分隔TokenCollection
+        /// Splits a collection into substrings that are based on the kind in the separator array.
         /// </summary>
-        /// <param name="start">开始索引</param>
-        /// <param name="end">结束索引</param>
-        /// <param name="kinds">分隔类型</param>
+        /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
+        /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
+        /// <param name="kinds">A kind array.</param>
         /// <returns></returns>
         public TokenCollection[] Split(int start, int end, params TokenKind[] kinds)
         {
@@ -269,11 +244,7 @@ namespace JinianNet.JNTemplate.Nodes
             return index;
         }
 
-        /// <summary>
-        /// 获取或设置指定索引的值
-        /// </summary>
-        /// <param name="index">从零开始的索引。</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public Token this[int index]
         {
             get
@@ -289,13 +260,7 @@ namespace JinianNet.JNTemplate.Nodes
             }
         }
 
-        #endregion
-
-        #region ICollection<Token> 成员
-        /// <summary>
-        /// 将对象添加到集合的结尾处。
-        /// </summary>
-        /// <param name="item">要添加到集合的末尾处的对象。</param>
+        /// <inheritdoc />
         public void Add(Token item)
         {
             if (item.TokenKind != TokenKind.Space)
@@ -304,37 +269,25 @@ namespace JinianNet.JNTemplate.Nodes
             }
         }
 
-        /// <summary>
-        ///  从集合中移除所有元素。
-        /// </summary>
+        /// <inheritdoc />
         public void Clear()
         {
             this.list.Clear();
         }
 
-        /// <summary>
-        /// 确定某元素是否在集合中。
-        /// </summary>
-        /// <param name="item">要在集合中查找的对象</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public bool Contains(Token item)
         {
             return this.list.Contains(item);
         }
 
-        /// <summary>
-        /// 将整个集合复制到兼容的一维数组中，从目标数组的指定索引位置开始放置。
-        /// </summary>
-        /// <param name="array"> 作为从集合复制的元素的目标位置的一维Token数组</param>
-        /// <param name="arrayIndex">必须具有从零开始的索引。</param>
+        /// <inheritdoc />
         public void CopyTo(Token[] array, int arrayIndex)
         {
             this.list.CopyTo(array, arrayIndex);
         }
 
-        /// <summary>
-        /// 集合的对象
-        /// </summary>
+        /// <inheritdoc />
         public int Count
         {
             get
@@ -342,9 +295,8 @@ namespace JinianNet.JNTemplate.Nodes
                 return this.list.Count;
             }
         }
-        /// <summary>
-        /// 是否只读集合
-        /// </summary>
+
+        /// <inheritdoc />
         public bool IsReadOnly
         {
             get
@@ -352,46 +304,26 @@ namespace JinianNet.JNTemplate.Nodes
                 return false;
             }
         }
-        /// <summary>
-        ///  从集合中移除特定对象的第一个匹配项。
-        /// </summary>
-        /// <param name="item">要从集合中移除的对象</param>
-        /// <returns></returns>
+
+        /// <inheritdoc />
         public bool Remove(Token item)
         {
             return this.list.Remove(item);
         }
 
-        #endregion
-
-        #region IEnumerable<Token> 成员
-        /// <summary>
-        /// 返回循环访问集合的枚举器。
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IEnumerator<Token> GetEnumerator()
         {
             return this.list.GetEnumerator();
         }
 
-        #endregion
-
-        #region IEnumerable 成员
-        /// <summary>
-        /// 返回循环访问集合的枚举器。
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
-        #endregion
-        /// <summary>
-        /// 比列二个集合是否相同
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public bool Equals(TokenCollection other)
         {
             if (other == null)
@@ -412,11 +344,8 @@ namespace JinianNet.JNTemplate.Nodes
             return true;
         }
 
-        /// <summary>
-        /// 重载Equals
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -430,10 +359,7 @@ namespace JinianNet.JNTemplate.Nodes
             return false;
         }
 
-        /// <summary>
-        /// 计算HASH CODE
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return base.GetHashCode();

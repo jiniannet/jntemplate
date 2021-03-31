@@ -7,15 +7,15 @@ using System;
 namespace JinianNet.JNTemplate.Dynamic
 {
     /// <summary>
-    /// 操作符处理类
+    ///The operator convert class.
     /// </summary>
     public class OperatorConvert
     {
         /// <summary>
-        /// 将枚举的操作符转换为字符串形式
+        /// Converts the pperator to its equivalent string representation.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">The operator.</param>
+        /// <returns>A string.</returns>
         public static string ToString(Operator value)
         {
             switch (value)
@@ -60,10 +60,10 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// 将操作符转换为枚举形式
+        /// Converts the string representation of a operator.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">A string containing a operator to convert.</param>
+        /// <returns>A operator.</returns>
         public static Operator Parse(string value)
         {
             switch (value)
