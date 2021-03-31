@@ -18,7 +18,8 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public IEngine Build()
         {
-            return new TemplatingEngine();
+            return new TemplatingEngine()
+                .UseDefaultOptions();
         }
     }
 }
