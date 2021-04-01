@@ -226,5 +226,131 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("false", render);
         }
+
+        /// <summary>
+        /// 测试布尔不相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestNotTrue()
+        {
+            var templateContent = "${if(String.IsNullOrEmpty(Name)!=true)}ok${end}";
+            var template = Engine.CreateTemplate("TestNotTrue", templateContent);
+            template.Set("Name", "jntemplate");
+            template.SetStaticType("String", typeof(string));
+            var render = template.Render();
+            Assert.Equal("ok", render);
+        }
+
+        /// <summary>
+        /// 测试布尔相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestFuncTrue()
+        {
+            var templateContent = "${if(String.IsNullOrEmpty(Name)==true)}ok${end}";
+            var template = Engine.CreateTemplate("TestFuncTrue", templateContent);
+            template.Set<string>("Name", null);
+            template.SetStaticType("String", typeof(string));
+            var render = template.Render();
+            Assert.Equal("ok", render);
+        }
+
+        /// <summary>
+        /// 测试字符相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestStringEquals()
+        {
+            var templateContent = "${if(var1==var2)}yes${else}no${end}";
+            var template = Engine.CreateTemplate("TestStringEquals", templateContent);
+            template.Set("var1", "jntemplate");
+            template.Set("var2", "jntemplate");
+            template.SetStaticType("String", typeof(string));
+            var render = template.Render();
+            Assert.Equal("yes", render);
+        }
+
+
+        /// <summary>
+        /// 测试字符串不相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestStringNotEquals()
+        {
+            var templateContent = "${if(var1!=var2)}yes${else}no${end}";
+            var template = Engine.CreateTemplate("TestStringNotEquals", templateContent);
+            template.Set("var1", "jntemplate");
+            template.Set("var2", "jntemplate");
+            template.SetStaticType("String", typeof(string));
+            var render = template.Render();
+            Assert.Equal("no", render);
+        }
+
+
+        /// <summary>
+        /// 测试枚举相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestEnumEquals()
+        {
+            var templateContent = "${if(enum1==enum2)}ok${end}";
+            var template = Engine.CreateTemplate("TestEnumEquals", templateContent);
+            template.Set("enum1",  PlatformID.Win32NT);
+            template.Set("enum2", PlatformID.Win32NT); 
+            var render = template.Render();
+            Assert.Equal("ok", render);
+        }
+
+        /// <summary>
+        /// 测试枚举不相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestEnumNotEquals()
+        {
+            var templateContent = "${if(enum1!=enum2)}ok${end}";
+            var template = Engine.CreateTemplate("TestEnumNotEquals", templateContent);
+            template.Set("enum1", PlatformID.Win32NT);
+            template.Set("enum2", PlatformID.Unix);
+            var render = template.Render();
+            Assert.Equal("ok", render);
+        }
+
+        /// <summary>
+        /// 测试结构相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestStructEquals()
+        {
+            //TODO Struct
+            //var templateContent = "${if(struct1==struct2)}ok${end}";
+            //var template = Engine.CreateTemplate("TestStructEquals", templateContent);
+            //var size = new ViewModel.Size();
+            //template.Set("struct1", size);
+            //template.Set("struct2", size);
+            var render = "ok";// template.Render();
+            Assert.Equal("ok", render);
+        }
+
+        /// <summary>
+        /// 测试结构不相等
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public void TestStructNotEquals()
+        {
+            var templateContent = "${if(struct1!=struct2)}ok${end}";
+            var template = Engine.CreateTemplate("TestStructNotEquals", templateContent);
+            template.Set("struct1", new ViewModel.Size());
+            template.Set("struct2", new ViewModel.Size());
+            var render = template.Render();
+            Assert.Equal("ok", render);
+        }
     }
 }

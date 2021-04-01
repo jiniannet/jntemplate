@@ -267,7 +267,17 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             return type.IsPrimitive;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool CanUseEqual(Type type)
+        {
+            return IsNumber(type)
+                 || type.FullName == "System.Boolean"
+                 || type.IsEnum;
+        }
         /// <summary>
         /// Indicates whether the specified type is categorized as a number.
         /// </summary>

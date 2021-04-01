@@ -263,7 +263,43 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 il.Emit(OpCodes.Ldloc, index);
             }
         }
-
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="il">The <see cref="ILGenerator"/></param>
+        /// <param name="type">The type.</param>
+        public static void EmitEquals(this ILGenerator il, Type type)
+        {
+            var equals = DynamicHelpers.GetMethod(type, "Equals", new Type[] { type });
+            //var ps = equals.GetParameters();
+            //if (ps.Length == 1
+            //    && ps[0].ParameterType != type)
+            //{
+            //    if (ps[0].ParameterType.IsValueType)
+            //    {
+            //        if (type.IsValueType)
+            //        {
+            //            il.Emit(OpCodes.Isinst, ps[0].ParameterType);
+            //        }
+            //        else
+            //        {
+            //            il.Emit(OpCodes.Unbox_Any, ps[0].ParameterType);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (type.IsValueType)
+            //        {
+            //            il.Emit(OpCodes.Box, ps[0].ParameterType);
+            //        }
+            //        else
+            //        {
+            //            il.Emit(OpCodes.Castclass, ps[0].ParameterType);
+            //        }
+            //    }
+            //}
+            il.Emit(OpCodes.Call, equals);
+        }
         /// <summary>
         /// Appends the string representation of a specified object to <see cref="StringBuilder"/>.
         /// </summary>

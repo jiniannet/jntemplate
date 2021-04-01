@@ -351,7 +351,7 @@ namespace JinianNet.JNTemplate.Parsers
                                 switch ((Operator)obj)
                                 {
                                     case Operator.GreaterThan:
-                                        if (TypeGuesser.IsNumber(bestType))
+                                        if (TypeGuesser.CanUseEqual(bestType))
                                         {
                                             il.Emit(OpCodes.Cgt);
                                         }
@@ -366,7 +366,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         break;
                                     case Operator.GreaterThanOrEqual:
-                                        if (TypeGuesser.IsNumber(bestType))
+                                        if (TypeGuesser.CanUseEqual(bestType))
                                         {
                                             il.Emit(OpCodes.Clt_Un);
                                             il.Emit(OpCodes.Ldc_I4_0);
@@ -383,7 +383,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         break;
                                     case Operator.LessThan:
-                                        if (TypeGuesser.IsNumber(bestType))
+                                        if (TypeGuesser.CanUseEqual(bestType))
                                         {
                                             il.Emit(OpCodes.Clt);
                                         }
@@ -398,7 +398,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         break;
                                     case Operator.LessThanOrEqual:
-                                        if (TypeGuesser.IsNumber(bestType))
+                                        if (TypeGuesser.CanUseEqual(bestType))
                                         {
                                             il.Emit(OpCodes.Cgt_Un);
                                             il.Emit(OpCodes.Ldc_I4_0);
@@ -415,23 +415,25 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         break;
                                     case Operator.Equal:
-                                        if (TypeGuesser.IsNumber(bestType))
+                                        if (TypeGuesser.CanUseEqual(bestType))
                                         {
                                             il.Emit(OpCodes.Ceq);
                                         }
                                         else
                                         {
-                                            il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(bestType, "Equals", new Type[] { bestType }));
+                                            il.EmitEquals(bestType);
+                                            //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(bestType, "Equals", new Type[] { bestType }));
                                         }
                                         break;
                                     case Operator.NotEqual:
-                                        if (TypeGuesser.IsNumber(bestType))
+                                        if (TypeGuesser.CanUseEqual(bestType))
                                         {
                                             il.Emit(OpCodes.Ceq);
                                         }
                                         else
                                         {
-                                            il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(bestType, "Equals", new Type[] { bestType }));
+                                            il.EmitEquals(bestType);
+                                            //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(bestType, "Equals", new Type[] { bestType }));
                                         }
                                         il.Emit(OpCodes.Ldc_I4_0);
                                         il.Emit(OpCodes.Ceq);
