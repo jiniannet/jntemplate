@@ -6,6 +6,7 @@ using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -137,6 +138,31 @@ namespace JinianNet.JNTemplate.Parsers
         public override Func<ITag, CompileContext, Type> BuildGuessMethod()
         {
             return (tag, c) => typeof(string);
+        }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as LoadTag;
+                object path = TagExecutor.Execute(t.Path, context);
+                if (path == null)
+                {
+                    return null;
+                }
+                var res = context.Load(path.ToString());
+                if (res != null)
+                {
+                    var render = new TemplateRender();
+                    render.Context = context;
+                    using (System.IO.StringWriter writer = new StringWriter())
+                    {
+                        render.Render(writer, render.ReadAll(res.Content));
+                        return writer.ToString();
+                    }
+                }
+                return null;
+            };
         }
     }
 }

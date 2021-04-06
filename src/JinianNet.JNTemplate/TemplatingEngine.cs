@@ -44,7 +44,8 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.FunctionRegistrar",
                 "JinianNet.JNTemplate.Parsers.JsonRegistrar",
                 "JinianNet.JNTemplate.Parsers.TextRegistrar",
-                "JinianNet.JNTemplate.Parsers.ComplexRegistrar" };
+                "JinianNet.JNTemplate.Parsers.OperatorRegistrar",
+                "JinianNet.JNTemplate.Parsers.ComplexRegistrar"}; 
         #region
         /// <summary>
         /// Gets the <see cref="RuntimeOptions"/>.
@@ -415,30 +416,37 @@ namespace JinianNet.JNTemplate
             int index = 0) where T : ITag
         {
             Options.Parser.Register(parseMethod, index);
-            Options.Builder.Register<T>(compileMethod);
-            Options.Guesser.Register<T>(guessMethod);
+            Options.Builder?.Register<T>(compileMethod);
+            Options.Guesser?.Register<T>(guessMethod);
         }
 
         /// <inheritdoc />
-        public void Register(Func<TemplateParser, TokenCollection, ITag> func,
+        public void RegisterParseFunc(Func<TemplateParser, TokenCollection, ITag> func,
             int index = 0)
         {
             this.Options.Parser.Register(func, index);
         }
 
         /// <inheritdoc />
-        public void Register<T>(Func<ITag, CompileContext, MethodInfo> func)
+        public void RegisterCompileFunc<T>(Func<ITag, CompileContext, MethodInfo> func)
             where T : ITag
         {
             this.Options.Builder?.Register<T>(func);
         }
 
         /// <inheritdoc />
-        public void Register<T>(Func<ITag, CompileContext, Type> func)
+        public void RegisterGuessFunc<T>(Func<ITag, CompileContext, Type> func)
             where T : ITag
         {
             this.Options.Guesser?.Register<T>(func);
         }
-#endregion
+
+        /// <inheritdoc />
+        public void RegisterExecuteFunc<T>(Func<ITag, TemplateContext, object> func)
+           where T : ITag
+        {
+            this.Options.ExecutorBuilder?.Register<T>(func);
+        }
+        #endregion
     }
 }

@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -237,6 +238,48 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, c) =>
             {
                 return typeof(string);
+            };
+        }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as ForTag;
+                TagExecutor.Execute(t.Initial, context);
+                //如果标签为空，则直接为false,避免死循环以内存溢出
+                bool run;
+
+                if (t.Condition == null)
+                {
+                    run = false;
+                }
+                else
+                {
+                    run = Utility.ToBoolean(TagExecutor.Execute(t.Condition, context));
+                }
+                using (var writer = new StringWriter())
+                {
+                    while (run)
+                    {
+                        for (int i = 0; i < t.Children.Count; i++)
+                        {
+                            var obj = TagExecutor.Execute(t.Children[i], context);
+                            if (obj != null)
+                            {
+                                writer.Write(obj.ToString());
+                            }
+                        }
+
+                        if (t.Do != null)
+                        {
+                            //执行计算，不需要输出，比如i++
+                            TagExecutor.Execute(t.Do, context);
+                        }
+                        run = Utility.ToBoolean(TagExecutor.Execute(t.Condition, context));
+                    }
+                    return writer.ToString();
+                }
             };
         }
     }

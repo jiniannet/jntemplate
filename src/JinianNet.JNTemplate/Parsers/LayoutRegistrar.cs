@@ -3,9 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
@@ -86,6 +88,45 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, c) =>
             {
                 return typeof(string);
+            };
+        }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as LayoutTag;
+                object path = TagExecutor.Execute(t.Path, context);
+                if (path == null)
+                {
+                    return null;
+                }
+                var res = context.Load(path.ToString());
+                if (res != null)
+                {
+                    var render = new TemplateRender();
+                    render.Context = context;
+                    //render.TemplateContent = res.Content;
+                    var tags = render.ReadAll(res.Content);
+                    for (int i = 0; i < tags.Length; i++)
+                    {
+                        if (tags[i] is BodyTag)
+                        {
+                            BodyTag body = (BodyTag)tags[i];
+                            for (int j = 0; j < t.Children.Count; j++)
+                            {
+                                body.AddChild(t.Children[j]);
+                            }
+                            tags[i] = body;
+                        }
+                    }
+                    using (System.IO.StringWriter writer = new StringWriter())
+                    {
+                        render.Render(writer, tags);
+                        return writer.ToString();
+                    }
+                }
+                return null;
             };
         }
 

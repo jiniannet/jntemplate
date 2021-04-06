@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Configuration;
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
 using System;
@@ -18,11 +19,20 @@ namespace JinianNet.JNTemplate.Runtime
     /// </summary>
     public class RuntimeOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RuntimeOptions"/> class
+        /// </summary>
+        internal RuntimeOptions() : this(true)
+        {
+
+        }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RuntimeOptions"/> class
         /// </summary>
-        internal RuntimeOptions()
+        /// <param name="enableCompile"></param>
+        internal RuntimeOptions(bool enableCompile)
         {
             CompilerResults = new ResultCollection<ICompilerResult>();
             this.Data = null;
@@ -38,8 +48,16 @@ namespace JinianNet.JNTemplate.Runtime
             this.StripWhiteSpace = false;
             this.ThrowExceptions = true;
             this.Parser = new TagParser();
-            this.Builder = new CompileBuilder();
-            this.Guesser = new TypeGuesser();
+            this.EnableCompile = enableCompile;
+            if (enableCompile)
+            {
+                this.Builder = new CompileBuilder();
+                this.Guesser = new TypeGuesser();
+            }
+            else
+            {
+                this.ExecutorBuilder = new ExecutorBuilder();
+            }
         }
 
         ///// <summary>
@@ -121,9 +139,14 @@ namespace JinianNet.JNTemplate.Runtime
         public TypeGuesser Guesser { internal set; get; }
 
         /// <summary>
+        /// Gets or sets the tag <see cref="ExecutorBuilder"/> of the engine.
+        /// </summary>
+        public ExecutorBuilder ExecutorBuilder { internal set; get; }
+
+        /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        public bool EnableCompile { internal set; get; } = true;
+        public bool EnableCompile { private set; get; } = true;
 
         /// <summary>
         /// Enable or disenable the cache.

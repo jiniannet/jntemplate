@@ -6,6 +6,7 @@ using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using System.Reflection;
 using System;
+using JinianNet.JNTemplate.Dynamic;
 
 namespace JinianNet.JNTemplate.Parsers
 {
@@ -52,6 +53,33 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, c) =>
             {
                 return c.GuessIfType((ElseifTag)tag);
+            };
+        }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as ElseifTag;
+                var condition = TagExecutor.Execute(t.Condition, context);
+                if (Utility.ToBoolean(condition))
+                {
+                    if (t.Children.Count == 0)
+                    {
+                        return null;
+                    }
+                    if (t.Children.Count == 1)
+                    {
+                        return TagExecutor.Execute(t.Children[0], context);
+                    }
+                    var sb = new System.Text.StringBuilder();
+                    for (int i = 0; i < t.Children.Count; i++)
+                    {
+                        sb.Append(TagExecutor.Execute(t.Children[i], context));
+                    }
+                    return sb.ToString();
+                }
+                return null;
             };
         }
     }

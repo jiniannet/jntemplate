@@ -3,8 +3,10 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace JinianNet.JNTemplate.Parsers
@@ -56,6 +58,22 @@ namespace JinianNet.JNTemplate.Parsers
         public override Func<ITag, CompileContext, Type> BuildGuessMethod()
         {
             return null;
+        }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as JsonTag;
+                var result = new Dictionary<object, object>();
+                foreach (var kv in t.Dict)
+                {
+                    var key = kv.Key == null ? null : TagExecutor.Execute(kv.Key, context);
+                    var value = kv.Value == null ? null : TagExecutor.Execute(kv.Value, context);
+                    result.Add(key, value);
+                }
+                return result;
+            };
         }
     }
 }

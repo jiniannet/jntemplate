@@ -84,5 +84,14 @@ namespace JinianNet.JNTemplate.Parsers
                 return ((NumberTag)tag).Value.GetType();
             };
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as NumberTag;
+                return t.Value;
+            };
+        }
     }
 }

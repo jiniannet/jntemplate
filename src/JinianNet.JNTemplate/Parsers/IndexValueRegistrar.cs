@@ -166,5 +166,16 @@ namespace JinianNet.JNTemplate.Parsers
                 throw new Exception.CompileException($"[IndexValueTag]: \"{tag.ToSource()}\" is not defined");
             };
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as IndexValueTag;
+                object obj = TagExecutor.Execute(t.Parent, context);
+                object index = TagExecutor.Execute(t.Index, context);
+                return DynamicHelpers.CallIndexValue(obj, index);
+            };
+        }
     }
 }

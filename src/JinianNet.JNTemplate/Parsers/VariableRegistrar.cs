@@ -160,5 +160,24 @@ namespace JinianNet.JNTemplate.Parsers
                 throw new Exception.CompileException($"[VariableTag]: \"{t.Name}\" is not defined");
             };
         }
+
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return ((tag, context) =>
+            {
+                var t = tag as VariableTag;
+                object baseValue = null;
+                if (t.Parent != null)
+                {
+                    baseValue = TagExecutor.Execute(t.Parent, context);
+                }
+                if (baseValue == null)
+                {
+                    return context.TempData[t.Name];
+                }
+                return DynamicHelpers.CallPropertyOrField(baseValue, t.Name);
+            });
+        }
     }
 }

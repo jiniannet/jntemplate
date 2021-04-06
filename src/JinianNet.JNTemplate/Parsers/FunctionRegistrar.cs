@@ -249,5 +249,63 @@ namespace JinianNet.JNTemplate.Parsers
                 return null;
             };
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as FunctaionTag;
+                object[] args = new object[t.Children.Count];
+                for (int i = 0; i < t.Children.Count; i++)
+                {
+                    args[i] = TagExecutor.Execute(t.Children[i], context);
+                }
+
+                object parentValue;
+                if (t.Parent == null)
+                {
+                    parentValue = context.TempData[t.Name];
+                }
+                else
+                {
+                    parentValue = TagExecutor.Execute(t.Parent, context);
+                }
+
+                if (parentValue == null)
+                {
+                    return null;
+                }
+                if (t.Parent == null || (t.Parent != null && string.IsNullOrEmpty(t.Name)))
+                {
+                    //if (parentValue is FuncHandler funcHandler)
+                    //{
+                    //    return funcHandler(args);
+                    //}
+                    if (parentValue is Delegate func)
+                    {
+                        //var ps = func.Method.GetParameters();
+                        //if (ps.Length==0)
+                        return func.DynamicInvoke(args);
+                    }
+                    return null;
+                }
+
+                var result = DynamicHelpers.CallMethod(parentValue, t.Name, args);
+
+                if (result != null)
+                {
+                    return result;
+                }
+
+                result = DynamicHelpers.CallPropertyOrField(parentValue, t.Name);
+
+                if (result != null && result is Delegate)
+                {
+                    return (result as Delegate).DynamicInvoke(args);
+                }
+
+                return null;
+            };
+        }
     }
 }

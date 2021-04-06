@@ -129,5 +129,25 @@ namespace JinianNet.JNTemplate.Parsers
                 return typeof(string);
             };
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as IncludeTag;
+                object path = TagExecutor.Execute(t.Path, context);
+                if (path == null)
+                {
+                    return null;
+                }
+                var res = context.Load(path.ToString());
+                if (res != null)
+                {
+                    return res.Content;
+                }
+                return null;
+            };
+        }
+
     }
 }

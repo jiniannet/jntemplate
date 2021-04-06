@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate
         private static IEngine engine;
 
         /// <summary>
-        /// Gets the default engine.
+        /// Gets or sets the engine instance.
         /// </summary>
         public static IEngine Current
         {
@@ -36,6 +36,7 @@ namespace JinianNet.JNTemplate
                 }
                 return engine;
             }
+            set { engine = value; }
         }
 
         /// <summary>
@@ -44,13 +45,9 @@ namespace JinianNet.JNTemplate
         public static string Version => Field.Version;
 
         /// <summary>
-        /// Enable or disenable the cache.
+        /// Enable or disenable the compile mode.
         /// </summary>
-        public static bool EnableCompile
-        {
-            get { return Current.Options.EnableCompile; }
-            set { Current.Options.EnableCompile = value; }
-        }
+        public static bool EnableCompile => Current.Options.EnableCompile; 
 
         /// <summary>
         /// Configuration engine which <see cref="Action{IConfig}"/>.
@@ -186,5 +183,20 @@ namespace JinianNet.JNTemplate
             Current.Register<T>((p, tc) => parser.Parse(p, tc), compileFunc, guessFunc);
         }
 
+        /// <summary>
+        /// Register an new tag.
+        /// </summary>
+        /// <typeparam name="T">Type of the new tag. </typeparam>
+        /// <param name="parseMethod">parser of the new tag.</param>
+        /// <param name="compileMethod">compile method of the new tag.</param>
+        /// <param name="guessMethod">guess method of the new tag.</param>
+        /// <param name="index">The zero-based index.</param>
+        public void Register<T>(Func<TemplateParser, Nodes.TokenCollection, Nodes.ITag> parseMethod,
+           Func<Nodes.ITag, CompileContext, System.Reflection.MethodInfo> compileMethod,
+           Func<Nodes.ITag, CompileContext, Type> guessMethod,
+           int index = 0) where T : Nodes.ITag
+        {
+            Current.Register<T>(parseMethod, compileMethod, guessMethod);
+        }
     }
 }

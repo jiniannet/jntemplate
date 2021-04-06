@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,11 @@ namespace JinianNet.JNTemplate
             this.TempData = data ?? new VariableScope(null);
             this.AllErrors = new List<System.Exception>();
         }
+
+        /// <summary>
+        /// Gets the <see cref="ExecutorBuilder"/>
+        /// </summary>
+        public ExecutorBuilder ExecutorBuilder => Options.ExecutorBuilder;
 
         /// <summary>
         /// Enable or Disenable the cache.
@@ -90,6 +96,7 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
             TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData));
+            ctx.Options = context.Options;
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;

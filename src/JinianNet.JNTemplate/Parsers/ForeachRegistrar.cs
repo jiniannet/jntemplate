@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -362,6 +363,49 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
 
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as ForeachTag;
+                if (t.Source != null)
+                {
+                    using (var writer = new StringWriter())
+                    {
+                        object value = TagExecutor.Execute(t.Source, context);
+                        var enumerable = ForeachTag.ToIEnumerable(value);
+                        TemplateContext ctx;
+                        if (enumerable != null)
+                        {
+                            var ienum = enumerable.GetEnumerator();
+                            ctx = TemplateContext.CreateContext(context);
+                            int i = 0;
+                            while (ienum.MoveNext())
+                            {
+                                i++;
+                                ctx.TempData.Set(t.Name, ienum.Current, ienum.Current == null ? typeof(object) : ienum.Current.GetType());
+                                //为了兼容以前的用户 foreachIndex 保留
+                                ctx.TempData.Set("foreachIndex", i);
+                                for (int n = 0; n < t.Children.Count; n++)
+                                {
+                                    object result = TagExecutor.Execute(t.Children[n], ctx);
+                                    if (i == 0 && t.Children.Count == 1)
+                                    {
+                                        return result;
+                                    }
+                                    if (result != null)
+                                    {
+                                        writer.Write(result.ToString());
+                                    }
+                                }
+                            }
+                        }
+                        return writer.ToString();
+                    }
+                }
+                return null;
+            };
+        }
     }
-
 }

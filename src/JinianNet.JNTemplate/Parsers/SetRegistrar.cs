@@ -141,5 +141,22 @@ namespace JinianNet.JNTemplate.Parsers
                 return typeof(void);
             };
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as SetTag;
+                object value = TagExecutor.Execute(t.Value, context);
+                if (value != null)
+                {
+                    if (!context.TempData.Update(t.Name, value))
+                    {
+                        context.TempData.Set(t.Name, value, value.GetType());
+                    }
+                }
+                return null;
+            };
+        }
     }
 }

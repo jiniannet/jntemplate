@@ -11,15 +11,15 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// The Execute the method builder
     /// </summary>
-    public class ExecuteBuilder
+    public class ExecutorBuilder
     {
 
         Dictionary<string, Func<ITag, TemplateContext, object>> dict;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExecuteBuilder"/> class
+        /// Initializes a new instance of the <see cref="ExecutorBuilder"/> class
         /// </summary>
-        public ExecuteBuilder()
+        public ExecutorBuilder()
         {
             dict = new Dictionary<string, Func<ITag, TemplateContext, object>>(StringComparer.OrdinalIgnoreCase);
         }
@@ -76,61 +76,6 @@ namespace JinianNet.JNTemplate.Dynamic
         public void Register(string name, Func<ITag, TemplateContext, object> func)
         {
             dict[name] = func;
-        }
-
-        /// <summary>
-        /// eval expression
-        /// </summary>
-        /// <param name="list">list</param>
-        /// <param name="isOperator"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private bool Eval(List<object> list, bool isOperator, object value)
-        {
-            if (isOperator)
-            {
-                Operator op = (Operator)value;
-                if (op == Operator.Or || op == Operator.And)
-                {
-                    object result;
-                    bool isTrue;
-                    if (list.Count > 1)
-                    {
-                        var stack = ExpressionEvaluator.ProcessExpression(list.ToArray());
-                        result = ExpressionEvaluator.Calculate(stack);
-                    }
-                    else
-                    {
-                        result = list[0];
-                    }
-                    if (result is bool)
-                    {
-                        isTrue = (bool)result;
-                    }
-                    else
-                    {
-                        isTrue = ExpressionEvaluator.CalculateBoolean(result);
-                    }
-                    if (op == Operator.Or && isTrue)
-                    {
-                        list.Add(true);
-                        return true;
-                    }
-                    if (op == Operator.And && !isTrue)
-                    {
-                        list.Add(false);
-                        return true;
-                    }
-                    list.Clear();
-                    list.Add(isTrue);
-                }
-                list.Add(op);
-            }
-            else
-            {
-                list.Add(value);
-            }
-            return false;
-        }
+        } 
     }
 }

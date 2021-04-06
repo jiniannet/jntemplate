@@ -53,5 +53,14 @@ namespace JinianNet.JNTemplate.Parsers
                 return typeof(void);
             };
         }
+
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                return null;
+            };
+        }
     }
 }

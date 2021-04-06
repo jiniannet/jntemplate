@@ -4,59 +4,39 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System;
 
 namespace JinianNet.JNTemplate.Parsers
 {
     /// <summary>
-    /// The <see cref="NullTag"/> registrar
+    /// The <see cref="OperatorRegistrar"/> registrar
     /// </summary>
-    public class NullRegistrar : TagRegistrar<NullTag>, IRegistrar
+    public class OperatorRegistrar : TagRegistrar<OperatorTag>, IRegistrar
     {
         /// <inheritdoc />
         public override Func<TemplateParser, TokenCollection, ITag> BuildParseMethod()
         {
-            return (parser, tc) =>
-            {
-                if (tc != null
-                    && tc.Count == 1
-                    && tc.First.TokenKind == TokenKind.TextData
-                    && tc.First.Text == "null")
-                {
-                    return new NullTag();
-                }
-                return null;
-            };
+            return null;
         }
         /// <inheritdoc />
         public override Func<ITag, CompileContext, MethodInfo> BuildCompileMethod()
         {
-            return (tag, c) =>
-            {
-                var type = typeof(object);
-                var mb = c.CreateReutrnMethod<NullTag>(type);
-                var il = mb.GetILGenerator();
-                il.Emit(OpCodes.Ldnull);
-                il.Emit(OpCodes.Ret);
-                return mb.GetBaseDefinition();
-            };
+            return null;
         }
         /// <inheritdoc />
         public override Func<ITag, CompileContext, Type> BuildGuessMethod()
         {
-            return (tag, c) =>
-            {
-                return typeof(object);
-            };
+            return null;
         }
         /// <inheritdoc />
         public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
         {
             return (tag, context) =>
             {
-                return null;
+                var t = tag as OperatorTag;
+                return t.Value;
             };
         }
     }

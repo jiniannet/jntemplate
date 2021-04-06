@@ -276,6 +276,33 @@ namespace JinianNet.JNTemplate.Parsers
                 return type;
             };
         }
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as IfTag;
+                for (int i = 0; i < t.Children.Count - 1; i++)
+                {
+                    var c = (ElseifTag)t.Children[i];
+                    if (tag == null)
+                    {
+                        continue;
+                    }
+                    if (t.Children[i] is ElseTag)
+                    {
+                        return TagExecutor.Execute(t.Children[i], context);
+                    }
+
+                    var condition = TagExecutor.Execute(c.Condition, context);
+                    if (Utility.ToBoolean(condition))
+                    {
+                        return TagExecutor.Execute(t.Children[i], context);
+                    }
+                }
+                return null;
+            };
+        }
 
     }
 }

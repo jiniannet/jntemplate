@@ -577,7 +577,10 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             if (tX.FullName == tX.FullName)
             {
-                //if(tX.FullName)
+                if (tX.IsEnum)
+                {
+                    return Equals(x,y);
+                }
                 return x == y;
             }
             return false;

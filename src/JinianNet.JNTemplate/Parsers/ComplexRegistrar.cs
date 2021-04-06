@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <inheritdoc />
         public void Regiser(IEngine engine)
         {
-            engine.Register((parser, tc) =>
+            engine.RegisterParseFunc((parser, tc) =>
             {
                 if (tc != null
                     && parser != null
@@ -142,12 +142,26 @@ namespace JinianNet.JNTemplate.Parsers
                 return null;
             }, -1);
 
-            engine.Register<ReferenceTag>((tag, c) =>
+            if (engine.Options.EnableCompile)
+            {
+                RegiserCompile(engine);
+            }
+            else
+            {
+                RegiserExcutor(engine);
+            }
+
+        
+        }
+
+        private void RegiserCompile(IEngine engine)
+        {
+            engine.RegisterCompileFunc<ReferenceTag>((tag, c) =>
             {
                 return c.CompileTag(((ReferenceTag)tag).Child);
             });
 
-            engine.Register<LogicTag>((tag, c) =>
+            engine.RegisterCompileFunc<LogicTag>((tag, c) =>
             {
                 var t = tag as LogicTag;
                 var type = c.GuessType(t);
@@ -457,7 +471,7 @@ namespace JinianNet.JNTemplate.Parsers
                 return mb.GetBaseDefinition();
             });
 
-            engine.Register<ArithmeticTag>((tag, c) =>
+            engine.RegisterCompileFunc<ArithmeticTag>((tag, c) =>
             {
                 var stringBuilderType = typeof(StringBuilder);
                 var t = tag as ArithmeticTag;
@@ -637,17 +651,17 @@ namespace JinianNet.JNTemplate.Parsers
                 return mb.GetBaseDefinition();
             });
 
-            engine.Register<ReferenceTag>((tag, c) =>
+            engine.RegisterGuessFunc<ReferenceTag>((tag, c) =>
             {
                 return c.GuessType(((ReferenceTag)tag).Child);
             });
 
-            engine.Register<LogicTag>((tag, ctx) =>
+            engine.RegisterGuessFunc<LogicTag>((tag, ctx) =>
             {
                 return typeof(bool);
             });
 
-            engine.Register<ArithmeticTag>((tag, ctx) =>
+            engine.RegisterGuessFunc<ArithmeticTag>((tag, ctx) =>
             {
                 var t = tag as ArithmeticTag;
                 var types = new List<Type>();
@@ -674,6 +688,59 @@ namespace JinianNet.JNTemplate.Parsers
                 }
 
                 return typeof(int);
+            });
+        }
+
+        private void RegiserExcutor(IEngine engine)
+        {
+            engine.RegisterExecuteFunc<ArithmeticTag>((tag, context) =>
+            {
+                var t = tag as ArithmeticTag;
+                var parameters = new List<object>();
+
+                for (int i = 0; i < t.Children.Count; i++)
+                {
+                    var opt = t.Children[i] as OperatorTag;
+                    if (opt != null)
+                    {
+                        parameters.Add(opt.Value);
+                    }
+                    else
+                    {
+                        parameters.Add(TagExecutor.Execute(t.Children[i], context));
+                    }
+                }
+                var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
+                return ExpressionEvaluator.Calculate(stack);
+            });
+
+            engine.RegisterExecuteFunc<LogicTag>((tag, context) =>
+            {
+                var t = tag as LogicTag;
+                List<object> parameters = new List<object>();
+
+                for (int i = 0; i < t.Children.Count; i++)
+                {
+                    bool isOperator = t.Children[i] is OperatorTag;
+                    object result = TagExecutor.Execute(t.Children[i], context);
+                    if (Eval(parameters, isOperator, result))
+                    {
+                        return parameters[parameters.Count - 1];
+                    }
+                }
+
+                var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
+                return ExpressionEvaluator.Calculate(stack);
+            });
+
+            engine.RegisterExecuteFunc<ReferenceTag>((tag, context) =>
+            {
+                var t = tag as ReferenceTag;
+                if (t.Child != null)
+                {
+                    return TagExecutor.Execute(t.Child, context);
+                }
+                return null;
             });
         }
         /// <summary>
@@ -763,6 +830,63 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 tag.AddChild(list[i]);
             }
+        }
+
+
+
+        /// <summary>
+        /// eval expression
+        /// </summary>
+        /// <param name="list">list</param>
+        /// <param name="isOperator"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool Eval(List<object> list, bool isOperator, object value)
+        {
+            if (isOperator)
+            {
+                Operator op = (Operator)value;
+                if (op == Operator.Or || op == Operator.And)
+                {
+                    object result;
+                    bool isTrue;
+                    if (list.Count > 1)
+                    {
+                        var stack = ExpressionEvaluator.ProcessExpression(list.ToArray());
+                        result = ExpressionEvaluator.Calculate(stack);
+                    }
+                    else
+                    {
+                        result = list[0];
+                    }
+                    if (result is bool)
+                    {
+                        isTrue = (bool)result;
+                    }
+                    else
+                    {
+                        isTrue = ExpressionEvaluator.CalculateBoolean(result);
+                    }
+                    if (op == Operator.Or && isTrue)
+                    {
+                        list.Add(true);
+                        return true;
+                    }
+                    if (op == Operator.And && !isTrue)
+                    {
+                        list.Add(false);
+                        return true;
+                    }
+                    list.Clear();
+                    list.Add(isTrue);
+                }
+                list.Add(op);
+            }
+            else
+            {
+                list.Add(value);
+            }
+            return false;
         }
 
         #endregion

@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using System;
 using System.Reflection;
@@ -55,6 +56,16 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, c) =>
             {
                 return typeof(bool);
+            };
+        }
+
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        {
+            return (tag, context) =>
+            {
+                var t = tag as BooleanTag;
+                return t.Value;
             };
         }
     }

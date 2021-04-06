@@ -12,32 +12,16 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public class TagExecutor
     {
-        private static Lazy<ExecuteBuilder> builder;
 
-        /// <summary>
-        /// Gets or sets the builder of the object.
-        /// </summary>
-        public static ExecuteBuilder Builder
-        {
-            get { return builder.Value; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TagExecutor"/> class.
-        /// </summary>
-        static TagExecutor()
-        {
-            builder = new Lazy<ExecuteBuilder>();
-        }
         /// <summary>
         /// Execute the tags.
         /// </summary>
         /// <param name="tag">The <see cref="ITag"/>.</param>
         /// <param name="ctx">The <see cref="TemplateContext"/>.</param>
         /// <returns></returns>
-        public static object Exec(ITag tag, TemplateContext ctx)
+        public static object Execute(ITag tag, TemplateContext ctx)
         {
-            var func = Builder.Build(tag);
+            var func = ctx.ExecutorBuilder.Build(tag);
             return func(tag, ctx);
         }
 
@@ -48,9 +32,9 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="tag"></param>
         /// <param name="ctx"></param>
         /// <returns></returns>
-        private static object Exec(string name, ITag tag, TemplateContext ctx)
+        private static object Execute(string name, ITag tag, TemplateContext ctx)
         {
-            var func = Builder.Build(name);
+            var func = ctx.ExecutorBuilder.Build(name);
             return func(tag, ctx);
         }
 
@@ -59,9 +43,10 @@ namespace JinianNet.JNTemplate.Dynamic
         /// </summary>
         /// <typeparam name="T">The type of itag.</typeparam>
         /// <param name="func">The parse method.</param>
-        public static void Register<T>(Func<ITag, TemplateContext, object> func) where T : ITag
+        /// <param name="ctx">The <see cref="TemplateContext"/>.</param>
+        public static void Register<T>(TemplateContext ctx, Func<ITag, TemplateContext, object> func) where T : ITag
         {
-            Builder.Register<T>(func);
+            ctx.ExecutorBuilder.Register<T>(func);
         }
     }
 }

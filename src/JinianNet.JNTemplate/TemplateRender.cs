@@ -14,8 +14,6 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class TemplateRender : TemplateBase
     {
-
-
         /// <summary>
         /// Performs the render for a template.
         /// </summary>
@@ -45,7 +43,7 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        var tagResult = TagExecutor.Exec(collection[i], this.Context);
+                        var tagResult = TagExecutor.Execute(collection[i], this.Context);
                         if (tagResult != null)
                         {
                             writer.Write(tagResult.ToString());

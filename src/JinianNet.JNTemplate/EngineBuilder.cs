@@ -12,14 +12,37 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class EngineBuilder
     {
+        private bool enableCompile = true;
+
         /// <summary>
         /// Build a engine.
         /// </summary>
         /// <returns></returns>
         public IEngine Build()
         {
+            var options = new Runtime.RuntimeOptions(enableCompile);
             return new TemplatingEngine()
-                .UseDefaultOptions();
+                .UseOptions(options);
+        }
+
+        /// <summary>
+        /// Enable compilation mode.
+        /// </summary>
+        /// <returns></returns>
+        public EngineBuilder EnableCompile()
+        {
+            this.enableCompile = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Disable compilation mode.
+        /// </summary>
+        /// <returns></returns>
+        public EngineBuilder DisableCompile()
+        {
+            this.enableCompile = false;
+            return this;
         }
     }
 }

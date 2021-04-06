@@ -24,19 +24,29 @@ namespace JinianNet.JNTemplate.Parsers
             var parseMethod = BuildParseMethod();
             if (parseMethod != null)
             {
-                engine.Register(parseMethod, -1);
+                engine.RegisterParseFunc(parseMethod, -1);
             }
-
-            var compileMethod = BuildCompileMethod();
-            if (compileMethod != null)
+            if (engine.Options.EnableCompile)
             {
-                engine.Register<T>(compileMethod);
+                var compileMethod = BuildCompileMethod();
+                if (compileMethod != null)
+                {
+                    engine.RegisterCompileFunc<T>(compileMethod);
+                }
+
+                var guessMethod = BuildGuessMethod();
+                if (guessMethod != null)
+                {
+                    engine.RegisterGuessFunc<T>(guessMethod);
+                }
             }
-
-            var guessMethod = BuildGuessMethod();
-            if (guessMethod != null)
+            else
             {
-                engine.Register<T>(guessMethod);
+                var excuteMethod = BuildExcuteMethod();
+                if (excuteMethod != null)
+                {
+                    engine.RegisterExecuteFunc<T>(excuteMethod);
+                }
             }
         }
 
@@ -56,5 +66,11 @@ namespace JinianNet.JNTemplate.Parsers
         /// </summary>
         /// <returns></returns>
         public abstract Func<ITag, CompileContext, Type> BuildGuessMethod();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public abstract Func<ITag, TemplateContext, object> BuildExcuteMethod();
     }
 }
