@@ -260,7 +260,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     args[i] = TagExecutor.Execute(t.Children[i], context);
                 }
-
+                Type type = null;
                 object parentValue;
                 if (t.Parent == null)
                 {
@@ -269,9 +269,20 @@ namespace JinianNet.JNTemplate.Parsers
                 else
                 {
                     parentValue = TagExecutor.Execute(t.Parent, context);
+                    if (parentValue != null)
+                    {
+                        type = parentValue.GetType();
+                    }
+                    else
+                    {
+                        if(t.Parent is VariableTag variable)
+                        {
+                            type = context.TempData.GetType(variable.Name);
+                        }
+                    }
                 }
 
-                if (parentValue == null)
+                if (parentValue==null && type == null)
                 {
                     return null;
                 }
@@ -290,7 +301,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return null;
                 }
 
-                var result = DynamicHelpers.CallMethod(parentValue, t.Name, args);
+                var result = DynamicHelpers.CallMethod(type,parentValue, t.Name, args);
 
                 if (result != null)
                 {

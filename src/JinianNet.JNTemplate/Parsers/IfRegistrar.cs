@@ -285,7 +285,7 @@ namespace JinianNet.JNTemplate.Parsers
                 for (int i = 0; i < t.Children.Count - 1; i++)
                 {
                     var c = (ElseifTag)t.Children[i];
-                    if (tag == null)
+                    if (c == null)
                     {
                         continue;
                     }

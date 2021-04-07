@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+#define NEEDFIELD
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -381,11 +382,12 @@ namespace JinianNet.JNTemplate.Dynamic
         /// Gets the property or field value of the object.
         /// </summary>
         /// <param name="container">The object.</param>
+        /// <param name="type">The type of the object.</param>
         /// <param name="name">The property or field name. </param>
         /// <returns></returns>
-        public static object CallPropertyOrField(object container, string name)
+        public static object CallPropertyOrField(object container, string name, Type type = null)
         {
-            Type t = container.GetType();
+            Type t = type ?? container.GetType();
             if (!char.IsDigit(name[0]))
             {
 #if !NET20_NOTUSER
@@ -397,7 +399,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 }
 #if NEEDFIELD
                 //Field
-                FieldInfo f = t.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static |_bindingIgnoreCase);
+                FieldInfo f = t.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
                 if (f != null)
                 {
                     return f.GetValue(container);
@@ -420,7 +422,6 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
         }
 
-
         /// <summary>
         /// Calls the specified method and returns the result of execution
         /// </summary>
@@ -429,6 +430,18 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="args">The parameter of the method.</param>
         /// <returns>The result of execution.</returns>
         public static object CallMethod(object container, string name, object[] args)
+        {
+            return CallMethod(container?.GetType(), container,name,args);
+        }
+        /// <summary>
+        /// Calls the specified method and returns the result of execution
+        /// </summary>
+        /// <param name="type">Then Instance objects.</param>
+        /// <param name="container">Then Instance objects.</param>
+        /// <param name="name">The name of the method.</param>
+        /// <param name="args">The parameter of the method.</param>
+        /// <returns>The result of execution.</returns>
+        public static object CallMethod(Type type, object container, string name, object[] args)
         {
             Type[] types = new Type[args.Length];
             bool hasNullValue = false;
@@ -443,9 +456,8 @@ namespace JinianNet.JNTemplate.Dynamic
                     hasNullValue = true;
                 }
             }
-
-            Type t = container.GetType();
-            MethodInfo method = DynamicHelpers.GetMethod(t, name, types);
+             
+            MethodInfo method = DynamicHelpers.GetMethod(type, name, types);
 
             if (method != null)
             {
@@ -486,7 +498,9 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     for (int i = 0; i < args.Length; i++)
                     {
-                        if (args[i] == null && pi[i].DefaultValue != null)
+                        if (args[i] == null 
+                            && !pi[i].ParameterType.IsClass
+                            && pi[i].DefaultValue != DBNull.Value)
                         {
                             args[i] = pi[i].DefaultValue;
                         }

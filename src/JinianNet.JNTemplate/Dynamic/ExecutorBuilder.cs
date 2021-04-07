@@ -76,6 +76,13 @@ namespace JinianNet.JNTemplate.Dynamic
         public void Register(string name, Func<ITag, TemplateContext, object> func)
         {
             dict[name] = func;
-        } 
+        }
+        /// <summary>
+        /// Removes all items from the <see cref="ExecutorBuilder"/>.
+        /// </summary>
+        public void Clear()
+        {
+            dict.Clear();
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace JinianNet.JNTemplate
         /// <param name="data">The <see cref="VariableScope"/>.</param>  
         internal TemplateContext(VariableScope data) : base()
         {
-            this.TempData = data ?? new VariableScope(null);
+            this.TempData = data;
             this.AllErrors = new List<System.Exception>();
         }
 
@@ -95,7 +95,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
-            TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData));
+            TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData,context.Options.TypeDetectPattern));
             ctx.Options = context.Options;
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;

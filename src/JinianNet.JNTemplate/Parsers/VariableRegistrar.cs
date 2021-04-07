@@ -168,15 +168,25 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 var t = tag as VariableTag;
                 object baseValue = null;
-                if (t.Parent != null)
-                {
-                    baseValue = TagExecutor.Execute(t.Parent, context);
-                }
-                if (baseValue == null)
+                Type type = null;
+                if (t.Parent == null)
                 {
                     return context.TempData[t.Name];
                 }
-                return DynamicHelpers.CallPropertyOrField(baseValue, t.Name);
+                baseValue = TagExecutor.Execute(t.Parent, context);
+                if (baseValue == null && t.Parent is VariableTag variable)
+                {
+                    type = context.TempData.GetType(variable.Name);
+                }
+                else
+                {
+                    type = baseValue.GetType();
+                }
+                if (type == null)
+                {
+                    return null;
+                }
+                return DynamicHelpers.CallPropertyOrField(baseValue, t.Name, type);
             });
         }
     }

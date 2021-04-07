@@ -60,46 +60,9 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public IEngine Configure(Action<IConfig> action)
+        public IEngine Configure(Action<IOptions> action)
         {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            action?.Invoke(conf);
-            return Configure(conf, null);
-        }
-
-        /// <inheritdoc />
-        public IEngine Configure(Action<IConfig, VariableScope> action)
-        {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            var score = new VariableScope(null);
-            action?.Invoke(conf, score);
-            return Configure(conf, score);
-        }
-
-        /// <inheritdoc />
-        public IEngine Configure(IDictionary<string, object> dict)
-        {
-            var props = typeof(RuntimeOptions).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var kv in dict)
-            {
-                if (kv.Value == null)
-                {
-                    continue;
-                }
-                var p = props.Where(m => m.Name.Equals(kv.Key, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-                if (p == null
-                    || !p.CanWrite
-                    || !Dynamic.DynamicHelpers.IsMatchType(kv.Value.GetType(), p.PropertyType))
-                {
-                    SetEnvironmentVariable(kv.Key, kv.Value?.ToString());
-                    continue;
-                }
-#if NET20 || NET40
-                p.SetValue(Options, kv.Value,null);
-#else
-                p.SetValue(Options, kv.Value);
-#endif
-            }
+            action?.Invoke(Options);
             return this;
         }
 
@@ -184,7 +147,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public TemplateContext CreateContext()
         {
-            var data = new VariableScope(Options.Data);
+            var data = new VariableScope(Options.Data,Options.TypeDetectPattern);
             var ctx = new TemplateContext(data);
             ctx.Options = Options;
             ctx.Charset = Options.Encoding;
@@ -378,6 +341,12 @@ namespace JinianNet.JNTemplate
         public IEngine UseOptions(RuntimeOptions options)
         {
             Options = options;
+            Initialize();
+            return this;
+        }
+
+        private void Initialize()
+        {
             for (var i = 0; i < registrars.Length; i++)
             {
                 Dynamic
@@ -385,13 +354,31 @@ namespace JinianNet.JNTemplate
                     .CreateInstance<IRegistrar>(registrars[i])
                     ?.Regiser(this);
             }
-            return this;
         }
 
         /// <inheritdoc />
         public IEngine UseDefaultOptions()
         {
             return UseOptions(new RuntimeOptions());
+        }
+
+
+
+        /// <inheritdoc />
+        public IEngine EnableCompile()
+        {
+            Options.EnableCompile = true;
+            Initialize();
+            return this;
+        }
+
+
+        /// <inheritdoc />
+        public IEngine DisableCompile()
+        {
+            Options.EnableCompile = false;
+            Initialize();
+            return this;
         }
 
         /// <summary>

@@ -141,7 +141,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         private static CompileContext GenerateContext(string name, RuntimeOptions options)
         {
-            return GenerateContext(name, options, new VariableScope(options.Data));
+            return GenerateContext(name, options, new VariableScope(options.Data, TypeDetect.Absolute));
         }
 
 
@@ -190,7 +190,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             if (scope == null)
             {
-                scope = new VariableScope(options.Data);
+                scope = new VariableScope(options.Data, options.TypeDetectPattern);
             }
             var ctx = new CompileContext();
             ctx.Data = scope;

@@ -17,12 +17,14 @@ namespace JinianNet.JNTemplate.Runtime
     /// <summary>
     /// Represents an global options.
     /// </summary>
-    public class RuntimeOptions
+    public class RuntimeOptions : IOptions
     {
+        private bool enabled;
         /// <summary>
         /// Initializes a new instance of the <see cref="RuntimeOptions"/> class
         /// </summary>
-        internal RuntimeOptions() : this(true)
+        internal RuntimeOptions()
+            : this(true)
         {
 
         }
@@ -49,7 +51,13 @@ namespace JinianNet.JNTemplate.Runtime
             this.ThrowExceptions = true;
             this.Parser = new TagParser();
             this.EnableCompile = enableCompile;
-            if (enableCompile)
+            this.TypeDetectPattern = TypeDetect.Standard;
+        }
+
+
+        private void Initialize()
+        {
+            if (this.enabled)
             {
                 this.Builder = new CompileBuilder();
                 this.Guesser = new TypeGuesser();
@@ -146,7 +154,14 @@ namespace JinianNet.JNTemplate.Runtime
         /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        public bool EnableCompile { private set; get; } = true;
+        public bool EnableCompile
+        {
+            internal set { 
+                enabled = value;
+                Initialize();
+            }
+            get { return enabled; }
+        }
 
         /// <summary>
         /// Enable or disenable the cache.
@@ -167,6 +182,11 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets whether strip white-space.
         /// </summary>
         public bool StripWhiteSpace { get; set; }
+
+        /// <summary>
+        /// Gets or sets the detect patterns.
+        /// </summary>
+        public TypeDetect TypeDetectPattern { get; set; }
 
     }
 }

@@ -22,17 +22,48 @@ namespace JinianNet.JNTemplate.Test
         public void YestUserTag()
         {
             //这是一个简单的自定义标签
-            Engine.Register<TestTag>(new TestParser(),
-                (tag, c) =>
+            if (Engine.EnableCompile)
+            {
+                Engine.Register<TestTag>((p, tc) =>
                 {
-                    var t = tag as TestTag;
-                    var mb = c.CreateReutrnMethod<TestTag>(typeof(string));
-                    var il = mb.GetILGenerator();
-                    il.Emit(OpCodes.Ldstr, "say " + t.Document);
-                    il.Emit(OpCodes.Ret);
-                    return mb.GetBaseDefinition();
+                    if (tc.Count == 2 && tc.First.Text == ":")
+                    {
+                        return new TestTag
+                        {
+                            Document = tc[1].Text
+                        };
+                    }
+                    return null;
                 },
-                (tag, c) => typeof(string));
+                    (tag, c) =>
+                    {
+                        var t = tag as TestTag;
+                        var mb = c.CreateReutrnMethod<TestTag>(typeof(string));
+                        var il = mb.GetILGenerator();
+                        il.Emit(OpCodes.Ldstr, "say " + t.Document);
+                        il.Emit(OpCodes.Ret);
+                        return mb.GetBaseDefinition();
+                    },
+                    (tag, c) => typeof(string));
+            }
+            else
+            {
+                Engine.Current.RegisterParseFunc((p, tc) =>
+                {
+                    if (tc.Count == 2 && tc.First.Text == ":")
+                    {
+                        return new TestTag
+                        {
+                            Document = tc[1].Text
+                        };
+                    }
+                    return null;
+                });
+                Engine.Current.RegisterExecuteFunc<TestTag>((tag, c) =>
+                {
+                    return $"say {(tag as TestTag).Document}";
+                });
+            }
 
             var templateContent = "${:hello}";
             var template = Engine.CreateTemplate(templateContent);
@@ -50,7 +81,7 @@ namespace JinianNet.JNTemplate.Test
             var engine = new EngineBuilder()
                 .Build();
 
-            engine.UseLoader(new TestLoader()); 
+            engine.UseLoader(new TestLoader());
             var template = engine.LoadTemplate("11111");
             template.Set("name", "jntemplate");
             var render = template.Render();
@@ -128,9 +159,9 @@ ${end}";
                 });
                 return list;
             });
-            var render = template.Render(); 
+            var render = template.Render();
             var result = @"<divclass=""goods1almostGoodsBox""><ahref='1'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称一</p><pclass=""goodsDescribgoodsText"">衣</p><pclass=""pricegoodsText"">￥200</p></a></div><divclass=""goodsalmostGoodsBox""><ahref='2'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称二</p><pclass=""goodsDescribgoodsText"">外</p><pclass=""pricegoodsText"">￥120</p></a></div><divclass=""goodsalmostGoodsBox""><ahref='3'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称三</p><pclass=""goodsDescribgoodsText"">中</p><pclass=""pricegoodsText"">￥15.80</p></a></div>";
-            Assert.Equal(result, render.Replace("\r","").Replace("\t", "").Replace("\n", "").Replace(" ", ""));
+            Assert.Equal(result, render.Replace("\r", "").Replace("\t", "").Replace("\n", "").Replace(" ", ""));
         }
     }
 }

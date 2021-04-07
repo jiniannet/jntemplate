@@ -25,19 +25,6 @@ namespace JinianNet.JNTemplate
         RuntimeOptions Options { get; }
 
         /// <summary>
-        /// Configuration engine which <see cref="Action{IConfig}"/>.
-        /// </summary>
-        /// <param name="action">The <see cref="Action{IConfig}"/>.</param>
-        /// <returns>The <see cref="TemplatingEngine"/>.</returns>
-        IEngine Configure(Action<IConfig> action);
-
-        /// <summary>
-        /// Configuration engine which <see cref="Action{IConfig, VariableScope}"/>.
-        /// </summary>
-        /// <param name="action">The <see cref="Action{IConfig, VariableScope}"/>.</param>
-        IEngine Configure(Action<IConfig, VariableScope> action);
-
-        /// <summary>
         /// Configuration engine which <see cref="IConfig"/>.
         /// </summary>
         /// <param name="conf">The <see cref="IConfig"/>.</param>
@@ -47,9 +34,9 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Configuration engine which <see cref="Action{IConfig}"/>.
         /// </summary>
-        /// <param name="dict">The <see cref="IDictionary{TKey,TValue}"/>.</param>
+        /// <param name="action">The <see cref="Action{action}"/>.</param>
         /// <returns>The <see cref="TemplatingEngine"/>.</returns>
-        IEngine Configure(IDictionary<string, object> dict);
+        IEngine Configure(Action<IOptions> action);
 
         /// <summary>
         /// Compile a template with a given file
@@ -152,6 +139,18 @@ namespace JinianNet.JNTemplate
         IEngine UseDefaultOptions();
 
         /// <summary>
+        /// Enable compilation mode.
+        /// </summary>
+        /// <returns></returns>
+        IEngine EnableCompile();
+
+        /// <summary>
+        /// Disable compilation mode.
+        /// </summary>
+        /// <returns></returns>
+        IEngine DisableCompile();
+
+        /// <summary>
         /// Clear compiled object and cache.
         /// </summary>
         void Clean();
@@ -200,6 +199,6 @@ namespace JinianNet.JNTemplate
         /// <param name="func">excute method of the new tag.</param>
         void RegisterExecuteFunc<T>(Func<ITag, TemplateContext, object> func)
            where T : ITag;
-        
+
     }
 }

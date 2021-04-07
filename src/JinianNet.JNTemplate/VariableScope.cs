@@ -14,16 +14,30 @@ namespace JinianNet.JNTemplate
     {
         private VariableScope parent;
         private IDictionary<string, VariableElement> dic;
+        /// <summary>
+        /// Gets or sets the  detect patterns.
+        /// </summary>
+        public TypeDetect DetectPattern { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
         /// <param name="parent">The parent <see cref="VariableScope"/>.</param> 
         public VariableScope(VariableScope parent)
+            : this(parent, parent?.DetectPattern ?? TypeDetect.Standard)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VariableScope"/> class
+        /// </summary>
+        /// <param name="parent">The parent <see cref="VariableScope"/>.</param> 
+        /// <param name="pattern">The <see cref="TypeDetect"/>.</param> 
+        public VariableScope(VariableScope parent, TypeDetect pattern)
         {
             this.parent = parent;
             this.dic = new Dictionary<string, VariableElement>(StringComparer.OrdinalIgnoreCase);
-
+            this.DetectPattern = pattern;
         }
 
         /// <summary>
@@ -188,7 +202,16 @@ namespace JinianNet.JNTemplate
         /// <typeparam name="T">The type of elements in the  <see cref="VariableScope"/>.</typeparam>
         public void Set<T>(string key, T value)
         {
-            Set(key, value, typeof(T));
+            if (this.DetectPattern == TypeDetect.None
+                || (this.DetectPattern == TypeDetect.Standard && value != null)
+                || (this.DetectPattern == TypeDetect.Auto && value != null && value.GetType() == typeof(T)))
+            {
+                Set(key, value, null);
+            }
+            else
+            {
+                Set(key, value, typeof(T));
+            }
         }
 
         /// <summary>

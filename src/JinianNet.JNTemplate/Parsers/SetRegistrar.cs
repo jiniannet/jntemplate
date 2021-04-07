@@ -152,7 +152,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     if (!context.TempData.Update(t.Name, value))
                     {
-                        context.TempData.Set(t.Name, value, value.GetType());
+                        context.TempData.Set(t.Name, value, null);
                     }
                 }
                 return null;

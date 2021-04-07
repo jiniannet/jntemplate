@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        public static bool EnableCompile => Current.Options.EnableCompile; 
+        public static bool EnableCompile => Current.Options.EnableCompile;
 
         /// <summary>
         /// Configuration engine which <see cref="Action{IConfig}"/>.
@@ -55,7 +55,9 @@ namespace JinianNet.JNTemplate
         /// <param name="action">The <see cref="Action{IConfig}"/>.</param>
         public static void Configure(Action<IConfig> action)
         {
-            Current.Configure(action);
+            var conf = EngineConfig.CreateDefault();
+            action?.Invoke(conf);
+            Current.Configure(conf, null);
         }
 
         /// <summary>
@@ -64,7 +66,9 @@ namespace JinianNet.JNTemplate
         /// <param name="action">The <see cref="Action{IConfig, VariableScope}"/>.</param>
         public static void Configure(Action<IConfig, VariableScope> action)
         {
-            Current.Configure(action);
+            var conf = Configuration.EngineConfig.CreateDefault();
+            var score = new VariableScope(null, Current.Options.TypeDetectPattern);
+            action?.Invoke(conf, score);
         }
 
         /// <summary>
@@ -191,7 +195,7 @@ namespace JinianNet.JNTemplate
         /// <param name="compileMethod">compile method of the new tag.</param>
         /// <param name="guessMethod">guess method of the new tag.</param>
         /// <param name="index">The zero-based index.</param>
-        public void Register<T>(Func<TemplateParser, Nodes.TokenCollection, Nodes.ITag> parseMethod,
+        public static void Register<T>(Func<TemplateParser, Nodes.TokenCollection, Nodes.ITag> parseMethod,
            Func<Nodes.ITag, CompileContext, System.Reflection.MethodInfo> compileMethod,
            Func<Nodes.ITag, CompileContext, Type> guessMethod,
            int index = 0) where T : Nodes.ITag
