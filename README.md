@@ -42,13 +42,13 @@ var template = Engine.LoadTemplate(@"c:\wwwroot\view\index.html"); ;
 template.Set("name", "jntemplate");
 var result = template.Render(); 
 ```
-default.html
+index.html
 
 ```html
 <!DOCTYPE html>
 <html>
 <body>
-  <h1>Hello, $name</h1>
+  <h1>Hello, ${name}</h1>
 </body>
 </html>
 ```

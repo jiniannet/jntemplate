@@ -12,27 +12,7 @@ namespace JinianNet.JNTemplate.Test
 
         public TagsTestBase()
         {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            //开始严格大小写模式 默认忽略大小写
-            //conf.IgnoreCase = false;
-            //Engine.EnableCompile = false;
-            Engine.Configure(conf);
-            //Engine.EnableCompile = false;
+
         }
-
-        //public  void <string> Excute(ITemplate t)
-        //{
-        //    string document;
-
-        //    using (StringWriter writer = new StringWriter())
-        //    {
-        //        t.Render(writer);
-        //        // await t.RenderAsync(writer);
-        //        document = writer.ToString();
-        //    }
-
-        //    return document;
-
-        //}
     }
 }

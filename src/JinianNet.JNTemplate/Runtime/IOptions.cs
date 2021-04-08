@@ -73,5 +73,10 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets whether strip white-space.
         /// </summary>
         bool StripWhiteSpace { get; set; }
+
+        /// <summary>
+        /// Gets or sets the detect patterns.
+        /// </summary>
+        TypeDetect TypeDetectPattern { get; set; }
     }
 }

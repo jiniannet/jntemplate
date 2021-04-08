@@ -22,51 +22,99 @@ JNTemplate所有代码全部开源，且具有最小的依赖关系，能轻松�
 - 更方便：能自由配置各项参数，扩展自己的标签。
 - 更自由：支持商用无须任何费用，所有代码完全开源。
 
-### 快速开始
+### 安装
 
-**您可以从NuGet获取我们的发行版本**
+使用 NuGet安装或者更新:
 ```
 PM> Install-Package JinianNet.JNTemplate
 
 ```
-或者（NET CORE）
+or
+
 ```
 > dotnet add package JinianNet.JNTemplate
 ```
 
+### 快速开始
 
-**也可以克隆源代码自行构建**
+**基本用法**
+
+使用预设的数据渲染模板
+
+c# 代码
+
+```csharp
+var template = Engine.LoadTemplate(@"c:\wwwroot\view\index.html");
+template.Set("name", "jntemplate");
+var result = template.Render(); 
+```
+模板文件`index.html`
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Hello, ${name}</h1>
+</body>
+</html>
 ```
 
-git clone https://github.com/jiniannet/jntemplate.git
+输出结果:
+
+```html
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Hello, jntemplate</h1>
+</body>
+</html>
 ```
 
-Windows:克隆完成后,运行 build/build.bat
-linux:克隆完成后,运行 build/build.sh
+**迭代列表**
 
-  
-  
+使用foreach快速迭代一个列表
+
+c# 代码
+
+```csharp
+var template = Engine.LoadTemplate(@"c:\wwwroot\view\view.html"); ;
+template.Set("list", new string[] { "github","jntemplate" });
+var result = template.Render(); 
+```
+模板文件：view.html
+
+```html
+<ul>
+${foreach(name in list)}
+	<li>${name}</li>
+${end}
+</ul>
+```
+
+输出结果:
+
+```html
+<ul>
+	<li>github</li>
+	<li>jntemplate</li>
+</ul>
+```
+更多完整用法请查看API文档（地址见下面的链接）
+
 **配置**
 
-你可以使用Engine.Configure()方法来对 JNTemplate进行配置.可配置项包括是否区分大小写，标签符号，模板工作目录，全局对象等：
+你可以使用`EngineConfig`对象来对 JNTemplate进行配置：
 ```csharp
 Engine.Configure((conf)=>{
     // .. 配置你的具体参数
 });
 ```
 
-**简单示例**
-c# 代码:
-```csharp
-var template = Engine.CreateTemplate("hello $model.Name");
-template.Set("model", new User{
-    Name = "jntemplate"
-});
-var result = template.Render(); 
-```
-### API文档
-完整用法请查看：[docs.jiniannet.com](https://docs.jiniannet.com)
+### 链接
 
+- 官网: https://www.jiniannet.com
+- 文根: https://docs.jiniannet.com
+- 代码: https://gitee.com/jiniannet/jntemplate
 
 ### 授权
 MIT 详细请查看 License.txt(1.4以下版本为apache 2.0)

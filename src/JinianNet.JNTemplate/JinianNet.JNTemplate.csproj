@@ -6,7 +6,7 @@
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
     <Authors>JinianNet.com</Authors>
     <Company>JinianNet.com</Company>
     <Product>JNTemplate</Product>
@@ -18,14 +18,15 @@
     <RepositoryUrl>https://github.com/jiniannet/jntemplate.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>templating engine template 模板引擎</PackageTags>
-    <PackageReleaseNotes>- fix bugs.</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <NeutralLanguage />
     <SignAssembly>false</SignAssembly>
     <PreBuildEvent></PreBuildEvent>
     <PostBuildEvent></PostBuildEvent>
     <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <FileVersion>2.0.1.0</FileVersion> 
+    <FileVersion>2.1.0.0</FileVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion> 
   </PropertyGroup>
 
 
