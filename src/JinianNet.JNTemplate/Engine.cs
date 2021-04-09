@@ -173,6 +173,15 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
+        /// Creates template context.
+        /// </summary>
+        /// <returns>An instance of a <see cref="TemplateContext"/>.</returns>
+        public TemplateContext CreateContext()
+        {
+            return Current.CreateContext();
+        }
+
+        /// <summary>
         /// Register an new tag.
         /// </summary>
         /// <typeparam name="T">Type of the new tag. </typeparam>

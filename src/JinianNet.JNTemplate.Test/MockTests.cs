@@ -13,6 +13,23 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public partial class TagsTests : TagsTestBase
     {
+
+        /// <summary>
+        /// 模拟生成一个真实页面
+        /// </summary>
+        [Fact]
+        public void TestMockPage1()
+        {
+            var e = Configuration.EngineConfig.CreateDefault();
+            e.ThrowExceptions = false;
+            Engine.Configure(e);
+            var template = Engine.CreateTemplate("<li>1</li><li>$model.id</li><li>3</li>");
+            template.Set("model",new object());
+            var result = "<li>1</li><li></li><li>3</li>"; 
+            Assert.Equal(result, template.Render());
+        }
+
+
         /// <summary>
         /// 模拟生成一个真实页面
         /// </summary>
