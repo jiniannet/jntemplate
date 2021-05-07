@@ -224,6 +224,10 @@ namespace JinianNet.JNTemplate
                     cs.Add(this.document[i]);
                 }
             }
+            if(cs.Count==0)
+            {
+                return null;
+            }
             return new string(cs.ToArray());
         }
         /// <summary>
@@ -234,6 +238,10 @@ namespace JinianNet.JNTemplate
         /// <returns>A string.</returns>
         public string GetString(int x, int y)
         {
+            if(x == y)
+            {
+                return null;
+            }
             return this.document.Substring(x, y - x);
         }
     }

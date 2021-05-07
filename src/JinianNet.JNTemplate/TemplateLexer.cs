@@ -96,12 +96,12 @@ namespace JinianNet.JNTemplate
             }
             else
             {
-                text = this.scanner.GetEscapeString();
+                text = this.scanner.GetString();
             }
 
             Token token = new Token(this.kind, text ?? "");
             this.kind = tokenKind;
-            if (token.TokenKind == TokenKind.Text && text == null)
+            if ((token.TokenKind == TokenKind.Text || token.TokenKind == TokenKind.EOF) && text == null)
             {
                 return null;
             }
@@ -243,7 +243,6 @@ namespace JinianNet.JNTemplate
             Token token = null;
             do
             {
-                //
                 if (this.flagMode == FlagMode.None)
                 {
                     if (IsTagStart())
