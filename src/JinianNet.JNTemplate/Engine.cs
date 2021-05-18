@@ -69,6 +69,7 @@ namespace JinianNet.JNTemplate
             var conf = Configuration.EngineConfig.CreateDefault();
             var score = new VariableScope(null, Current.Options.TypeDetectPattern);
             action?.Invoke(conf, score);
+            Current.Configure(conf, score);
         }
 
         /// <summary>
