@@ -352,5 +352,18 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("ok", render);
         }
+
+        /// <summary>
+        /// 测试二个字符串比较
+        /// </summary>
+        [Fact]
+        public void TestStrAndStr()
+        {
+            var templateContent = "${if(\"key\"==\"key\")}yes${else}no${end}";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+            Assert.Equal("yes", render);
+        }
+
     }
 }

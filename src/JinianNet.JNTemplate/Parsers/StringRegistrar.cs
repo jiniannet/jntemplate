@@ -21,20 +21,13 @@ namespace JinianNet.JNTemplate.Parsers
             return (parser, tc) =>
             {
                 if (tc != null
-                                && tc.Count > 1
+                                && (tc.Count == 3 || tc.Count == 2)
                                 && tc.First.TokenKind == TokenKind.StringStart
                                 && tc.Last.TokenKind == TokenKind.StringEnd
                                 )
                 {
                     var tag = new StringTag();
-                    if (tc.Count == 3 && tc[1].TokenKind == TokenKind.String)
-                    {
-                        tag.Value = tc[1].Text;
-                    }
-                    else
-                    {
-                        tag.Value = "";
-                    }
+                    tag.Value = tc.Count == 3 ? tc[1].Text : string.Empty;
                     return tag;
                 }
                 return null;

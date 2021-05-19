@@ -333,6 +333,15 @@ namespace JinianNet.JNTemplate.Parsers
                                         case "System.Byte":
                                             il.Emit(OpCodes.Conv_U1);
                                             break;
+                                        case "System.String":
+                                            if (m.ReturnType.IsValueType)
+                                            {
+                                                var p = il.DeclareLocal(m.ReturnType);
+                                                il.Emit(OpCodes.Stloc, p.LocalIndex);
+                                                il.Emit(OpCodes.Ldloca, p.LocalIndex);
+                                            }
+                                            il.Call(m.ReturnType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+                                            break;
                                         default:
                                             if (m.ReturnType.IsValueType)
                                             {
