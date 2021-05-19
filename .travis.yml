@@ -1,5 +1,6 @@
 language: csharp
-before_install:
- - chmod +x build/build.mono.sh
+mono: none
+dotnet: 5.0.203
 script:
-  - ./build/build.mono.sh
+ - dotnet restore
+ - dotnet build
