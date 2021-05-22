@@ -321,6 +321,10 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("ok", render);
         }
 
+#if NOTODO 
+
+        //Struct 还不支持比较
+
         /// <summary>
         /// 测试结构相等
         /// </summary>
@@ -329,12 +333,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestStructEquals()
         {
             //TODO Struct
-            //var templateContent = "${if(struct1==struct2)}ok${end}";
-            //var template = Engine.CreateTemplate("TestStructEquals", templateContent);
-            //var size = new ViewModel.Size();
-            //template.Set("struct1", size);
-            //template.Set("struct2", size);
-            var render = "ok";// template.Render();
+            var templateContent = "${if(struct1==struct2)}ok${end}";
+            var template = Engine.CreateTemplate("TestStructEquals", templateContent);
+            var size = new ViewModel.Size();
+            template.Set("struct1", size);
+            template.Set("struct2", size);
+            var render =  template.Render();
             Assert.Equal("ok", render);
         }
 
@@ -352,6 +356,7 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("ok", render);
         }
+#endif
 
         /// <summary>
         /// 测试二个字符串比较
