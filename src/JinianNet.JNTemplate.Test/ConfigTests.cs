@@ -8,14 +8,14 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public class ConfigTests
     {
-#if testconfig
         /// <summary>
-        /// 自定义标签前后缀测试
+        /// 测试配置:自定义标签前后缀
         /// </summary>
         [Fact]
         public void TestConfig()
         {
-            Engine.Configure((c) =>
+            var engine = new EngineBuilder().Build();
+            engine.Configure((c) =>
             {
                 c.TagFlag = '@';
                 c.TagSuffix = "}}";
@@ -23,33 +23,54 @@ namespace JinianNet.JNTemplate.Test
             });
 
             var templateContent = "你好，@name,欢迎来到{{name}}的世界";
-            var template = Engine.CreateTemplate(templateContent);
+            var template = engine.CreateTemplate(templateContent);
             template.Set("name", "jntemplate");
             var render = template.Render();
             Console.WriteLine(render);
             Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
 
-            Engine.Configure(Configuration.EngineConfig.CreateDefault());
+        }
+
+        /// <summary>
+        /// 测试配置:自定义标签前后缀2
+        /// </summary>
+        [Fact]
+        public void TestTagConfig()
+        {
+            var engine = new EngineBuilder().Build();
+            engine.Configure((c) =>
+            {
+                c.TagFlag = '$';
+                c.TagSuffix = "}";
+                c.TagPrefix = "{$";
+            });
+
+            var templateContent = "hello,{$username}{{jsVar}}{$year}!!";
+            var template = engine.CreateTemplate(templateContent);
+            template.Set("username", "jntemplate");
+            template.Set("year",2020);
+            var render = template.Render();
+            Console.WriteLine(render);
+            Assert.Equal("hello,jntemplate{{jsVar}}2020!!", render);
 
         }
 
         /// <summary>
-        /// 测试配置
+        /// 测试配置:禁用简写
         /// </summary>
         [Fact]
-        public void TestConfig2()
+        public void TestDisableeLogogram()
         {
-            Engine.Configure((c) =>
+            var engine = new EngineBuilder().Build();
+            engine.Configure((c) =>
             {
                 c.DisableeLogogram = true;
             });
             var templateContent = "var $a =34;";
-            var template = Engine.CreateTemplate(templateContent);
+            var template = engine.CreateTemplate(templateContent);
             var render = template.Render();
             Assert.Equal("var $a =34;", render);
-            Engine.Configure(Configuration.EngineConfig.CreateDefault());
         }
-#endif
 
     }
 }

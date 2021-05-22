@@ -265,88 +265,90 @@ namespace JinianNet.JNTemplate
                         continue;
                     }
                 }
-
-                if (this.scanner.Read() == '"')
+                else
                 {
-                    if (this.pos.Count > 0 && this.pos.Peek() == "\"")
+                    var c = this.scanner.Read();
+                    if (c == '"')
                     {
-                        if (this.scanner.Read(-1) != '\\'
-                            || GetPrevCharCount('\\') % 2 == 0)
+                        if (this.pos.Count > 0 && this.pos.Peek() == "\"")
                         {
-                            //if (this.kind == TokenKind.StringStart)
-                            //{
-                            //    token = GetToken(TokenKind.String);
-                            //}
-                            token = GetToken(TokenKind.StringEnd);
-                            this.pos.Pop();
-                        }
-                        continue;
-                    }
-                    else
-                    {
-                        if (this.kind == TokenKind.TagStart
-                            || this.kind == TokenKind.LeftBracket
-                           || this.kind == TokenKind.LeftParentheses
-                           || this.kind == TokenKind.Operator
-                           || this.kind == TokenKind.Punctuation
-                           || this.kind == TokenKind.Comma
-                           || this.kind == TokenKind.Colon
-                           || this.kind == TokenKind.LeftBrace
-                           || this.kind == TokenKind.Space)
-                        {
-                            token = GetToken(TokenKind.StringStart);
-                            this.pos.Push("\"");
+                            if (this.scanner.Read(-1) != '\\'
+                                || GetPrevCharCount('\\') % 2 == 0)
+                            {
+                                //if (this.kind == TokenKind.StringStart)
+                                //{
+                                //    token = GetToken(TokenKind.String);
+                                //}
+                                token = GetToken(TokenKind.StringEnd);
+                                this.pos.Pop();
+                            }
                             continue;
                         }
+                        else
+                        {
+                            if (this.kind == TokenKind.TagStart
+                                || this.kind == TokenKind.LeftBracket
+                               || this.kind == TokenKind.LeftParentheses
+                               || this.kind == TokenKind.Operator
+                               || this.kind == TokenKind.Punctuation
+                               || this.kind == TokenKind.Comma
+                               || this.kind == TokenKind.Colon
+                               || this.kind == TokenKind.LeftBrace
+                               || this.kind == TokenKind.Space)
+                            {
+                                token = GetToken(TokenKind.StringStart);
+                                this.pos.Push("\"");
+                                continue;
+                            }
 
+                        }
                     }
-                }
 
-                if (this.kind == TokenKind.StringStart)
-                {
-                    token = GetToken(TokenKind.String);
-                    continue;
-                }
-
-                if (this.kind == TokenKind.String)
-                {
-                    continue;
-                }
-
-                if (this.scanner.Read() == '(' || this.scanner.Read() == '[' || this.scanner.Read() == '{')
-                {
-                    this.pos.Push(this.scanner.Read().ToString());
-                }
-                else if (
-                    (this.scanner.Read() == ')' && this.pos.Count > 0 && this.pos.Peek() == "(")
-                    || (this.scanner.Read() == ']' && this.pos.Count > 0 && this.pos.Peek() == "[")
-                    || (this.scanner.Read() == '}' && this.pos.Count > 0 && this.pos.Peek() == "{"))// && this.pos.Count > 2
-                {
-                    this.pos.Pop();
-                }
-                else if (IsTagEnd())
-                {
-                    token = GetToken(TokenKind.TagEnd);
-                    if (this.flagMode == FlagMode.Full)
+                    if (this.kind == TokenKind.StringStart)
                     {
-                        Move(this.suffix.Length - 1);
+                        token = GetToken(TokenKind.String);
+                        continue;
                     }
+
+                    if (this.kind == TokenKind.String)
+                    {
+                        continue;
+                    }
+
+                    if (c == '(' || c == '[' || c == '{')
+                    {
+                        this.pos.Push(this.scanner.Read().ToString());
+                    }
+                    else if (this.pos.Count > 0 &&
+                        ((c == ')' && this.pos.Peek() == "(")
+                        || (c == ']' && this.pos.Peek() == "[")
+                        || (c == '}' && this.pos.Peek() == "{")))// && this.pos.Count > 2
+                    {
+                        this.pos.Pop();
+                    }
+                    else if (IsTagEnd())
+                    {
+                        token = GetToken(TokenKind.TagEnd);
+                        if (this.flagMode == FlagMode.Full)
+                        {
+                            Move(this.suffix.Length - 1);
+                        }
 #if ALLOWCOMMENT
-                    else if (this.flagMode == FlagMode.Comment)
-                    {
-                        Move(1);
-                    }
+                        else if (this.flagMode == FlagMode.Comment)
+                        {
+                            Move(1);
+                        }
 #endif
-                    else if (this.flagMode == FlagMode.Logogram)
-                    {
-                        Move(-1);
+                        else if (this.flagMode == FlagMode.Logogram)
+                        {
+                            Move(-1);
+                        }
+                        this.flagMode = FlagMode.None;
+                        continue;
                     }
-                    this.flagMode = FlagMode.None;
-                    continue;
                 }
-
                 TokenKind tk;
-                if (this.scanner.Read() == '+' || this.scanner.Read() == '-') 
+                if (this.scanner.Read() == '+' || this.scanner.Read() == '-')
                 {
                     if (char.IsNumber(this.scanner.Read(1)) &&
                         (this.kind != TokenKind.Number

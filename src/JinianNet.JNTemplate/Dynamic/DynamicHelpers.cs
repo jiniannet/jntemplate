@@ -5,6 +5,7 @@
 #define NEEDFIELD
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -15,7 +16,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public class DynamicHelpers
     {
-        private static Dictionary<string, MethodInfo[]> dict = new Dictionary<string, MethodInfo[]>(StringComparer.OrdinalIgnoreCase);
+        private static ConcurrentDictionary<string, MethodInfo[]> dict = new ConcurrentDictionary<string, MethodInfo[]>(StringComparer.OrdinalIgnoreCase);
         /// <summary>
         /// Searches for the public property with the specified name.
         /// </summary>
@@ -70,13 +71,10 @@ namespace JinianNet.JNTemplate.Dynamic
         public static MethodInfo[] GetCacheMethods(Type type, string name)
         {
             var cacheKey = string.Concat(type.FullName, ".", name);
-            if (dict.TryGetValue(cacheKey, out var result))
+            return dict.GetOrAdd(cacheKey, (key) =>
             {
-                return result;
-            }
-            result = GetMethods(type, name);
-            dict[cacheKey] = result;
-            return result;
+                return GetMethods(type, name);
+            });
         }
 
         /// <summary>
@@ -301,17 +299,17 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
         /// <summary>
-        /// Convert dict to matching parameters
+        /// Convert dictionary to matching parameters
         /// </summary>
-        /// <param name="dict">The dictionary. </param>
+        /// <param name="data">The dictionary. </param>
         /// <param name="pis">The parameter types.</param>
         /// <returns>object[]</returns>
-        public static object[] ChangeParameters(Dictionary<object, object> dict, ParameterInfo[] pis)
+        public static object[] ChangeParameters(Dictionary<object, object> data, ParameterInfo[] pis)
         {
             var args = new object[pis.Length];
             for (int i = 0; i < pis.Length; i++)
             {
-                foreach (var kv in dict)
+                foreach (var kv in data)
                 {
                     if (pis[i].Name.Equals(kv.Key.ToString()))
                     {
@@ -431,7 +429,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>The result of execution.</returns>
         public static object CallMethod(object container, string name, object[] args)
         {
-            return CallMethod(container?.GetType(), container,name,args);
+            return CallMethod(container?.GetType(), container, name, args);
         }
         /// <summary>
         /// Calls the specified method and returns the result of execution
@@ -456,7 +454,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     hasNullValue = true;
                 }
             }
-             
+
             MethodInfo method = DynamicHelpers.GetMethod(type, name, types);
 
             if (method != null)
@@ -498,7 +496,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     for (int i = 0; i < args.Length; i++)
                     {
-                        if (args[i] == null 
+                        if (args[i] == null
                             && !pi[i].ParameterType.IsClass
                             && pi[i].DefaultValue != DBNull.Value)
                         {

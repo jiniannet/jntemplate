@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Test
 
 
         /// <summary>
-        /// 测试索引取值与方法标签
+        /// 测试LOAD使用变量
         /// </summary>
         [Fact]
         public void TestLoadVar()
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Test
         }
 
         /// <summary>
-        /// 测试索引取值与方法标签
+        /// 测试include
         /// </summary>
         [Fact]
         public void TestInclub()
@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Test
 
 
         /// <summary>
-        /// 测试索引取值与方法标签
+        /// 测试include使用变量
         /// </summary>
         [Fact]
         public void TestIncludeVar()
@@ -72,7 +72,7 @@ namespace JinianNet.JNTemplate.Test
         }
 
         /// <summary>
-        /// 测试索引取值与方法标签
+        /// 测试子目录LOAD
         /// </summary>
         [Fact]
         public void TestLoad()
@@ -103,7 +103,7 @@ namespace JinianNet.JNTemplate.Test
 
 
         /// <summary>
-        /// 测试Layout
+        /// 测试LoadTemplate
         /// </summary>
         [Fact]
         public void TestLoadTemplate()

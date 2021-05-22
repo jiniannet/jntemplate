@@ -3,4 +3,5 @@ mono: none
 dotnet: 5.0.203
 script:
  - dotnet restore
+ - dotnet test
  - dotnet build
