@@ -12,14 +12,9 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class LoadTag : BlockTag
     {
-        private ITag path;
         /// <summary>
         /// The path of a tag.
         /// </summary>
-        public ITag Path
-        {
-            get { return this.path; }
-            set { this.path = value; }
-        } 
+        public ITag Path { get; set; }
     }
 }

@@ -12,5 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class EndTag : SpecialTag
     {
+        /// <inheritdoc />
+        public override bool Out => false;
     }
 }

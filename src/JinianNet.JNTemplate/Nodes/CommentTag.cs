@@ -12,6 +12,10 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class CommentTag : SpecialTag
     {
+
+        /// <inheritdoc />
+        public override bool Out => false;
+
         /// <inheritdoc />
         public override string ToString()
         {

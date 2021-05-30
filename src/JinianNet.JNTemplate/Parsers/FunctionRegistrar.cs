@@ -23,8 +23,8 @@ namespace JinianNet.JNTemplate.Parsers
         {
             return (tag, c) =>
             {
-                var getVariableScope = DynamicHelpers.GetPropertyGetMethod(typeof(TemplateContext), "TempData");
-                var getVariableValue = DynamicHelpers.GetMethod(typeof(VariableScope), "get_Item", new[] { typeof(string) });
+                var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
+                var getVariableValue = typeof(VariableScope).GetMethodInfo("get_Item", new[] { typeof(string) });
                 var t = tag as FunctaionTag;
                 Type baseType;
                 MethodInfo method;
@@ -43,14 +43,14 @@ namespace JinianNet.JNTemplate.Parsers
                 if (t.Parent != null)
                 {
                     baseType = c.GuessType(t.Parent);
-                    method = DynamicHelpers.GetMethod(baseType, t.Name, paramType, false);
+                    method = baseType.GetMethodInfo(t.Name, paramType, false);
                     if (method == null)
                     {
-                        var property = DynamicHelpers.GetPropertyInfo(baseType, t.Name);
+                        var property = baseType.GetPropertyInfo(t.Name);
                         Type funcType = null;
                         if (property == null)
                         {
-                            field = DynamicHelpers.GetFieldInfo(baseType, t.Name);
+                            field = baseType.GetFieldInfo( t.Name);
                             if (field != null)
                             {
                                 funcType = field.FieldType;
@@ -208,7 +208,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     types[i] = c.GuessType(t.Children[i]);
                 }
-                var method = DynamicHelpers.GetMethod(parentType, t.Name, types);
+                var method = parentType.GetMethodInfo( t.Name, types);
                 if (method != null)
                 {
                     return method.ReturnType;
@@ -301,14 +301,14 @@ namespace JinianNet.JNTemplate.Parsers
                     return null;
                 }
 
-                var result = DynamicHelpers.CallMethod(type,parentValue, t.Name, args);
+                var result = type.CallMethod(parentValue, t.Name, args);
 
                 if (result != null)
                 {
                     return result;
                 }
 
-                result = DynamicHelpers.CallPropertyOrField(parentValue, t.Name);
+                result = parentValue.CallPropertyOrField(t.Name);
 
                 if (result != null && result is Delegate)
                 {

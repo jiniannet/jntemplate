@@ -12,36 +12,23 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class ForTag : ComplexTag
     {
-        private ITag initial;
-        private ITag condition;
-        private ITag dothing;
-
         /// <summary>
         /// Gets or sets the initial of the tag.
         /// </summary>
-        public ITag Initial
-        {
-            get { return this.initial; }
-            set { this.initial = value; }
-        }
+        public ITag Initial { get; set; }
 
         /// <summary>
         /// Gets or sets the condition of the tag.
         /// </summary>
-        public ITag Condition
-        {
-            get { return this.condition; }
-            set { this.condition = value; }
-        }
+        public ITag Condition { get; set; }
 
         /// <summary>
         /// do things.
         /// </summary>
-        public ITag Do
-        {
-            get { return this.dothing; }
-            set { this.dothing = value; }
-        }
+        public ITag Do { get; set; }
+
+        /// <inheritdoc />
+        public override bool Out => false;
 
     }
 }

@@ -53,11 +53,7 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, context) =>
             {
                 var t = tag as TextTag;
-                if (context.StripWhiteSpace)
-                {
-                    return (t.Text ?? string.Empty).Trim();
-                }
-                return t.Text;
+                return t.ToString(context.OutMode);
             };
         }
     }

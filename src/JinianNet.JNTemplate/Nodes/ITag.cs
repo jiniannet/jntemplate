@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace JinianNet.JNTemplate.Nodes
@@ -14,7 +15,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <summary>
         /// Gets the childer of the tag.
         /// </summary>
-        Collection<ITag> Children { get; }
+        TagCollection Children { get; }
 
         /// <summary>
         /// Adds an tag to the end of the children.
@@ -30,6 +31,13 @@ namespace JinianNet.JNTemplate.Nodes
         /// Gets or sets the last token of the tag.
         /// </summary>
         Token LastToken { get; set; }
-
+        /// <summary>
+        /// Gets or sets the output mode
+        /// </summary>
+        bool Out { get; }
+        /// <summary>
+        /// Gets or sets the output mode
+        /// </summary>
+        ITag Previous { get; set; }
     }
 }

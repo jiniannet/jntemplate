@@ -12,14 +12,9 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class FunctaionTag : ChildrenTag
     {
-        private string name;
         /// <summary>
         /// The method name of the tag.
         /// </summary>
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; }
-        } 
+        public string Name { get; set; }
     }
 }

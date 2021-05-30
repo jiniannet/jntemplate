@@ -72,5 +72,51 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("var $a =34;", render);
         }
 
+        /// <summary>
+        /// 测试标签前后空白字符串处理
+        /// </summary>
+        [Fact]
+        public void TestStripWhiteSpace()
+        {
+            var templateContent = @"
+your data is:
+$set(key1=1)
+$set(key2=2)
+$set(key3=3)
+$set(key4=4)
+$set(key5=5)
+$set(key6=6)
+$key5";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.OutMode = OutMode.StripWhiteSpace;
+            var render = template.Render();
+            Assert.Equal("your data is:5", render);
+        }
+
+
+        /// <summary>
+        /// 测试标签输出模式
+        /// </summary>
+        [Fact]
+        public void TestAutoMode()
+        {
+            var templateContent = 
+@"<ul>
+$for(i =0;i<5;i++)
+<li>$i</li>
+$end
+<ul>";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Context.OutMode = OutMode.Auto;
+            var render = template.Render();
+            Assert.Equal(
+@"<ul>
+<li>0</li>
+<li>1</li>
+<li>2</li>
+<li>3</li>
+<li>4</li>
+<ul>", render);
+        }
     }
 }

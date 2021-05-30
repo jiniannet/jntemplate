@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
-            ctx.StripWhiteSpace = context.StripWhiteSpace;
+            ctx.OutMode = context.OutMode;
             return ctx;
         }
     }

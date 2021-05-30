@@ -12,14 +12,9 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class VariableTag : ChildrenTag
     {
-        private string name;
         /// <summary>
         /// The name of tag.
         /// </summary>
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; }
-        } 
+        public string Name { get; set; }
     }
 }

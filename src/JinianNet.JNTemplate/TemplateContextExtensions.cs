@@ -68,7 +68,7 @@ namespace JinianNet.JNTemplate
                 ctx2.Data = ctx1.TempData;
                 ctx2.CurrentPath = ctx1.CurrentPath;
                 ctx2.Charset = ctx1.Charset;
-                ctx2.StripWhiteSpace = ctx1.StripWhiteSpace;
+                ctx2.OutMode = ctx1.OutMode;
                 ctx2.ThrowExceptions = ctx1.ThrowExceptions;
             }
         }

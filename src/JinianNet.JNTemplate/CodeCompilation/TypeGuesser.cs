@@ -85,30 +85,17 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             if (type.IsArray)
             {
-                var methd = DynamicHelpers.GetMethod(type, "Get", new Type[] { typeof(int) });
+                var methd = type.GetMethodInfo("Get", new Type[] { typeof(int) });
                 if (methd != null)
                 {
                     return new Type[] { methd.ReturnType };
                 }
             }
-            var gType = type.GetInterface("IEnumerable`1");
+            var gType = type.GetIEnumerableGenericType();
             if (gType != null)
             {
                 return gType.GetGenericArguments();
             }
-            //if (type.IsGenericType)
-            //{
-            //    return type.GetGenericArguments();
-            //}
-            //var types = type.GetInterfaces();
-            //foreach (var t in types)
-            //{
-            //    if (t.IsGenericType)
-            //    {
-            //        return t.GetGenericArguments();
-            //    }
-            //}
-
             return new Type[] { typeof(object) };
         }
 

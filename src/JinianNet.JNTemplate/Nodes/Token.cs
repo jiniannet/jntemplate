@@ -12,60 +12,30 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class Token : IComparable<Token>
     {
-        private string text;
-        private int beginline;
-        private int begincolumn;
-        private int endline;
-        private int endcolumn;
-        private TokenKind tokenkind;
-        private Token next;
         /// <summary>
         /// Gets or sets the start line of the token.
         /// </summary>
-        public int BeginLine
-        {
-            get { return this.beginline; }
-            set { this.beginline = value; }
-        }
+        public int BeginLine { get; set; }
         /// <summary>
         /// Gets or sets the start cloumn of the token.
         /// </summary>
-        public int BeginColumn
-        {
-            get { return this.begincolumn; }
-            set { this.begincolumn = value; }
-        }
+        public int BeginColumn { get; set; }
         /// <summary>
         /// Gets or sets the end line of the token.
         /// </summary>
-        public int EndLine
-        {
-            get { return this.endline; }
-            set { this.endline = value; }
-        }
+        public int EndLine { get; set; }
         /// <summary>
         /// Gets or sets the end cloumn of the token.
         /// </summary>
-        public int EndColumn
-        {
-            get { return this.endcolumn; }
-            set { this.endcolumn = value; }
-        }
-
+        public int EndColumn { get; set; }
         /// <summary>
         /// Gets or sets the text of the token.
         /// </summary>
-        public string Text
-        {
-            get { return this.text; }
-        }
+        public string Text { get; private set; }
         /// <summary>
         /// Gets or sets the kind of the token.
         /// </summary>
-        public TokenKind TokenKind
-        {
-            get { return this.tokenkind; }
-        }
+        public TokenKind TokenKind { get; private set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="Token"/> class
         /// </summary>
@@ -73,17 +43,13 @@ namespace JinianNet.JNTemplate.Nodes
         /// <param name="text">The text.</param>
         public Token(TokenKind kind, string text)
         {
-            this.tokenkind = kind;
-            this.text = text;
+            this.TokenKind = kind;
+            this.Text = text;
         }
         /// <summary>
         /// Gets or sets the  next element of the collection.
         /// </summary>
-        public Token Next
-        {
-            get { return this.next; }
-            set { this.next = value; }
-        }
+        public Token Next { get; set; }
         /// <inheritdoc />
         public override string ToString()
         {

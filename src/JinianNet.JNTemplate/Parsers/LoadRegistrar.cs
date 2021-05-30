@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                             il.Emit(OpCodes.Ldloc, 3);
                         }
-                        il.Call(m.ReturnType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+                        il.Call(m.ReturnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
                         il.Emit(OpCodes.Stloc, 0);
                         il.Emit(OpCodes.Ldloc, 0);
                     }
@@ -117,7 +117,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Ldloc_0);
-                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(TemplateContextExtensions), "CompileFileAndExec", new Type[] { typeof(TemplateContext), typeof(string)}));
+                    il.Emit(OpCodes.Call, typeof(TemplateContextExtensions).GetMethodInfo("CompileFileAndExec", new Type[] { typeof(TemplateContext), typeof(string)}));
                     il.Emit(OpCodes.Stloc, 2);
 
                     il.Emit(OpCodes.Br, labelSuccess);

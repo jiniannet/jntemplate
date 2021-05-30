@@ -133,7 +133,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 });
             }
             il.Emit(OpCodes.Ldloc_0);
-            il.Call(stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+            il.Call(stringBuilderType, stringBuilderType.GetMethodInfo( "ToString", Type.EmptyTypes));
             il.Emit(OpCodes.Stloc_1);
             il.Emit(OpCodes.Ldloc_1);
         }
@@ -183,7 +183,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 });
             }
             il.Emit(OpCodes.Ldloc_1);
-            il.Call(stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+            il.Call(stringBuilderType, stringBuilderType.GetMethodInfo("ToString", Type.EmptyTypes));
             il.Emit(OpCodes.Stloc_0);
 
             il.MarkLabel(labelEnd);

@@ -13,25 +13,16 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class SetTag : ComplexTag
     {
-        private string name;
-        private ITag value;
-
         /// <summary>
         ///  Gets the name of the tag.
         /// </summary>
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         ///  Gets the value of the tag.
         /// </summary>
-        public ITag Value
-        {
-            get { return this.value; }
-            set { this.value = value; }
-        } 
+        public ITag Value { get; set; } 
+        /// <inheritdoc />
+        public override bool Out => false;
     }
 }

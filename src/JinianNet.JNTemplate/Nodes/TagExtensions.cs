@@ -46,5 +46,36 @@ namespace JinianNet.JNTemplate.Nodes
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Returns tag instance of <see cref="string"/> 
+        /// </summary>
+        /// <param name="tag">The <see cref="TextTag"/> </param>
+        /// <param name="mode">The <see cref="OutMode"/></param>
+        /// <returns></returns>
+        public static string ToString(this TextTag tag, OutMode mode)
+        {
+            switch (mode)
+            {
+                case OutMode.Auto:
+                    if ((tag.Previous == null || !tag.Previous.Out) && !string.IsNullOrEmpty(tag.Text))
+                    {
+                        if (tag.Text.Length > 1 && tag.Text[0] == '\r' && tag.Text[1] == '\n')
+                        {
+                            return tag.Text.Substring(2);
+                        }
+
+                        if (tag.Text.Length > 0 && tag.Text[0] == '\n')
+                        {
+                            return tag.Text.Substring(1);
+                        }
+                    }
+                    return tag.Text;
+                case OutMode.StripWhiteSpace:
+                    return tag.Text?.Trim();
+                default:
+                    return tag.Text;
+            }
+        }
     }
 }

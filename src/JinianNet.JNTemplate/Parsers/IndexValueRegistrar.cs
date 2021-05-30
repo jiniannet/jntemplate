@@ -99,7 +99,7 @@ namespace JinianNet.JNTemplate.Parsers
                     il.DeclareLocal(typeof(string));
                     il.Emit(OpCodes.Stloc_3);
                     il.Emit(OpCodes.Ldloc_3);
-                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(string), "ToCharArray", Type.EmptyTypes));
+                    il.Emit(OpCodes.Call, typeof(string).GetMethodInfo("ToCharArray", Type.EmptyTypes));
                 }
                 il.Emit(OpCodes.Stloc_0);
 
@@ -119,7 +119,7 @@ namespace JinianNet.JNTemplate.Parsers
                 }
                 else
                 {
-                    var getItem = DynamicHelpers.GetMethod(parentType, "get_Item", new Type[] { indexType });
+                    var getItem = parentType.GetMethodInfo("get_Item", new Type[] { indexType });
                     if (getItem == null)
                     {
                         throw new CompileException($"[IndexValutTag] : Cannot not compile.");
@@ -151,13 +151,13 @@ namespace JinianNet.JNTemplate.Parsers
                 var indexType = c.GuessType(t.Index);
                 if (parentType.IsArray)
                 {
-                    var method = DynamicHelpers.GetMethod(parentType, "get", new Type[] { indexType });
+                    var method = parentType.GetMethodInfo("get", new Type[] { indexType });
                     if (method != null)
                     {
                         return method.ReturnType;
                     }
                 }
-                var m = DynamicHelpers.GetMethod(parentType, "get_Item", new Type[] { indexType });
+                var m = parentType.GetMethodInfo("get_Item", new Type[] { indexType });
                 if (m != null)
                 {
                     return m.ReturnType;
@@ -174,7 +174,7 @@ namespace JinianNet.JNTemplate.Parsers
                 var t = tag as IndexValueTag;
                 object obj = TagExecutor.Execute(t.Parent, context);
                 object index = TagExecutor.Execute(t.Index, context);
-                return DynamicHelpers.CallIndexValue(obj, index);
+                return obj.CallIndexValue(index);
             };
         }
     }

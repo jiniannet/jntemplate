@@ -2,15 +2,25 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate
 {
     /// <summary>
-    /// LayoutTag
+    /// output mode of the tag.
     /// </summary>
-    [Serializable]
-    public class LayoutTag : LoadTag
+    public enum OutMode
     {
+        /// <summary>
+        /// none
+        /// </summary>
+        None,
+        /// <summary>
+        /// StripWhiteSpace
+        /// </summary>
+        StripWhiteSpace,
+        /// <summary>
+        /// auto
+        /// </summary>
+        Auto
     }
 }

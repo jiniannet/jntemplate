@@ -87,7 +87,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <returns></returns>
         public static MethodInfo EnumerableForeachCompile(CompileContext c, ForeachTag tag, Type sourceType)
         {
-            var getVariableScope = DynamicHelpers.GetPropertyGetMethod(typeof(TemplateContext), "TempData");
+            var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
             var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
 
             var stringBuilderType = typeof(StringBuilder);
@@ -96,7 +96,7 @@ namespace JinianNet.JNTemplate.Parsers
             var variableScopeType = typeof(VariableScope);
             var templateContextType = typeof(TemplateContext);
             var childType = TypeGuesser.InferChildType(sourceType);
-            var enumerableType = sourceType.GetInterface("IEnumerable`1");// typeof(System.Collections.IEnumerable);
+            var enumerableType = sourceType.GetIEnumerableGenericType();// typeof(System.Collections.IEnumerable);
             Type enumeratorType;
             bool mustTo = false;
             if (enumerableType == null)
@@ -161,10 +161,10 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Brfalse, labelEnd);
             il.Emit(OpCodes.Nop);
             il.Emit(OpCodes.Ldloc_1);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(enumerableType, "GetEnumerator", Type.EmptyTypes));
+            il.Emit(OpCodes.Callvirt, enumerableType.GetMethodInfo("GetEnumerator", Type.EmptyTypes));
             il.Emit(OpCodes.Stloc_S, 4);
             il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(templateContextType, "CreateContext", new Type[] { templateContextType }));
+            il.Emit(OpCodes.Call, templateContextType.GetMethodInfo("CreateContext", new Type[] { templateContextType }));
             il.Emit(OpCodes.Stloc_2);
             il.Emit(OpCodes.Ldc_I4, 0);
             il.Emit(OpCodes.Stloc_S, 5);
@@ -176,7 +176,7 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Add);
             il.Emit(OpCodes.Stloc_S, 5);
             il.Emit(OpCodes.Ldloc_S, 4);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(enumeratorType, "Current"));
+            il.Emit(OpCodes.Callvirt, enumeratorType.GetPropertyGetMethod("Current"));
             if (mustTo)
             {
                 if (childType[0].IsValueType)
@@ -193,14 +193,14 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Callvirt, getVariableScope);
             il.Emit(OpCodes.Ldstr, t.Name);
             il.Emit(OpCodes.Ldloc_S, 6);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, childType, "Set", new Type[] { typeof(string), childType[0] }));
+            il.Emit(OpCodes.Callvirt, variableScopeType.GetGenericMethod(childType, "Set", new Type[] { typeof(string), childType[0] }));
 
             il.Emit(OpCodes.Nop);
             il.Emit(OpCodes.Ldloc, 2);
             il.Emit(OpCodes.Callvirt, getVariableScope);
             il.Emit(OpCodes.Ldstr, "foreachIndex");
             il.Emit(OpCodes.Ldloc_S, 5);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, new Type[] { typeof(int) }, "Set", new Type[] { typeof(string), typeof(int) }));
+            il.Emit(OpCodes.Callvirt, variableScopeType.GetGenericMethod(new Type[] { typeof(int) }, "Set", new Type[] { typeof(string), typeof(int) }));
             il.Emit(OpCodes.Nop);
 
             il.StringAppend(c, t.Children, 0, 2);
@@ -210,18 +210,18 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Ldloc_S, 4);
             if (!mustTo)
             {
-                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(System.Collections.IEnumerator), "MoveNext", Type.EmptyTypes));
+                il.Emit(OpCodes.Callvirt, typeof(System.Collections.IEnumerator).GetMethodInfo("MoveNext", Type.EmptyTypes));
             }
             else
             {
-                il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(enumeratorType, "MoveNext", Type.EmptyTypes));
+                il.Emit(OpCodes.Callvirt, enumeratorType.GetMethodInfo("MoveNext", Type.EmptyTypes));
             }
             il.Emit(OpCodes.Stloc_S, 7);
             il.Emit(OpCodes.Ldloc_S, 7);
             il.Emit(OpCodes.Brtrue, labelStart);
             il.MarkLabel(labelEnd);
             il.Emit(OpCodes.Ldloc_0);
-            il.Call(stringBuilderType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+            il.Call(stringBuilderType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
             il.Emit(OpCodes.Stloc_S, 8);
             il.Emit(OpCodes.Ldloc_S, 8);
             il.Emit(OpCodes.Ret);
@@ -239,7 +239,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <returns></returns>
         public static MethodInfo ArrayForeachCompile(CompileContext c, ForeachTag tag, Type sourceType)
         {
-            var getVariableScope = DynamicHelpers.GetPropertyGetMethod(typeof(TemplateContext), "TempData");
+            var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
             var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
 
             var stringBuilderType = typeof(StringBuilder);
@@ -308,7 +308,7 @@ namespace JinianNet.JNTemplate.Parsers
 
 
             il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(templateContextType, "CreateContext", new Type[] { templateContextType }));
+            il.Emit(OpCodes.Call, templateContextType.GetMethodInfo("CreateContext", new Type[] { templateContextType }));
             il.Emit(OpCodes.Stloc_3);
             il.Emit(OpCodes.Ldc_I4_0);
             il.Emit(OpCodes.Stloc, 4);
@@ -332,12 +332,12 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Callvirt, getVariableScope);
             il.Emit(OpCodes.Ldstr, t.Name);
             il.Emit(OpCodes.Ldloc, 7);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, childType, "Set", new Type[] { typeof(string), childType[0] }));
+            il.Emit(OpCodes.Callvirt, variableScopeType.GetGenericMethod(childType, "Set", new Type[] { typeof(string), childType[0] }));
             il.Emit(OpCodes.Ldloc, 3);
             il.Emit(OpCodes.Callvirt, getVariableScope);
             il.Emit(OpCodes.Ldstr, "foreachIndex");
             il.Emit(OpCodes.Ldloc, 4);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetGenericMethod(variableScopeType, new Type[] { typeof(int) }, "Set", new Type[] { typeof(string), typeof(int) }));
+            il.Emit(OpCodes.Callvirt, variableScopeType.GetGenericMethod(new Type[] { typeof(int) }, "Set", new Type[] { typeof(string), typeof(int) }));
 
             il.StringAppend(c, t.Children, 0, 3);
 
@@ -355,7 +355,7 @@ namespace JinianNet.JNTemplate.Parsers
 
             il.MarkLabel(labelEnd);
             il.Emit(OpCodes.Ldloc_0);
-            il.Call(stringBuilderType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+            il.Call(stringBuilderType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
             il.Emit(OpCodes.Stloc, 8);
             il.Emit(OpCodes.Ldloc, 8);
             il.Emit(OpCodes.Ret);
@@ -374,7 +374,7 @@ namespace JinianNet.JNTemplate.Parsers
                     using (var writer = new StringWriter())
                     {
                         object value = TagExecutor.Execute(t.Source, context);
-                        var enumerable = ForeachTag.ToIEnumerable(value);
+                        var enumerable = value.ToIEnumerable();
                         TemplateContext ctx;
                         if (enumerable != null)
                         {

@@ -214,10 +214,10 @@ namespace JinianNet.JNTemplate.Parsers
                         il.Emit(OpCodes.Call, m);
                         if (m.ReturnType.Name != "Boolean")
                         {
-                            var cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { m.ReturnType });
+                            var cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { m.ReturnType });
                             if (cm == null)
                             {
-                                cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { typeof(object) });
+                                cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { typeof(object) });
                                 if (m.ReturnType.IsValueType)
                                 {
                                     il.Emit(OpCodes.Box, typeof(object));
@@ -340,7 +340,7 @@ namespace JinianNet.JNTemplate.Parsers
                                                 il.Emit(OpCodes.Stloc, p.LocalIndex);
                                                 il.Emit(OpCodes.Ldloca, p.LocalIndex);
                                             }
-                                            il.Call(m.ReturnType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+                                            il.Call(m.ReturnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
                                             break;
                                         default:
                                             if (m.ReturnType.IsValueType)
@@ -380,7 +380,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         else
                                         {
-                                            var m = DynamicHelpers.GetMethod(bestType, "op_GreaterThan", new Type[] { bestType, bestType });
+                                            var m = bestType.GetMethodInfo("op_GreaterThan", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
                                                 throw new Exception.TemplateException($"Operator \">\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
@@ -397,7 +397,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         else
                                         {
-                                            var m = DynamicHelpers.GetMethod(bestType, "op_GreaterThanOrEqual", new Type[] { bestType, bestType });
+                                            var m = bestType.GetMethodInfo("op_GreaterThanOrEqual", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
                                                 throw new Exception.TemplateException($"Operator \">=\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
@@ -412,7 +412,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         else
                                         {
-                                            var m = DynamicHelpers.GetMethod(bestType, "op_LessThan", new Type[] { bestType, bestType });
+                                            var m = bestType.GetMethodInfo("op_LessThan", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
                                                 throw new Exception.TemplateException($"Operator \"<\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
@@ -429,7 +429,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         }
                                         else
                                         {
-                                            var m = DynamicHelpers.GetMethod(bestType, "op_LessThanOrEqual", new Type[] { bestType, bestType });
+                                            var m = bestType.GetMethodInfo("op_LessThanOrEqual", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
                                                 throw new Exception.TemplateException($"Operator \"<=\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
@@ -445,7 +445,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         else
                                         {
                                             il.EmitEquals(bestType);
-                                            //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(bestType, "Equals", new Type[] { bestType }));
+                                            //il.Emit(OpCodes.Call, DynamicHelpers.GetMethodInfo(bestType, "Equals", new Type[] { bestType }));
                                         }
                                         break;
                                     case Operator.NotEqual:
@@ -456,7 +456,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         else
                                         {
                                             il.EmitEquals(bestType);
-                                            //il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(bestType, "Equals", new Type[] { bestType }));
+                                            //il.Emit(OpCodes.Call, DynamicHelpers.GetMethodInfo(bestType, "Equals", new Type[] { bestType }));
                                         }
                                         il.Emit(OpCodes.Ldc_I4_0);
                                         il.Emit(OpCodes.Ceq);
@@ -534,7 +534,7 @@ namespace JinianNet.JNTemplate.Parsers
                     }
 
                     il.Emit(OpCodes.Ldloc_1);
-                    il.Call(stringBuilderType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+                    il.Call(stringBuilderType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
                     il.Emit(OpCodes.Stloc_0);
                 }
                 else

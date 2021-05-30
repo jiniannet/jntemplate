@@ -12,42 +12,20 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public abstract class Tag : ITag
     {
-        private Token first, last;
-        private Collection<ITag> children = new Collection<ITag>();
-        /// <summary>
-        /// Gets the childer of the tag.
-        /// </summary>
-        public Collection<ITag> Children
-        {
-            get { return children; }
-        }
-        /// <summary>
-        /// Adds an tag to the end of the children.
-        /// </summary>
-        /// <param name="node"></param>
+        /// <inheritdoc />
+        public TagCollection Children { get; } = new TagCollection();
+        /// <inheritdoc />
+        public Token FirstToken { get; set; }
+        /// <inheritdoc />
+        public Token LastToken { get; set; }
+        /// <inheritdoc />
+        public virtual bool Out => true;
+        /// <inheritdoc />
+        public ITag Previous { get; set; }
+        /// <inheritdoc />
         public virtual void AddChild(ITag node)
         {
-            if (node != null)
-            {
-                children.Add(node);
-            }
-        }
-
-        /// <summary>
-        /// Returns the first token of the tag.
-        /// </summary>
-        public Token FirstToken
-        {
-            get { return this.first; }
-            set { this.first = value; }
-        }
-        /// <summary>
-        /// Returns the last token of the tag.
-        /// </summary>
-        public Token LastToken
-        {
-            set { this.last = value; }
-            get { return this.last; }
+            Children.Add(node);
         }
     }
 }

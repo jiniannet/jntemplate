@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The target type.</param>
         public static void ObjectTo(this ILGenerator il, Type type)
         {
-            var toString = DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes);
+            var toString = typeof(object).GetMethodInfo("ToString", Type.EmptyTypes);
             switch (type.FullName)
             {
                 case "System.Int32":
@@ -211,7 +211,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     return;
                 }
                 before?.Invoke(il, true, false);
-                il.Emit(OpCodes.Ldstr, textTag.Text);
+                var text = textTag.ToString(ctx.OutMode); 
+                il.Emit(OpCodes.Ldstr, text);
                 completed?.Invoke(il, typeof(string));
                 return;
             }
@@ -270,7 +271,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The type.</param>
         public static void EmitEquals(this ILGenerator il, Type type)
         {
-            var equals = DynamicHelpers.GetMethod(type, "Equals", new Type[] { type });
+            var equals = type.GetMethodInfo("Equals", new Type[] { type });
             //var ps = equals.GetParameters();
             //if (ps.Length == 1
             //    && ps[0].ParameterType != type)
@@ -312,7 +313,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             for (var i = 0; i < tags.Count; i++)
             {
-                CallTag(il, context, tags[i], (nil, hasReturn, needCall) =>
+                il.CallTag(context, tags[i],(nil, hasReturn, needCall) =>
                 {
                     if (hasReturn)
                     {
@@ -364,7 +365,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 case "System.Byte":
                 case "System.SByte":
                 case "System.Int32":
-                    appendMethod = DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { returnType });
+                    appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { returnType });
                     break;
                 default:
                     if (returnType.IsValueType)
@@ -372,12 +373,12 @@ namespace JinianNet.JNTemplate.CodeCompilation
                         var p = il.DeclareLocal(returnType);
                         il.Emit(OpCodes.Stloc, p.LocalIndex);
                         LoadVariable(il, returnType, p.LocalIndex);
-                        il.Call(returnType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
-                        appendMethod = DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(string) });
+                        il.Call(returnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
+                        appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { typeof(string) });
                     }
                     else
                     {
-                        appendMethod = DynamicHelpers.GetMethod(stringBuilderType, "Append", new Type[] { typeof(object) });
+                        appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { typeof(object) });
                     }
                     break;
             }

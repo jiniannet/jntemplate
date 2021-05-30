@@ -12,6 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class IfTag : ComplexTag
     {
-
+        /// <inheritdoc />
+        public override bool Out => false;
     }
 }

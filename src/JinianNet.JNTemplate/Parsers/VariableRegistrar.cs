@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Parsers
         {
             return (tag, c) =>
             {
-                var getVariableScope = DynamicHelpers.GetPropertyGetMethod(typeof(TemplateContext), "TempData");
+                var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
                 var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
                 var t = tag as VariableTag;
                 var type = c.GuessType(t);
@@ -74,10 +74,10 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     var parentType = c.GuessType(t.Parent);
 
-                    var property = DynamicHelpers.GetPropertyInfo(parentType, t.Name);
+                    var property = parentType.GetPropertyInfo( t.Name);
                     if (property == null)
                     {
-                        var field = DynamicHelpers.GetFieldInfo(parentType, t.Name);
+                        var field = parentType.GetFieldInfo(t.Name);
                         if (field == null)
                         {
                             throw new CompileException($"[VariableTag] : {parentType.Name} Cannot find property {t.Name}");
@@ -126,7 +126,7 @@ namespace JinianNet.JNTemplate.Parsers
                 il.MarkLabel(labelInit);
                 if (t.Parent == null)
                 {
-                    var defaultMethod = DynamicHelpers.GetGenericMethod(typeof(TemplateCompiler), new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
+                    var defaultMethod = typeof(TemplateCompiler).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
                     il.Emit(OpCodes.Call, defaultMethod);
                     il.Emit(OpCodes.Stloc, 1);
                 }
@@ -147,12 +147,12 @@ namespace JinianNet.JNTemplate.Parsers
                     return c.Data.GetType(t.Name);
                 }
                 var parentType = c.GuessType(t.Parent);
-                var p = DynamicHelpers.GetPropertyInfo(parentType, t.Name);
+                var p = parentType.GetPropertyInfo(t.Name);
                 if (p != null)
                 {
                     return p.PropertyType;
                 }
-                var f = DynamicHelpers.GetFieldInfo(parentType, t.Name);
+                var f = parentType.GetFieldInfo(t.Name);
                 if (f != null)
                 {
                     return f.FieldType;
@@ -186,7 +186,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return null;
                 }
-                return DynamicHelpers.CallPropertyOrField(baseValue, t.Name, type);
+                return baseValue.CallPropertyOrField(t.Name, type);
             });
         }
     }

@@ -83,7 +83,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 #else
             typeBuilder.CreateType();
 #endif
-            return DynamicHelpers.CreateInstance(type);
+            return type.CreateInstance();
         }
 
         /// <summary>
@@ -122,14 +122,14 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
         //private static void ImplementationRender(Type type, TypeBuilder typeBuilder)
         //{
-        //    var targetMethod = DynamicHelpers.GetMethod(typeof(ITemplate), "Render", new Type[] { typeof(TextWriter) });
+        //    var targetMethod = DynamicHelpers.GetMethodInfo(typeof(ITemplate), "Render", new Type[] { typeof(TextWriter) });
         //    MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, targetMethod.Attributes & (~MethodAttributes.Abstract), targetMethod.ReturnType, new Type[] { typeof(TextWriter) });
         //    ILGenerator il = method.GetILGenerator();
         //    il.Emit(OpCodes.Ldarg_0);
         //    il.Emit(OpCodes.Ldarg_1);
         //    il.Emit(OpCodes.Ldarg_0);
         //    il.Emit(OpCodes.Call, DynamicHelpers.GetPropertyInfo(typeof(ITemplate), "Context").SetMethod);
-        //    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(ICompileTemplate), "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) }));
+        //    il.Emit(OpCodes.Call, DynamicHelpers.GetMethodInfo(typeof(ICompileTemplate), "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) }));
         //    il.Emit(OpCodes.Ret);
         //}
 
@@ -197,7 +197,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
             ctx.Name = name;
             ctx.Options = options;
             ctx.Charset = options.Encoding;
-            ctx.StripWhiteSpace = options.StripWhiteSpace;
             ctx.ThrowExceptions = options.ThrowExceptions;
             return ctx;
 
@@ -213,7 +212,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             var interfaceType = typeof(ICompilerResult);
             TypeBuilder typeBuilder = DefineType(interfaceType, null, typeof(TemplateCompiler).Namespace, $"Template{ToHashCode(ctx.Name)}");
-            var targetMethod = DynamicHelpers.GetMethod(interfaceType, "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
+            var targetMethod = interfaceType.GetMethodInfo("Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             ILGenerator methodGenerator = method.GetILGenerator();
             ctx.TypeBuilder = typeBuilder;
@@ -253,7 +252,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 return null;
             }
-            var instance = DynamicHelpers.CreateInstance<ICompilerResult>(type);
+            var instance = type.CreateInstance<ICompilerResult>();
             return instance;
 
         }

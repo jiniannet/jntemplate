@@ -152,8 +152,8 @@ namespace JinianNet.JNTemplate
             ctx.Options = Options;
             ctx.Charset = Options.Encoding;
             ctx.EnableTemplateCache = Options.EnableTemplateCache && !Options.EnableCompile;
-            ctx.StripWhiteSpace = Options.StripWhiteSpace;
             ctx.ThrowExceptions = Options.ThrowExceptions;
+            ctx.OutMode = Options.OutMode;
             return ctx;
         }
 
@@ -350,7 +350,7 @@ namespace JinianNet.JNTemplate
             for (var i = 0; i < registrars.Length; i++)
             {
                 Dynamic
-                    .DynamicHelpers
+                    .TypeExtensions
                     .CreateInstance<IRegistrar>(registrars[i])
                     ?.Regiser(this);
             }

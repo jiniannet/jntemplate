@@ -90,11 +90,11 @@ namespace JinianNet.JNTemplate.CodeCompilation
             var index = 0;
 
 
-            if (DynamicHelpers.IsMatchType(type, taskType))
+            if (type.IsMatchType(taskType))
             {
                 isAsync = true;
-                taskAwaiterMethod = DynamicHelpers.GetMethod(method.ReturnType, "GetAwaiter", Type.EmptyTypes);
-                resultMethod = DynamicHelpers.GetMethod(taskAwaiterMethod.ReturnType, "GetResult", Type.EmptyTypes);
+                taskAwaiterMethod = method.ReturnType.GetMethodInfo("GetAwaiter", Type.EmptyTypes);
+                resultMethod = taskAwaiterMethod.ReturnType.GetMethodInfo("GetResult", Type.EmptyTypes);
                 type = resultMethod.ReturnType;
             }
             if (type.FullName != "System.Void")
@@ -178,7 +178,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             il.BeginCatchBlock(typeof(System.Exception));
             il.Emit(OpCodes.Stloc, index);
             il.Emit(OpCodes.Ldarg_2);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(typeof(Context), "ThrowExceptions"));
+            il.Emit(OpCodes.Callvirt, typeof(Context).GetPropertyGetMethod("ThrowExceptions"));
             il.Emit(OpCodes.Stloc, index + 1);
             il.Emit(OpCodes.Ldloc, index + 1);
             il.Emit(OpCodes.Brfalse, lableThrow);
@@ -189,7 +189,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             il.MarkLabel(lableThrow);
             il.Emit(OpCodes.Ldarg_2);
             il.Emit(OpCodes.Ldloc, index);
-            il.Emit(OpCodes.Callvirt, DynamicHelpers.GetMethod(typeof(TemplateContext), "AddError", new Type[] { typeof(System.Exception) }));
+            il.Emit(OpCodes.Callvirt, typeof(TemplateContext).GetMethodInfo("AddError", new Type[] { typeof(System.Exception) }));
             //il.Emit(OpCodes.Leave_S, labelPass);
             il.EndExceptionBlock();
 
@@ -253,11 +253,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             if (tag is TextTag textTag)
             {
-                var text = textTag.Text;
-                if (context.StripWhiteSpace)
-                {
-                    text = text?.Trim();
-                }
+                var text = textTag.ToString(context.OutMode); 
                 if (!string.IsNullOrEmpty(text))
                 {
                     context.Generator.Emit(OpCodes.Ldarg_1);

@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// ITypeTag
     /// </summary>
-    public interface ITypeTag
+    public interface ITypeTag : ITag
     {
         /// <summary>
         /// Gets or sets the value of the tag.

@@ -83,7 +83,7 @@ namespace JinianNet.JNTemplate.Parsers
                         var localVar = il.DeclareLocal(m.ReturnType);
                         il.Emit(OpCodes.Stloc, localVar.LocalIndex);
                         il.LoadVariable(m.ReturnType, localVar.LocalIndex);
-                        il.Call(m.ReturnType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+                        il.Call(m.ReturnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
                     }
                     il.Emit(OpCodes.Stloc_0);
                     il.Emit(OpCodes.Ldloc_0);
@@ -95,7 +95,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Ldloc_0);
-                    il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(typeof(TemplateContextExtensions), "Load", new Type[] { typeof(Context), strType }));
+                    il.Emit(OpCodes.Call, typeof(TemplateContextExtensions).GetMethodInfo("Load", new Type[] { typeof(Context), strType }));
                     il.Emit(OpCodes.Stloc_2);
                     il.Emit(OpCodes.Ldloc_2);
                     il.Emit(OpCodes.Ldnull);
@@ -105,7 +105,7 @@ namespace JinianNet.JNTemplate.Parsers
                     il.Emit(OpCodes.Brfalse, labelEnd);
 
                     il.Emit(OpCodes.Ldloc_2);
-                    il.Emit(OpCodes.Callvirt, DynamicHelpers.GetPropertyGetMethod(resType, "Content"));
+                    il.Emit(OpCodes.Callvirt, resType.GetPropertyGetMethod("Content"));
                     il.Emit(OpCodes.Stloc, 4);
                     il.Emit(OpCodes.Br, labelSuccess);
 

@@ -137,7 +137,7 @@ namespace JinianNet.JNTemplate.Parsers
                 il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
                 il.Emit(OpCodes.Stloc_0);
                 il.Emit(OpCodes.Ldarg_1);
-                il.Emit(OpCodes.Call, DynamicHelpers.GetMethod(templateContextType, "CreateContext", new Type[] { templateContextType }));
+                il.Emit(OpCodes.Call, templateContextType.GetMethodInfo("CreateContext", new Type[] { templateContextType }));
                 il.Emit(OpCodes.Stloc_1);
 
                 il.Emit(OpCodes.Ldarg_0);
@@ -201,10 +201,10 @@ namespace JinianNet.JNTemplate.Parsers
 
                 if (m.ReturnType.Name != "Boolean")
                 {
-                    var cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { m.ReturnType });
+                    var cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { m.ReturnType });
                     if (cm == null)
                     {
-                        cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { typeof(object) });
+                        cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { typeof(object) });
                         if (m.ReturnType.IsValueType)
                         {
                             il.Emit(OpCodes.Box, typeof(object));
@@ -223,7 +223,7 @@ namespace JinianNet.JNTemplate.Parsers
 
 
                 il.Emit(OpCodes.Ldloc, 0);
-                il.Call(stringBuilderType, DynamicHelpers.GetMethod(stringBuilderType, "ToString", Type.EmptyTypes));
+                il.Call(stringBuilderType, stringBuilderType.GetMethodInfo("ToString", Type.EmptyTypes));
 
 
                 il.Emit(OpCodes.Stloc, 3);

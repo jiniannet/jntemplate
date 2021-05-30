@@ -14,16 +14,8 @@ namespace JinianNet.JNTemplate.Nodes
     public class JsonTag : ComplexTag
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonTag"/> class
-        /// </summary>
-        public JsonTag()
-        {
-            this.Dict = new Dictionary<ITag, ITag>();
-        }
-
-        /// <summary>
         /// Gets or sets the data of the tag.
         /// </summary>
-        public Dictionary<ITag, ITag> Dict { get; private set; }
+        public Dictionary<ITag, ITag> Dict { get; } = new Dictionary<ITag, ITag>();
     }
 }

@@ -12,15 +12,12 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class ElseifTag : ComplexTag
     {
+        /// <inheritdoc />
+        public override bool Out => false;
 
-        private ITag condition;
         /// <summary>
         /// Gets or sets the condition of the tag.
         /// </summary>
-        public virtual ITag Condition
-        {
-            get { return this.condition; }
-            set { this.condition = value; }
-        }
+        public virtual ITag Condition { get; set; }
     }
 }

@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$foreach(i in list)$i$end";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("list",new int[] { 7, 0, 2, 0, 6 });
+            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
             var render = template.Render();
             Assert.Equal("70206", render);
         }
@@ -57,11 +57,24 @@ namespace JinianNet.JNTemplate.Test
         public void TestForIn()
         {
             var templateContent = "$for(i in list)$i$end";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("list",new int[] { 7, 0, 2, 0, 6 });
+            var template = Engine.CreateTemplate("TestForIn",templateContent);
+            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
             var render = template.Render();
             Assert.Equal("70206", render);
-        } 
+        }
 
+        /// <summary>
+        /// 测试IEnumerable<T>
+        /// </summary>
+        [Fact]
+        public void TestForInEnumerable()
+        {
+            var list = (IEnumerable<int>)new List<int>(new int[] { 1, 2, 3, 4, 5, 6, 7 });
+            var templateContent = "$for(i in list)$i$end";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("list", list);
+            var render = template.Render();
+            Assert.Equal("1234567", render);
+        }
     }
 }

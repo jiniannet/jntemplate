@@ -18,7 +18,17 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Strip white-space characters from the template
         /// </summary>
-        public bool StripWhiteSpace { get; set; } = false;
+        [Obsolete]
+        public bool StripWhiteSpace
+        {
+            get { return this.OutMode != OutMode.None; }
+            set { this.OutMode = (value ? OutMode.StripWhiteSpace : OutMode.None); }
+        }
+
+        /// <summary>
+        /// Gets or sets the render mode.
+        /// </summary>
+        public OutMode OutMode { get; set; }
 
         /// <summary>
         /// Gets or sets the current path.

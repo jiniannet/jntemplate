@@ -17,7 +17,7 @@ namespace JinianNet.JNTemplate
         private ITag tag;
         private Token[] tokens;
         private int index;
-        private List<ITag> tags;
+        private TagCollection tags;
         private TagParser tagParser;
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace JinianNet.JNTemplate
         {
             if (tags == null)
             {
-                tags = new List<ITag>();
+                tags = new TagCollection();
 
                 while (MoveNext())
                 {

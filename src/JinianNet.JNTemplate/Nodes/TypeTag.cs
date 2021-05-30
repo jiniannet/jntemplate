@@ -14,23 +14,18 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public abstract class TypeTag<T> : SpecialTag, ITypeTag
     {
-        private T baseValue;
         /// <summary>
         /// Gets or sets the value of the tag.
         /// </summary>
-        public T Value
-        {
-            get { return this.baseValue; }
-            set { this.baseValue = value; }
-        }
+        public T Value { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the tag.
         /// </summary>
         object ITypeTag.Value
         {
-            get { return this.baseValue; }
-            set { this.baseValue = (T)value; }
+            get { return this.Value; }
+            set { this.Value = (T)value; }
         }
     }
 }

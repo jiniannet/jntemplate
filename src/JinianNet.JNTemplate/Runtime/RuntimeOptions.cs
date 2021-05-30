@@ -52,6 +52,7 @@ namespace JinianNet.JNTemplate.Runtime
             this.Parser = new TagParser();
             this.EnableCompile = enableCompile;
             this.TypeDetectPattern = TypeDetect.Standard;
+            this.OutMode = OutMode.None;
         }
 
 
@@ -187,6 +188,10 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets the detect patterns.
         /// </summary>
         public TypeDetect TypeDetectPattern { get; set; }
+        /// <summary>
+        /// Gets or sets the output mode.
+        /// </summary>
+        public OutMode OutMode { get; set; }
 
     }
 }

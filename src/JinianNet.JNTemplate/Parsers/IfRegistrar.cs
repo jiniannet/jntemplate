@@ -112,10 +112,10 @@ namespace JinianNet.JNTemplate.Parsers
                             var localVar = il.DeclareLocal(m.ReturnType);
                             il.Emit(OpCodes.Stloc, localVar.LocalIndex);
                             il.LoadVariable(m.ReturnType, localVar.LocalIndex);
-                            var cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { m.ReturnType });
+                            var cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { m.ReturnType });
                             if (cm == null)
                             {
-                                cm = DynamicHelpers.GetMethod(typeof(Utility), "ToBoolean", new Type[] { typeof(object) });
+                                cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { typeof(object) });
                                 if (m.ReturnType.IsValueType)
                                 {
                                     il.Emit(OpCodes.Box, typeof(object));
@@ -141,7 +141,7 @@ namespace JinianNet.JNTemplate.Parsers
                             var localVar = il.DeclareLocal(execute.ReturnType);
                             il.Emit(OpCodes.Stloc, localVar.LocalIndex);
                             il.LoadVariable(execute.ReturnType, localVar.LocalIndex);
-                            il.Call(execute.ReturnType, DynamicHelpers.GetMethod(typeof(object), "ToString", Type.EmptyTypes));
+                            il.Call(execute.ReturnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
                         }
                         else
                         {
@@ -229,7 +229,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     if (type.IsValueType)
                     {
-                        var defaultMethod = DynamicHelpers.GetGenericMethod(typeof(TemplateCompiler), new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
+                        var defaultMethod = typeof(TemplateCompiler).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
                         il.Emit(OpCodes.Call, defaultMethod);
                         il.Emit(OpCodes.Stloc_0);
                     }
