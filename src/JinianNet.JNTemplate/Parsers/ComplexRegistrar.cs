@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -45,7 +46,7 @@ namespace JinianNet.JNTemplate.Parsers
                         {
                             if (tags.Count == 0 || i == tcs[i].Count - 1 || (tcs[i + 1].Count == 1 && (tcs[i + 1][0].TokenKind == TokenKind.Dot || tcs[i + 1][0].TokenKind == TokenKind.Operator)))
                             {
-                                throw new Exception.ParseException(string.Concat("syntax error near .:", tc), tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
+                                throw new ParseException(string.Concat("syntax error near .:", tc), tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
                             }
                             if (tags[tags.Count - 1] is ReferenceTag)
                             {
@@ -89,7 +90,7 @@ namespace JinianNet.JNTemplate.Parsers
                             {
                                 if (tags.Count == 0)
                                 {
-                                    throw new Exception.ParseException(string.Concat("syntax error near [:", tc), tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
+                                    throw new ParseException(string.Concat("syntax error near [:", tc), tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
                                 }
                                 var t = new ReferenceTag();
                                 t.AddChild(tags[tags.Count - 1]);
@@ -383,7 +384,7 @@ namespace JinianNet.JNTemplate.Parsers
                                             var m = bestType.GetMethodInfo("op_GreaterThan", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
-                                                throw new Exception.TemplateException($"Operator \">\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
+                                                throw new TemplateException($"Operator \">\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
                                             }
                                             il.Emit(OpCodes.Call, m);
                                         }
@@ -400,7 +401,7 @@ namespace JinianNet.JNTemplate.Parsers
                                             var m = bestType.GetMethodInfo("op_GreaterThanOrEqual", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
-                                                throw new Exception.TemplateException($"Operator \">=\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
+                                                throw new TemplateException($"Operator \">=\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
                                             }
                                             il.Emit(OpCodes.Call, m);
                                         }
@@ -415,7 +416,7 @@ namespace JinianNet.JNTemplate.Parsers
                                             var m = bestType.GetMethodInfo("op_LessThan", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
-                                                throw new Exception.TemplateException($"Operator \"<\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
+                                                throw new TemplateException($"Operator \"<\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
                                             }
                                             il.Emit(OpCodes.Call, m);
                                         }
@@ -432,7 +433,7 @@ namespace JinianNet.JNTemplate.Parsers
                                             var m = bestType.GetMethodInfo("op_LessThanOrEqual", new Type[] { bestType, bestType });
                                             if (m == null)
                                             {
-                                                throw new Exception.TemplateException($"Operator \"<=\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
+                                                throw new TemplateException($"Operator \"<=\" can not be applied operand \"{bestType.FullName}\" and \"{bestType.FullName}\"");
                                             }
                                             il.Emit(OpCodes.Call, m);
                                         }
@@ -462,7 +463,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         il.Emit(OpCodes.Ceq);
                                         break;
                                     default:
-                                        throw new Exception.CompileException($"The operator \"{obj}\" is not supported on type  \"{bestType.FullName}\" .");
+                                        throw new CompileException(tag,$"The operator \"{obj}\" is not supported on type  \"{bestType.FullName}\" .");
                                 }
                             }
                         }
@@ -470,7 +471,7 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                     else
                     {
-                        throw new Exception.CompileException($"[LogicExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
+                        throw new CompileException(tag,$"[LogicExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
                     }
                 }
 
@@ -596,7 +597,7 @@ namespace JinianNet.JNTemplate.Parsers
                                         il.Emit(OpCodes.Conv_U1);
                                         break;
                                     default:
-                                        throw new Exception.CompileException($"[ExpressionTag] : The type \"{bestType.FullName}\" is not supported .");
+                                        throw new CompileException(tag,$"[ExpressionTag] : The type \"{bestType.FullName}\" is not supported .");
                                 }
                             }
                         }
@@ -644,8 +645,8 @@ namespace JinianNet.JNTemplate.Parsers
                                     il.Emit(OpCodes.Ceq);
                                     break;
                                 default:
-                                    throw new Exception.CompileException($"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
-                                    //throw new Exception.CompileException($"The operator \"{obj}\" is not supported on type  \"{bestType.FullName}\" .");
+                                    throw new CompileException(tag,$"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
+                                    //throw new CompileException($"The operator \"{obj}\" is not supported on type  \"{bestType.FullName}\" .");
                                     //case Operator.Or:
                                     //    il.Emit(OpCodes.Blt);
                                     //    break;

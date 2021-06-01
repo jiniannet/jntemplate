@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.IO;
 
@@ -46,7 +47,7 @@ namespace JinianNet.JNTemplate
             });
             if (t == null)
             {
-                throw new Exception.TemplateException($"compile error.");
+                throw new TemplateException($"compile error.");
             }
             try
             {

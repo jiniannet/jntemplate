@@ -198,6 +198,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             ctx.Options = options;
             ctx.Charset = options.Encoding;
             ctx.ThrowExceptions = options.ThrowExceptions;
+            ctx.OutMode = options.OutMode;
             return ctx;
 
         }

@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Exception;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
@@ -122,7 +122,7 @@ namespace JinianNet.JNTemplate.Parsers
                     var getItem = parentType.GetMethodInfo("get_Item", new Type[] { indexType });
                     if (getItem == null)
                     {
-                        throw new CompileException($"[IndexValutTag] : Cannot not compile.");
+                        throw new CompileException(tag, $"[IndexValutTag] : Cannot not compile.");
                     }
                     il.Emit(OpCodes.Callvirt, getItem);
                     il.Emit(OpCodes.Stloc_2);
@@ -141,7 +141,7 @@ namespace JinianNet.JNTemplate.Parsers
                 var t = tag as IndexValueTag;
                 if (t.Parent == null)
                 {
-                    throw new Exception.CompileException("[IndexValueTag] : Parent cannot be null");
+                    throw new CompileException(tag, "[IndexValueTag] : Parent cannot be null");
                 }
                 var parentType = c.GuessType(t.Parent);
                 if (parentType.FullName == "System.String")
@@ -163,7 +163,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return m.ReturnType;
                 }
 
-                throw new Exception.CompileException($"[IndexValueTag]: \"{tag.ToSource()}\" is not defined");
+                throw new CompileException(tag, $"[IndexValueTag]: \"{tag.ToSource()}\" is not defined");
             };
         }
         /// <inheritdoc />

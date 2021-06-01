@@ -6,6 +6,7 @@
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 
 namespace JinianNet.JNTemplate
@@ -70,6 +71,7 @@ namespace JinianNet.JNTemplate
                 ctx2.Charset = ctx1.Charset;
                 ctx2.OutMode = ctx1.OutMode;
                 ctx2.ThrowExceptions = ctx1.ThrowExceptions;
+                ctx2.Debug = ctx1.Debug;
             }
         }
 
@@ -110,14 +112,14 @@ namespace JinianNet.JNTemplate
             var full = context.FindFullPath(path);
             if (full == null)
             {
-                throw new Exception.TemplateException($"\"{ path }\" cannot be found.");
+                throw new TemplateException($"\"{ path }\" cannot be found.");
             }
             var template = context.Options.CompilerResults.GetOrAdd(full, (name) =>
             {
                 var res = context.Options.Loader.Load(path, context.Options.Encoding, context.Options.ResourceDirectories.ToArray());
                 if (res == null)
                 {
-                    throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
+                    throw new TemplateException($"Path:\"{path}\", the file could not be found.");
                 }
 
                 if (string.IsNullOrEmpty(name))

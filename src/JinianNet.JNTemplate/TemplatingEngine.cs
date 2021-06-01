@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using JinianNet.JNTemplate.Runtime;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Caching;
+using JinianNet.JNTemplate.Exceptions;
 using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
 using System.Text;
@@ -109,7 +110,7 @@ namespace JinianNet.JNTemplate
             var res = Options.Loader.Load(path, Options.Encoding, Options.ResourceDirectories.ToArray());
             if (res == null)
             {
-                throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
+                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
 
             if (string.IsNullOrEmpty(name))
@@ -202,7 +203,7 @@ namespace JinianNet.JNTemplate
             var res = ctx.Load(path);
             if (res == null)
             {
-                throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
+                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
 
             var t = LoadTemplate<Template>(name, path, CreateContext());
@@ -224,7 +225,7 @@ namespace JinianNet.JNTemplate
                 name = ctx.FindFullPath(path);
                 if (string.IsNullOrEmpty(name))
                 {
-                    throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
+                    throw new TemplateException($"Path:\"{path}\", the file could not be found.");
                 }
             }
             var template = LoadTemplate<CompileTemplate>(name, path, ctx);
@@ -239,7 +240,7 @@ namespace JinianNet.JNTemplate
             var res = ctx.Load(path);
             if (res == null)
             {
-                throw new Exception.TemplateException($"Path:\"{path}\", the file could not be found.");
+                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
             template.TemplateContent = res.Content;
             return template;
@@ -350,7 +351,7 @@ namespace JinianNet.JNTemplate
             for (var i = 0; i < registrars.Length; i++)
             {
                 Dynamic
-                    .TypeExtensions
+                    .ReflectionExtensions
                     .CreateInstance<IRegistrar>(registrars[i])
                     ?.Regiser(this);
             }

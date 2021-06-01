@@ -4,7 +4,7 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,11 +84,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
             var mb = context.CreateRenderMethod(tagType.Name);
             var il = mb.GetILGenerator();
             var exBlock = il.BeginExceptionBlock();
-            var lableThrow = il.DefineLabel();
+            //var lableThrow = il.DefineLabel();
             var labelPass = il.DefineLabel();
-
-            var index = 0;
-
 
             if (type.IsMatchType(taskType))
             {
@@ -100,19 +97,17 @@ namespace JinianNet.JNTemplate.CodeCompilation
             if (type.FullName != "System.Void")
             {
                 il.DeclareLocal(type);
-                index = 1;
                 il.Emit(OpCodes.Ldarg_0);
                 il.Emit(OpCodes.Ldarg_2);
                 il.Emit(OpCodes.Call, method);
 
                 if (isAsync)
                 {
-                    il.DeclareLocal(taskAwaiterMethod.ReturnType);
+                    var returnVar = il.DeclareLocal(taskAwaiterMethod.ReturnType);
                     il.Emit(OpCodes.Callvirt, taskAwaiterMethod);
-                    il.Emit(OpCodes.Stloc, index);
-                    il.Emit(OpCodes.Ldloca, index);
+                    il.Emit(OpCodes.Stloc, returnVar.LocalIndex);
+                    il.Emit(OpCodes.Ldloca, returnVar.LocalIndex);
                     il.Emit(OpCodes.Call, resultMethod);
-                    index++;
                 }
                 il.Emit(OpCodes.Stloc_0);
                 il.Emit(OpCodes.Ldarg_1);
@@ -162,7 +157,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     il.Emit(OpCodes.Stloc_0);
                     il.Emit(OpCodes.Ldloca, 0);
                     il.Emit(OpCodes.Call, resultMethod);
-                    index = 1;
                 }
                 else
                 {
@@ -171,24 +165,55 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     il.Emit(OpCodes.Call, method);
                 }
             }
-
-            il.DeclareLocal(typeof(System.Exception));
-            il.DeclareLocal(typeof(bool));
+            var exceptionVar = il.DeclareLocal(typeof(System.Exception));
+            //il.DeclareLocal(typeof(bool));
 
             il.BeginCatchBlock(typeof(System.Exception));
-            il.Emit(OpCodes.Stloc, index);
-            il.Emit(OpCodes.Ldarg_2);
-            il.Emit(OpCodes.Callvirt, typeof(Context).GetPropertyGetMethod("ThrowExceptions"));
-            il.Emit(OpCodes.Stloc, index + 1);
-            il.Emit(OpCodes.Ldloc, index + 1);
-            il.Emit(OpCodes.Brfalse, lableThrow);
+            il.Emit(OpCodes.Stloc, exceptionVar.LocalIndex);
+            //il.Emit(OpCodes.Ldarg_2);
+            //il.Emit(OpCodes.Callvirt, typeof(Context).GetPropertyGetMethod("ThrowExceptions"));
+            //il.Emit(OpCodes.Stloc, index + 1);
+            //il.Emit(OpCodes.Ldloc, index + 1);
+            //il.Emit(OpCodes.Brfalse, lableThrow);
 
-            il.Emit(OpCodes.Ldloc, index);
-            il.Emit(OpCodes.Throw);
+            //il.Emit(OpCodes.Ldloc, index);
+            //il.Emit(OpCodes.Throw);
 
-            il.MarkLabel(lableThrow);
+            if (context.Debug)
+            {
+                il.Emit(OpCodes.Ldstr, $"{{0}} on {tag.ToSource()} [line:{tag.FirstToken?.BeginLine},col:{tag.FirstToken?.BeginColumn}]");
+            }
+            else
+            {
+                il.Emit(OpCodes.Ldstr, $"{{0}} [line:{tag.FirstToken?.BeginLine},col:{tag.FirstToken?.BeginColumn}]");
+            }
+            il.Emit(OpCodes.Ldloc, exceptionVar.LocalIndex);
+            il.Emit(OpCodes.Callvirt, typeof(System.Exception).GetPropertyGetMethod("Message"));
+            il.Emit(OpCodes.Call, typeof(string).GetMethodInfo("Format",new Type[] { typeof(string),typeof(object) }));
+            var msgVar = il.DeclareLocal(typeof(string));
+            il.Emit(OpCodes.Stloc, msgVar.LocalIndex);
+            il.Emit(OpCodes.Ldloc, msgVar.LocalIndex);
+            il.Emit(OpCodes.Ldloc, exceptionVar.LocalIndex);
+            var exceptionType = typeof(RuntimeException);
+            il.Emit(OpCodes.Newobj, exceptionType.GetConstructor(new Type[] { typeof(string), typeof(System.Exception) }));
+
+            var newExVar = il.DeclareLocal(exceptionType);
+            il.Emit(OpCodes.Stloc, newExVar.LocalIndex);
+            if (tag.FirstToken != null)
+            {
+                il.Emit(OpCodes.Ldloc, newExVar.LocalIndex);
+                il.Emit(OpCodes.Ldc_I4, tag.FirstToken.BeginLine);
+                il.Emit(OpCodes.Callvirt, exceptionType.GetPropertySetMethod("Line"));
+                il.Emit(OpCodes.Ldloc, newExVar.LocalIndex);
+                il.Emit(OpCodes.Ldc_I4, tag.FirstToken.BeginColumn);
+                il.Emit(OpCodes.Callvirt, exceptionType.GetPropertySetMethod("Column"));
+            }
+
+            //call string[System.Runtime] System.String::Format(string, object)
+            //callvirt instance string [System.Runtime]System.Exception::get_Message()
+            //il.MarkLabel(lableThrow);
             il.Emit(OpCodes.Ldarg_2);
-            il.Emit(OpCodes.Ldloc, index);
+            il.Emit(OpCodes.Ldloc, newExVar.LocalIndex);
             il.Emit(OpCodes.Callvirt, typeof(TemplateContext).GetMethodInfo("AddError", new Type[] { typeof(System.Exception) }));
             //il.Emit(OpCodes.Leave_S, labelPass);
             il.EndExceptionBlock();
@@ -218,7 +243,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 }
                 if (method == null)
                 {
-                    throw new Exception.CompileException($"cannot compile the tag! type:{tag?.GetType().FullName}");
+                    throw new CompileException(tag,$"cannot compile the tag! type:{tag?.GetType().FullName}");
                 }
             }
             catch (System.Exception exception)
@@ -228,8 +253,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     throw;
                 }
                 context.Generator.Emit(OpCodes.Ldarg_2);
-                context.Generator.Emit(OpCodes.Ldstr, exception.Message);
-                context.Generator.Emit(OpCodes.Newobj, typeof(Exception.CompileException).GetConstructor(new Type[] { typeof(string) }));
+                context.Generator.Emit(OpCodes.Ldstr, exception.ToString());
+                context.Generator.Emit(OpCodes.Newobj, typeof(CompileException).GetConstructor(new Type[] { typeof(string) }));
                 //context.Generator.Emit(OpCodes.Throw);
                 context.Generator.Emit(OpCodes.Callvirt, typeof(TemplateContext).GetMethod("AddError", new Type[] { typeof(System.Exception) }));
                 return;

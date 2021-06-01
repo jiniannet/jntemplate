@@ -3,7 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Exception;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using System;
 using System.Collections.Generic;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -181,7 +182,7 @@ namespace JinianNet.JNTemplate.Nodes
                     }
                     else
                     {
-                        throw new Exception.ParseException(string.Concat("syntax error near ", this[i].TokenKind.ToString(), this), this[i].BeginLine, this[i].BeginColumn);
+                        throw new ParseException(string.Concat("syntax error near ", this[i].TokenKind.ToString(), this), this[i].BeginLine, this[i].BeginColumn);
                     }
                 }
                 if ((pos.Count == 0 && IsInKinds(this[i].TokenKind, kinds))
@@ -209,7 +210,7 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     //if (x == 0 && y == i)
                     //{
-                    //    throw new Exception.ParseException(string.Concat("Unexpected  tag:", this), this[0].BeginLine, this[0].BeginColumn);
+                    //    throw new ParseException(string.Concat("Unexpected  tag:", this), this[0].BeginLine, this[0].BeginColumn);
                     //}
                     tc.Add(this[x, y + 1]);
                     x = i + 1;

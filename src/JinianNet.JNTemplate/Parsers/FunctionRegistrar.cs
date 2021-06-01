@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using System.Text;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Exception;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Parsers
                     paramType[i] = c.GuessType(t.Children[i]);
                     if (paramType[i].FullName == "System.Void")
                     {
-                        throw new CompileException("[FunctaionTag]:parameter error");
+                        throw new CompileException(tag,"[FunctaionTag]:parameter error");
                     }
                 }
 
@@ -75,7 +75,7 @@ namespace JinianNet.JNTemplate.Parsers
                         }
                         if (method == null)
                         {
-                            throw new CompileException($"[FunctaionTag]:method \"{t.Name}\" cannot be found!");
+                            throw new CompileException(tag,$"[FunctaionTag]:method \"{t.Name}\" cannot be found!");
                         }
                     }
                 }
@@ -196,7 +196,7 @@ namespace JinianNet.JNTemplate.Parsers
                     var bodyType = c.Data.GetType(t.Name);
                     if (bodyType.BaseType.FullName != "System.MulticastDelegate")
                     {
-                        throw new Exception.CompileException($"[FunctaionTag]: \"{bodyType.BaseType}\" is not supported.");
+                        throw new CompileException(tag, $"[FunctaionTag]: \"{bodyType.BaseType}\" is not supported.");
                     }
                     var invokeMethod = bodyType.GetMethod("Invoke");
                     return invokeMethod.ReturnType;
@@ -213,7 +213,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return method.ReturnType;
                 }
-                throw new Exception.CompileException($"[FunctaionTag]: \"{t.Name}\" is not defined");
+                throw new CompileException(tag, $"[FunctaionTag]: \"{t.Name}\" is not defined");
             };
         }
         /// <inheritdoc />

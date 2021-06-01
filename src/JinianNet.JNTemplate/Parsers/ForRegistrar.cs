@@ -10,7 +10,7 @@ using System.Reflection.Emit;
 using System.Text;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Exception;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
@@ -86,7 +86,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                         if (ts.Count != 3)
                         {
-                            throw new Exception.ParseException(string.Concat("syntax error near for:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                            throw new ParseException(string.Concat("syntax error near for:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                         }
 
                         tag.Initial = ts[0];
@@ -102,11 +102,11 @@ namespace JinianNet.JNTemplate.Parsers
                             }
                         }
 
-                        throw new Exception.ParseException(string.Concat("for is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                        throw new ParseException(string.Concat("for is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                     }
                     else
                     {
-                        throw new Exception.ParseException(string.Concat("syntax error near for:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                        throw new ParseException(string.Concat("syntax error near for:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                     }
                 }
 

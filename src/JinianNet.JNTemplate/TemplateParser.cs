@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
+using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate
 {
@@ -100,13 +101,13 @@ namespace JinianNet.JNTemplate
                 {
                     t = Read(tc);
                 }
-                catch (Exception.TemplateException)
+                catch (TemplateException)
                 {
                     throw;
                 }
                 catch (System.Exception e)
                 {
-                    throw new Exception.ParseException(string.Concat("Parse error:", tc, "\r\nError message:", e.Message), tc.First.BeginLine, tc.First.BeginColumn);//标签分析异常
+                    throw new ParseException(string.Concat("Parse error:", tc, "\r\nError message:", e.Message), tc.First.BeginLine, tc.First.BeginColumn);//标签分析异常
                 }
 
                 if (t != null)
@@ -119,7 +120,7 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
-                    throw new Exception.ParseException(string.Concat("Unexpected  tag:", tc), tc.First.BeginLine, tc.First.BeginColumn); //未知的标签
+                    throw new ParseException(string.Concat("Unexpected  tag:", tc), tc.First.BeginLine, tc.First.BeginColumn); //未知的标签
                 }
             }
             else
@@ -140,7 +141,7 @@ namespace JinianNet.JNTemplate
         {
             if (tc == null || tc.Count == 0)
             {
-                throw new Exception.ParseException("Invalid TokenCollection!");//无效的标签集合
+                throw new ParseException("Invalid TokenCollection!");//无效的标签集合
             }
             return tagParser.Parsing(this, tc);
         }

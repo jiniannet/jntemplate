@@ -4,6 +4,7 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -73,7 +74,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     return type;
                 }
             }
-            throw new Exception.CompileException($"[{name}]:\"{tag.ToSource()}\" is not defined!");
+            throw new CompileException(tag,$"[{name}]:\"{tag.ToSource()}\" is not defined!");
         }
 
         /// <summary>

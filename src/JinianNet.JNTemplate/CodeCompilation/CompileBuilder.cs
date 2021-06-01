@@ -2,7 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using System;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 return func;
             }
-            throw new Exception.CompileException($"The tag \"{name}\" is not supported .");
+            throw new CompileException($"The tag \"{name}\" is not supported .");
         }
 
         /// <summary>

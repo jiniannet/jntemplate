@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.IO;
 using System.Reflection;
@@ -55,7 +56,7 @@ namespace JinianNet.JNTemplate.Parsers
                     var res = c.Load(strTag.Value);
                     if (res == null)
                     {
-                        throw new Exception.CompileException($"[LoadTag] : \"{strTag.Value}\" cannot be found.");
+                        throw new CompileException(tag, $"[LoadTag] : \"{strTag.Value}\" cannot be found.");
                     }
                     var lexer = c.CreateTemplateLexer(res.Content);
                     var ts = lexer.Execute();

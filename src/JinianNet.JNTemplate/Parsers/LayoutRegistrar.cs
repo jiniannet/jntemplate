@@ -9,6 +9,7 @@ using System.Reflection.Emit;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.Parsers
 {
@@ -52,12 +53,12 @@ namespace JinianNet.JNTemplate.Parsers
                 var strTag = t.Path as StringTag;
                 if (strTag == null)
                 {
-                    throw new Exception.CompileException($"[LayoutTag] : path must be a string.");
+                    throw new CompileException(tag, $"[LayoutTag] : path must be a string.");
                 }
                 var res = c.Load(strTag.Value);
                 if (res == null)
                 {
-                    throw new Exception.CompileException($"[LayoutTag] : \"{strTag.Value}\" cannot be found.");
+                    throw new CompileException(tag, $"[LayoutTag] : \"{strTag.Value}\" cannot be found.");
                 }
                 var lexer = c.CreateTemplateLexer(res.Content);
                 var ts = lexer.Execute();

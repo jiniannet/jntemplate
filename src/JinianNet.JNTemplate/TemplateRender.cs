@@ -5,7 +5,7 @@
 using System; 
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate
 {
@@ -49,15 +49,14 @@ namespace JinianNet.JNTemplate
                             writer.Write(tagResult.ToString());
                         }
                     }
-                    catch (Exception.TemplateException e)
+                    catch (TemplateException e)
                     {
                         ThrowException(e, collection[i], writer);
                     }
                     catch (System.Exception e)
                     {
-                        System.Exception baseException = e.GetBaseException();
-                        Exception.ParseException ex = new Exception.ParseException(baseException.Message, baseException);
-                        ThrowException(ex, collection[i], writer);
+                        var baseException = e.GetBaseException();
+                        ThrowException(new ParseException(collection[i], baseException), collection[i], writer);
                     }
                 }
             }
@@ -104,16 +103,12 @@ namespace JinianNet.JNTemplate
         /// <param name="e">Represents errors that occur during application execution.</param>
         /// <param name="tag">Represents errors tag.</param>
         /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
-        private void ThrowException(Exception.TemplateException e, ITag tag, System.IO.TextWriter writer)
+        private void ThrowException(TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
-            if (this.Context.ThrowExceptions)
+            this.Context.AddError(e);
+            if (!this.Context.ThrowExceptions)
             {
-                throw e;
-            }
-            else
-            {
-                this.Context.AddError(e);
-                writer.Write(tag.ToString());
+                writer.Write(tag.ToSource());
             }
         } 
 

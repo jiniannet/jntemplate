@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -58,11 +59,11 @@ namespace JinianNet.JNTemplate.Parsers
                             }
                         }
 
-                        throw new Exception.ParseException(string.Concat("if is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                        throw new ParseException(string.Concat("if is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                     }
                     else
                     {
-                        throw new Exception.ParseException(string.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                        throw new ParseException(string.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
                     }
 
                 }

@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -55,7 +56,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return func;
             }
-            throw new Exception.CompileException($"The tag \"{name}\" is not supported .");
+            throw new CompileException($"The tag \"{name}\" is not supported .");
         }
 
         /// <summary>

@@ -1,7 +1,10 @@
-version: 1.0.{build}
+version: 2.1.{build}
 image: Visual Studio 2019
 configuration: Release
 platform: Any CPU
-build:
-  project: JinianNet.JNTemplate.sln
-  verbosity: minimal
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore
+build_script:
+  - cmd: dotnet build
+  - cmd: dotnet test

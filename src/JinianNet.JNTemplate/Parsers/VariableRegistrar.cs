@@ -4,7 +4,7 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Exception;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using System;
 using System.Reflection;
@@ -80,7 +80,7 @@ namespace JinianNet.JNTemplate.Parsers
                         var field = parentType.GetFieldInfo(t.Name);
                         if (field == null)
                         {
-                            throw new CompileException($"[VariableTag] : {parentType.Name} Cannot find property {t.Name}");
+                            throw new CompileException(tag, $"[VariableTag] : {parentType.Name} Cannot find property {t.Name}");
                         }
                         if (!field.IsStatic)
                         {
@@ -157,7 +157,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return f.FieldType;
                 }
-                throw new Exception.CompileException($"[VariableTag]: \"{t.Name}\" is not defined");
+                throw new CompileException(tag, $"[VariableTag]: \"{t.Name}\" is not defined");
             };
         }
 

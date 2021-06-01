@@ -10,7 +10,7 @@ using System.Reflection.Emit;
 using System.Text;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Exception;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
@@ -48,7 +48,7 @@ namespace JinianNet.JNTemplate.Parsers
                         }
                     }
 
-                    throw new Exception.ParseException(string.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                    throw new ParseException(string.Concat("foreach is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
 
                 }
                 return null;
@@ -111,7 +111,7 @@ namespace JinianNet.JNTemplate.Parsers
             }
             if (childType.Length != 1)
             {
-                throw new CompileException("[ForeachTag]:source error.");
+                throw new CompileException(tag,"[ForeachTag]:source error.");
             }
             var old = c.Data;
             var scope = new VariableScope(old);
@@ -250,7 +250,7 @@ namespace JinianNet.JNTemplate.Parsers
             var variableScopeType = typeof(VariableScope);
             if (childType.Length != 1)
             {
-                throw new CompileException("[ForeachTag]:source error.");
+                throw new CompileException(tag,"[ForeachTag]:source error.");
             }
 
             var old = c.Data;

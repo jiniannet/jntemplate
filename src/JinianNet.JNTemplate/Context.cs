@@ -52,5 +52,16 @@ namespace JinianNet.JNTemplate
         /// Gets the cache of the engine.
         /// </summary>
         public ICache Cache => Options.Cache;
+
+        /// <summary>
+        /// Gets or sets the debug mode.
+        /// </summary>
+        public bool Debug { get; set; } =
+#if DEBUG
+            true;
+#else
+            false;
+#endif
+
     }
 }
