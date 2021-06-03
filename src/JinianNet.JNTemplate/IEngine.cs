@@ -25,13 +25,6 @@ namespace JinianNet.JNTemplate
         RuntimeOptions Options { get; }
 
         /// <summary>
-        /// Configuration engine which <see cref="IConfig"/>.
-        /// </summary>
-        /// <param name="conf">The <see cref="IConfig"/>.</param>
-        /// <param name="scope">The global <see cref="VariableScope"/>.</param>
-        IEngine Configure(IConfig conf, VariableScope scope);
-
-        /// <summary>
         /// Configuration engine which <see cref="Action{IConfig}"/>.
         /// </summary>
         /// <param name="action">The <see cref="Action{action}"/>.</param>

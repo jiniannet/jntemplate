@@ -103,9 +103,9 @@ ${end}
 
 **配置**
 
-你可以使用`EngineConfig`对象来对 JNTemplate进行配置：
+你可以使用`IOptions`对象来对 JNTemplate进行配置：
 ```csharp
-Engine.Configure((conf)=>{
+Engine.Configure((options)=>{
     // .. 配置你的具体参数
 });
 ```
@@ -113,7 +113,7 @@ Engine.Configure((conf)=>{
 ### 链接
 
 - 官网: https://www.jiniannet.com
-- 文根: https://docs.jiniannet.com
+- 文档: https://docs.jiniannet.com
 - 代码: https://gitee.com/jiniannet/jntemplate
 
 ### 授权

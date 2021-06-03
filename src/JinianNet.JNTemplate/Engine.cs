@@ -53,11 +53,9 @@ namespace JinianNet.JNTemplate
         /// Configuration engine which <see cref="Action{IConfig}"/>.
         /// </summary>
         /// <param name="action">The <see cref="Action{IConfig}"/>.</param>
-        public static void Configure(Action<IConfig> action)
+        public static void Configure(Action<Runtime.IOptions> action)
         {
-            var conf = EngineConfig.CreateDefault();
-            action?.Invoke(conf);
-            Current.Configure(conf, null);
+            Current.Configure(action);
         }
 
         /// <summary>
@@ -66,19 +64,18 @@ namespace JinianNet.JNTemplate
         /// <param name="action">The <see cref="Action{IConfig, VariableScope}"/>.</param>
         public static void Configure(Action<IConfig, VariableScope> action)
         {
-            var conf = Configuration.EngineConfig.CreateDefault();
-            var score = new VariableScope(null, Current.Options.TypeDetectPattern);
-            action?.Invoke(conf, score);
-            Current.Configure(conf, score);
+            IConfig conf = Current.Options;
+            action?.Invoke(Current.Options, Current.Options.Data);
         }
 
         /// <summary>
         /// Configuration engine which <see cref="IConfig"/>.
         /// </summary>
         /// <param name="conf">The <see cref="IConfig"/>.</param>
+        [Obsolete("please use Configure(Action<IOptions>)")]
         public static void Configure(IConfig conf)
         {
-            Current.Configure(conf, null);
+            Configure(conf, null);
         }
 
 
@@ -87,9 +84,48 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="conf">The <see cref="IConfig"/>.</param>
         /// <param name="scope">The global <see cref="VariableScope"/>.</param>
+        [Obsolete("please use Configure(Action<IOptions>)")]
         public static void Configure(IConfig conf, VariableScope scope)
         {
-            Current.Configure(conf, scope);
+            Runtime.RuntimeOptions options;
+            if (conf is Runtime.RuntimeOptions o)
+            {
+
+                options = o;
+            }
+            else
+            {
+                options = Current.Options;
+                options.DisableeLogogram = conf.DisableeLogogram;
+                options.TagPrefix = conf.TagPrefix;
+                options.TagSuffix = conf.TagSuffix;
+                options.TagFlag = conf.TagFlag;
+                options.Encoding = conf.Encoding;
+                options.EnableTemplateCache = conf.EnableTemplateCache;
+                options.ThrowExceptions = conf.ThrowExceptions;
+                options.TypeDetectPattern = conf.TypeDetectPattern;
+                options.OutMode = conf.OutMode;
+                if (options.EnableCompile != conf.EnableCompile)
+                {
+                    options.EnableCompile = conf.EnableCompile;
+                }
+                if (conf.ResourceDirectories?.Count > 0)
+                {
+                    foreach (var path in conf.ResourceDirectories)
+                    {
+                        if (!options.ResourceDirectories.Contains(path))
+                        {
+                            options.ResourceDirectories.Add(path);
+                        }
+                    }
+                }
+            }
+            if (scope != null && scope.Count > 0)
+            {
+                options.Data = scope;
+            }
+
+            Current.UseOptions(options);
         }
 
         /// <summary>

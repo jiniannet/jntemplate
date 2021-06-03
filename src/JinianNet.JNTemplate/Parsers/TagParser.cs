@@ -22,6 +22,11 @@ namespace JinianNet.JNTemplate.Parsers
             delegates = new List<Func<TemplateParser, TokenCollection, ITag>>();
         }
 
+        /// <summary>
+        ///  Gets the number of elements contained in <see cref="TagParser"/>.
+        /// </summary>
+        public int Count => delegates.Count;
+
         /// <inheritdoc />
         public ITag Parsing(TemplateParser parser, TokenCollection tc)
         {

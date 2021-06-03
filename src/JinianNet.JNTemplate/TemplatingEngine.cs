@@ -46,7 +46,7 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.JsonRegistrar",
                 "JinianNet.JNTemplate.Parsers.TextRegistrar",
                 "JinianNet.JNTemplate.Parsers.OperatorRegistrar",
-                "JinianNet.JNTemplate.Parsers.ComplexRegistrar"}; 
+                "JinianNet.JNTemplate.Parsers.ComplexRegistrar"};
         #region
         /// <summary>
         /// Gets the <see cref="RuntimeOptions"/>.
@@ -64,43 +64,6 @@ namespace JinianNet.JNTemplate
         public IEngine Configure(Action<IOptions> action)
         {
             action?.Invoke(Options);
-            return this;
-        }
-
-        /// <inheritdoc />
-        public IEngine Configure(IConfig conf, VariableScope scope)
-        {
-            if (conf.ResourceDirectories != null && conf.ResourceDirectories.Count > 0)
-            {
-                foreach (var path in conf.ResourceDirectories)
-                {
-                    AppendResourcePath(path);
-                }
-            }
-            if (scope != null && scope.Count > 0)
-            {
-                Options.Data = scope;
-            }
-            if (!string.IsNullOrEmpty(conf.Charset))
-            {
-                Options.Encoding = Encoding.GetEncoding(conf.Charset);
-            }
-            this.Options.DisableeLogogram = conf.DisableeLogogram;
-            this.Options.EnableTemplateCache = conf.EnableTemplateCache;
-            this.Options.StripWhiteSpace = conf.StripWhiteSpace;
-            if (conf.TagFlag != '\0')
-            {
-                this.Options.TagFlag = conf.TagFlag;
-            }
-            if (!string.IsNullOrEmpty(conf.TagPrefix))
-            {
-                this.Options.TagPrefix = conf.TagPrefix;
-            }
-            if (!string.IsNullOrEmpty(conf.TagSuffix))
-            {
-                this.Options.TagSuffix = conf.TagSuffix;
-            }
-            this.Options.ThrowExceptions = conf.ThrowExceptions;
             return this;
         }
 
@@ -148,7 +111,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public TemplateContext CreateContext()
         {
-            var data = new VariableScope(Options.Data,Options.TypeDetectPattern);
+            var data = VariableScope.Create(Options);
             var ctx = new TemplateContext(data);
             ctx.Options = Options;
             ctx.Charset = Options.Encoding;
@@ -341,8 +304,14 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public IEngine UseOptions(RuntimeOptions options)
         {
-            Options = options;
-            Initialize();
+            if (Options != options)
+            {
+                Options = options;
+                if (options.Parser.Count == 0)
+                {
+                    Initialize();
+                }
+            }
             return this;
         }
 

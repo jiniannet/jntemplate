@@ -118,5 +118,24 @@ $end
 <li>4</li>
 <ul>", render);
         }
+
+
+
+        /// <summary>
+        /// 测试全局数据
+        /// </summary>
+        [Fact]
+        public void TestGlobalData()
+        {
+            Console.WriteLine(Field.Version);
+            var engine = new EngineBuilder().Build();
+            engine.Configure(o =>o.Data.Set("name","jntemplate"));
+
+            var templateContent ="hello,${name} ${version}";
+            var template = engine.CreateTemplate(templateContent);
+            template.Set("version", Field.Version);
+            var render = template.Render();
+            Assert.Equal($"hello,jntemplate {Field.Version}", render);
+        }
     }
 }

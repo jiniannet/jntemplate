@@ -96,9 +96,9 @@ output:
 
 **Configuration**
 
-You can configure JNTemplate with the `EngineConfig` class.
+You can configure JNTemplate with the `IOptions` class.
 ```csharp
-Engine.Configure((conf)=>{
+Engine.Configure((options)=>{
 // .. configure your instance
 });
 ```

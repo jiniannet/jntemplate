@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate.Runtime
         internal RuntimeOptions(bool enableCompile)
         {
             CompilerResults = new ResultCollection<ICompilerResult>();
-            this.Data = null;
+            this.Data = new VariableScope(null, TypeDetect.Absolute);
             this.Variable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             //IgnoreCase
             this.Cache = new MemoryCache();
@@ -47,7 +47,6 @@ namespace JinianNet.JNTemplate.Runtime
             this.TagFlag = '$';
             this.TagPrefix = "${";
             this.TagSuffix = "}";
-            this.StripWhiteSpace = false;
             this.ThrowExceptions = true;
             this.Parser = new TagParser();
             this.EnableCompile = enableCompile;
@@ -62,10 +61,13 @@ namespace JinianNet.JNTemplate.Runtime
             {
                 this.Builder = new CompileBuilder();
                 this.Guesser = new TypeGuesser();
+                this.ExecutorBuilder?.Clear();
             }
             else
             {
                 this.ExecutorBuilder = new ExecutorBuilder();
+                this.Builder = null;
+                this.Guesser = null;
             }
         }
 
@@ -157,7 +159,8 @@ namespace JinianNet.JNTemplate.Runtime
         /// </summary>
         public bool EnableCompile
         {
-            internal set { 
+            internal set
+            {
                 enabled = value;
                 Initialize();
             }
@@ -178,12 +181,6 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets whether throw exceptions.
         /// </summary>
         public bool ThrowExceptions { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether strip white-space.
-        /// </summary>
-        public bool StripWhiteSpace { get; set; }
-
         /// <summary>
         /// Gets or sets the detect patterns.
         /// </summary>
@@ -192,6 +189,21 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets the output mode.
         /// </summary>
         public OutMode OutMode { get; set; }
+        /// <summary>
+        /// Gets or sets whether strip white-space.
+        /// </summary>
+        [Obsolete("please use OutMode")]
+        public bool StripWhiteSpace { get; set; }
+        /// <inheritdoc />
+        [Obsolete("please use Encoding")]
+        public string Charset
+        {
+            get { return this.Encoding.EncodingName; }
+            set { this.Encoding = Encoding.GetEncoding(value); }
+        }
+        /// <inheritdoc />
+        [Obsolete]
+        public bool IgnoreCase { get; set; } = true;
 
     }
 }

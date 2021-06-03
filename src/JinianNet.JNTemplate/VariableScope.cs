@@ -2,7 +2,9 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Runtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate
@@ -14,6 +16,20 @@ namespace JinianNet.JNTemplate
     {
         private VariableScope parent;
         private IDictionary<string, VariableElement> dic;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VariableScope"/> class
+        /// </summary>
+        /// <param name="options">The parent <see cref="IOptions"/>.</param> 
+        public static VariableScope Create(IOptions options)
+        {
+            if (options.Data == null || options.Data.Count == 0)
+            {
+                return new VariableScope(null, options.TypeDetectPattern);
+            }
+            return new VariableScope(options.Data, options.TypeDetectPattern);
+        }
+
         /// <summary>
         /// Gets or sets the  detect patterns.
         /// </summary>
@@ -233,5 +249,11 @@ namespace JinianNet.JNTemplate
         {
             this.dic[key] = element;
         }
+
+
+        /// <summary>
+        /// Gets an <see cref="ICollection{T}"/>  containing the keys of the <see cref=" VariableScope"/>.
+        /// </summary>
+        public ICollection<string> Keys => this.dic.Keys;
     }
 }
