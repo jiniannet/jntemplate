@@ -129,7 +129,7 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
-                    this.column++;
+                    this.column += i;
                 }
                 return true;
             }
@@ -240,6 +240,10 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public bool MoveNext()
         {
+            if (this.kind == TokenKind.EOF)
+            {
+                return false;
+            }
             Token token = null;
             do
             {
@@ -289,7 +293,9 @@ namespace JinianNet.JNTemplate
                             if (this.kind == TokenKind.TagStart
                                 || this.kind == TokenKind.LeftBracket
                                || this.kind == TokenKind.LeftParentheses
-                               || this.kind == TokenKind.Operator
+                               //|| this.kind == TokenKind.Operator
+                               || this.kind == TokenKind.Arithmetic
+                               || this.kind == TokenKind.Logic
                                || this.kind == TokenKind.Punctuation
                                || this.kind == TokenKind.Comma
                                || this.kind == TokenKind.Colon
@@ -328,22 +334,7 @@ namespace JinianNet.JNTemplate
                     }
                     else if (IsTagEnd())
                     {
-                        token = GetToken(TokenKind.TagEnd);
-                        if (this.flagMode == FlagMode.Full)
-                        {
-                            Move(this.suffix.Length - 1);
-                        }
-#if ALLOWCOMMENT
-                        else if (this.flagMode == FlagMode.Comment)
-                        {
-                            Move(1);
-                        }
-#endif
-                        else if (this.flagMode == FlagMode.Logogram)
-                        {
-                            Move(-1);
-                        }
-                        this.flagMode = FlagMode.None;
+                        token = GetEndToken();
                         continue;
                     }
                 }
@@ -363,7 +354,7 @@ namespace JinianNet.JNTemplate
                     }
                     else
                     {
-                        tk = TokenKind.Operator;
+                        tk = TokenKind.Arithmetic;
                     }
                 }
                 else
@@ -393,16 +384,37 @@ namespace JinianNet.JNTemplate
             }
             while (Move() && token == null);
 
-            if (token != null
-                || (this.flagMode != FlagMode.None && (token = new Token(TokenKind.TagEnd, string.Empty)) != null)
-                || (this.kind != TokenKind.EOF && (token = GetToken(TokenKind.EOF)) != null))
+            if (token == null)
             {
-                this.Current = token;
-                return true;
+                if (this.kind == TokenKind.EOF)
+                {
+                    return false;
+                }
+                token = GetToken(TokenKind.EOF);
             }
+            this.Current = token;
+            return true;
+        }
 
-            return false;
-
+        private Token GetEndToken()
+        {
+            var token = GetToken(TokenKind.TagEnd);
+            if (this.flagMode == FlagMode.Full)
+            {
+                Move(this.suffix.Length - 1);
+            }
+#if ALLOWCOMMENT
+            else if (this.flagMode == FlagMode.Comment)
+            {
+                Move(1);
+            }
+#endif
+            else if (this.flagMode == FlagMode.Logogram)
+            {
+                Move(-1);
+            }
+            this.flagMode = FlagMode.None;
+            return token;
         }
 
         private TokenKind GetTokenKind(char c)
@@ -431,8 +443,6 @@ namespace JinianNet.JNTemplate
                     return TokenKind.LeftBrace;
                 case '}':
                     return TokenKind.RightBrace;
-
-
                 case '0':
                 case '1':
                 case '2':
@@ -448,16 +458,18 @@ namespace JinianNet.JNTemplate
                 case '-':
                 case '+':
                 case '/':
+                case '%':
+                    return TokenKind.Arithmetic;
                 case '>':
                 case '<':
                 case '=':
                 case '!':
                 case '&':
                 case '|':
+                    return TokenKind.Logic;
                 case '~':
                 case '^':
                 case '?':
-                case '%':
                     return TokenKind.Operator;
                 case ',':
                     return TokenKind.Comma;

@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Parsers
                     paramType[i] = c.GuessType(t.Children[i]);
                     if (paramType[i].FullName == "System.Void")
                     {
-                        throw new CompileException(tag,"[FunctaionTag]:parameter error");
+                        throw new CompileException(tag, "[FunctaionTag]:parameter error");
                     }
                 }
 
@@ -50,7 +50,7 @@ namespace JinianNet.JNTemplate.Parsers
                         Type funcType = null;
                         if (property == null)
                         {
-                            field = baseType.GetFieldInfo( t.Name);
+                            field = baseType.GetFieldInfo(t.Name);
                             if (field != null)
                             {
                                 funcType = field.FieldType;
@@ -75,7 +75,7 @@ namespace JinianNet.JNTemplate.Parsers
                         }
                         if (method == null)
                         {
-                            throw new CompileException(tag,$"[FunctaionTag]:method \"{t.Name}\" cannot be found!");
+                            throw new CompileException(tag, $"[FunctaionTag]:method \"{t.Name}\" cannot be found!");
                         }
                     }
                 }
@@ -208,7 +208,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     types[i] = c.GuessType(t.Children[i]);
                 }
-                var method = parentType.GetMethodInfo( t.Name, types);
+                var method = parentType.GetMethodInfo(t.Name, types);
                 if (method != null)
                 {
                     return method.ReturnType;
@@ -227,19 +227,27 @@ namespace JinianNet.JNTemplate.Parsers
                     && tc.Count > 2
                     && tc[1].TokenKind == TokenKind.LeftParentheses
                     && tc.Last.TokenKind == TokenKind.RightParentheses
-                    && tc.Split(0, tc.Count, TokenKind.Operator).Length == 1)
+                    )
                 {
+                    var tcs = tc.Split(TokenKind.LeftParentheses, TokenKind.RightParentheses);
+                    if (tcs.Length != 2
+                    || tcs[1].Count < 2
+                    || tcs[1].First.TokenKind != TokenKind.LeftParentheses
+                    || tcs[1].Last.TokenKind != TokenKind.RightParentheses)
+                    {
+                        return null;
+                    }
+
                     var tag = new FunctaionTag();
                     tag.Name = tc.First.Text;
-
-                    TokenCollection[] tcs = tc.Split(2, tc.Count - 1, TokenKind.Comma);
-                    for (int i = 0; i < tcs.Length; i++)
+                    var ntc = tcs[1].Split(1, tcs[1].Count - 1, TokenKind.Comma);
+                    for (int i = 0; i < ntc.Length; i++)
                     {
-                        if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Comma)
+                        if (ntc[i].Count == 1 && ntc[i][0].TokenKind == TokenKind.Comma)
                         {
                             continue;
                         }
-                        tag.AddChild(parser.Read(tcs[i]));
+                        tag.AddChild(parser.Read(ntc[i]));
                     }
 
                     return tag;
@@ -275,14 +283,14 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                     else
                     {
-                        if(t.Parent is VariableTag variable)
+                        if (t.Parent is VariableTag variable)
                         {
                             type = context.TempData.GetType(variable.Name);
                         }
                     }
                 }
 
-                if (parentValue==null && type == null)
+                if (parentValue == null && type == null)
                 {
                     return null;
                 }

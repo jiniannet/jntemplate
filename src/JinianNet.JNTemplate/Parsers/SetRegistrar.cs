@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                 if (tc.Count == 2
                     && tc.First.TokenKind == TokenKind.TextData
-                    && tc.Last.TokenKind == TokenKind.Operator
+                    && tc.Last.TokenKind == TokenKind.Arithmetic
                     && (tc.Last.Text == "++" || tc.Last.Text == "--"))
                 {
                     var tag = new SetTag();
@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate.Parsers
                         FirstToken = tc.First,
                         Name = tc.First.Text
                     });
-                    c.AddChild(new OperatorTag(new Token(TokenKind.Operator, tc.Last.Text[0].ToString())));
+                    c.AddChild(new OperatorTag(new Token(TokenKind.Arithmetic, tc.Last.Text[0].ToString())));
 
                     //c.AddChild(new TextTag()
                     //{

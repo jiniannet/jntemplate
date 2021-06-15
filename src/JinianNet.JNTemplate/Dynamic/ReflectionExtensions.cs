@@ -90,7 +90,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetCacheMethods(this Type type, string name)
         {
-            var cacheKey = string.Concat(type.FullName, ".", name);
+            var cacheKey = $"{type.FullName}.{name}";
             return dict.GetOrAdd(cacheKey, (key) =>
             {
                 return GetMethodInfos(type, name);

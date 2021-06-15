@@ -46,7 +46,9 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.JsonRegistrar",
                 "JinianNet.JNTemplate.Parsers.TextRegistrar",
                 "JinianNet.JNTemplate.Parsers.OperatorRegistrar",
-                "JinianNet.JNTemplate.Parsers.ComplexRegistrar"};
+                "JinianNet.JNTemplate.Parsers.LogicRegistrar",
+                "JinianNet.JNTemplate.Parsers.ArithmeticRegistrar",
+                "JinianNet.JNTemplate.Parsers.ReferenceRegistrar"};
         #region
         /// <summary>
         /// Gets the <see cref="RuntimeOptions"/>.

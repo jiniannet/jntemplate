@@ -59,11 +59,11 @@ namespace JinianNet.JNTemplate.Parsers
                             }
                         }
 
-                        throw new ParseException(string.Concat("if is not properly closed by a end tag:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                        throw new ParseException($"if is not properly closed by a end tag: {tc.ToString()}", tc.First.BeginLine, tc.First.BeginColumn);
                     }
                     else
                     {
-                        throw new ParseException(string.Concat("syntax error near if:", tc), tc.First.BeginLine, tc.First.BeginColumn);
+                        throw new ParseException($"syntax error near if: {tc.ToString()}", tc.First.BeginLine, tc.First.BeginColumn);
                     }
 
                 }

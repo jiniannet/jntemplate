@@ -427,12 +427,12 @@ namespace JinianNet.JNTemplate.Dynamic
                     {
                         if (tX.Name[0] == 'U')
                         {
-                            tX = Type.GetType(string.Concat("System.", tX.Name.Remove(0, 1)));
+                            tX = Type.GetType($"System.{tX.Name.Remove(0, 1)}");
                         }
 
                         if (tY.Name[0] == 'U')
                         {
-                            tY = Type.GetType(string.Concat("System.", tY.Name.Remove(0, 1)));
+                            tY = Type.GetType($"System.{tY.Name.Remove(0, 1)}");
                         }
 
                         i = Array.IndexOf<string>(numberWeights, tX.FullName);
@@ -488,7 +488,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "!=":
                     return !Equals(x, y, tX, tY);
                 case "+":
-                    return string.Concat(x.ToString(), y.ToString());
+                    return $"{x.ToString()}{y.ToString()}";
                 case ">=":
                 case ">":
                 case "<=":
@@ -511,7 +511,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     }
                     return false;
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"object\" and \"object\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"object\" and \"object\"");
             }
         }
 
@@ -665,7 +665,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "&&":
                     return x && y;
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"bool\" and \"bool\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"bool\" and \"bool\"");
             }
         }
         
@@ -685,9 +685,9 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "!=":
                     return !x.Equals(y, StringComparison.OrdinalIgnoreCase);
                 case "+":
-                    return string.Concat(x, y);
+                    return $"{x}{y}";
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"string\" and \"string\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"string\" and \"string\"");
             }
         }
 
@@ -715,7 +715,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "<=":
                     return x <= y;
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"DateTime\" and \"DateTime\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"DateTime\" and \"DateTime\"");
             }
         }
 
@@ -753,7 +753,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "!=":
                     return x != y;
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Double\" and \"Double\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Double\" and \"Double\"");
             }
         }
 
@@ -791,7 +791,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "!=":
                     return x != y;
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Single\" and \"Single\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Single\" and \"Single\"");
             }
         }
 
@@ -829,7 +829,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "!=":
                     return x != y;
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Decimal\" and \"Decimal\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Decimal\" and \"Decimal\"");
             }
         }
 
@@ -872,7 +872,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     return x & y;
 
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"int\" and \"int\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"int\" and \"int\"");
             }
         }
 
@@ -915,7 +915,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     return x & y;
 
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Int64\" and \"Int64\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Int64\" and \"Int64\"");
             }
         }
 
@@ -958,7 +958,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     return x & y;
 
                 default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"Int16\" and \"Int16\""));
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Int16\" and \"Int16\"");
             }
         }
         #region 

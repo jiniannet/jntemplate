@@ -181,7 +181,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             if (context.Debug)
             {
-                il.Emit(OpCodes.Ldstr, $"{{0}} on {tag.ToSource()} [line:{tag.FirstToken?.BeginLine},col:{tag.FirstToken?.BeginColumn}]");
+                //{tag.ToSource()} 
+                il.Emit(OpCodes.Ldstr, $"{{0}} on [line:{tag.FirstToken?.BeginLine},col:{tag.FirstToken?.BeginColumn}]");
             }
             else
             {

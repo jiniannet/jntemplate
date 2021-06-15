@@ -1,110 +1,51 @@
-/********************************************************************************
+﻿/********************************************************************************
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Exceptions;
+using JinianNet.JNTemplate.Nodes;
 
 namespace JinianNet.JNTemplate.Parsers
 {
     /// <summary>
-    /// The complex tags registrar
+    /// The <see cref="LogicTag"/> registrar
     /// </summary>
-    public class ComplexRegistrar : IRegistrar
+    public class LogicRegistrar : TagRegistrar<LogicTag>, IRegistrar
     {
         #region
         private static List<Operator> operators = new List<Operator>(new Operator[] { Operator.Equal, Operator.NotEqual, Operator.LessThan, Operator.LessThanOrEqual, Operator.GreaterThan, Operator.GreaterThanOrEqual });
         #endregion
-
-        #region 
         /// <inheritdoc />
-        public void Regiser(IEngine engine)
+        public override Func<TemplateParser, TokenCollection, ITag> BuildParseMethod()
         {
-            engine.RegisterParseFunc((parser, tc) =>
+            return (parser, tc) =>
             {
                 if (tc != null
                     && parser != null
                     && tc.Count > 2)
                 {
-
-                    var tags = new List<ITag>();
-                    var tcs = tc.Split(0, tc.Count, TokenKind.Dot, TokenKind.Operator);
-                    bool isLogical = false;
-                    if (tcs.Length == 1)
+                    var tcs = tc.Split(TokenKind.Logic);
+                    if (tcs.Length <= 1)
                     {
                         return null;
                     }
+
+                    var tags = new List<ITag>();
                     for (int i = 0; i < tcs.Length; i++)
                     {
-                        if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Dot)
-                        {
-                            if (tags.Count == 0 || i == tcs[i].Count - 1 || (tcs[i + 1].Count == 1 && (tcs[i + 1][0].TokenKind == TokenKind.Dot || tcs[i + 1][0].TokenKind == TokenKind.Operator)))
-                            {
-                                throw new ParseException($"syntax error near '.': {tc.ToString()}", tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
-                            }
-                            if (tags[tags.Count - 1] is ReferenceTag)
-                            {
-                                tags[tags.Count - 1].AddChild(parser.Read(tcs[i + 1]));
-                            }
-                            else
-                            {
-                                var t = new ReferenceTag();
-                                t.AddChild(tags[tags.Count - 1]);
-                                t.AddChild(parser.Read(tcs[i + 1]));
-                                tags[tags.Count - 1] = t;
-                            }
-                            i++;
-                        }
-                        else if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Operator)
+                        if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Logic)
                         {
                             tags.Add(new OperatorTag(tcs[i][0]));
-
-                            Operator op = Dynamic.OperatorConvert.Parse(tcs[i][0].Text);
-                            switch (op)
-                            {
-                                case Operator.Or:
-                                case Operator.And:
-                                case Operator.LessThan:
-                                case Operator.LessThanOrEqual:
-                                case Operator.Equal:
-                                case Operator.GreaterThan:
-                                case Operator.GreaterThanOrEqual:
-                                case Operator.NotEqual:
-                                    isLogical = true;
-                                    break;
-                            }
                         }
-                        else if (tcs[i][0].TokenKind == TokenKind.LeftBracket)
+                        else
                         {
-                            if (tags[tags.Count - 1] is ReferenceTag)
-                            {
-                                tags[tags.Count - 1].AddChild(parser.Read(tcs[i]));
-                            }
-                            else
-                            {
-                                if (tags.Count == 0)
-                                {
-                                    throw new ParseException($"syntax error near '[': {tc.ToString()}", tcs[i][0].BeginLine, tcs[i][0].BeginColumn);
-                                }
-                                var t = new ReferenceTag();
-                                t.AddChild(tags[tags.Count - 1]);
-                                t.AddChild(parser.Read(tcs[i]));
-                                tags[tags.Count - 1] = t;
-                            }
-                        }
-                        else if (tcs[i].Count > 0)
-                        {
-                            if (tcs[i].First.TokenKind == TokenKind.LeftParentheses && tcs[i].Last.TokenKind == TokenKind.RightParentheses)
-                            {
-                                tcs[i].RemoveAt(0);
-                                tcs[i].RemoveAt(tcs[i].Count - 1);
-                            }
                             tags.Add(parser.Read(tcs[i]));
                         }
                     }
@@ -117,52 +58,27 @@ namespace JinianNet.JNTemplate.Parsers
                     if (tags.Count > 1)
                     {
                         var list = new List<List<ITag>>();
-                        ITag t;
-                        if (isLogical)
+                        ITag t = new LogicTag();
+                        var arr = Analysis(tags, new List<Operator>(new Operator[] { Operator.And, Operator.Or }));
+                        if (arr.Length == 1)
                         {
-                            t = new LogicTag();
-                            var arr = Analysis(tags, new List<Operator>(new Operator[] { Operator.And, Operator.Or }));
-                            if (arr.Length == 1)
-                            {
-                                return arr[0];
-                            }
-                            AddRange(t, arr);
+                            return arr[0];
                         }
-                        else
-                        {
-                            t = new ArithmeticTag();
-                            for (int i = 0; i < tags.Count; i++)
-                            {
-                                t.AddChild(tags[i]);
-                            }
-                        }
+                        AddRange(t, arr);
                         tags.Clear();
                         return t;
                     }
+
                 }
+
                 return null;
-            }, -1);
-
-            if (engine.Options.EnableCompile)
-            {
-                RegiserCompile(engine);
-            }
-            else
-            {
-                RegiserExcutor(engine);
-            }
-
-
+            };
         }
 
-        private void RegiserCompile(IEngine engine)
+        /// <inheritdoc />
+        public override Func<ITag, CompileContext, MethodInfo> BuildCompileMethod()
         {
-            engine.RegisterCompileFunc<ReferenceTag>((tag, c) =>
-            {
-                return c.CompileTag(((ReferenceTag)tag).Child);
-            });
-
-            engine.RegisterCompileFunc<LogicTag>((tag, c) =>
+            return (tag, c) =>
             {
                 var t = tag as LogicTag;
                 var type = c.GuessType(t);
@@ -479,252 +395,20 @@ namespace JinianNet.JNTemplate.Parsers
                 il.Emit(OpCodes.Ldloc_0);
                 il.Emit(OpCodes.Ret);
                 return mb.GetBaseDefinition();
-            });
-
-            engine.RegisterCompileFunc<ArithmeticTag>((tag, c) =>
-            {
-                var stringBuilderType = typeof(StringBuilder);
-                var t = tag as ArithmeticTag;
-                var type = c.GuessType(t);
-                var mb = c.CreateReutrnMethod<ArithmeticTag>(type);
-                var il = mb.GetILGenerator();
-                Label labelEnd = il.DefineLabel();
-                il.DeclareLocal(type);
-                var array = new object[t.Children.Count];
-                var types = new List<Type>();
-                var opts = new List<Operator>();
-                var message = new List<string>();
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    var opt = t.Children[i] as OperatorTag;
-                    if (opt != null)
-                    {
-                        if (!opts.Contains(opt.Value))
-                        {
-                            opts.Add(opt.Value);
-                        }
-                        array[i] = opt.Value;
-                        message.Add(OperatorConvert.ToString(opt.Value));
-                    }
-                    else
-                    {
-                        array[i] = t.Children[i];
-                        types.Add(c.GuessType(t.Children[i]));
-                        message.Add(types[types.Count - 1].Name);
-                    }
-                }
-                if (types.Contains(typeof(string)) && opts.Count == 1 && opts[0] == Operator.Add)
-                {
-                    il.DeclareLocal(stringBuilderType);
-                    il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc_1);
-                    for (int i = 0; i < t.Children.Count; i++)
-                    {
-                        var opt = t.Children[i] as OperatorTag;
-                        if (opt != null)
-                        {
-                            continue;
-                        }
-                        il.Emit(OpCodes.Ldloc_1);
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldarg_1);
-                        var m = c.CompileTag(t.Children[i]);
-                        il.Emit(OpCodes.Call, m);
-                        il.StringAppend(c, m.ReturnType);
-                        il.Emit(OpCodes.Pop);
-                    }
-
-                    il.Emit(OpCodes.Ldloc_1);
-                    il.Call(stringBuilderType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc_0);
-                }
-                else
-                {
-                    var bestType = TypeGuesser.FindBestType(types.ToArray());
-                    var stack = ExpressionEvaluator.ProcessExpression(array);
-                    var arr = stack.ToArray();
-                    for (var i = arr.Length - 1; i >= 0; i--)
-                    {
-                        var obj = arr[i];
-                        var childTag = obj as ITag;
-                        if (childTag != null)
-                        {
-                            var m = c.CompileTag(childTag);
-                            il.Emit(OpCodes.Ldarg_0);
-                            il.Emit(OpCodes.Ldarg_1);
-                            il.Emit(OpCodes.Call, m);
-                            if (m.ReturnType.FullName != bestType.FullName)
-                            {
-                                switch (bestType.FullName)
-                                {
-                                    case "System.Decimal":
-                                        Type cType = m.ReturnType;
-                                        switch (cType.FullName)
-                                        {
-                                            case "System.Int16":
-                                            case "System.UInt16":
-                                            case "System.Byte":
-                                                il.Emit(OpCodes.Conv_I4);
-                                                break;
-                                        }
-                                        il.Emit(OpCodes.Call, typeof(decimal).GetConstructor(new Type[] { cType }));
-                                        break;
-                                    case "System.Double":
-                                        il.Emit(OpCodes.Conv_R8);
-                                        break;
-                                    case "System.Single":
-                                        il.Emit(OpCodes.Conv_R4);
-                                        break;
-                                    case "System.Int64":
-                                        il.Emit(OpCodes.Conv_I8);
-                                        break;
-                                    case "System.UInt64":
-                                        il.Emit(OpCodes.Conv_U8);
-                                        break;
-                                    case "System.Int32":
-                                        il.Emit(OpCodes.Conv_I4);
-                                        break;
-                                    case "System.UInt32":
-                                        il.Emit(OpCodes.Conv_U4);
-                                        break;
-                                    case "System.Int16":
-                                        il.Emit(OpCodes.Conv_I2);
-                                        break;
-                                    case "System.UInt16":
-                                        il.Emit(OpCodes.Conv_U2);
-                                        break;
-                                    case "System.Byte":
-                                        il.Emit(OpCodes.Conv_U1);
-                                        break;
-                                    default:
-                                        throw new CompileException(tag, $"[ExpressionTag] : The type \"{bestType.FullName}\" is not supported .");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            switch ((Operator)obj)
-                            {
-                                case Operator.Add:
-                                    il.Emit(OpCodes.Add);
-                                    break;
-                                case Operator.Subtract:
-                                    il.Emit(OpCodes.Sub);
-                                    break;
-                                case Operator.Multiply:
-                                    il.Emit(OpCodes.Mul);
-                                    break;
-                                case Operator.Divided:
-                                    il.Emit(OpCodes.Div);
-                                    break;
-                                case Operator.Remainder:
-                                    il.Emit(OpCodes.Rem);
-                                    break;
-                                case Operator.GreaterThan:
-                                    il.Emit(OpCodes.Cgt);
-                                    break;
-                                case Operator.GreaterThanOrEqual:
-                                    il.Emit(OpCodes.Clt_Un);
-                                    il.Emit(OpCodes.Ldc_I4_0);
-                                    il.Emit(OpCodes.Ceq);
-                                    break;
-                                case Operator.LessThan:
-                                    il.Emit(OpCodes.Clt);
-                                    break;
-                                case Operator.LessThanOrEqual:
-                                    il.Emit(OpCodes.Cgt_Un);
-                                    il.Emit(OpCodes.Ldc_I4_0);
-                                    il.Emit(OpCodes.Ceq);
-                                    break;
-                                case Operator.Equal:
-                                    il.Emit(OpCodes.Ceq);
-                                    break;
-                                case Operator.NotEqual:
-                                    il.Emit(OpCodes.Ceq);
-                                    il.Emit(OpCodes.Ldc_I4_0);
-                                    il.Emit(OpCodes.Ceq);
-                                    break;
-                                default:
-                                    throw new CompileException(tag, $"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
-                                    //throw new CompileException($"The operator \"{obj}\" is not supported on type  \"{bestType.FullName}\" .");
-                                    //case Operator.Or:
-                                    //    il.Emit(OpCodes.Blt);
-                                    //    break;
-                            }
-                        }
-                    }
-                    il.Emit(OpCodes.Stloc_0);
-                }
-                il.MarkLabel(labelEnd);
-                il.Emit(OpCodes.Ldloc_0);
-                il.Emit(OpCodes.Ret);
-                return mb.GetBaseDefinition();
-            });
-
-            engine.RegisterGuessFunc<ReferenceTag>((tag, c) =>
-            {
-                return c.GuessType(((ReferenceTag)tag).Child);
-            });
-
-            engine.RegisterGuessFunc<LogicTag>((tag, ctx) =>
+            };
+        }
+        /// <inheritdoc />
+        public override Func<ITag, CompileContext, Type> BuildGuessMethod()
+        {
+            return (tag, c) =>
             {
                 return typeof(bool);
-            });
-
-            engine.RegisterGuessFunc<ArithmeticTag>((tag, ctx) =>
-            {
-                var t = tag as ArithmeticTag;
-                var types = new List<Type>();
-                var opts = new List<Operator>();
-                for (var i = 0; i < t.Children.Count; i++)
-                {
-                    var opt = t.Children[i] as OperatorTag;
-                    if (opt == null)
-                    {
-                        types.Add(ctx.GuessType(t.Children[i]));
-                    }
-                }
-                if (types.Count == 1)
-                {
-                    return types[0];
-                }
-                if (types.Contains(typeof(string)))
-                {
-                    return typeof(string);
-                }
-                if (types.Count > 0)
-                {
-                    return TypeGuesser.FindBestType(types.ToArray());
-                }
-
-                return typeof(int);
-            });
+            };
         }
-
-        private void RegiserExcutor(IEngine engine)
+        /// <inheritdoc />
+        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
         {
-            engine.RegisterExecuteFunc<ArithmeticTag>((tag, context) =>
-            {
-                var t = tag as ArithmeticTag;
-                var parameters = new List<object>();
-
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    var opt = t.Children[i] as OperatorTag;
-                    if (opt != null)
-                    {
-                        parameters.Add(opt.Value);
-                    }
-                    else
-                    {
-                        parameters.Add(TagExecutor.Execute(t.Children[i], context));
-                    }
-                }
-                var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
-                return ExpressionEvaluator.Calculate(stack);
-            });
-
-            engine.RegisterExecuteFunc<LogicTag>((tag, context) =>
+            return (tag, context) =>
             {
                 var t = tag as LogicTag;
                 List<object> parameters = new List<object>();
@@ -741,108 +425,8 @@ namespace JinianNet.JNTemplate.Parsers
 
                 var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
                 return ExpressionEvaluator.Calculate(stack);
-            });
-
-            engine.RegisterExecuteFunc<ReferenceTag>((tag, context) =>
-            {
-                var t = tag as ReferenceTag;
-                if (t.Child != null)
-                {
-                    return TagExecutor.Execute(t.Child, context);
-                }
-                return null;
-            });
+            };
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tags"></param>
-        /// <param name="opt"></param>
-        /// <returns></returns>
-        public static ITag[] Analysis(IList<ITag> tags, IList<Operator> opt)
-        {
-            var result = new List<ITag>();
-            var temp = new List<ITag>();
-
-            var isLogical = false;
-            for (var i = 0; i < tags.Count; i++)
-            {
-                var o = tags[i] as OperatorTag;
-                if (o != null)
-                {
-                    if (opt.Contains(o.Value))
-                    {
-                        result.Add(Analysis(temp, isLogical));
-                        result.Add(tags[i]);
-                        isLogical = false;
-                        temp.Clear();
-                    }
-                    else
-                    {
-                        if (operators.Contains(o.Value))
-                        {
-                            isLogical = true;
-                        }
-                        temp.Add(tags[i]);
-                    }
-                    //result.Add(new Tem);
-                }
-                else
-                {
-                    temp.Add(tags[i]);
-                }
-            }
-
-            if (temp.Count > 0)
-            {
-                result.Add(Analysis(temp, isLogical));
-            }
-
-            return result.ToArray();
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tags"></param>
-        /// <param name="isLogical"></param>
-        /// <returns></returns>
-        public static ITag Analysis(IList<ITag> tags, bool isLogical)
-        {
-            if (tags.Count > 1)
-            {
-                ITag t;
-                if (isLogical)
-                {
-                    t = new LogicTag();
-                    AddRange(t, Analysis(tags, operators));
-                }
-                else
-                {
-                    t = new ArithmeticTag();
-                    AddRange(t, tags);
-                }
-                return t;
-            }
-            else
-            {
-                return tags[0];
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="list"></param>
-        public static void AddRange(ITag tag, IList<ITag> list)
-        {
-            for (var i = 0; i < list.Count; i++)
-            {
-                tag.AddChild(list[i]);
-            }
-        }
-
-
 
         /// <summary>
         /// eval expression
@@ -851,7 +435,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="isOperator"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool Eval(List<object> list, bool isOperator, object value)
+        private static bool Eval(List<object> list, bool isOperator, object value)
         {
             if (isOperator)
             {
@@ -898,7 +482,94 @@ namespace JinianNet.JNTemplate.Parsers
             }
             return false;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tags"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
+        private static ITag[] Analysis(IList<ITag> tags, IList<Operator> opt)
+        {
+            var result = new List<ITag>();
+            var temp = new List<ITag>();
 
-        #endregion
+            var isLogical = false;
+            for (var i = 0; i < tags.Count; i++)
+            {
+                var o = tags[i] as OperatorTag;
+                if (o != null)
+                {
+                    if (opt.Contains(o.Value))
+                    {
+                        result.Add(Analysis(temp, isLogical));
+                        result.Add(tags[i]);
+                        isLogical = false;
+                        temp.Clear();
+                    }
+                    else
+                    {
+                        if (operators.Contains(o.Value))
+                        {
+                            isLogical = true;
+                        }
+                        temp.Add(tags[i]);
+                    }
+                    //result.Add(new Tem);
+                }
+                else
+                {
+                    temp.Add(tags[i]);
+                }
+            }
+
+            if (temp.Count > 0)
+            {
+                result.Add(Analysis(temp, isLogical));
+            }
+
+            return result.ToArray();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tags"></param>
+        /// <param name="isLogical"></param>
+        /// <returns></returns>
+        private static ITag Analysis(IList<ITag> tags, bool isLogical)
+        {
+            if (tags.Count > 1)
+            {
+                ITag t;
+                if (isLogical)
+                {
+                    t = new LogicTag();
+                    AddRange(t, Analysis(tags, operators));
+                }
+                else
+                {
+                    t = new ArithmeticTag();
+                    AddRange(t, tags);
+                }
+                return t;
+            }
+            else
+            {
+                return tags[0];
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="list"></param>
+        private static void AddRange(ITag tag, IList<ITag> list)
+        {
+            for (var i = 0; i < list.Count; i++)
+            {
+                tag.AddChild(list[i]);
+            }
+        }
+
     }
 }

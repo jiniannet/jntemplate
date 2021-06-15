@@ -76,19 +76,28 @@ namespace JinianNet.JNTemplate
                 Token t1, t2;
                 t1 = t2 = GetToken();
                 TokenCollection tc = new TokenCollection();
-
+                if (t1 == null)
+                {
+                    return null;  
+                }
                 do
                 {
                     this.index++;
                     t2.Next = GetToken();
                     t2 = t2.Next;
-
+                    if(t2 == null)
+                    {
+                        break;
+                    }
                     tc.Add(t2);
 
 
                 } while (!IsTagEnd());
 
-                tc.Remove(tc.Last);
+                if (tc.Last != null && (tc.Last.TokenKind == TokenKind.TagEnd))
+                {
+                    tc.Remove(tc.Last);
+                }
 
                 this.index++;
 
@@ -107,7 +116,7 @@ namespace JinianNet.JNTemplate
                 }
                 catch (System.Exception e)
                 {
-                    throw new ParseException(string.Concat("Parse error:", tc, "\r\nError message:", e.Message), tc.First.BeginLine, tc.First.BeginColumn);//标签分析异常
+                    throw new ParseException($"Parse error:{tc.ToString()}\r\nError message:{e.Message}", tc.First.BeginLine, tc.First.BeginColumn);//标签分析异常
                 }
 
                 if (t != null)
@@ -120,7 +129,7 @@ namespace JinianNet.JNTemplate
                 }
                 else
                 {
-                    throw new ParseException(string.Concat("Unexpected  tag:", tc), tc.First.BeginLine, tc.First.BeginColumn); //未知的标签
+                    throw new ParseException($"Unexpected  tag: {tc.ToString()}", tc.First.BeginLine, tc.First.BeginColumn); //未知的标签
                 }
             }
             else
@@ -163,11 +172,15 @@ namespace JinianNet.JNTemplate
 
         private bool IsTagStart(Token t)
         {
-            return t.TokenKind == TokenKind.TagStart;
+            return t != null && t.TokenKind == TokenKind.TagStart;
         }
 
         private Token GetToken()
         {
+            if (this.index >= this.tokens.Length)
+            {
+                return null;
+            }
             return this.tokens[this.index];
         }
 

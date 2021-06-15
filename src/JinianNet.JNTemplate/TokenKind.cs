@@ -43,19 +43,19 @@ namespace JinianNet.JNTemplate
         /// </summary>
         Number,
         /// <summary>
-        /// Left Bracket (
+        /// Left Bracket [
         /// </summary>
         LeftBracket,
         /// <summary>
-        /// Right Bracket )
+        /// Right Bracket ]
         /// </summary>
         RightBracket,
         /// <summary>
-        /// Left Parentheses [
+        /// Left Parentheses (
         /// </summary>
         LeftParentheses,
         /// <summary>
-        /// Right Parentheses ]
+        /// Right Parentheses )
         /// </summary>
         RightParentheses,
         /// <summary>
@@ -94,6 +94,14 @@ namespace JinianNet.JNTemplate
         /// Operator (+,-,*,/,%..)
         /// </summary>
         Operator,
+        /// <summary>
+        /// <![CDATA[Logic Operator (>,>=,==,!=,<,<=,||,&&)]]> 
+        /// </summary>
+        Logic,
+        /// <summary>
+        /// Arithmetic Operator (+,-,*,/,%..)
+        /// </summary>
+        Arithmetic,
         /// <summary>
         /// Comma (,)
         /// </summary>

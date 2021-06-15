@@ -238,7 +238,7 @@ namespace JinianNet.JNTemplate
         /// <returns>A string.</returns>
         public string GetString(int x, int y)
         {
-            if(x == y)
+            if(x >= y)
             {
                 return null;
             }
