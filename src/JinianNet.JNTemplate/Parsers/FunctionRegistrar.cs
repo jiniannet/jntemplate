@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, c) =>
             {
                 var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-                var getVariableValue = typeof(VariableScope).GetMethodInfo("get_Item", new[] { typeof(string) });
+                var getVariableValue = typeof(IVariableScope).GetMethodInfo("get_Item", new[] { typeof(string) });
                 var t = tag as FunctaionTag;
                 Type baseType;
                 MethodInfo method;

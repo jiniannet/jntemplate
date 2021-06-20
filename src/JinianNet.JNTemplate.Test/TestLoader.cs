@@ -9,9 +9,9 @@ namespace JinianNet.JNTemplate.Test
     /// <summary>
     /// 
     /// </summary>
-    public class TestLoader : JinianNet.JNTemplate.Resources.IResourceLoader
+    public class TestLoader : IResourceLoader
     {
-        public string FindFullPath(string filename, params string[] directory)
+        public string Find(Context ctx, string filename)
         {
             return filename;
         }
@@ -21,7 +21,7 @@ namespace JinianNet.JNTemplate.Test
             return fullPath;
         }
 
-        public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
+        public ResourceInfo Load(Context ctx, string filename)
         {
             return new ResourceInfo
             {
@@ -30,13 +30,13 @@ namespace JinianNet.JNTemplate.Test
             };
         }
 
-        public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
+        public async Task<ResourceInfo> LoadAsync(Context ctx, string filename)
         {
             return new ResourceInfo
             {
                 Content = $"当前是模板：{ filename} hello,$name",
                 FullPath = filename
-            }; 
+            };
         }
     }
 }

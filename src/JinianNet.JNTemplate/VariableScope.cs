@@ -12,97 +12,61 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Variable Scope
     /// </summary>
-    public class VariableScope
+    public class VariableScope : IVariableScope
     {
-        private VariableScope parent;
         private IDictionary<string, VariableElement> dic;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VariableScope"/> class
-        /// </summary>
-        /// <param name="options">The parent <see cref="IOptions"/>.</param> 
-        public static VariableScope Create(IOptions options)
-        {
-            if (options.Data == null || options.Data.Count == 0)
-            {
-                return new VariableScope(null, options.TypeDetectPattern);
-            }
-            return new VariableScope(options.Data, options.TypeDetectPattern);
-        }
 
-        /// <summary>
-        /// Gets or sets the  detect patterns.
-        /// </summary>
+        /// <inheritdoc />
         public TypeDetect DetectPattern { get; set; }
+        /// <inheritdoc />
+        public IVariableScope Parent { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
-        /// <param name="parent">The parent <see cref="VariableScope"/>.</param> 
-        public VariableScope(VariableScope parent)
-            : this(parent, parent?.DetectPattern ?? TypeDetect.Standard)
+        public VariableScope()
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VariableScope"/> class
-        /// </summary>
-        /// <param name="parent">The parent <see cref="VariableScope"/>.</param> 
-        /// <param name="pattern">The <see cref="TypeDetect"/>.</param> 
-        public VariableScope(VariableScope parent, TypeDetect pattern)
-        {
-            this.parent = parent;
+            this.Parent = null;
             this.dic = new Dictionary<string, VariableElement>(StringComparer.OrdinalIgnoreCase);
-            this.DetectPattern = pattern;
+            this.DetectPattern = TypeDetect.Absolute;
         }
 
-        /// <summary>
-        /// Removes all items from the <see cref="VariableScope"/>.
-        /// </summary>
-        /// <param name="all">is removes all</param>
+        /// <inheritdoc />
         public void Clear(bool all)
         {
             this.dic.Clear();
             if (all
-                && this.parent != null)
+                && this.Parent != null)
             {
-                this.parent.Clear(all);
+                this.Parent.Clear(all);
             }
         }
 
-        /// <summary>
-        /// Removes all items from the <see cref="VariableScope"/>.
-        /// </summary>
+        /// <inheritdoc />
         public void Clear()
         {
             Clear(false);
         }
 
-        /// <summary>
-        /// gets the parent from the <see cref="VariableScope"/>.
-        /// </summary>
-        public VariableScope Parent
-        {
-            get { return this.parent; }
-        }
-
-        /// <summary>
-        /// Gets the element with the specified key.
-        /// </summary>
-        /// <param name="key">The key of the element to get.</param>
-        /// <returns>The element with the specified key.</returns>
+        /// <inheritdoc />
         public object this[string key]
         {
             get
             {
-                VariableElement val = GetElement(key);
+                var val = GetElement(key);
                 if (val != null)
                 {
                     return val.Value;
                 }
+                if (Parent != null)
+                {
+                    return Parent[key];
+                }
                 return null;
             }
         }
+
 
         private Type GetValueType(object value)
         {
@@ -116,12 +80,7 @@ namespace JinianNet.JNTemplate
             }
         }
 
-        /// <summary>
-        /// update the element with the specified key from the <see cref="VariableScope"/>.
-        /// </summary>
-        /// <param name="key">The key to locate in the <see cref="VariableScope"/>.</param>
-        /// <param name="value">The value with the specified key.</param>
-        /// <returns>true if the element is successfully updated; otherwise, false.</returns>
+        /// <inheritdoc />
         public bool Update<T>(string key, T value)
         {
             if (this.dic.ContainsKey(key))
@@ -136,45 +95,31 @@ namespace JinianNet.JNTemplate
             return false;
         }
 
-        /// <summary>
-        /// Determines whether the <see cref="VariableScope"/>. contains an element with the specified key.
-        /// </summary>
-        /// <param name="key">The key to locate in the <see cref="VariableScope"/>.</param>
-        /// <returns>true if the <see cref="VariableScope"/> contains an element with the key; otherwise, false.</returns>
+        /// <inheritdoc />
         public bool ContainsKey(string key)
         {
             if (this.dic.ContainsKey(key))
             {
                 return true;
             }
-            if (this.parent != null)
+            if (this.Parent != null)
             {
-                return this.parent.ContainsKey(key);
+                return this.Parent.ContainsKey(key);
             }
 
             return false;
         }
 
-        /// <summary>
-        /// Removes the element with the specified key from the <see cref="VariableScope"/>.
-        /// </summary>
-        /// <param name="key">The key of the element to remove.</param>
-        /// <returns>true if the element is successfully removed; otherwise, false. This method also returns false if key was not found in the original <see cref="VariableScope"/>.</returns>
+        /// <inheritdoc />
         public bool Remove(string key)
         {
             return this.dic.Remove(key);
         }
 
-        /// <summary>
-        /// Gets the number of elements contained in the <see cref="VariableScope"/>.
-        /// </summary>
-        public int Count => this.dic.Count + (this.parent == null ? 0 : this.parent.Count);
+        /// <inheritdoc />
+        public int Count => this.dic.Count + (this.Parent == null ? 0 : this.Parent.Count);
 
-        /// <summary>
-        /// Get a <see cref="VariableElement"/> for variables
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <returns>The <see cref="VariableElement"/> with the specified key.</returns>
+        /// <inheritdoc />
         private VariableElement GetElement(string key)
         {
             VariableElement val;
@@ -182,17 +127,9 @@ namespace JinianNet.JNTemplate
             {
                 return val;
             }
-            if (this.parent != null)
-            {
-                return this.parent.GetElement(key);
-            }
             return null;
         }
-        /// <summary>
-        /// Get a <see cref="Type"/> for variables
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <returns>The <see cref="Type"/> with the specified key.</returns>
+        /// <inheritdoc />
         public Type GetType(string key)
         {
             VariableElement val = GetElement(key);
@@ -207,15 +144,13 @@ namespace JinianNet.JNTemplate
                     return val.Value.GetType();
                 }
             }
+            if (Parent != null)
+            {
+                return Parent.GetType(key);
+            }
             return null;
         }
-
-        /// <summary>
-        /// Set a new value for variables.
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="value">The element with the specified key.</param>
-        /// <typeparam name="T">The type of elements in the  <see cref="VariableScope"/>.</typeparam>
+        /// <inheritdoc />
         public void Set<T>(string key, T value)
         {
             if (this.DetectPattern == TypeDetect.None
@@ -229,31 +164,19 @@ namespace JinianNet.JNTemplate
                 Set(key, value, typeof(T));
             }
         }
-
-        /// <summary>
-        /// Set a new <see cref="object"/> for variables
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="value">The element with the specified key.</param>
-        /// <param name="type"><see cref="Type"/> of the value.</param>
+        /// <inheritdoc />
         public void Set(string key, object value, Type type)
         {
             SetElement(key, new VariableElement(type, value));
         }
-        /// <summary>
-        /// Set a new <see cref="VariableElement"/> for variables
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="element">The element with the specified key.</param>
+
+        /// <inheritdoc />
         public void SetElement(string key, VariableElement element)
         {
             this.dic[key] = element;
         }
 
-
-        /// <summary>
-        /// Gets an <see cref="ICollection{T}"/>  containing the keys of the <see cref=" VariableScope"/>.
-        /// </summary>
+        /// <inheritdoc />
         public ICollection<string> Keys => this.dic.Keys;
     }
 }

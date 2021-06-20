@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
 using System;
@@ -120,19 +121,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
             return result;
         }
 
-        //private static void ImplementationRender(Type type, TypeBuilder typeBuilder)
-        //{
-        //    var targetMethod = DynamicHelpers.GetMethodInfo(typeof(ITemplate), "Render", new Type[] { typeof(TextWriter) });
-        //    MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, targetMethod.Attributes & (~MethodAttributes.Abstract), targetMethod.ReturnType, new Type[] { typeof(TextWriter) });
-        //    ILGenerator il = method.GetILGenerator();
-        //    il.Emit(OpCodes.Ldarg_0);
-        //    il.Emit(OpCodes.Ldarg_1);
-        //    il.Emit(OpCodes.Ldarg_0);
-        //    il.Emit(OpCodes.Call, DynamicHelpers.GetPropertyInfo(typeof(ITemplate), "Context").SetMethod);
-        //    il.Emit(OpCodes.Call, DynamicHelpers.GetMethodInfo(typeof(ICompileTemplate), "Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) }));
-        //    il.Emit(OpCodes.Ret);
-        //}
-
         /// <summary>
         /// Generate Context
         /// </summary>
@@ -141,7 +129,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         private static CompileContext GenerateContext(string name, RuntimeOptions options)
         {
-            return GenerateContext(name, options, new VariableScope(options.Data, TypeDetect.Absolute));
+            return GenerateContext(name, options, null);
         }
 
 
@@ -186,19 +174,15 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="scope">The template data.</param>
         /// <param name="options">The options of the engine.</param>
         /// <returns></returns>
-        private static CompileContext GenerateContext(string name, RuntimeOptions options, VariableScope scope)
+        private static CompileContext GenerateContext(string name, RuntimeOptions options, IVariableScope scope)
         {
-            if (scope == null)
-            {
-                scope = new VariableScope(options.Data, options.TypeDetectPattern);
-            }
             var ctx = new CompileContext();
-            ctx.Data = scope;
             ctx.Name = name;
             ctx.Options = options;
             ctx.Charset = options.Encoding;
             ctx.ThrowExceptions = options.ThrowExceptions;
             ctx.OutMode = options.OutMode;
+            ctx.Data = scope ?? ctx.CreateVariableScope();
             return ctx;
 
         }
@@ -211,9 +195,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         private static ICompilerResult Compile(ITag[] tags, CompileContext ctx)
         {
-            var interfaceType = typeof(ICompilerResult);
-            TypeBuilder typeBuilder = DefineType(interfaceType, null, typeof(TemplateCompiler).Namespace, $"Template{ToHashCode(ctx.Name)}");
-            var targetMethod = interfaceType.GetMethodInfo("Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
+            var baseType = typeof(CompilerResult);
+            TypeBuilder typeBuilder = DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, baseType.Namespace, $"Template{ToHashCode(ctx.Name)}");
+            var targetMethod = baseType.GetMethodInfo("Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             ILGenerator methodGenerator = method.GetILGenerator();
             ctx.TypeBuilder = typeBuilder;
@@ -256,6 +240,37 @@ namespace JinianNet.JNTemplate.CodeCompilation
             var instance = type.CreateInstance<ICompilerResult>();
             return instance;
 
+        }
+
+        /// <summary>
+        /// Compile the text into a dynamic class.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="action">The parameter setting method.</param>
+        /// <param name="options">The options of the engine.</param>
+        /// <returns></returns>
+        public static ICompilerResult CompileFile(string name, string path, RuntimeOptions options, Action<CompileContext> action = null)
+        {
+            var ctx = GenerateContext(name, options);
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+            if (action != null)
+            {
+                action(ctx);
+            }
+            var res = options.Loader.Load(ctx, path);
+            if (res == null)
+            {
+                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
+            }
+            if (string.IsNullOrEmpty(ctx.Name))
+            {
+                ctx.Name = res.FullPath;
+            }
+            return Compile(res.Content, ctx);
         }
 
         /// <summary>
@@ -305,7 +320,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public static string ToHashCode(string name)
         {
-            return name.GetHashCode().ToString();
+            return name?.GetHashCode().ToString() ?? "0";
         }
     }
 }

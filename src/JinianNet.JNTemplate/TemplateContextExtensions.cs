@@ -8,6 +8,7 @@ using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Exceptions;
 using System;
+using JinianNet.JNTemplate.Runtime;
 
 namespace JinianNet.JNTemplate
 {
@@ -23,14 +24,15 @@ namespace JinianNet.JNTemplate
         /// <returns>An array of the full names (including paths) of directories in the <see cref="Context"/>.</returns>
         public static string[] GetResourceDirectories(this Context ctx)
         {
-            if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.Options.ResourceDirectories.Contains(ctx.CurrentPath))
-            {
-                return ctx.Options.ResourceDirectories.ToArray();
-            }
-            string[] paths = new string[ctx.Options.ResourceDirectories.Count + 1];
-            paths[0] = ctx.CurrentPath;
-            ctx.Options.ResourceDirectories.CopyTo(paths, 1);
-            return paths;
+            //if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.Options.ResourceDirectories.Contains(ctx.CurrentPath))
+            //{
+            //    return ctx.Options.ResourceDirectories.ToArray();
+            //}
+            //string[] paths = new string[ctx.Options.ResourceDirectories.Count + 1];
+            //paths[0] = ctx.CurrentPath;
+            //ctx.Options.ResourceDirectories.CopyTo(paths, 1);
+            //return paths;
+            return ctx.Options.ResourceDirectories.ToArray();
         }
 
         /// <summary>
@@ -41,8 +43,7 @@ namespace JinianNet.JNTemplate
         /// <returns>The loaded resource.</returns>
         public static Resources.ResourceInfo Load(this Context ctx, string fileName)
         {
-            var paths = ctx.GetResourceDirectories();
-            return ctx.Options.Loader.Load(fileName, ctx.Charset, paths);
+            return ctx.Options.Loader.Load(ctx, fileName);
         }
 
         /// <summary>
@@ -53,8 +54,63 @@ namespace JinianNet.JNTemplate
         /// <returns>The full path.</returns>
         public static string FindFullPath(this Context ctx, string fileName)
         {
-            var paths = ctx.GetResourceDirectories();
-            return ctx.Options.Loader.FindFullPath(fileName, paths);
+            return ctx.Options.Loader.Find(ctx, fileName);
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IVariableScope"/> class
+        /// </summary>
+        /// <param name="options">The <see cref="RuntimeOptions"/></param>
+        /// <returns></returns>
+        public static IVariableScope CreateVariableScope(this RuntimeOptions options)
+        {
+            var vs = options?.ScopeProvider?.CreateScope();
+            if (vs != null)
+            {
+                if (options.Data.Count > 0)
+                {
+                    vs.Parent = options.Data;
+                }
+                vs.DetectPattern = options.TypeDetectPattern;
+            }
+            return vs;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IVariableScope"/> class
+        /// </summary>
+        /// <param name="options">The <see cref="RuntimeOptions"/></param>
+        /// <param name="parent">The <see cref="IVariableScope"/></param>
+        /// <returns></returns>
+        public static IVariableScope CreateVariableScope(this RuntimeOptions options, IVariableScope parent)
+        {
+            var vs = options?.ScopeProvider?.CreateScope();
+            if (vs != null)
+            {
+                vs.Parent = parent;
+                vs.DetectPattern = parent?.DetectPattern ?? options.TypeDetectPattern;
+            }
+            return vs;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IVariableScope"/> class
+        /// </summary>
+        /// <param name="ctx">The <see cref="Context"/></param>
+        /// <returns></returns>
+        public static IVariableScope CreateVariableScope(this Context ctx)
+        {
+            return ctx.Options.CreateVariableScope();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IVariableScope"/> class
+        /// </summary>
+        /// <param name="ctx">The <see cref="Context"/></param>
+        /// <param name="parent">The <see cref="IVariableScope"/></param>
+        /// <returns></returns>
+        public static IVariableScope CreateVariableScope(this Context ctx, IVariableScope parent)
+        {
+            return ctx.Options.CreateVariableScope(parent);
         }
 
         /// <summary>
@@ -114,19 +170,14 @@ namespace JinianNet.JNTemplate
             {
                 throw new TemplateException($"\"{ path }\" cannot be found.");
             }
-            var template = context.Options.CompilerResults.GetOrAdd(full, (name) =>
+            var template = context.Options.CompilerResults.GetOrAdd(full, (fullName) =>
             {
-                var res = context.Options.Loader.Load(path, context.Options.Encoding, context.Options.ResourceDirectories.ToArray());
+                var res = context.Load(fullName);
                 if (res == null)
                 {
                     throw new TemplateException($"Path:\"{path}\", the file could not be found.");
                 }
-
-                if (string.IsNullOrEmpty(name))
-                {
-                    name = res.FullPath;
-                }
-                return TemplateCompiler.Compile(name, res.Content, context.Options, (c) => context.CopyTo(c));
+                return TemplateCompiler.Compile(fullName, res.Content, context.Options, (c) => context.CopyTo(c));
             });
             using (var sw = new System.IO.StringWriter())
             {

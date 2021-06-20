@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
+using JinianNet.JNTemplate.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +23,8 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateContext"/> class
         /// </summary>
-        /// <param name="data">The <see cref="VariableScope"/>.</param>  
-        internal TemplateContext(VariableScope data) : base()
+        /// <param name="data">The <see cref="IVariableScope"/>.</param>  
+        internal TemplateContext(IVariableScope data) : base()
         {
             this.TempData = data;
             this.AllErrors = new List<System.Exception>();
@@ -40,9 +41,9 @@ namespace JinianNet.JNTemplate
         public bool EnableTemplateCache { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="TemplateContext"/> of the context.
+        /// Gets or sets the <see cref="IVariableScope"/> of the context.
         /// </summary>
-        public VariableScope TempData { get; set; }
+        public IVariableScope TempData { get; set; }
 
         /// <summary>
         /// Gets the <see cref="Exception"/> of the context.
@@ -95,7 +96,8 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
-            TemplateContext ctx = new TemplateContext(new VariableScope(context.TempData,context.Options.TypeDetectPattern));
+            var scope = context.CreateVariableScope(context.TempData);
+            var ctx = new TemplateContext(scope);
             ctx.Options = context.Options;
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;

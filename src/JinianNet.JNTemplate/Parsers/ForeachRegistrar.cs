@@ -12,6 +12,7 @@ using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Runtime;
 
 namespace JinianNet.JNTemplate.Parsers
 {
@@ -88,12 +89,12 @@ namespace JinianNet.JNTemplate.Parsers
         public static MethodInfo EnumerableForeachCompile(CompileContext c, ForeachTag tag, Type sourceType)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-            var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
+            var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
 
             var stringBuilderType = typeof(StringBuilder);
             var t = tag;
             var type = c.GuessType(t);
-            var variableScopeType = typeof(VariableScope);
+            var variableScopeType = typeof(IVariableScope);
             var templateContextType = typeof(TemplateContext);
             var childType = TypeGuesser.InferChildType(sourceType);
             var enumerableType = sourceType.GetIEnumerableGenericType();// typeof(System.Collections.IEnumerable);
@@ -111,12 +112,11 @@ namespace JinianNet.JNTemplate.Parsers
             }
             if (childType.Length != 1)
             {
-                throw new CompileException(tag,"[ForeachTag]:source error.");
+                throw new CompileException(tag, "[ForeachTag]:source error.");
             }
             var old = c.Data;
-            var scope = new VariableScope(old);
-            c.Data = scope;
-            c.Set(t.Name, childType[0]);
+            var scope = c.CreateVariableScope(old);
+            c.Data = scope;            c.Set(t.Name, childType[0]);
             c.Set("foreachIndex", typeof(int));
             var mb = c.CreateReutrnMethod<ForeachTag>(type);
             var il = mb.GetILGenerator();
@@ -240,21 +240,21 @@ namespace JinianNet.JNTemplate.Parsers
         public static MethodInfo ArrayForeachCompile(CompileContext c, ForeachTag tag, Type sourceType)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-            var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
+            var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
 
             var stringBuilderType = typeof(StringBuilder);
             var t = tag;
             var type = c.GuessType(t);
             var childType = TypeGuesser.InferChildType(sourceType);
             var templateContextType = typeof(TemplateContext);
-            var variableScopeType = typeof(VariableScope);
+            var variableScopeType = typeof(IVariableScope);
             if (childType.Length != 1)
             {
-                throw new CompileException(tag,"[ForeachTag]:source error.");
+                throw new CompileException(tag, "[ForeachTag]:source error.");
             }
 
             var old = c.Data;
-            var scope = new VariableScope(old);
+            var scope = c.CreateVariableScope(old);
             c.Data = scope;
             c.Set(t.Name, childType[0]);
             c.Set("foreachIndex", typeof(int));

@@ -40,7 +40,7 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, c) =>
             {
                 var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-                var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
+                var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
                 var t = tag as VariableTag;
                 var type = c.GuessType(t);
                 var mb = c.CreateReutrnMethod<VariableTag>(type);

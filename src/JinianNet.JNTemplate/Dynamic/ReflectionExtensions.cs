@@ -194,11 +194,11 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>bool</returns>
         public static bool IsMatch(ParameterInfo[] pi, Type[] args, bool isAllMatch)
         {
-            if (pi.Length != args.Length)
+            if (pi.Length != (args?.Length ?? 0))
             {
                 return false;
             }
-            for (int i = 0; i < args.Length; i++)
+            for (int i = 0; i < pi.Length; i++)
             {
                 if (args[i] == null)
                 {

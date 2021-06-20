@@ -61,8 +61,8 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Configuration engine which <see cref="Action{IConfig, VariableScope}"/>.
         /// </summary>
-        /// <param name="action">The <see cref="Action{IConfig, VariableScope}"/>.</param>
-        public static void Configure(Action<IConfig, VariableScope> action)
+        /// <param name="action">The <see cref="Action{IConfig, IVariableScope}"/>.</param>
+        public static void Configure(Action<IConfig, IVariableScope> action)
         {
             IConfig conf = Current.Options;
             action?.Invoke(Current.Options, Current.Options.Data);
@@ -83,9 +83,9 @@ namespace JinianNet.JNTemplate
         /// Configuration engine which <see cref="IConfig"/>.
         /// </summary>
         /// <param name="conf">The <see cref="IConfig"/>.</param>
-        /// <param name="scope">The global <see cref="VariableScope"/>.</param>
+        /// <param name="scope">The global <see cref="IVariableScope"/>.</param>
         [Obsolete("please use Configure(Action<IOptions>)")]
-        public static void Configure(IConfig conf, VariableScope scope)
+        public static void Configure(IConfig conf, IVariableScope scope)
         {
             Runtime.RuntimeOptions options;
             if (conf is Runtime.RuntimeOptions o)

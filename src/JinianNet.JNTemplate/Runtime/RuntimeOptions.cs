@@ -37,7 +37,7 @@ namespace JinianNet.JNTemplate.Runtime
         internal RuntimeOptions(bool enableCompile)
         {
             CompilerResults = new ResultCollection<ICompilerResult>();
-            this.Data = new VariableScope(null, TypeDetect.Absolute);
+            this.ScopeProvider = new DefaultScopeProvider();
             this.Variable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             //IgnoreCase
             this.Cache = new MemoryCache();
@@ -52,6 +52,9 @@ namespace JinianNet.JNTemplate.Runtime
             this.EnableCompile = enableCompile;
             this.TypeDetectPattern = TypeDetect.Standard;
             this.OutMode = OutMode.None;
+            this.Data = ScopeProvider.CreateScope();
+            this.Data.Parent = null;
+            this.Data.DetectPattern =  TypeDetect.Absolute;
         }
 
 
@@ -109,7 +112,7 @@ namespace JinianNet.JNTemplate.Runtime
         /// <summary>
         /// Gets or sets the global data of the engine.
         /// </summary>
-        public VariableScope Data { internal set; get; }
+        public IVariableScope Data { internal set; get; }
 
         /// <summary>
         /// Gets or sets the <see cref="IResourceLoader"/> of the engine.
@@ -153,6 +156,11 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets the tag <see cref="ExecutorBuilder"/> of the engine.
         /// </summary>
         public ExecutorBuilder ExecutorBuilder { internal set; get; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="IScopeProvider"/> of the engine.
+        /// </summary>
+        public IScopeProvider ScopeProvider { internal set; get; }
 
         /// <summary>
         /// Enable or disenable the compile mode.

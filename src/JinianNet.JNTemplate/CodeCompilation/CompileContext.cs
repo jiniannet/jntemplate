@@ -36,9 +36,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// </summary>
         public ILGenerator Generator { get; set; }
         /// <summary>
-        /// Gets or sets the <see cref="VariableScope"/> of the context.
+        /// Gets or sets the <see cref="IVariableScope"/> of the context.
         /// </summary>
-        public VariableScope Data { get; set; }
+        public IVariableScope Data { get; set; }
         /// <summary>
         /// Used to cache some compiled methods . 
         /// </summary>
@@ -61,7 +61,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The type of the variable.</param>
         public void Set(string name, Type type)
         {
-            Data.SetElement(name, new VariableElement(type, null));
+            Data.Set(name,null, type);
         }
 
         /// <summary>

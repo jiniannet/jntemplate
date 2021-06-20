@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,41 @@ namespace JinianNet.JNTemplate.Resources
     /// </summary>
     public class FileLoader : IResourceLoader
     {
+        /// <inheritdoc />
+        public ResourceInfo Load(Context ctx, string filename)
+        {
+            if (!filename.IsAbsolutePath())
+            {
+                filename = Find(ctx, filename);
+            }
+
+            if (string.IsNullOrEmpty(filename) || !File.Exists(filename))
+            {
+                return null;
+            }
+            return new ResourceInfo
+            {
+                Content = LoadResource(filename, ctx.Charset),
+                FullPath = filename
+            };
+        }
+
+        /// <inheritdoc />
+        public string Find(Context ctx, string filename)
+        {
+            if (filename.IsAbsolutePath())
+            {
+                return filename;
+            }
+            string full;
+            if (!string.IsNullOrEmpty(ctx.CurrentPath)
+                && !string.IsNullOrEmpty(full = FindPath(filename, ctx.CurrentPath)))
+            {
+                return full;
+            }
+            return FindPath(filename, ctx.GetResourceDirectories());
+        }
+
 
         /// <inheritdoc />
         public string GetDirectoryName(string fullPath)
@@ -25,10 +61,11 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <inheritdoc />
+        [Obsolete]
         public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
         {
-            ResourceInfo info = new ResourceInfo();
-            if (string.IsNullOrEmpty(info.FullPath = FindPath(directory, filename)))
+            var info = new ResourceInfo();
+            if (string.IsNullOrEmpty(info.FullPath = FindPath(filename, directory)))
             {
                 return null;
             }
@@ -38,9 +75,14 @@ namespace JinianNet.JNTemplate.Resources
 
 
         /// <inheritdoc />
+        [Obsolete]
         public string FindFullPath(string filename, params string[] directory)
         {
-            return FindPath(directory, filename);
+            if (filename.IsAbsolutePath())
+            {
+                return filename;
+            }
+            return FindPath(filename, directory);
         }
 
         /// <summary>
@@ -49,19 +91,15 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="paths">The resource search directory.</param>
         /// <param name="filename">The file name.</param>
         /// <returns>The full path.</returns>
-        private string FindPath(IEnumerable<string> paths, string filename)
+        private string FindPath(string filename, params string[] paths)
         {
-            if (IsAbsolutePath(filename) && System.IO.File.Exists(filename))
-            {
-                return filename;
-            }
             //filename  
             string fullPath = null;
 
             if (!string.IsNullOrEmpty(filename))
             {
                 if ((filename = NormalizePath(filename)) == null  // illegal path（../header.txt）
-                    || paths==null) 
+                    || paths == null)
                 {
                     return null;
                 }
@@ -100,51 +138,9 @@ namespace JinianNet.JNTemplate.Resources
             {
                 encoding = Encoding.UTF8;
             }
-            return System.IO.File.ReadAllText(fullPath, encoding);
+            return File.ReadAllText(fullPath, encoding);
         }
 
-        /// <summary>
-        /// Whether the windows path.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private bool IsWindowsAbsolutePath(string path)
-        {
-            return path.Length > 2 && ((Char.IsLetter(path[0]) && path[1] == System.IO.Path.VolumeSeparatorChar) || (path[0] == System.IO.Path.DirectorySeparatorChar && path[1] == System.IO.Path.DirectorySeparatorChar));
-        }
-
-        /// <summary>
-        /// Whether the unix path.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private bool IsUnixAbsolutePath(string path)
-        {
-            return path.Length > 0 && path[0] == '/';
-        }
-
-        /// <summary>
-        /// Whether the absolute path
-        /// </summary>
-        /// <param name="path">路径</param>
-        /// <returns></returns>
-        private bool IsAbsolutePath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-#if NET20 || NET40
-            System.OperatingSystem osInfo = System.Environment.OSVersion;
-            if (osInfo.Platform == PlatformID.Unix || osInfo.Platform == PlatformID.MacOSX)
-            {
-                return IsUnixAbsolutePath(path);
-            }
-            return IsWindowsAbsolutePath(path);
-#else
-            return IsUnixAbsolutePath(path) || IsWindowsAbsolutePath(path);
-#endif
-        }
 
         /// <summary>
         /// 
@@ -186,11 +182,13 @@ namespace JinianNet.JNTemplate.Resources
         }
 
 #if NETCOREAPP || NETSTANDARD
+
         /// <inheritdoc />
+        [Obsolete]
         public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
         {
             ResourceInfo info = new ResourceInfo();
-            if (string.IsNullOrWhiteSpace(info.FullPath = FindPath(directory, filename)))
+            if (string.IsNullOrWhiteSpace(info.FullPath = FindPath(filename, directory)))
             {
                 return null;
             }
@@ -218,6 +216,24 @@ namespace JinianNet.JNTemplate.Resources
 #else
             return await System.IO.File.ReadAllTextAsync(fullPath, encoding);
 #endif
+        }
+        /// <inheritdoc />
+        public async Task<ResourceInfo> LoadAsync(Context ctx, string filename)
+        {
+            if (!filename.IsAbsolutePath())
+            {
+                filename = Find(ctx, filename);
+            }
+
+            if (string.IsNullOrEmpty(filename) || !File.Exists(filename))
+            {
+                return null;
+            }
+            return new ResourceInfo
+            {
+                Content = await LoadResourceAsync(filename, ctx.Charset),
+                FullPath = filename
+            };
         }
 #endif
 

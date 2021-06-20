@@ -32,19 +32,11 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             if (tag is StringTag str)
             {
-                return $"s{str.Value?.GetHashCode() ?? 0}";
+                return $"{nameof(StringTag)}_{str.Value?.GetHashCode() ?? 0}";
             }
-            if (tag is NumberTag num)
+            if (tag is ITypeTag type)
             {
-                return $"n{num.Value}";
-            }
-            if (tag is BooleanTag b)
-            {
-                return $"b{b.Value}";
-            }
-            if (tag is OperatorTag opt)
-            {
-                return $"o{opt.Value.ToString()}";
+                return $"{tag.GetType().Name}_{type.Value}";
             }
             if (tag is NullTag)
             {
@@ -69,7 +61,12 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 return mi;
             }
             var func = context.CompileBuilder.Build(name);
-            return func(tag, context);
+            var method = func(tag, context);
+            if (tagKey != null)
+            {
+                context.Methods[tagKey] = method;
+            } 
+            return method;
         }
 
 
@@ -170,53 +167,21 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             il.BeginCatchBlock(typeof(System.Exception));
             il.Emit(OpCodes.Stloc, exceptionVar.LocalIndex);
-            //il.Emit(OpCodes.Ldarg_2);
-            //il.Emit(OpCodes.Callvirt, typeof(Context).GetPropertyGetMethod("ThrowExceptions"));
-            //il.Emit(OpCodes.Stloc, index + 1);
-            //il.Emit(OpCodes.Ldloc, index + 1);
-            //il.Emit(OpCodes.Brfalse, lableThrow);
 
-            //il.Emit(OpCodes.Ldloc, index);
-            //il.Emit(OpCodes.Throw);
-
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_2);
+            il.Emit(OpCodes.Ldloc, exceptionVar.LocalIndex);
+            il.Emit(OpCodes.Ldc_I4, tag.FirstToken?.BeginLine ?? 0);
+            il.Emit(OpCodes.Ldc_I4, tag.FirstToken?.BeginColumn ?? 0);
             if (context.Debug)
             {
-                //{tag.ToSource()} 
-                il.Emit(OpCodes.Ldstr, $"{{0}} on [line:{tag.FirstToken?.BeginLine},col:{tag.FirstToken?.BeginColumn}]");
+                il.Emit(OpCodes.Ldstr, tag.ToSource());
             }
             else
             {
-                il.Emit(OpCodes.Ldstr, $"{{0}} [line:{tag.FirstToken?.BeginLine},col:{tag.FirstToken?.BeginColumn}]");
+                il.Emit(OpCodes.Ldnull);
             }
-            il.Emit(OpCodes.Ldloc, exceptionVar.LocalIndex);
-            il.Emit(OpCodes.Callvirt, typeof(System.Exception).GetPropertyGetMethod("Message"));
-            il.Emit(OpCodes.Call, typeof(string).GetMethodInfo("Format",new Type[] { typeof(string),typeof(object) }));
-            var msgVar = il.DeclareLocal(typeof(string));
-            il.Emit(OpCodes.Stloc, msgVar.LocalIndex);
-            il.Emit(OpCodes.Ldloc, msgVar.LocalIndex);
-            il.Emit(OpCodes.Ldloc, exceptionVar.LocalIndex);
-            var exceptionType = typeof(RuntimeException);
-            il.Emit(OpCodes.Newobj, exceptionType.GetConstructor(new Type[] { typeof(string), typeof(System.Exception) }));
-
-            var newExVar = il.DeclareLocal(exceptionType);
-            il.Emit(OpCodes.Stloc, newExVar.LocalIndex);
-            if (tag.FirstToken != null)
-            {
-                il.Emit(OpCodes.Ldloc, newExVar.LocalIndex);
-                il.Emit(OpCodes.Ldc_I4, tag.FirstToken.BeginLine);
-                il.Emit(OpCodes.Callvirt, exceptionType.GetPropertySetMethod("Line"));
-                il.Emit(OpCodes.Ldloc, newExVar.LocalIndex);
-                il.Emit(OpCodes.Ldc_I4, tag.FirstToken.BeginColumn);
-                il.Emit(OpCodes.Callvirt, exceptionType.GetPropertySetMethod("Column"));
-            }
-
-            //call string[System.Runtime] System.String::Format(string, object)
-            //callvirt instance string [System.Runtime]System.Exception::get_Message()
-            //il.MarkLabel(lableThrow);
-            il.Emit(OpCodes.Ldarg_2);
-            il.Emit(OpCodes.Ldloc, newExVar.LocalIndex);
-            il.Emit(OpCodes.Callvirt, typeof(TemplateContext).GetMethodInfo("AddError", new Type[] { typeof(System.Exception) }));
-            //il.Emit(OpCodes.Leave_S, labelPass);
+            il.Emit(OpCodes.Call,typeof(CompilerResult).GetMethodInfo("ThrowException", null));
             il.EndExceptionBlock();
 
             il.MarkLabel(labelPass);
@@ -231,6 +196,10 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
         private static void CompileToRender(ITag tag, CompileContext context, Type tagType)
         {
+            if (tag == null)
+            {
+                return;
+            }
             MethodInfo method = null;
             try
             {
@@ -244,7 +213,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 }
                 if (method == null)
                 {
-                    throw new CompileException(tag,$"cannot compile the tag! type:{tag?.GetType().FullName}");
+                    throw new CompileException(tag, $"Cannot compile the {tag.GetType().Name} on {tag.ToSource()}[line:{tag.FirstToken?.BeginLine ?? 0},col:{tag.FirstToken?.BeginColumn ?? 0}]:");
                 }
             }
             catch (System.Exception exception)
@@ -279,7 +248,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             if (tag is TextTag textTag)
             {
-                var text = textTag.ToString(context.OutMode); 
+                var text = textTag.ToString(context.OutMode);
                 if (!string.IsNullOrEmpty(text))
                 {
                     context.Generator.Emit(OpCodes.Ldarg_1);
@@ -291,16 +260,12 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             if (tag is ITypeTag value)
             {
-                context.Generator.Emit(OpCodes.Ldarg_1);
-                if (value.Value == null)
+                if (value.Value != null)
                 {
-                    context.Generator.Emit(OpCodes.Ldstr, string.Empty);
-                }
-                else
-                {
+                    context.Generator.Emit(OpCodes.Ldarg_1);
                     context.Generator.Emit(OpCodes.Ldstr, value.Value.ToString());
+                    context.Generator.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
                 }
-                context.Generator.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
                 return;
             }
 

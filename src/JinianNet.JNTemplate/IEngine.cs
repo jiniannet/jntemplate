@@ -114,6 +114,12 @@ namespace JinianNet.JNTemplate
         IEngine UseLoader(IResourceLoader loader);
 
         /// <summary>
+        /// Sets an <see cref="IScopeProvider"/> values from engine.
+        /// </summary>
+        /// <param name="provider">The <see cref="IScopeProvider"/> to add set.</param> 
+        IEngine UseScopeProvider(IScopeProvider provider);
+
+        /// <summary>
         /// Sets an <see cref="ICache"/> values from engine.
         /// </summary>
         /// <param name="cache">The <see cref="ICache"/> to add set.</param> 

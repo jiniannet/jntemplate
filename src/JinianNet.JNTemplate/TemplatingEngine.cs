@@ -14,6 +14,7 @@ using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
 using System.Text;
 using System.Linq;
+using System.IO;
 
 namespace JinianNet.JNTemplate
 {
@@ -72,17 +73,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public ICompilerResult CompileFile(string name, string path, Action<CompileContext> action = null)
         {
-            var res = Options.Loader.Load(path, Options.Encoding, Options.ResourceDirectories.ToArray());
-            if (res == null)
-            {
-                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                name = res.FullPath;
-            }
-            return Options.CompilerResults[name] = TemplateCompiler.Compile(name, res.Content, Options, action);
+            return Options.CompilerResults[name] = TemplateCompiler.CompileFile(name, path, Options, action);
         }
 
 
@@ -113,7 +104,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public TemplateContext CreateContext()
         {
-            var data = VariableScope.Create(Options);
+            var data = Options.CreateVariableScope();
             var ctx = new TemplateContext(data);
             ctx.Options = Options;
             ctx.Charset = Options.Encoding;
@@ -171,7 +162,7 @@ namespace JinianNet.JNTemplate
                 throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
 
-            var t = LoadTemplate<Template>(name, path, CreateContext());
+            var t = LoadTemplate<Template>(name, path, ctx);
             t.TemplateContent = res.Content;
             return t;
         }
@@ -289,6 +280,18 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentNullException(nameof(loader));
             }
             Options.Loader = loader;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IEngine UseScopeProvider(IScopeProvider provider)
+        {
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+            Options.ScopeProvider = provider;
+            Options.Data = provider.CreateScope();
             return this;
         }
 

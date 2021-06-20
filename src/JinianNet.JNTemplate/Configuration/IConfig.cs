@@ -57,7 +57,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// Gets or sets the global data of the engine.
         /// </summary>
-        VariableScope Data { get; }
+        IVariableScope Data { get; }
 
         /// <summary>
         /// Gets or sets the <see cref="Encoding"/> of the engine.

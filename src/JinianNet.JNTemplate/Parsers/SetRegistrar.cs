@@ -113,7 +113,7 @@ namespace JinianNet.JNTemplate.Parsers
                 il.Emit(OpCodes.Callvirt, getVariableScope);
                 il.Emit(OpCodes.Ldstr, t.Name);
                 il.Emit(OpCodes.Ldloc_S, 0);
-                il.Emit(OpCodes.Callvirt, typeof(VariableScope).GetGenericMethod(new Type[] { retunType }, "Update", new Type[] { typeof(string), retunType }));
+                il.Emit(OpCodes.Callvirt, typeof(IVariableScope).GetGenericMethod(new Type[] { retunType }, "Update", new Type[] { typeof(string), retunType }));
 
                 il.Emit(OpCodes.Ldc_I4_0);
                 il.Emit(OpCodes.Ceq);
@@ -125,7 +125,7 @@ namespace JinianNet.JNTemplate.Parsers
                 il.Emit(OpCodes.Callvirt, getVariableScope);
                 il.Emit(OpCodes.Ldstr, t.Name);
                 il.Emit(OpCodes.Ldloc_S, 0);
-                il.Emit(OpCodes.Callvirt, typeof(VariableScope).GetGenericMethod(new Type[] { retunType }, "Set", new Type[] { typeof(string), retunType }));
+                il.Emit(OpCodes.Callvirt, typeof(IVariableScope).GetGenericMethod(new Type[] { retunType }, "Set", new Type[] { typeof(string), retunType }));
 
 
                 il.MarkLabel(labelEnd);

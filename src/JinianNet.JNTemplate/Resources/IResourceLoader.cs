@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using System;
 using System.Text;
 #if !NET20
 using System.Threading.Tasks;
@@ -15,22 +16,22 @@ namespace JinianNet.JNTemplate.Resources
     /// </summary>
     public interface IResourceLoader
     {
+
         /// <summary>
         /// Loads the resource on the specified path.
         /// </summary>
         /// <param name="filename">The fully qualified path or file name of the file to load.</param>
-        /// <param name="encoding">The <see cref="Encoding"/>.</param>
-        /// <param name="directory">The resource search directory.</param>
+        /// <param name="ctx">The <see cref="Context"/>.</param> 
         /// <returns>An instance of a resource.</returns>
-        ResourceInfo Load(string filename, Encoding encoding, params string[] directory);
+        ResourceInfo Load(Context ctx, string filename);
 
         /// <summary>
         /// Search for file full path.
         /// </summary>
         /// <param name="filename">The fully qualified path or file name of the file to load.</param>
-        /// <param name="directory">The resource search directory.</param>
+        /// <param name="ctx">The <see cref="Context"/>.</param> 
         /// <returns>The file full path of the resource.</returns>
-        string FindFullPath(string filename, params string[] directory);
+        string Find(Context ctx, string filename);
 
         /// <summary>
         /// Returns the directory information for the specified path string.
@@ -40,14 +41,14 @@ namespace JinianNet.JNTemplate.Resources
         string GetDirectoryName(string fullPath);
 
 #if NETCOREAPP || NETSTANDARD
+
         /// <summary>
         /// Loads the resource on the specified path.
         /// </summary>
         /// <param name="filename">The fully qualified path or file name of the file to load.</param>
-        /// <param name="encoding">The <see cref="Encoding"/>.</param>
-        /// <param name="directory">The resource search directory.</param>
+        /// <param name="ctx">The <see cref="Context"/>.</param> 
         /// <returns>An instance of a resource.</returns>
-        Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory);
+        Task<ResourceInfo> LoadAsync(Context ctx, string filename);
 #endif
     }
 }
