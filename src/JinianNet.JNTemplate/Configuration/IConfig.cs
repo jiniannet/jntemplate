@@ -65,11 +65,6 @@ namespace JinianNet.JNTemplate.Configuration
         Encoding Encoding { set; get; }
 
         /// <summary>
-        /// Gets or sets the cache of the engine.
-        /// </summary>
-        ICache Cache { get; }
-
-        /// <summary>
         /// Gets or sets the global resource directories of the engine.
         /// </summary>
         /// <value></value>
