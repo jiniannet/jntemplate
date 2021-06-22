@@ -178,7 +178,7 @@ namespace JinianNet.JNTemplate.Runtime
         /// <summary>
         /// Enable or disenable the cache.
         /// </summary>
-        public bool EnableTemplateCache { internal set; get; } = true;
+        public bool EnableTemplateCache { set; get; } = true;
 
         /// <summary>
         /// Gets or sets the compiler result collection.

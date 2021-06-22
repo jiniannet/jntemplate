@@ -177,6 +177,21 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            foreach(KeyValuePair<string, VariableElement> kv in dic)
+            {
+                yield return new KeyValuePair<string, object>(kv.Key, kv.Value);
+            }
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        /// <inheritdoc />
         public ICollection<string> Keys => this.dic.Keys;
     }
 }

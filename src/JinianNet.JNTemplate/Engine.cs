@@ -50,82 +50,50 @@ namespace JinianNet.JNTemplate
         public static bool EnableCompile => Current.Options.EnableCompile;
 
         /// <summary>
-        /// Configuration engine which <see cref="Action{IConfig}"/>.
+        /// Configuration engine which <see cref="Action{T}"/>.
         /// </summary>
-        /// <param name="action">The <see cref="Action{IConfig}"/>.</param>
+        /// <param name="action">The <see cref="Action{T}"/>.</param>
         public static void Configure(Action<Runtime.IOptions> action)
         {
             Current.Configure(action);
         }
 
         /// <summary>
-        /// Configuration engine which <see cref="Action{IConfig, VariableScope}"/>.
+        /// Configuration engine which <see cref="Action{TOptions, TVariable}"/>.
         /// </summary>
-        /// <param name="action">The <see cref="Action{IConfig, IVariableScope}"/>.</param>
-        public static void Configure(Action<IConfig, IVariableScope> action)
+        /// <param name="action">The <see cref="Action{TOptions, TVariable}"/>.</param>
+        public static void Configure(Action<Runtime.IOptions, IVariableScope> action)
         {
-            IConfig conf = Current.Options;
             action?.Invoke(Current.Options, Current.Options.Data);
         }
 
         /// <summary>
-        /// Configuration engine which <see cref="IConfig"/>.
+        /// Configuration engine which <see cref="Runtime.IOptions"/>.
         /// </summary>
-        /// <param name="conf">The <see cref="IConfig"/>.</param>
-        [Obsolete("please use Configure(Action<IOptions>)")]
-        public static void Configure(IConfig conf)
+        /// <param name="option">The <see cref="Runtime.IOptions"/>.</param>
+        public static void Configure(Runtime.IOptions option)
         {
-            Configure(conf, null);
+            Current.Configure(option);
         }
 
 
         /// <summary>
-        /// Configuration engine which <see cref="IConfig"/>.
+        /// Configuration engine which <see cref="Runtime.IOptions"/>.
         /// </summary>
-        /// <param name="conf">The <see cref="IConfig"/>.</param>
+        /// <param name="option">The <see cref="Runtime.IOptions"/>.</param>
         /// <param name="scope">The global <see cref="IVariableScope"/>.</param>
         [Obsolete("please use Configure(Action<IOptions>)")]
-        public static void Configure(IConfig conf, IVariableScope scope)
+        public static void Configure(Runtime.IOptions option, IVariableScope scope)
         {
-            Runtime.RuntimeOptions options;
-            if (conf is Runtime.RuntimeOptions o)
+            if(scope!=null && scope.Count > 0)
             {
-
-                options = o;
-            }
-            else
-            {
-                options = Current.Options;
-                options.DisableeLogogram = conf.DisableeLogogram;
-                options.TagPrefix = conf.TagPrefix;
-                options.TagSuffix = conf.TagSuffix;
-                options.TagFlag = conf.TagFlag;
-                options.Encoding = conf.Encoding;
-                options.EnableTemplateCache = conf.EnableTemplateCache;
-                options.ThrowExceptions = conf.ThrowExceptions;
-                options.TypeDetectPattern = conf.TypeDetectPattern;
-                options.OutMode = conf.OutMode;
-                if (options.EnableCompile != conf.EnableCompile)
+                var keys = scope.Keys;
+                foreach(var key in keys)
                 {
-                    options.EnableCompile = conf.EnableCompile;
-                }
-                if (conf.ResourceDirectories?.Count > 0)
-                {
-                    foreach (var path in conf.ResourceDirectories)
-                    {
-                        if (!options.ResourceDirectories.Contains(path))
-                        {
-                            options.ResourceDirectories.Add(path);
-                        }
-                    }
+                    option.Data?.Set(key, scope[key], scope.GetType(key));
                 }
             }
-            if (scope != null && scope.Count > 0)
-            {
-                options.Data = scope;
-            }
-
-            Current.UseOptions(options);
+            Current.Configure(option);
         }
 
         /// <summary>

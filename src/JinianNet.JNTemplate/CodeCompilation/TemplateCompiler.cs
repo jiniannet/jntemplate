@@ -214,8 +214,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             il.MarkLabel(labelPass);
 
-            var write = typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) });
-
             for (var i = 0; i < tags.Length; i++)
             {
                 TagCompiler.CompileToRender(tags[i], ctx);

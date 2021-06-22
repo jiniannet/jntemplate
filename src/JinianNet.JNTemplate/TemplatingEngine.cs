@@ -71,6 +71,40 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
+        public IEngine Configure(IOptions option)
+        {
+            Options.DisableeLogogram = option.DisableeLogogram;
+            Options.TagPrefix = option.TagPrefix;
+            Options.TagSuffix = option.TagSuffix;
+            Options.TagFlag = option.TagFlag;
+            Options.Encoding = option.Encoding;
+            Options.EnableTemplateCache = option.EnableTemplateCache;
+            Options.ThrowExceptions = option.ThrowExceptions;
+            Options.TypeDetectPattern = option.TypeDetectPattern;
+            Options.OutMode = option.OutMode;
+            if (option.ResourceDirectories?.Count > 0)
+            {
+                foreach (var path in option.ResourceDirectories)
+                {
+                    if (!Options.ResourceDirectories.Contains(path))
+                    {
+                        Options.ResourceDirectories.Add(path);
+                    }
+                }
+            }
+            if (Options.EnableCompile != option.EnableCompile)
+            {
+                Options.EnableCompile = option.EnableCompile;
+            }
+            if((option.Data!=null && option.Data.Count > 0)
+                || Options.Data.Count == 0)
+            {
+                Options.Data = option.Data;
+            }
+            return this;
+        }
+
+        /// <inheritdoc />
         public ICompilerResult CompileFile(string name, string path, Action<CompileContext> action = null)
         {
             return Options.CompilerResults[name] = TemplateCompiler.CompileFile(name, path, Options, action);
@@ -363,11 +397,11 @@ namespace JinianNet.JNTemplate
         {
             if (Options.EnableCompile)
             {
-                Options.CompilerResults.Clear();
+                Options.CompilerResults?.Clear();
             }
             else
             {
-                Options.Cache.Clear();
+                Options.Cache?.Clear();
             }
         }
 

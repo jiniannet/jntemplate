@@ -78,7 +78,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// <summary>
         /// Enable or disenable the cache.
         /// </summary>
-        bool EnableTemplateCache { get; }
+        bool EnableTemplateCache { get; set; }
 
         /// <summary>
         /// Gets or sets whether throw exceptions.

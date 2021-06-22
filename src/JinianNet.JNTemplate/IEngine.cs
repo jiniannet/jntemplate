@@ -32,6 +32,13 @@ namespace JinianNet.JNTemplate
         IEngine Configure(Action<IOptions> action);
 
         /// <summary>
+        /// Configuration engine which <see cref="IOptions"/>.
+        /// </summary>
+        /// <param name="option">The <see cref="IOptions"/>.</param>
+        /// <returns>The <see cref="TemplatingEngine"/>.</returns>
+        IEngine Configure(IOptions option);
+
+        /// <summary>
         /// Compile a template with a given file
         /// </summary>
         /// <param name="name">Unique key of the template</param>

@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Variable Scope
     /// </summary>
-    public interface IVariableScope
+    public interface IVariableScope : IEnumerable<KeyValuePair<string, object>>
     {
 
         /// <summary>
