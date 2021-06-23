@@ -150,9 +150,9 @@ namespace JinianNet.JNTemplate
         {
             if (tc == null || tc.Count == 0)
             {
-                throw new ParseException("Invalid TokenCollection!");//无效的标签集合
+                throw new ParseException("Invalid TokenCollection!");
             }
-            return tagParser.Parsing(this, tc);
+            return tagParser.Parsing(this, tc.TrimParentheses());
         }
 
         private bool IsTagEnd()

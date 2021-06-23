@@ -90,10 +90,10 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${ArticleList(15,\"<div class=\\\"col-md-6 col-sm-12 col-12\\\"><div class=\\\"notice-k\\\"><div class=\\\"notice-h4\\\"><a href=\\\"/default/show/[ID]\\\">[F_Title]</a></div><p>[F_Summery]</p><div class=\\\"notice-bottom\\\"><div class=\\\"notice-bottom-left\\\">[F_AddTime]</div><div class=\\\"notice-bottom-right\\\">[F_Author]</div></div></div></div>\",4,20,60)}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set<Func<int, string, int, int, int, string>>("ArticleList", (id, html,page,rows,classId) =>
+            template.Set<Func<int, string, int, int, int, string>>("ArticleList", (id, html, page, rows, classId) =>
             {
                 return id.ToString();
-            }); 
+            });
             var render = template.Render();
             Assert.Equal("15", render);
         }
@@ -107,10 +107,10 @@ namespace JinianNet.JNTemplate.Test
             //var templateContent = "${ArticleList(Class)}";
             var templateContent = "${ArticleList(Nav.Class.Sort,10,false,20,60,true,false)}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set<Func<int, int, bool, int, int,bool,bool, int>>("ArticleList", (a,b,c,d,e,f,g) =>
-            {
-                return a;
-            }); 
+            template.Set<Func<int, int, bool, int, int, bool, bool, int>>("ArticleList", (a, b, c, d, e, f, g) =>
+              {
+                  return a;
+              });
             template.Set("Nav", new Nav
             {
                 Class = new Nav.ClassValue
@@ -121,14 +121,14 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("1", render);
         }
-         
+
 
         /// <summary>
         /// 测试Func委托(1.4.0以上版本支持)
         /// </summary>
         [Fact]
         public void TestFunctionFunc()
-        { 
+        {
             var templateContent = "${test(\"test data\")}";
             var template = Engine.CreateTemplate(templateContent);
             template.Set<Func<string, string>>("test", (text) =>
@@ -179,7 +179,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestStaticConcat()
         {
             var templateContent = "${string.Concat(\"str1\",\"str2\")}";
-            var template = Engine.CreateTemplate(templateContent); 
+            var template = Engine.CreateTemplate(templateContent);
             template.SetStaticType("string", typeof(string));
             var render = template.Render();
             Assert.Equal("str1str2", render);
@@ -194,8 +194,9 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${model.PropertyFunc(100)}";
             var template = Engine.CreateTemplate(templateContent);
-            template.Set("model",new FuncInfo() {
-                PropertyFunc = (i)=>(i * 2).ToString()
+            template.Set("model", new FuncInfo()
+            {
+                PropertyFunc = (i) => (i * 2).ToString()
             });
             var render = template.Render();
             Assert.Equal("200", render);
@@ -216,6 +217,20 @@ namespace JinianNet.JNTemplate.Test
             });
             var render = template.Render();
             Assert.Equal("200", render);
+        }
+
+
+        /// <summary>
+        /// 测试方法与为数学
+        /// </summary>
+        [Fact]
+        public void TestFuncAndArithmetic()
+        {
+            var templateContent = "${calc(84+2,53)}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set<Func<int, int, int>>("calc", (x, y) => x - y);
+            var render = template.Render();
+            Assert.Equal("33", render);
         }
     }
 }

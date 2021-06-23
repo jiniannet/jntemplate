@@ -300,8 +300,8 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if(enum1==enum2)}ok${end}";
             var template = Engine.CreateTemplate("TestEnumEquals", templateContent);
-            template.Set("enum1",  PlatformID.Win32NT);
-            template.Set("enum2", PlatformID.Win32NT); 
+            template.Set("enum1", PlatformID.Win32NT);
+            template.Set("enum2", PlatformID.Win32NT);
             var render = template.Render();
             Assert.Equal("ok", render);
         }
@@ -370,5 +370,57 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("yes", render);
         }
 
+        /// <summary>
+        /// 测试多余括号的运算
+        /// </summary>
+        [Fact]
+        public void TestParentheses()
+        {
+            var templateContent = "${if((true))}yes${else}no${end}";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+            Assert.Equal("yes", render);
+        }
+
+        /// <summary>
+        /// 测试括号与算术表达式组合
+        /// </summary>
+        [Fact]
+        public void TestParenthesesAndArithmetic()
+        {
+            var templateContent = "${if((3+8)-4>0)}yes${else}no${end}";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+            Assert.Equal("yes", render);
+        }
+
+
+        /// <summary>
+        /// 测试运逻运算与括号的组合
+        /// </summary>
+        [Fact]
+        public void TestParenthesesAndLogic()
+        {
+            var templateContent = "${if(id==0||(id>0 && value <10))}yes${else}no${end}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("id",4);
+            template.Set("value", 8);
+            var render = template.Render();
+            Assert.Equal("yes", render);
+        }
+
+        /// <summary>
+        /// 测试 || 与 &&的组合
+        /// </summary>
+        [Fact]
+        public void TestOrVsAndLogic()
+        {
+            var templateContent = "${if(id>0 && id<10 && value<10)}yes${else}no${end}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("id", 4);
+            template.Set("value", 8);
+            var render = template.Render();
+            Assert.Equal("yes", render);
+        }
     }
 }

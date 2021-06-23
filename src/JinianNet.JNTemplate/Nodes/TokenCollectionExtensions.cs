@@ -15,6 +15,62 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public static class TokenCollectionExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="coll">The <see cref="TokenCollection"/>.</param>
+        /// <returns></returns>
+        public static TokenCollection TrimParentheses(this TokenCollection coll)
+        {
+            var tc = coll;
+            while (InsideParentheses(tc, 0, tc?.Count ?? 0))
+            {
+                tc = tc[1, tc.Count - 1];
+            }
+            return tc;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="coll">The <see cref="TokenCollection"/>.</param>
+        /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
+        /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
+        /// <returns></returns>
+        public static bool InsideParentheses(this TokenCollection coll, int start, int end)
+        {
+            if (coll == null
+                || coll.Count <= 2
+                || coll.First.TokenKind != TokenKind.LeftParentheses
+                || coll.Last.TokenKind != TokenKind.RightParentheses)
+            {
+                return false;
+            }
+            var pos = new Stack<TokenKind>();
+            for (int i = start; i < end; i++)
+            {
+                if (coll[i].TokenKind == TokenKind.LeftParentheses)
+                {
+                    pos.Push(coll[i].TokenKind);
+                    continue;
+                }
+                if (coll[i].TokenKind == TokenKind.RightParentheses)
+                {
+                    pos.Pop();
+                    if (pos.Count == 0
+                        && i != (end - 1))
+                    {
+                        return false;
+                    }
+                }
+            }
+            if (pos.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
 
         /// <summary>
         /// Splits a collection into substrings that are based on the kind in the separator array.

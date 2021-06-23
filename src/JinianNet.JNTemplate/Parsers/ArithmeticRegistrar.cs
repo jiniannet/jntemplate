@@ -44,11 +44,6 @@ namespace JinianNet.JNTemplate.Parsers
                         }
                         else
                         {
-                            if (tcs[i].First.TokenKind == TokenKind.LeftParentheses && tcs[i].Last.TokenKind == TokenKind.RightParentheses)
-                            {
-                                tcs[i].RemoveAt(0);
-                                tcs[i].RemoveAt(tcs[i].Count - 1);
-                            }
                             tags.Add(parser.Read(tcs[i]));
                         }
                     }

@@ -571,7 +571,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
         private static bool Equals(object x, object y, Type tX, Type tY)
         {
-            if (x == null || x == null)
+            if (x == null || y == null)
             {
                 return x == null && y == null;
             }
