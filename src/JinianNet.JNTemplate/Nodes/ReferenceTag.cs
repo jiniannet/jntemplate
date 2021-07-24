@@ -42,8 +42,11 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 var parent = this.Children[0];
                 child.Parent = (BasisTag)parent;
+                child.FirstToken = parent.FirstToken;
                 this.Children[0] = child;
             }
-        } 
+            this.FirstToken = Child?.FirstToken;
+            this.LastToken = Child?.LastToken;
+        }
     }
 }
