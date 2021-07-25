@@ -72,7 +72,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
         public static object DefineObjectFrom(Type baseType)
         {
             var name = baseType.FullName.GetHashCode().ToString();
-            var typeBuilder = DefineType(null, null, "JinianNet.JNTemplate.DynamicCompile", $"Entity{name}");
+            var assName = $"{ typeof(TemplateCompiler).Namespace}.Entity{name}";
+            var typeBuilder = DefineType(assName);
             var ps = baseType.GetProperties();
             foreach (var p in ps)
             {
@@ -136,12 +137,34 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <summary>
         /// Constructs a TypeBuilder for a private type with the specified name in this module.
         /// </summary>
+        /// <param name="assemblyName">The display name of the assembly.</param> 
+        /// <returns></returns>
+        public static TypeBuilder DefineType(string assemblyName)
+        {
+            return DefineType(null, null, assemblyName, "DynamicMocule");
+        }
+
+        /// <summary>
+        /// Constructs a TypeBuilder for a private type with the specified name in this module.
+        /// </summary>
+        /// <param name="interfaceType">The interface that this type implements.</param>
+        /// <param name="parent">The type that the defined type extends.</param>
+        /// <param name="assemblyName">The display name of the assembly.</param> 
+        /// <returns></returns>
+        public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName)
+        {
+            return DefineType(interfaceType, parent, assemblyName, "DynamicMocule");
+        }
+
+        /// <summary>
+        /// Constructs a TypeBuilder for a private type with the specified name in this module.
+        /// </summary>
         /// <param name="interfaceType">The interface that this type implements.</param>
         /// <param name="parent">The type that the defined type extends.</param>
         /// <param name="assemblyName">The display name of the assembly.</param>
-        /// <param name="className">The name of the dynamic module.</param>
+        /// <param name="moduleName">The name of the dynamic module.</param>
         /// <returns></returns>
-        public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName, string className)
+        public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName, string moduleName)
         {
             AssemblyBuilder assemblyBuilder
 #if NET40 || NET20
@@ -149,7 +172,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 #else
                 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
 #endif
-            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(className);
+            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(moduleName);
             TypeBuilder typeBuilder;
             if (parent != null)
             {
@@ -196,7 +219,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         private static ICompilerResult Compile(ITag[] tags, CompileContext ctx)
         {
             var baseType = typeof(CompilerResult);
-            TypeBuilder typeBuilder = DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, baseType.Namespace, $"Template{ToHashCode(ctx.Name)}");
+            TypeBuilder typeBuilder = DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ToHashCode(ctx.Name)}");
             var targetMethod = baseType.GetMethodInfo("Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             ILGenerator methodGenerator = method.GetILGenerator();
