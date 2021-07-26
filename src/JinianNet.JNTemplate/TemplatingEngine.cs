@@ -71,7 +71,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public IEngine Configure(IOptions option)
+        public IEngine Configure(IConfig option)
         {
             Options.DisableeLogogram = option.DisableeLogogram;
             Options.TagPrefix = option.TagPrefix;
@@ -96,10 +96,20 @@ namespace JinianNet.JNTemplate
             {
                 Options.EnableCompile = option.EnableCompile;
             }
-            if((option.Data!=null && option.Data.Count > 0)
-                || Options.Data.Count == 0)
+            if(option.GlobalData != null && option.GlobalData.Count > 0)
             {
-                Options.Data = option.Data;
+                foreach(var kv in option.GlobalData)
+                {
+                    if (kv.Value == null)
+                    {
+                        continue;
+                    }
+                    Options.Data.Set(kv.Key,kv.Value,kv.Value.GetType());
+                }
+            }
+            if(Options.TypeDetectPattern == TypeDetect.None && Options.EnableCompile)
+            {
+                Options.TypeDetectPattern = TypeDetect.Standard;
             }
             return this;
         }

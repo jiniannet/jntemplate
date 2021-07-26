@@ -18,24 +18,6 @@ namespace JinianNet.JNTemplate.Configuration
     public interface IConfig
     {
         /// <summary>
-        /// Gets or sets the charset of the engine.
-        /// </summary>
-        [Obsolete("please use Encoding")]
-        string Charset { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether strip white-space.
-        /// </summary>
-        [Obsolete("please use OutMode")]
-        bool StripWhiteSpace { get; set; }
-
-        /// <summary>
-        /// IgnoreCase
-        /// </summary>
-        [Obsolete]
-        bool IgnoreCase { get; set; }
-
-        /// <summary>
         /// Gets or sets whether disablee logogram .
         /// </summary>
         bool DisableeLogogram { get; set; }
@@ -55,11 +37,6 @@ namespace JinianNet.JNTemplate.Configuration
         char TagFlag { get; set; }
 
         /// <summary>
-        /// Gets or sets the global data of the engine.
-        /// </summary>
-        IVariableScope Data { get; }
-
-        /// <summary>
         /// Gets or sets the <see cref="Encoding"/> of the engine.
         /// </summary>
         Encoding Encoding { set; get; }
@@ -68,7 +45,7 @@ namespace JinianNet.JNTemplate.Configuration
         /// Gets or sets the global resource directories of the engine.
         /// </summary>
         /// <value></value>
-        List<string> ResourceDirectories { get; }
+        List<string> ResourceDirectories { get; set; }
 
         /// <summary>
         /// Enable or disenable the compile mode.
@@ -85,11 +62,6 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         bool ThrowExceptions { get; set; }
 
-        // /// <summary>
-        // /// Gets or sets whether strip white-space.
-        // /// </summary>
-        //bool StripWhiteSpace { get; set; }
-
         /// <summary>
         /// Gets or sets the detect patterns.
         /// </summary>
@@ -98,5 +70,10 @@ namespace JinianNet.JNTemplate.Configuration
         /// Gets or sets the output mode.
         /// </summary>
         OutMode OutMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the global data of the engine.
+        /// </summary>
+        IDictionary<string, object> GlobalData { get; }
     }
 }

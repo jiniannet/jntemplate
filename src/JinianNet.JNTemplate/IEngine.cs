@@ -36,7 +36,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="option">The <see cref="IOptions"/>.</param>
         /// <returns>The <see cref="TemplatingEngine"/>.</returns>
-        IEngine Configure(IOptions option);
+        IEngine Configure(IConfig option);
 
         /// <summary>
         /// Compile a template with a given file

@@ -71,28 +71,8 @@ namespace JinianNet.JNTemplate
         /// Configuration engine which <see cref="Runtime.IOptions"/>.
         /// </summary>
         /// <param name="option">The <see cref="Runtime.IOptions"/>.</param>
-        public static void Configure(Runtime.IOptions option)
+        public static void Configure(IConfig option)
         {
-            Current.Configure(option);
-        }
-
-
-        /// <summary>
-        /// Configuration engine which <see cref="Runtime.IOptions"/>.
-        /// </summary>
-        /// <param name="option">The <see cref="Runtime.IOptions"/>.</param>
-        /// <param name="scope">The global <see cref="IVariableScope"/>.</param>
-        [Obsolete("please use Configure(Action<IOptions>)")]
-        public static void Configure(Runtime.IOptions option, IVariableScope scope)
-        {
-            if(scope!=null && scope.Count > 0)
-            {
-                var keys = scope.Keys;
-                foreach(var key in keys)
-                {
-                    option.Data?.Set(key, scope[key], scope.GetType(key));
-                }
-            }
             Current.Configure(option);
         }
 
