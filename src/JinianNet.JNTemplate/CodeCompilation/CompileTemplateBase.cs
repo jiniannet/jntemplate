@@ -21,5 +21,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             Render(writer, this.Context);
         }
+        /// <inheritdoc />
+        public abstract bool EnableCompile { get; }
     }
 }

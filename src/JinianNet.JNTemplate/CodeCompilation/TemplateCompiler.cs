@@ -30,98 +30,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             return default(T);
         }
 
-        /// <summary>
-        /// Adds a new property to the type, with the given name, attributes, calling convention, and property signature.
-        /// </summary>
-        /// <param name="type">The return type of the property.</param>
-        /// <param name="typeBuilder">The <see cref="TypeBuilder"/>.</param>
-        /// <param name="name">The name of the property. name cannot contain embedded nulls.</param>
-        public static void ImplementationProperty(Type type, TypeBuilder typeBuilder, string name)
-        {
-            FieldBuilder customerNameBldr = typeBuilder.DefineField($"_{name.ToLower()}", type, FieldAttributes.Private);
-            PropertyBuilder propertyBuilder = typeBuilder.DefineProperty(name, PropertyAttributes.HasDefault, type, null);
-
-            MethodAttributes getSetAttr = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-
-            MethodBuilder getBuilder = typeBuilder.DefineMethod($"get_{name}", getSetAttr, type, Type.EmptyTypes);
-
-            ILGenerator getIl = getBuilder.GetILGenerator();
-
-            getIl.Emit(OpCodes.Ldarg_0);
-            getIl.Emit(OpCodes.Ldfld, customerNameBldr);
-            getIl.Emit(OpCodes.Ret);
-
-            MethodBuilder setBuilder = typeBuilder.DefineMethod($"set_{name}", getSetAttr, typeof(void), new Type[] { type });
-            ILGenerator setIl = setBuilder.GetILGenerator();
-
-            setIl.Emit(OpCodes.Ldarg_0);
-            setIl.Emit(OpCodes.Ldarg_1);
-            setIl.Emit(OpCodes.Stfld, customerNameBldr);
-            setIl.Emit(OpCodes.Ret);
-
-            propertyBuilder.SetGetMethod(getBuilder);
-            propertyBuilder.SetSetMethod(setBuilder);
-        }
-
-
-        /// <summary>
-        /// define object
-        /// </summary>
-        /// <param name="baseType">base type</param>
-        /// <returns></returns>
-        public static object DefineObjectFrom(Type baseType)
-        {
-            var name = baseType.FullName.GetHashCode().ToString();
-            var assName = $"{ typeof(TemplateCompiler).Namespace}.Entity{name}";
-            var typeBuilder = DefineType(assName);
-            var ps = baseType.GetProperties();
-            foreach (var p in ps)
-            {
-                ImplementationProperty(p.PropertyType, typeBuilder, p.Name);
-            }
-            var type =
-#if NETSTANDARD2_0
-            typeBuilder.AsType();
-#else
-            typeBuilder.CreateType();
-#endif
-            return type.CreateInstance();
-        }
-
-        /// <summary>
-        /// copy property
-        /// </summary>
-        /// <param name="value">ori object</param>
-        /// <returns></returns>
-        public static object CopyObject(object value)
-        {
-            return CopyObject(value.GetType(), value);
-        }
-
-        /// <summary>
-        /// Copies all properties of an object
-        /// </summary>
-        /// <param name="baseType">type</param>
-        /// <param name="value">ori object</param>
-        /// <returns></returns>
-        public static object CopyObject(Type baseType, object value)
-        {
-            var result = DefineObjectFrom(baseType);
-            var resultType = result.GetType();
-            var ps = baseType.GetProperties();
-            foreach (var p in ps)
-            {
-#if NET40 || NET20
-                var data = p.GetValue(value,null);
-                resultType.GetProperty(p.Name).SetValue(result, data,null);
-#else
-                var data = p.GetValue(value);
-                resultType.GetProperty(p.Name).SetValue(result, data);
-#endif
-            }
-            return result;
-        }
-
+        
         /// <summary>
         /// Generate Context
         /// </summary>
@@ -133,63 +42,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
             return GenerateContext(name, options, null);
         }
 
-
-        /// <summary>
-        /// Constructs a TypeBuilder for a private type with the specified name in this module.
-        /// </summary>
-        /// <param name="assemblyName">The display name of the assembly.</param> 
-        /// <returns></returns>
-        public static TypeBuilder DefineType(string assemblyName)
-        {
-            return DefineType(null, null, assemblyName, "DynamicMocule");
-        }
-
-        /// <summary>
-        /// Constructs a TypeBuilder for a private type with the specified name in this module.
-        /// </summary>
-        /// <param name="interfaceType">The interface that this type implements.</param>
-        /// <param name="parent">The type that the defined type extends.</param>
-        /// <param name="assemblyName">The display name of the assembly.</param> 
-        /// <returns></returns>
-        public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName)
-        {
-            return DefineType(interfaceType, parent, assemblyName, "DynamicMocule");
-        }
-
-        /// <summary>
-        /// Constructs a TypeBuilder for a private type with the specified name in this module.
-        /// </summary>
-        /// <param name="interfaceType">The interface that this type implements.</param>
-        /// <param name="parent">The type that the defined type extends.</param>
-        /// <param name="assemblyName">The display name of the assembly.</param>
-        /// <param name="moduleName">The name of the dynamic module.</param>
-        /// <returns></returns>
-        public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName, string moduleName)
-        {
-            AssemblyBuilder assemblyBuilder
-#if NET40 || NET20
-                =AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
-#else
-                = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
-#endif
-            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(moduleName);
-            TypeBuilder typeBuilder;
-            if (parent != null)
-            {
-                typeBuilder = moduleBuilder.DefineType(assemblyName, TypeAttributes.Public, parent);
-            }
-            else
-            {
-                typeBuilder = moduleBuilder.DefineType(assemblyName, TypeAttributes.Public);
-            }
-            CustomAttributeBuilder customAttributeBuilder = new CustomAttributeBuilder(typeof(SerializableAttribute).GetConstructor(Type.EmptyTypes), new Type[] { });
-            typeBuilder.SetCustomAttribute(customAttributeBuilder);
-            if (interfaceType != null)
-            {
-                typeBuilder.AddInterfaceImplementation(interfaceType);
-            }
-            return typeBuilder;
-        }
         /// <summary>
         /// Create a compilation context.
         /// </summary>
@@ -219,7 +71,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         private static ICompilerResult Compile(ITag[] tags, CompileContext ctx)
         {
             var baseType = typeof(CompilerResult);
-            TypeBuilder typeBuilder = DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ToHashCode(ctx.Name)}");
+            TypeBuilder typeBuilder = ObjectBuilder.DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ToHashCode(ctx.Name)}");
             var targetMethod = baseType.GetMethodInfo("Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             MethodBuilder method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
             ILGenerator methodGenerator = method.GetILGenerator();

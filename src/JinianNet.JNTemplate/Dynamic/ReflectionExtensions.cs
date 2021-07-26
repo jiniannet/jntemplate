@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 
     /// </summary>
-    public static  class ReflectionExtensions
+    public static class ReflectionExtensions
     {
         private static ConcurrentDictionary<string, MethodInfo[]> dict = new ConcurrentDictionary<string, MethodInfo[]>(StringComparer.OrdinalIgnoreCase);
         /// <summary>
@@ -43,6 +43,21 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return null;
             }
+            return GetPropertyGetMethod(p);
+        }
+
+
+        /// <summary>
+        /// Returns the public get accessor for specified property.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static MethodInfo GetPropertyGetMethod(this PropertyInfo p)
+        {
+            if (p == null)
+            {
+                return null;
+            }
 #if NET40 || NET20
             return p.GetGetMethod();
 #else
@@ -57,7 +72,18 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo GetPropertySetMethod(this Type type, string name)
         {
-            PropertyInfo p = GetPropertyInfo(type, name);
+            var p = GetPropertyInfo(type, name);
+            return GetPropertySetMethod(p);
+        }
+
+
+        /// <summary>
+        /// Returns the public get accessor for specified property.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static MethodInfo GetPropertySetMethod(this PropertyInfo p)
+        {
             if (p == null)
             {
                 return null;

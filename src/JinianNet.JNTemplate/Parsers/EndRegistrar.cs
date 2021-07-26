@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 if (tc != null
                     && tc.Count == 1
-                    && Utility.IsEqual(tc.First.Text, Field.KEY_END))
+                    && Utility.IsEqual(tc.First.Text, Const.KEY_END))
                 {
                     return new EndTag();
                 }

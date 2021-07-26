@@ -14,6 +14,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class CompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CompileTemplate"/> class
         /// </summary> 
@@ -53,7 +54,7 @@ namespace JinianNet.JNTemplate
             {
                 t.Render(writer, context);
             }
-            catch(System.Exception e)
+            catch (System.Exception e)
             {
                 context.AddError(e);
             }
@@ -66,5 +67,8 @@ namespace JinianNet.JNTemplate
         {
             Render(writer, this.Context);
         }
+
+        /// <inheritdoc />
+        public bool EnableCompile => true;
     }
 }

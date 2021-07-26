@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// The engine version.
         /// </summary>
-        public static string Version => Field.Version;
+        public static string Version => Const.Version;
 
         /// <summary>
         /// Enable or disenable the compile mode.

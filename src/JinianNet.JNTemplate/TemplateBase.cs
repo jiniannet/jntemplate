@@ -25,29 +25,5 @@ namespace JinianNet.JNTemplate
         /// Gets or sets the content of the template.
         /// </summary>
         public string TemplateContent { get; set; }
-
-        /// <summary>
-        /// Set a new value for variables.
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="value">The element with the specified key.</param>
-        public void Set<T>(string key, T value)
-        {
-            Context.TempData.Set<T>(key, value);
-        }
-
-        /// <summary>
-        /// Set a static type for variables.
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="type">The type with the specified key.</param>
-        public void SetStaticType(string key, Type type)
-        {
-            if (string.IsNullOrEmpty(key))
-            {
-                key = type.Name;
-            }
-            Context.TempData.Set(key, null, type);
-        }
     }
 }

@@ -401,6 +401,23 @@ $end
             Assert.StartsWith("System.Collections.Generic.List`1", render);
         }
 
+        /// <summary>
+        /// 测试Anonymous object
+        /// </summary>
+        [Fact]
+        public void TestAnonymousObject()
+        {
+            var templateContent = "${model.Id}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.SetAnonymousObject("model", new
+            {
+                Name = "user",
+                Id = 48
+            });
+            var render = template.Render();
+            Assert.Equal("48", render);
+
+        }
         ///// <summary>
         ///// 测试标签大小写
         ///// </summary>

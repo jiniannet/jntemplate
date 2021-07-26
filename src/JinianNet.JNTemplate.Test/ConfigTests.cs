@@ -127,15 +127,13 @@ $end
         [Fact]
         public void TestGlobalData()
         {
-            Console.WriteLine(Field.Version);
             var engine = new EngineBuilder().Build();
             engine.Configure(o =>o.Data.Set("name","jntemplate"));
 
-            var templateContent ="hello,${name} ${version}";
+            var templateContent ="hello,${name}";
             var template = engine.CreateTemplate(templateContent);
-            template.Set("version", Field.Version);
             var render = template.Render();
-            Assert.Equal($"hello,jntemplate {Field.Version}", render);
+            Assert.Equal($"hello,jntemplate", render);
         }
     }
 }

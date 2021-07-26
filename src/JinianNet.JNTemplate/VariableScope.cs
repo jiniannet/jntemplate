@@ -153,21 +153,21 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public void Set<T>(string key, T value)
         {
-            if (this.DetectPattern == TypeDetect.None
-                || (this.DetectPattern == TypeDetect.Standard && value != null)
-                || (this.DetectPattern == TypeDetect.Auto && value != null && value.GetType() == typeof(T)))
-            {
-                Set(key, value, null);
-            }
-            else
-            {
-                Set(key, value, typeof(T));
-            }
+            Set(key, value, typeof(T));
         }
         /// <inheritdoc />
         public void Set(string key, object value, Type type)
         {
-            SetElement(key, new VariableElement(type, value));
+            if (this.DetectPattern == TypeDetect.None
+            || (this.DetectPattern == TypeDetect.Standard && value != null)
+            || (this.DetectPattern == TypeDetect.Auto && value != null && value.GetType() == type))
+            {
+                SetElement(key, new VariableElement(null, value));
+            }
+            else
+            {
+                SetElement(key, new VariableElement(type, value));
+            }
         }
 
         /// <inheritdoc />
@@ -179,7 +179,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            foreach(KeyValuePair<string, VariableElement> kv in dic)
+            foreach (KeyValuePair<string, VariableElement> kv in dic)
             {
                 yield return new KeyValuePair<string, object>(kv.Key, kv.Value);
             }

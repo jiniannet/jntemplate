@@ -21,7 +21,7 @@ namespace JinianNet.JNTemplate.Parsers
         {
             return (parser, tc) =>
             {
-                if (Utility.IsEqual(tc.First.Text, Field.KEY_INCLUDE))
+                if (Utility.IsEqual(tc.First.Text, Const.KEY_INCLUDE))
                 {
                     if (tc != null
                         && parser != null

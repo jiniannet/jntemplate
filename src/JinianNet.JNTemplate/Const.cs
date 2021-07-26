@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// System fields.
     /// </summary>
-    public class Field
+    public class Const
     {
         /// <summary>
         /// Version
@@ -29,5 +29,8 @@ namespace JinianNet.JNTemplate
         internal const string KEY_IN = "in";
         internal const string KEY_LAYOUT = "layout";
         internal const string KEY_BODY = "body";
+
+
+        internal const string ANONYMOUS_TYPE_CACHE = "Anonymous-Type-";
     }
 }

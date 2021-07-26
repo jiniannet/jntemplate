@@ -30,5 +30,8 @@ namespace JinianNet.JNTemplate
             Context = ctx;
             TemplateContent = text;
         }
+
+        /// <inheritdoc />
+        public bool EnableCompile => false;
     }
 }

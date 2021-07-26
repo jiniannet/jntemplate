@@ -33,19 +33,9 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">See the <see cref="TextWriter"/>.</param>
         void Render(TextWriter writer);
 
-
         /// <summary>
-        /// Set a new value for variables.
+        /// Enable or disenable the compile mode.
         /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="value">The element with the specified key.</param>
-        void Set<T>(string key, T value);
-
-        /// <summary>
-        /// Set a static type for variables.
-        /// </summary>
-        /// <param name="key">The key of the element to get</param> 
-        /// <param name="type">The type with the specified key.</param>
-        void SetStaticType(string key, Type type);
+        bool EnableCompile { get; }
     }
 }

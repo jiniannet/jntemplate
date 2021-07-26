@@ -25,7 +25,7 @@
     <PostBuildEvent></PostBuildEvent>
     <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <FileVersion>2.2.1.1</FileVersion>
+    <FileVersion>2.2.1.2</FileVersion>
     <AssemblyVersion>2.2.1.0</AssemblyVersion>
     <DelaySign>false</DelaySign> 
   </PropertyGroup>
