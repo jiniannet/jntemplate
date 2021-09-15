@@ -16,6 +16,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// Initializes a new instance of the <see cref="VariableElement"/> class
         /// </summary>
         public EmptyCompileTemplate()
+            : base()
         {
 
         }
@@ -24,7 +25,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// Initializes a new instance of the <see cref="VariableElement"/> class
         /// </summary>
         /// <param name="message">The output message.</param>
-        public EmptyCompileTemplate(string message) 
+        public EmptyCompileTemplate(string message)
+            : base()
         {
             this.TemplateContent = message;
         }

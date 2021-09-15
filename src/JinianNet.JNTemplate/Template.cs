@@ -3,6 +3,8 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
@@ -33,5 +35,14 @@ namespace JinianNet.JNTemplate
 
         /// <inheritdoc />
         public bool EnableCompile => false;
+
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public virtual Task RenderAsync(TextWriter writer)
+        {
+            var textWriter = writer;
+            return Task.Run(() => Render(textWriter));
+        }
+#endif
     }
 }

@@ -4,6 +4,7 @@
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Exceptions;
+using JinianNet.JNTemplate.Hosting;
 using System;
 using System.IO;
 
@@ -12,7 +13,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     ///  The compile template.
     /// </summary>
-    public class CompileTemplate : TemplateBase, ICompileTemplate, ITemplate
+    public class CompileTemplate : CompileTemplateBase, ICompileTemplate, ITemplate
     {
 
         /// <summary>
@@ -36,15 +37,16 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public virtual void Render(TextWriter writer, TemplateContext context)
+        public override void Render(TextWriter writer, TemplateContext context)
         {
             var text = this.TemplateContent;
-            var t = context.Options.CompilerResults.GetOrAdd(this.TemplateKey, (key) =>
+            var environment = context.Environment;
+            var t = environment.Results.GetOrAdd(this.TemplateKey, (key) =>
             {
-                return TemplateCompiler.Compile(key, text, context.Options, (ctx) =>
-                 {
-                     context.CopyTo(ctx);
-                 });
+                return environment.Compile(key, text, (ctx) =>
+                  {
+                      context.CopyTo(ctx);
+                  });
             });
             if (t == null)
             {
@@ -60,15 +62,5 @@ namespace JinianNet.JNTemplate
             }
         }
 
-
-
-        /// <inheritdoc />
-        public virtual void Render(System.IO.TextWriter writer)
-        {
-            Render(writer, this.Context);
-        }
-
-        /// <inheritdoc />
-        public bool EnableCompile => true;
     }
 }

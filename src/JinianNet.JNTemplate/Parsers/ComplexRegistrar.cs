@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Text;
+using JinianNet.JNTemplate.Hosting;
 
 namespace JinianNet.JNTemplate.Parsers
 {
@@ -24,9 +25,9 @@ namespace JinianNet.JNTemplate.Parsers
 
         #region 
         /// <inheritdoc />
-        public void Regiser(IEngine engine)
+        public void Regiser(IHost host)
         {
-            engine.RegisterParseFunc((parser, tc) =>
+            host.RegisterParseFunc((parser, tc) =>
             {
                 if (tc != null
                     && parser != null
@@ -142,27 +143,27 @@ namespace JinianNet.JNTemplate.Parsers
                 }
                 return null;
             }, -1);
-
-            if (engine.Options.EnableCompile)
+            var options = host.HostEnvironment.Options;
+            if (options.Mode == EngineMode.Compiled)
             {
-                RegiserCompile(engine);
+                RegiserCompile(host);
             }
             else
             {
-                RegiserExcutor(engine);
+                RegiserExcutor(host);
             }
 
 
         }
 
-        private void RegiserCompile(IEngine engine)
+        private void RegiserCompile(IHost host)
         {
-            engine.RegisterCompileFunc<ReferenceTag>((tag, c) =>
+            host.RegisterCompileFunc<ReferenceTag>((tag, c) =>
             {
                 return c.CompileTag(((ReferenceTag)tag).Child);
             });
 
-            engine.RegisterCompileFunc<LogicTag>((tag, c) =>
+            host.RegisterCompileFunc<LogicTag>((tag, c) =>
             {
                 var t = tag as LogicTag;
                 var type = c.GuessType(t);
@@ -481,7 +482,7 @@ namespace JinianNet.JNTemplate.Parsers
                 return mb.GetBaseDefinition();
             });
 
-            engine.RegisterCompileFunc<ArithmeticTag>((tag, c) =>
+            host.RegisterCompileFunc<ArithmeticTag>((tag, c) =>
             {
                 var stringBuilderType = typeof(StringBuilder);
                 var t = tag as ArithmeticTag;
@@ -661,17 +662,17 @@ namespace JinianNet.JNTemplate.Parsers
                 return mb.GetBaseDefinition();
             });
 
-            engine.RegisterGuessFunc<ReferenceTag>((tag, c) =>
+            host.RegisterGuessFunc<ReferenceTag>((tag, c) =>
             {
                 return c.GuessType(((ReferenceTag)tag).Child);
             });
 
-            engine.RegisterGuessFunc<LogicTag>((tag, ctx) =>
+            host.RegisterGuessFunc<LogicTag>((tag, ctx) =>
             {
                 return typeof(bool);
             });
 
-            engine.RegisterGuessFunc<ArithmeticTag>((tag, ctx) =>
+            host.RegisterGuessFunc<ArithmeticTag>((tag, ctx) =>
             {
                 var t = tag as ArithmeticTag;
                 var types = new List<Type>();
@@ -701,9 +702,9 @@ namespace JinianNet.JNTemplate.Parsers
             });
         }
 
-        private void RegiserExcutor(IEngine engine)
+        private void RegiserExcutor(IHost host)
         {
-            engine.RegisterExecuteFunc<ArithmeticTag>((tag, context) =>
+            host.RegisterExecuteFunc<ArithmeticTag>((tag, context) =>
             {
                 var t = tag as ArithmeticTag;
                 var parameters = new List<object>();
@@ -717,14 +718,14 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                     else
                     {
-                        parameters.Add(TagExecutor.Execute(t.Children[i], context));
+                        parameters.Add(context.Execute(t.Children[i]));
                     }
                 }
                 var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
                 return ExpressionEvaluator.Calculate(stack);
             });
 
-            engine.RegisterExecuteFunc<LogicTag>((tag, context) =>
+            host.RegisterExecuteFunc<LogicTag>((tag, context) =>
             {
                 var t = tag as LogicTag;
                 List<object> parameters = new List<object>();
@@ -732,7 +733,7 @@ namespace JinianNet.JNTemplate.Parsers
                 for (int i = 0; i < t.Children.Count; i++)
                 {
                     bool isOperator = t.Children[i] is OperatorTag;
-                    object result = TagExecutor.Execute(t.Children[i], context);
+                    object result = context.Execute(t.Children[i]);
                     if (Eval(parameters, isOperator, result))
                     {
                         return parameters[parameters.Count - 1];
@@ -743,12 +744,12 @@ namespace JinianNet.JNTemplate.Parsers
                 return ExpressionEvaluator.Calculate(stack);
             });
 
-            engine.RegisterExecuteFunc<ReferenceTag>((tag, context) =>
+            host.RegisterExecuteFunc<ReferenceTag>((tag, context) =>
             {
                 var t = tag as ReferenceTag;
                 if (t.Child != null)
                 {
-                    return TagExecutor.Execute(t.Child, context);
+                    return context.Execute(t.Child);
                 }
                 return null;
             });

@@ -19,199 +19,55 @@ namespace JinianNet.JNTemplate.Runtime
     /// </summary>
     public class RuntimeOptions : IOptions
     {
-        private bool enabled;
         /// <summary>
         /// Initializes a new instance of the <see cref="RuntimeOptions"/> class
         /// </summary>
         internal RuntimeOptions()
-            : this(true)
         {
-
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RuntimeOptions"/> class
-        /// </summary>
-        /// <param name="enableCompile"></param>
-        internal RuntimeOptions(bool enableCompile)
-        {
-            CompilerResults = new ResultCollection<ICompilerResult>();
-            this.ScopeProvider = new DefaultScopeProvider();
-            this.Variable = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            //IgnoreCase
-            this.Cache = new MemoryCache();
-            this.ResourceDirectories = new List<string>();
-            this.Loader = new FileLoader();
             this.Encoding = Encoding.UTF8;
             this.TagFlag = '$';
             this.TagPrefix = "${";
             this.TagSuffix = "}";
-            this.ThrowExceptions = true;
-            this.Parser = new TagParser();
-            this.EnableCompile = enableCompile;
+            this.ThrowExceptions = true; 
             this.TypeDetectPattern = TypeDetect.Standard;
             this.OutMode = OutMode.None;
-            this.Data = ScopeProvider.CreateScope();
-            this.Data.Parent = null;
-            this.Data.DetectPattern =  TypeDetect.Absolute;
+            this.Mode = EngineMode.Compiled;
         }
-
-
-        private void Initialize()
-        {
-            if (this.enabled)
-            {
-                this.Builder = new CompileBuilder();
-                this.Guesser = new TypeGuesser();
-                this.ExecutorBuilder?.Clear();
-            }
-            else
-            {
-                this.ExecutorBuilder = new ExecutorBuilder();
-                this.Builder = null;
-                this.Guesser = null;
-            }
-        }
-
-        ///// <summary>
-        ///// Initializes instance.
-        ///// </summary>
-        ///// <param name="dict">The <see cref="IDictionary{TKey, TValue}"/>.</param>
-        //public void Initialization(IDictionary<string, string> dict)
-        //{
-        //    foreach (KeyValuePair<string, string> node in dict)
-        //    {
-        //        if (string.IsNullOrEmpty(node.Value))
-        //        {
-        //            continue;
-        //        }
-        //        this.Variable[node.Key] = node.Value;
-        //    }
-        //}
-
-        /// <summary>
-        /// Gets or sets whether disablee logogram .
-        /// </summary>
+        /// <inheritdoc />
         public bool DisableeLogogram { get; set; }
-        /// <summary>
-        /// Gets or sets the tag prefix .
-        /// </summary> 
+        /// <inheritdoc />
         public string TagPrefix { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tag suffix.
-        /// </summary> 
+        /// <inheritdoc />
         public string TagSuffix { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tag flag.
-        /// </summary> 
+        /// <inheritdoc />
         public char TagFlag { get; set; }
 
-        /// <summary>
-        /// Gets or sets the global data of the engine.
-        /// </summary>
-        public IVariableScope Data { internal set; get; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="IResourceLoader"/> of the engine.
-        /// </summary>
-        public IResourceLoader Loader { internal set; get; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="Encoding"/> of the engine.
-        /// </summary>
+        /// <inheritdoc />
         public Encoding Encoding { set; get; }
 
-        /// <summary>
-        /// Gets or sets the cache of the engine.
-        /// </summary>
-        public ICache Cache { internal set; get; }
+        /// <inheritdoc />
+        public bool EnableCompile { get; set; }
 
-        /// <summary>
-        /// Gets or sets the global resource directories of the engine.
-        /// </summary>
-        /// <value></value>
-        public List<string> ResourceDirectories { internal set; get; }
-        /// <summary>
-        /// Gets or sets the environment variable of the engine.
-        /// </summary>
-        public Dictionary<string, string> Variable { internal set; get; }
-        /// <summary>
-        /// Gets or sets the tag parser of the engine.
-        /// </summary>
-        public TagParser Parser { internal set; get; }
-        /// <summary>
-        /// Gets or sets the tag <see cref="CompileBuilder"/> of the engine.
-        /// </summary>
-        public CompileBuilder Builder { internal set; get; }
-
-        /// <summary>
-        /// Gets or sets the tag <see cref="CompileBuilder"/> of the engine.
-        /// </summary>
-        public TypeGuesser Guesser { internal set; get; }
-
-        /// <summary>
-        /// Gets or sets the tag <see cref="ExecutorBuilder"/> of the engine.
-        /// </summary>
-        public ExecutorBuilder ExecutorBuilder { internal set; get; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="IScopeProvider"/> of the engine.
-        /// </summary>
-        public IScopeProvider ScopeProvider { internal set; get; }
-
-        /// <summary>
-        /// Enable or disenable the compile mode.
-        /// </summary>
-        public bool EnableCompile
+        /// <inheritdoc />
+        [Obsolete("please use the `Mode`")]
+        public bool EnableTemplateCache
         {
-            internal set
-            {
-                enabled = value;
-                Initialize();
-            }
-            get { return enabled; }
+            set { this.Mode = value ? EngineMode.Compiled : EngineMode.Interpreted; }
+            get { return this.Mode == EngineMode.Compiled; }
         }
 
-        /// <summary>
-        /// Enable or disenable the cache.
-        /// </summary>
-        public bool EnableTemplateCache { set; get; } = true;
-
-        /// <summary>
-        /// Gets or sets the compiler result collection.
-        /// </summary>
-        public ResultCollection<ICompilerResult> CompilerResults { get; }
-
-        /// <summary>
-        /// Gets or sets whether throw exceptions.
-        /// </summary>
+        /// <inheritdoc />
         public bool ThrowExceptions { get; set; }
-        /// <summary>
-        /// Gets or sets the detect patterns.
-        /// </summary>
+        /// <inheritdoc />
         public TypeDetect TypeDetectPattern { get; set; }
-        /// <summary>
-        /// Gets or sets the output mode.
-        /// </summary>
+        /// <inheritdoc />
         public OutMode OutMode { get; set; }
-        /// <summary>
-        /// Gets or sets whether strip white-space.
-        /// </summary>
-        [Obsolete("please use OutMode")]
-        public bool StripWhiteSpace { get; set; }
         /// <inheritdoc />
-        [Obsolete("please use Encoding")]
-        public string Charset
-        {
-            get { return this.Encoding.EncodingName; }
-            set { this.Encoding = Encoding.GetEncoding(value); }
-        }
-        /// <inheritdoc />
-        [Obsolete]
-        public bool IgnoreCase { get; set; } = true;
+        public IVariableScope Data { set; get; }
 
+        /// <inheritdoc />
+        public EngineMode Mode { get; set; }
     }
 }

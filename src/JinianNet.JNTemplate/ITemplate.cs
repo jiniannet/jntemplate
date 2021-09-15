@@ -4,9 +4,8 @@
  ********************************************************************************/
 using System;
 using System.IO;
-#if !NET20
 using System.Threading.Tasks;
-#endif
+
 
 namespace JinianNet.JNTemplate
 {
@@ -37,5 +36,13 @@ namespace JinianNet.JNTemplate
         /// Enable or disenable the compile mode.
         /// </summary>
         bool EnableCompile { get; }
+
+#if !NF40 && !NF45
+        /// <summary>
+        /// Performs the render for a template.
+        /// </summary>
+        /// <param name="writer">See the <see cref="TextWriter"/>.</param>
+        Task RenderAsync(TextWriter writer);
+#endif
     }
 }

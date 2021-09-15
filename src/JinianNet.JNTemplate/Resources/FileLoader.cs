@@ -5,11 +5,8 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-#if !NET20
 using System.Threading.Tasks;
-#endif
 
 namespace JinianNet.JNTemplate.Resources
 {
@@ -181,7 +178,7 @@ namespace JinianNet.JNTemplate.Resources
             return string.Join(System.IO.Path.DirectorySeparatorChar.ToString(), values.ToArray());
         }
 
-#if NETCOREAPP || NETSTANDARD
+#if !NF40 && !NF45
 
         /// <inheritdoc />
         [Obsolete]
@@ -209,7 +206,7 @@ namespace JinianNet.JNTemplate.Resources
             {
                 encoding = Encoding.UTF8;
             }
-#if NETSTANDARD && NETSTANDARD2_0
+#if NFW || NETSTANDARD2_0
             return await Task.Run(() => {
                 return System.IO.File.ReadAllText(fullPath, encoding);
             });

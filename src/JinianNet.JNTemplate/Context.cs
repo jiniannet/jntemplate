@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 using JinianNet.JNTemplate.Caching;
-using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Hosting;
 
 namespace JinianNet.JNTemplate
 {
@@ -16,13 +16,21 @@ namespace JinianNet.JNTemplate
     public class Context
     {
         /// <summary>
-        /// Strip white-space characters from the template
+        /// 
         /// </summary>
-        [Obsolete]
-        public bool StripWhiteSpace
+        /// <param name="hostEnvironment"></param>
+        public Context(IHostEnvironment hostEnvironment)
         {
-            get { return this.OutMode != OutMode.None; }
-            set { this.OutMode = (value ? OutMode.StripWhiteSpace : OutMode.None); }
+            this.OutMode = hostEnvironment.Options.OutMode;
+            this.CurrentPath = hostEnvironment.RootPath;
+            this.Charset = hostEnvironment.Options.Encoding;
+            this.ThrowExceptions = hostEnvironment.Options.ThrowExceptions;
+            this.Environment = hostEnvironment;
+#if DEBUG
+            this.Debug = true;
+#else
+            this.Debug = false;
+#endif
         }
 
         /// <summary>
@@ -38,30 +46,26 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Gets or sets the encoding.
         /// </summary>
-        public Encoding Charset { get; set; } = Encoding.UTF8;
+        public Encoding Charset { get; set; }
 
         /// <summary>
         /// Gets or sets the exception handling.
         /// </summary>
-        public bool ThrowExceptions { get; set; } = true;
+        public bool ThrowExceptions { get; set; }
+
         /// <summary>
-        /// Gets or sets the cache of the context.
+        ///  Gets or sets the cache of the environment.
         /// </summary>
-        internal RuntimeOptions Options { get; set; }
+        public IHostEnvironment Environment { get; }
+
         /// <summary>
         /// Gets the cache of the engine.
         /// </summary>
-        public ICache Cache => Options.Cache;
+        public ICache Cache => Environment.Cache;
 
         /// <summary>
         /// Gets or sets the debug mode.
         /// </summary>
-        public bool Debug { get; set; } =
-#if DEBUG
-            true;
-#else
-            false;
-#endif
-
+        public bool Debug { get; set; }
     }
 }

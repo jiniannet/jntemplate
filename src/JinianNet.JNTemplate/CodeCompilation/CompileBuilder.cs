@@ -5,10 +5,8 @@
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Reflection.Emit;
+using System.Collections.Generic; 
+using System.Reflection; 
 
 namespace JinianNet.JNTemplate.CodeCompilation
 {
@@ -17,14 +15,14 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// </summary>
     public partial class CompileBuilder
     {
-        Dictionary<string, Func<ITag, CompileContext, MethodInfo>> returnDict;
+        Dictionary<string, Func<ITag, CompileContext, MethodInfo>> dict;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompileBuilder"/> class
         /// </summary>
         public CompileBuilder()
         {
-            returnDict = new Dictionary<string, Func<ITag, CompileContext, MethodInfo>>(StringComparer.OrdinalIgnoreCase);
+            dict = new Dictionary<string, Func<ITag, CompileContext, MethodInfo>>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -43,7 +41,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="func">The method.</param>
         public void Register(string name, Func<ITag, CompileContext, MethodInfo> func)
         {
-            returnDict[name] = func;
+            dict[name] = func;
         }
         /// <summary>
         /// Build a method with has return value
@@ -52,7 +50,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public Func<ITag, CompileContext, MethodInfo> Build(string name)
         {
-            if (returnDict.TryGetValue(name, out var func))
+            if (dict.TryGetValue(name, out var func))
             {
                 return func;
             }
@@ -78,6 +76,15 @@ namespace JinianNet.JNTemplate.CodeCompilation
             where T : ITag
         {
             return Build(typeof(T).Name);
+        }
+
+
+        /// <summary>
+        /// Removes all elements from <see cref="CompileBuilder"/>
+        /// </summary>
+        public void Clear()
+        {
+            dict.Clear();
         }
     }
 }

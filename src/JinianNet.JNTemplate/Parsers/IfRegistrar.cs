@@ -230,7 +230,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     if (type.IsValueType)
                     {
-                        var defaultMethod = typeof(TemplateCompiler).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
+                        var defaultMethod = typeof(Utility).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
                         il.Emit(OpCodes.Call, defaultMethod);
                         il.Emit(OpCodes.Stloc_0);
                     }
@@ -292,13 +292,13 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                     if (t.Children[i] is ElseTag)
                     {
-                        return TagExecutor.Execute(t.Children[i], context);
+                        return context.Execute(t.Children[i]);
                     }
 
-                    var condition = TagExecutor.Execute(c.Condition, context);
+                    var condition = context.Execute(c.Condition);
                     if (Utility.ToBoolean(condition))
                     {
-                        return TagExecutor.Execute(t.Children[i], context);
+                        return context.Execute(t.Children[i]);
                     }
                 }
                 return null;

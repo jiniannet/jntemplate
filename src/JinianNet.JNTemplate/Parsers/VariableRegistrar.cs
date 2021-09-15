@@ -102,7 +102,7 @@ namespace JinianNet.JNTemplate.Parsers
                     else
                     {
                         var getMethod =
-#if NET40
+#if NF40
                         property.GetGetMethod();
 #else
                         property.GetMethod;
@@ -126,7 +126,7 @@ namespace JinianNet.JNTemplate.Parsers
                 il.MarkLabel(labelInit);
                 if (t.Parent == null)
                 {
-                    var defaultMethod = typeof(TemplateCompiler).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
+                    var defaultMethod = typeof(Utility).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
                     il.Emit(OpCodes.Call, defaultMethod);
                     il.Emit(OpCodes.Stloc, 1);
                 }
@@ -173,7 +173,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return context.TempData[t.Name];
                 }
-                baseValue = TagExecutor.Execute(t.Parent, context);
+                baseValue = context.Execute(t.Parent);
                 if (baseValue == null && t.Parent is VariableTag variable)
                 {
                     type = context.TempData.GetType(variable.Name);

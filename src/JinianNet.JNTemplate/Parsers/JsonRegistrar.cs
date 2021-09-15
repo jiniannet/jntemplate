@@ -68,8 +68,8 @@ namespace JinianNet.JNTemplate.Parsers
                 var result = new Dictionary<object, object>();
                 foreach (var kv in t.Dict)
                 {
-                    var key = kv.Key == null ? null : TagExecutor.Execute(kv.Key, context);
-                    var value = kv.Value == null ? null : TagExecutor.Execute(kv.Value, context);
+                    var key = kv.Key == null ? null : context.Execute(kv.Key);
+                    var value = kv.Value == null ? null : context.Execute(kv.Value);
                     result.Add(key, value);
                 }
                 return result;

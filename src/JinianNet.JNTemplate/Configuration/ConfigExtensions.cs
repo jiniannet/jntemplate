@@ -31,7 +31,7 @@ namespace JinianNet.JNTemplate.Configuration
                 {
                     continue;
                 }
-#if NET20 || NET40
+#if NF20 || NF40
                 object value = p.GetValue(config, null);
 #else
                 object value = p.GetValue(config);

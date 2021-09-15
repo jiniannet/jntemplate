@@ -3,9 +3,9 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Hosting;
 using JinianNet.JNTemplate.Nodes;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -15,29 +15,30 @@ namespace JinianNet.JNTemplate.Parsers
     /// The base registrar
     /// </summary>
     public abstract class TagRegistrar<T> : IRegistrar
-        where T:ITag
+        where T : ITag
     {
 
         /// <inheritdoc />
-        public virtual void Regiser(IEngine engine)
+        public virtual void Regiser(IHost host)
         {
             var parseMethod = BuildParseMethod();
             if (parseMethod != null)
             {
-                engine.RegisterParseFunc(parseMethod, -1);
+                host.RegisterParseFunc(parseMethod, -1);
             }
-            if (engine.Options.EnableCompile)
+            var options = host.HostEnvironment.Options;
+            if (options.Mode == EngineMode.Compiled)
             {
                 var compileMethod = BuildCompileMethod();
                 if (compileMethod != null)
                 {
-                    engine.RegisterCompileFunc<T>(compileMethod);
+                    host.RegisterCompileFunc<T>(compileMethod);
                 }
 
                 var guessMethod = BuildGuessMethod();
                 if (guessMethod != null)
                 {
-                    engine.RegisterGuessFunc<T>(guessMethod);
+                    host.RegisterGuessFunc<T>(guessMethod);
                 }
             }
             else
@@ -45,7 +46,7 @@ namespace JinianNet.JNTemplate.Parsers
                 var excuteMethod = BuildExcuteMethod();
                 if (excuteMethod != null)
                 {
-                    engine.RegisterExecuteFunc<T>(excuteMethod);
+                    host.RegisterExecuteFunc<T>(excuteMethod);
                 }
             }
         }
@@ -55,7 +56,7 @@ namespace JinianNet.JNTemplate.Parsers
         /// 
         /// </summary>
         /// <returns></returns>
-        public abstract Func<TemplateParser, TokenCollection,ITag> BuildParseMethod();
+        public abstract Func<TemplateParser, TokenCollection, ITag> BuildParseMethod();
         /// <summary>
         /// 
         /// </summary>

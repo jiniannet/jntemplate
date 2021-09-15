@@ -47,17 +47,17 @@
     <TreatSpecificWarningsAsErrors />
     <NoWarn>1701;1702;1705</NoWarn>
     <Optimize>True</Optimize>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;DEBUG;NETSTANDARD</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NETCOREAPP</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;DEBUG;NET20</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;DEBUG;NET40</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;DEBUG;NET45</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NET46</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NET47</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;DEBUG;NET48</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NETCOREAPP;NET5</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;DEBUG;NFW;NF20</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;DEBUG;NFW;NF40</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;DEBUG;NFW;NF45</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NFW;NF46</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NFW;NF47</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;DEBUG;NFW;NF48</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NET5;NET</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -72,17 +72,17 @@
     <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Release\net47\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Release\net48\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Release\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;RELEASE;NET20</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;RELEASE;NET40</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;RELEASE;NET45</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NET46</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NET47</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;RELEASE;NET48</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NETCOREAPP;NET5</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;RELEASE;NFW;NF20</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;RELEASE;NFW;NF40</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;RELEASE;NFW;NF45</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NFW;NF46</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NFW;NF47</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;RELEASE;NFW;NF48</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;RELEASE;NET5;NET</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'"> 

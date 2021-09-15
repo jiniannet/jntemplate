@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        public static bool EnableCompile => Current.Options.EnableCompile;
+        public static bool EnableCompile => Current.Mode == EngineMode.Compiled;
 
         /// <summary>
         /// Configuration engine which <see cref="Action{T}"/>.
@@ -56,15 +56,6 @@ namespace JinianNet.JNTemplate
         public static void Configure(Action<Runtime.IOptions> action)
         {
             Current.Configure(action);
-        }
-
-        /// <summary>
-        /// Configuration engine which <see cref="Action{TOptions, TVariable}"/>.
-        /// </summary>
-        /// <param name="action">The <see cref="Action{TOptions, TVariable}"/>.</param>
-        public static void Configure(Action<Runtime.IOptions, IVariableScope> action)
-        {
-            action?.Invoke(Current.Options, Current.Options.Data);
         }
 
         /// <summary>
@@ -164,21 +155,6 @@ namespace JinianNet.JNTemplate
         public TemplateContext CreateContext()
         {
             return Current.CreateContext();
-        }
-
-        /// <summary>
-        /// Register an new tag.
-        /// </summary>
-        /// <typeparam name="T">Type of the new tag. </typeparam>
-        /// <param name="parser">parser of the new tag.</param>
-        /// <param name="compileFunc">compile method of the new tag.</param>
-        /// <param name="guessFunc">guess method of the new tag.</param>
-        [Obsolete]
-        public static void Register<T>(Parsers.ITagParser parser,
-            Func<Nodes.ITag, CompileContext, System.Reflection.MethodInfo> compileFunc,
-            Func<Nodes.ITag, CompileContext, Type> guessFunc) where T : Nodes.ITag
-        {
-            Current.Register<T>((p, tc) => parser.Parse(p, tc), compileFunc, guessFunc);
         }
 
         /// <summary>

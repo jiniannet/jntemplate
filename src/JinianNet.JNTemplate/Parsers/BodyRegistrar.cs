@@ -67,12 +67,12 @@ namespace JinianNet.JNTemplate.Parsers
                 }
                 if (t.Children.Count == 1)
                 {
-                    return TagExecutor.Execute(t.Children[0], context);
+                    return context.Execute(t.Children[0]);
                 }
                 var sb = new System.Text.StringBuilder();
                 for (int i = 0; i < t.Children.Count; i++)
                 {
-                    sb.Append(TagExecutor.Execute(t.Children[i], context));
+                    sb.Append(context.Execute(t.Children[i]));
                 }
                 return sb.ToString();
             };

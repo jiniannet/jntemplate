@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.CodeCompilation
@@ -44,5 +45,15 @@ namespace JinianNet.JNTemplate.CodeCompilation
             }
             ctx.AddError(templateException);
         }
+
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public virtual Task RenderAsync(TextWriter writer, TemplateContext context)
+        {
+            var textWriter = writer;
+            var templateContext = context;
+            return Task.Run(() => Render(textWriter, templateContext));
+        }
+#endif
     }
 }

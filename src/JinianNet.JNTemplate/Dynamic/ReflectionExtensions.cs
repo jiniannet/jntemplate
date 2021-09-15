@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return null;
             }
-#if NET40 || NET20
+#if NF40 || NF20
             return p.GetGetMethod();
 #else
             return p.GetMethod;
@@ -88,7 +88,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return null;
             }
-#if NET40 || NET20
+#if NF40 || NF20
             return p.GetSetMethod();
 #else
             return p.SetMethod;
@@ -635,7 +635,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>A <see cref="IEnumerable"/> for the object.</returns>
         public static IEnumerable ToIEnumerable(this object dataSource)
         {
-#if NET20 || NET40
+#if NF20 || NF40
             IListSource source;
 #endif
             IEnumerable result;
@@ -648,7 +648,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return result;
             }
-#if NET20 || NET40
+#if NF20 || NF40
             if ((source = dataSource as IListSource) != null)
             {
                 IList list = source.GetList();

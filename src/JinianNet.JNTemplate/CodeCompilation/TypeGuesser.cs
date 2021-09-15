@@ -299,5 +299,14 @@ namespace JinianNet.JNTemplate.CodeCompilation
             }
             return false;
         }
+
+
+        /// <summary>
+        /// Removes all elements from <see cref="TypeGuesser"/>
+        /// </summary>
+        public void Clear()
+        {
+            dict.Clear();
+        }
     }
 }

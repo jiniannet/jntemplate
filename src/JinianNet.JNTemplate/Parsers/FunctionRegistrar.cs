@@ -59,7 +59,7 @@ namespace JinianNet.JNTemplate.Parsers
                         else
                         {
                             funcType = property.PropertyType;
-#if NET40 || NET20
+#if NF40 || NF20
                             childMethd = property.GetGetMethod();
 #else
                             childMethd = property.GetMethod;
@@ -266,7 +266,7 @@ namespace JinianNet.JNTemplate.Parsers
                 object[] args = new object[t.Children.Count];
                 for (int i = 0; i < t.Children.Count; i++)
                 {
-                    args[i] = TagExecutor.Execute(t.Children[i], context);
+                    args[i] = context.Execute(t.Children[i]);
                 }
                 Type type = null;
                 object parentValue;
@@ -276,7 +276,7 @@ namespace JinianNet.JNTemplate.Parsers
                 }
                 else
                 {
-                    parentValue = TagExecutor.Execute(t.Parent, context);
+                    parentValue = context.Execute(t.Parent);
                     if (parentValue != null)
                     {
                         type = parentValue.GetType();

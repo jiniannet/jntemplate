@@ -172,8 +172,8 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, context) =>
             {
                 var t = tag as IndexValueTag;
-                object obj = TagExecutor.Execute(t.Parent, context);
-                object index = TagExecutor.Execute(t.Index, context);
+                object obj = context.Execute(t.Parent);
+                object index = context.Execute(t.Index);
                 return obj.CallIndexValue(index);
             };
         }

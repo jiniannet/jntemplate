@@ -89,7 +89,7 @@ namespace JinianNet.JNTemplate.Parsers
                 var t = tag as ReferenceTag;
                 if (t.Child != null)
                 {
-                    return TagExecutor.Execute(t.Child, context);
+                    return context.Execute(t.Child);
                 }
                 return null;
             };

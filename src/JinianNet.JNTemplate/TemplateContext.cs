@@ -3,7 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     [Serializable]
     public class TemplateContext : Context
-#if NET20 || NET40
+#if NF20 || NF40
         , ICloneable
 #endif
     {
@@ -24,7 +24,10 @@ namespace JinianNet.JNTemplate
         /// Initializes a new instance of the <see cref="TemplateContext"/> class
         /// </summary>
         /// <param name="data">The <see cref="IVariableScope"/>.</param>  
-        internal TemplateContext(IVariableScope data) : base()
+        /// <param name="hostEnvironment"></param> 
+        internal TemplateContext(IVariableScope data,
+            IHostEnvironment hostEnvironment)
+            : base(hostEnvironment)
         {
             this.TempData = data;
             this.AllErrors = new List<System.Exception>();
@@ -33,7 +36,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Gets the <see cref="ExecutorBuilder"/>
         /// </summary>
-        public ExecutorBuilder ExecutorBuilder => Options.ExecutorBuilder;
+        public ExecutorBuilder ExecutorBuilder => Environment.ExecutorBuilder;
 
         /// <summary>
         /// Enable or Disenable the cache.
@@ -97,8 +100,7 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
             var scope = context.CreateVariableScope(context.TempData);
-            var ctx = new TemplateContext(scope);
-            ctx.Options = context.Options;
+            var ctx = new TemplateContext(scope, context.Environment);
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;

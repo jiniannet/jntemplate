@@ -416,7 +416,7 @@ namespace JinianNet.JNTemplate.Parsers
                 for (int i = 0; i < t.Children.Count; i++)
                 {
                     bool isOperator = t.Children[i] is OperatorTag;
-                    object result = TagExecutor.Execute(t.Children[i], context);
+                    object result = context.Execute(t.Children[i]);
                     if (Eval(parameters, isOperator, result))
                     {
                         return parameters[parameters.Count - 1];

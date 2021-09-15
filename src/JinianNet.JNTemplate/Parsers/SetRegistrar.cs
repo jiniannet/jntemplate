@@ -147,7 +147,7 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, context) =>
             {
                 var t = tag as SetTag;
-                object value = TagExecutor.Execute(t.Value, context);
+                object value = context.Execute(t.Value);
                 if (value != null)
                 {
                     if (!context.TempData.Update(t.Name, value))

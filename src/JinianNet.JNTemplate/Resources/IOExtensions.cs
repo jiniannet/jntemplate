@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <returns>true if the path is fixed to a specific drive or UNC path; false if the path  is relative to the current drive or working directory.</returns>
         public static bool IsAbsolutePath(this string path)
         {
-#if NET40 || NET20 || NETSTANDARD2_0 || NET45|| NET46 || NET47
+#if NFW || NETSTANDARD2_0
             return IsWindowsAbsolutePath(path) || IsUnixAbsolutePath(path);
 #else
             return Path.IsPathFullyQualified(path);

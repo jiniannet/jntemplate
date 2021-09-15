@@ -9,6 +9,12 @@ using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Exceptions;
 using System;
 using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Hosting;
+using JinianNet.JNTemplate.Dynamic;
+using System.IO;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
@@ -32,7 +38,7 @@ namespace JinianNet.JNTemplate
             //paths[0] = ctx.CurrentPath;
             //ctx.Options.ResourceDirectories.CopyTo(paths, 1);
             //return paths;
-            return ctx.Options.ResourceDirectories.ToArray();
+            return ctx.Environment.ResourceDirectories.ToArray();
         }
 
         /// <summary>
@@ -43,8 +49,21 @@ namespace JinianNet.JNTemplate
         /// <returns>The loaded resource.</returns>
         public static Resources.ResourceInfo Load(this Context ctx, string fileName)
         {
-            return ctx.Options.Loader.Load(ctx, fileName);
+            return ctx.Environment.Loader.Load(ctx, fileName);
         }
+
+#if !NF40 && !NF45
+        /// <summary>
+        /// Loads the contents of an resource file on the specified path.
+        /// </summary>
+        /// <param name="fileName">The path of the file to load.</param> 
+        /// <param name="ctx">The <see cref="Context"/>.</param>
+        /// <returns>The loaded resource.</returns>
+        public static Task<Resources.ResourceInfo> LoadAsync(this Context ctx, string fileName)
+        {
+            return ctx.Environment.Loader.LoadAsync(ctx, fileName);
+        }
+#endif
 
         /// <summary>
         /// Returns the full path in the resource directorys.
@@ -54,42 +73,7 @@ namespace JinianNet.JNTemplate
         /// <returns>The full path.</returns>
         public static string FindFullPath(this Context ctx, string fileName)
         {
-            return ctx.Options.Loader.Find(ctx, fileName);
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IVariableScope"/> class
-        /// </summary>
-        /// <param name="options">The <see cref="RuntimeOptions"/></param>
-        /// <returns></returns>
-        public static IVariableScope CreateVariableScope(this RuntimeOptions options)
-        {
-            var vs = options?.ScopeProvider?.CreateScope();
-            if (vs != null)
-            {
-                if (options.Data.Count > 0)
-                {
-                    vs.Parent = options.Data;
-                }
-                vs.DetectPattern = options.TypeDetectPattern;
-            }
-            return vs;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IVariableScope"/> class
-        /// </summary>
-        /// <param name="options">The <see cref="RuntimeOptions"/></param>
-        /// <param name="parent">The <see cref="IVariableScope"/></param>
-        /// <returns></returns>
-        public static IVariableScope CreateVariableScope(this RuntimeOptions options, IVariableScope parent)
-        {
-            var vs = options?.ScopeProvider?.CreateScope();
-            if (vs != null)
-            {
-                vs.Parent = parent;
-                vs.DetectPattern = parent?.DetectPattern ?? options.TypeDetectPattern;
-            }
-            return vs;
+            return ctx.Environment.Loader.Find(ctx, fileName);
         }
 
         /// <summary>
@@ -99,7 +83,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static IVariableScope CreateVariableScope(this Context ctx)
         {
-            return ctx.Options.CreateVariableScope();
+            return ctx.Environment.CreateVariableScope();
         }
 
         /// <summary>
@@ -110,7 +94,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static IVariableScope CreateVariableScope(this Context ctx, IVariableScope parent)
         {
-            return ctx.Options.CreateVariableScope(parent);
+            return ctx.Environment.CreateVariableScope(parent);
         }
 
         /// <summary>
@@ -139,11 +123,12 @@ namespace JinianNet.JNTemplate
         /// <returns>An TemplateParser.</returns>
         public static TemplateLexer CreateTemplateLexer(this Context ctx, string text)
         {
+            var options = ctx.Environment.Options;
             return new TemplateLexer(text,
-                ctx.Options.TagPrefix,
-                ctx.Options.TagSuffix,
-                ctx.Options.TagFlag,
-                ctx.Options.DisableeLogogram);
+                options.TagPrefix,
+                options.TagSuffix,
+                options.TagFlag,
+                options.DisableeLogogram);
         }
 
         /// <summary>
@@ -154,7 +139,7 @@ namespace JinianNet.JNTemplate
         /// <returns>An TemplateParser.</returns>
         public static TemplateParser CreateTemplateParser(this Context ctx, Token[] ts)
         {
-            return new TemplateParser(ctx.Options.Parser, ts);
+            return new TemplateParser(ctx.Environment.Parser, ts);
         }
 
         /// <summary>
@@ -170,20 +155,45 @@ namespace JinianNet.JNTemplate
             {
                 throw new TemplateException($"\"{ path }\" cannot be found.");
             }
-            var template = context.Options.CompilerResults.GetOrAdd(full, (fullName) =>
+            var template = context.Environment.Results.GetOrAdd(full, (fullName) =>
             {
                 var res = context.Load(fullName);
                 if (res == null)
                 {
                     throw new TemplateException($"Path:\"{path}\", the file could not be found.");
                 }
-                return TemplateCompiler.Compile(fullName, res.Content, context.Options, (c) => context.CopyTo(c));
+                return context.Environment.Compile(fullName, res.Content, (c) => context.CopyTo(c));
             });
             using (var sw = new System.IO.StringWriter())
             {
                 template.Render(sw, context);
                 return sw.ToString();
             }
+        }
+
+        /// <summary>
+        /// Execute the tags.
+        /// </summary>
+        /// <param name="tag">The <see cref="ITag"/>.</param>
+        /// <param name="ctx">The <see cref="TemplateContext"/>.</param>
+        /// <returns></returns>
+        public static object Execute(this TemplateContext ctx, ITag tag)
+        {
+            var func = ctx.ExecutorBuilder.Build(tag);
+            return func(tag, ctx);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="tag"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        private static object Execute(this TemplateContext ctx, string name, ITag tag)
+        {
+            var func = ctx.ExecutorBuilder.Build(name);
+            return func(tag, ctx);
         }
     }
 }

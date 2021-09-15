@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -18,8 +19,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <summary>
         /// Initializes a new instance of the <see cref="CompileContext"/> class
         /// </summary>
-        public CompileContext()
-            : base()
+        /// <param name="hostEnvironment"></param> 
+        public CompileContext(IHostEnvironment hostEnvironment)
+            : base(hostEnvironment)
         {
             Methods = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
         }
@@ -47,12 +49,12 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <summary>
         /// Gets the <see cref="CompileBuilder"/>
         /// </summary>
-        public CompileBuilder CompileBuilder => Options.Builder;
+        public CompileBuilder CompileBuilder  => Environment.Builder;
 
         /// <summary>
         /// Gets the <see cref="CompileBuilder"/>
         /// </summary>
-        public TypeGuesser TypeGuesser => Options.Guesser;
+        public TypeGuesser TypeGuesser => Environment.Guesser;
 
         /// <summary>
         /// Set the type of compilation parameters 
@@ -61,7 +63,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The type of the variable.</param>
         public void Set(string name, Type type)
         {
-            Data.Set(name,null, type);
+            Data.Set(name, null, type);
         }
 
         /// <summary>
@@ -81,8 +83,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             TypeBuilder = null;
             Data = null;
             Methods = null;
-            Generator = null;
-            Options = null;
+            Generator = null; 
         }
 
         /// <summary>

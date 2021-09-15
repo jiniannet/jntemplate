@@ -373,7 +373,7 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     using (var writer = new StringWriter())
                     {
-                        object value = TagExecutor.Execute(t.Source, context);
+                        object value = context.Execute(t.Source);
                         var enumerable = value.ToIEnumerable();
                         TemplateContext ctx;
                         if (enumerable != null)
@@ -389,7 +389,7 @@ namespace JinianNet.JNTemplate.Parsers
                                 ctx.TempData.Set("foreachIndex", i);
                                 for (int n = 0; n < t.Children.Count; n++)
                                 {
-                                    object result = TagExecutor.Execute(t.Children[n], ctx);
+                                    object result = ctx.Execute(t.Children[n]);
                                     if (i == 0 && t.Children.Count == 1)
                                     {
                                         return result;

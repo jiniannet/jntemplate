@@ -2,7 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System; 
+using System;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate
                 {
                     try
                     {
-                        var tagResult = TagExecutor.Execute(collection[i], this.Context);
+                        var tagResult = this.Context.Execute(collection[i]);
                         if (tagResult != null)
                         {
                             writer.Write(tagResult.ToString());
@@ -71,10 +71,6 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public ITag[] ReadAll(string text)
         {
-            if (string.IsNullOrEmpty(text))
-            {
-                return new ITag[0];
-            }
             var findOnCache = this.Context.EnableTemplateCache
                 && !string.IsNullOrEmpty(this.TemplateKey);
 
@@ -83,9 +79,12 @@ namespace JinianNet.JNTemplate
             {
                 return tags;
             }
-
+            if (string.IsNullOrEmpty(text))
+            {
+                return new ITag[0];
+            }
             var lexer = Context.CreateTemplateLexer(text);
-            var ts = lexer.Execute(); 
+            var ts = lexer.Execute();
             var parser = Context.CreateTemplateParser(ts);
             tags = parser.Execute();
 
@@ -110,7 +109,7 @@ namespace JinianNet.JNTemplate
             {
                 writer.Write(tag.ToSource());
             }
-        } 
+        }
 
     }
 }

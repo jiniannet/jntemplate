@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.CodeCompilation
 {
@@ -22,6 +23,22 @@ namespace JinianNet.JNTemplate.CodeCompilation
             Render(writer, this.Context);
         }
         /// <inheritdoc />
-        public abstract bool EnableCompile { get; }
+        public virtual bool EnableCompile => true;
+
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public virtual Task RenderAsync(TextWriter writer, TemplateContext context)
+        {
+            var textWriter = writer;
+            var templateContext = context;
+            return Task.Run(() => Render(textWriter, templateContext));
+        }
+
+        /// <inheritdoc />
+        public virtual Task RenderAsync(TextWriter writer)
+        {
+            return RenderAsync(writer, this.Context);
+        }
+#endif
     }
 }

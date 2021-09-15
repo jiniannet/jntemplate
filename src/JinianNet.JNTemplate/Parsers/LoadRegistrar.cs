@@ -146,7 +146,7 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, context) =>
             {
                 var t = tag as LoadTag;
-                object path = TagExecutor.Execute(t.Path, context);
+                object path = context.Execute(t.Path);
                 if (path == null)
                 {
                     return null;

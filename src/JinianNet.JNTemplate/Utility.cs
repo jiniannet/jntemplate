@@ -207,5 +207,15 @@ namespace JinianNet.JNTemplate
                 return byte2String;
             }
         }
+
+        /// <summary>
+        /// Generates default values based on the specified type
+        /// </summary>
+        /// <typeparam name="T">the Type of the object.</typeparam>
+        /// <returns>The efault values.</returns>
+        public static T GenerateDefaultValue<T>()
+        {
+            return default(T);
+        }
     }
 }

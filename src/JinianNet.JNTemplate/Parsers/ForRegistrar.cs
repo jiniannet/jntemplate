@@ -246,7 +246,7 @@ namespace JinianNet.JNTemplate.Parsers
             return (tag, context) =>
             {
                 var t = tag as ForTag;
-                TagExecutor.Execute(t.Initial, context);
+                context.Execute(t.Initial);
                 //如果标签为空，则直接为false,避免死循环以内存溢出
                 bool run;
 
@@ -256,7 +256,7 @@ namespace JinianNet.JNTemplate.Parsers
                 }
                 else
                 {
-                    run = Utility.ToBoolean(TagExecutor.Execute(t.Condition, context));
+                    run = Utility.ToBoolean(context.Execute(t.Condition));
                 }
                 using (var writer = new StringWriter())
                 {
@@ -264,7 +264,7 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         for (int i = 0; i < t.Children.Count; i++)
                         {
-                            var obj = TagExecutor.Execute(t.Children[i], context);
+                            var obj = context.Execute(t.Children[i]);
                             if (obj != null)
                             {
                                 writer.Write(obj.ToString());
@@ -274,9 +274,9 @@ namespace JinianNet.JNTemplate.Parsers
                         if (t.Do != null)
                         {
                             //执行计算，不需要输出，比如i++
-                            TagExecutor.Execute(t.Do, context);
+                            context.Execute(t.Do);
                         }
-                        run = Utility.ToBoolean(TagExecutor.Execute(t.Condition, context));
+                        run = Utility.ToBoolean(context.Execute(t.Condition));
                     }
                     return writer.ToString();
                 }

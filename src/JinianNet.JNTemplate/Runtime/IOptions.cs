@@ -4,6 +4,7 @@
  ********************************************************************************/
 
 using JinianNet.JNTemplate.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,11 +15,6 @@ namespace JinianNet.JNTemplate.Runtime
     /// </summary>
     public interface IOptions
     {
-        /// <summary>
-        /// Gets or sets the global data of the engine.
-        /// </summary>
-        IVariableScope Data { get; }
-
         /// <summary>
         /// Gets or sets whether disablee logogram .
         /// </summary>
@@ -44,15 +40,15 @@ namespace JinianNet.JNTemplate.Runtime
         Encoding Encoding { set; get; }
 
         /// <summary>
-        /// Gets or sets the global resource directories of the engine.
+        /// Enable or disenable the compile mode.
         /// </summary>
-        /// <value></value>
-        List<string> ResourceDirectories { get; }
+        [Obsolete("please use the `Mode`")]
+        bool EnableCompile { get; set; }
 
         /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        bool EnableCompile { get; }
+        EngineMode Mode { get; set; }
 
         /// <summary>
         /// Enable or disenable the cache.
@@ -72,5 +68,10 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets the output mode.
         /// </summary>
         OutMode OutMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the global data of the engine.
+        /// </summary>
+        IVariableScope Data { set; get; }
     }
 }

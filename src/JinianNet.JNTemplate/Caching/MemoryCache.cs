@@ -5,21 +5,24 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Caching
 {
     /// <summary>
     /// MemoryCache
     /// </summary>
-    public class MemoryCache : ICache
+    public class MemoryCache : ICache, IDistributedCache<object>
     {
-        private Dictionary<string, object> dict;
+        private ConcurrentDictionary<string, object> dict;
 
         /// <inheritdoc />
-        internal MemoryCache()
+        public MemoryCache()
         {
-            dict = new Dictionary<string, object>();
+            dict = new ConcurrentDictionary<string, object>();
         }
 
         /// <inheritdoc />
@@ -49,9 +52,9 @@ namespace JinianNet.JNTemplate.Caching
             return dict.GetEnumerator();
         }
         /// <inheritdoc />
-        public object Remove(string key)
+        public void Remove(string key)
         {
-            return dict.Remove(key);
+            dict.TryRemove(key, out var value);
         }
 
         /// <inheritdoc />
@@ -81,5 +84,144 @@ namespace JinianNet.JNTemplate.Caching
         {
             dict.Clear();
         }
+        /// <inheritdoc />
+        public IEnumerable<KeyValuePair<string, object>> GetMany(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+            {
+                yield return new KeyValuePair<string, object>(key, Get(key));
+            }
+        }
+
+
+        /// <inheritdoc />
+        public object GetOrAdd(string key, Func<object> factory, Func<DistributedCacheEntryOptions> optionsFactory = null)
+        {
+            return dict.GetOrAdd(key, (k) => factory());
+        }
+
+        /// <inheritdoc />
+        public void Set(string key, object value, DistributedCacheEntryOptions options = null)
+        {
+            dict[key] = value;
+        }
+
+
+        /// <inheritdoc />
+        public void SetMany(IEnumerable<KeyValuePair<string, object>> items, DistributedCacheEntryOptions options = null)
+        {
+            foreach (var kv in items)
+            {
+                dict[kv.Key] = kv.Value;
+            }
+        }
+
+        /// <inheritdoc />
+        public void Refresh(string key)
+        {
+
+        }
+
+        /// <inheritdoc />
+        public void RefreshMany(IEnumerable<string> keys)
+        {
+
+        }
+        /// <inheritdoc />
+        public void RemoveMany(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+            {
+                Remove(key);
+            }
+        }
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public Task RemoveManyAsync(IEnumerable<string> keys, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => RemoveMany(keys));
+        }
+        /// <inheritdoc />
+        public Task RefreshManyAsync(IEnumerable<string> keys, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => RemoveMany(keys));
+        }
+
+        /// <inheritdoc />
+        public Task RemoveAsync(string key, CancellationToken token = default)
+        {
+            //return token.IsCancellationRequested ?
+            //    Task.FromCanceled(token) :
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => Remove(key));
+        }
+        /// <inheritdoc />
+        public Task SetManyAsync(IEnumerable<KeyValuePair<string, object>> items, DistributedCacheEntryOptions options = null, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => SetMany(items));
+        }
+        /// <inheritdoc />
+        public Task<IEnumerable<KeyValuePair<string, object>>> GetManyAsync(IEnumerable<string> keys, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => GetMany(keys));
+        }
+
+        /// <inheritdoc />
+        public Task<object> GetAsync(string key, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => Get(key));
+        }
+        /// <inheritdoc />
+        public Task<object> GetOrAddAsync(string key, Func<Task<object>> factory, Func<DistributedCacheEntryOptions> optionsFactory = null, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => GetOrAdd(key, factory, optionsFactory));
+        }
+
+        /// <inheritdoc />
+        public Task SetAsync(string key, object value, DistributedCacheEntryOptions options = null, CancellationToken token = default)
+        {
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
+            return Task.Run(() => Set(key, value));
+        }
+        /// <inheritdoc />
+        public Task RefreshAsync(string key, CancellationToken token = default)
+        {
+#if NETSTANDARD2_0 || NF45
+            return Task.Delay(0);
+#else
+            return Task.CompletedTask;
+#endif
+        }
+#endif
     }
 }

@@ -31,7 +31,7 @@ namespace JinianNet.JNTemplate.Dynamic
             var ps = original.GetProperties();
             foreach (var p in ps)
             {
-#if NET40 || NET20
+#if NF40 || NF20
                 var data = p.GetValue(value,null);
                 target.GetProperty(p.Name).SetValue(result, data,null);
 #else
@@ -184,7 +184,7 @@ namespace JinianNet.JNTemplate.Dynamic
         public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName, string moduleName)
         {
             AssemblyBuilder assemblyBuilder
-#if NET40 || NET20
+#if NF40 || NF20
                 =AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
 #else
                 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);

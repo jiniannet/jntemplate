@@ -6,15 +6,14 @@ using System;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Hosting;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Exceptions;
 using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
-using System.Text;
-using System.Linq;
-using System.IO;
+using JinianNet.JNTemplate.Runtime;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
@@ -23,6 +22,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public sealed class TemplatingEngine : IEngine
     {
+        #region
         private static string[] registrars = new string[] {
                 "JinianNet.JNTemplate.Parsers.CommentRegistrar",
                 "JinianNet.JNTemplate.Parsers.BooleanRegistrar",
@@ -50,66 +50,80 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.LogicRegistrar",
                 "JinianNet.JNTemplate.Parsers.ArithmeticRegistrar",
                 "JinianNet.JNTemplate.Parsers.ReferenceRegistrar"};
-        #region
-        /// <summary>
-        /// Gets the <see cref="RuntimeOptions"/>.
-        /// </summary>
-        public RuntimeOptions Options { private set; get; }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TemplatingEngine"/> class
-        /// </summary>
-        public TemplatingEngine()
-        {
+        #endregion
 
+        #region
+        /// <inheritdoc />
+        public IHostEnvironment HostEnvironment { get; }
+        /// <inheritdoc />
+        public EngineMode Mode => HostEnvironment.Options.Mode;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// Initializes a new instance of the <see cref="TemplatingEngine"/> class
+        /// <param name="environment"></param>
+        public TemplatingEngine(IHostEnvironment environment = null)
+        {
+            HostEnvironment = environment
+                ?? new DefaultHostEnvironment();
+            Initialize();
         }
 
         /// <inheritdoc />
         public IEngine Configure(Action<IOptions> action)
         {
-            action?.Invoke(Options);
+            var mode = HostEnvironment.Options.Mode;
+            action?.Invoke(HostEnvironment.Options);
+            if (mode != HostEnvironment.Options.Mode)
+            {
+                Initialize();
+            }
             return this;
         }
 
         /// <inheritdoc />
         public IEngine Configure(IConfig option)
         {
-            Options.DisableeLogogram = option.DisableeLogogram;
-            Options.TagPrefix = option.TagPrefix;
-            Options.TagSuffix = option.TagSuffix;
-            Options.TagFlag = option.TagFlag;
-            Options.Encoding = option.Encoding;
-            Options.EnableTemplateCache = option.EnableTemplateCache;
-            Options.ThrowExceptions = option.ThrowExceptions;
-            Options.TypeDetectPattern = option.TypeDetectPattern;
-            Options.OutMode = option.OutMode;
+            HostEnvironment.Options.DisableeLogogram = option.DisableeLogogram;
+            HostEnvironment.Options.TagPrefix = option.TagPrefix;
+            HostEnvironment.Options.TagSuffix = option.TagSuffix;
+            HostEnvironment.Options.TagFlag = option.TagFlag;
+            HostEnvironment.Options.Encoding = option.Encoding;
+            HostEnvironment.Options.EnableTemplateCache = option.EnableTemplateCache;
+            HostEnvironment.Options.ThrowExceptions = option.ThrowExceptions;
+            HostEnvironment.Options.TypeDetectPattern = option.TypeDetectPattern;
+            HostEnvironment.Options.OutMode = option.OutMode;
             if (option.ResourceDirectories?.Count > 0)
             {
                 foreach (var path in option.ResourceDirectories)
                 {
-                    if (!Options.ResourceDirectories.Contains(path))
+                    if (!HostEnvironment.ResourceDirectories.Contains(path))
                     {
-                        Options.ResourceDirectories.Add(path);
+                        HostEnvironment.ResourceDirectories.Add(path);
                     }
                 }
             }
-            if (Options.EnableCompile != option.EnableCompile)
+            var mode = option.EnableCompile ? EngineMode.Compiled : EngineMode.Interpreted;
+
+            if (mode != HostEnvironment.Options.Mode)
             {
-                Options.EnableCompile = option.EnableCompile;
+                HostEnvironment.Options.Mode = mode;
             }
-            if(option.GlobalData != null && option.GlobalData.Count > 0)
+            if (option.GlobalData != null && option.GlobalData.Count > 0)
             {
-                foreach(var kv in option.GlobalData)
+                foreach (var kv in option.GlobalData)
                 {
                     if (kv.Value == null)
                     {
                         continue;
                     }
-                    Options.Data.Set(kv.Key,kv.Value,kv.Value.GetType());
+                    HostEnvironment.Options.Data.Set(kv.Key, kv.Value, kv.Value.GetType());
                 }
             }
-            if(Options.TypeDetectPattern == TypeDetect.None && Options.EnableCompile)
+            if (HostEnvironment.Options.TypeDetectPattern == TypeDetect.None && mode == EngineMode.Compiled)
             {
-                Options.TypeDetectPattern = TypeDetect.Standard;
+                HostEnvironment.Options.TypeDetectPattern = TypeDetect.Standard;
             }
             return this;
         }
@@ -117,7 +131,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public ICompilerResult CompileFile(string name, string path, Action<CompileContext> action = null)
         {
-            return Options.CompilerResults[name] = TemplateCompiler.CompileFile(name, path, Options, action);
+            return HostEnvironment.Results[name] = HostEnvironment.CompileFile(name, path, action);
         }
 
 
@@ -132,7 +146,7 @@ namespace JinianNet.JNTemplate
             {
                 name = content.GetHashCode().ToString();
             }
-            return Options.CompilerResults[name] = TemplateCompiler.Compile(name, content, Options, action);
+            return HostEnvironment.Results[name] = HostEnvironment.Compile(name, content, action);
         }
 
         /// <inheritdoc />
@@ -148,14 +162,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public TemplateContext CreateContext()
         {
-            var data = Options.CreateVariableScope();
-            var ctx = new TemplateContext(data);
-            ctx.Options = Options;
-            ctx.Charset = Options.Encoding;
-            ctx.EnableTemplateCache = Options.EnableTemplateCache && !Options.EnableCompile;
-            ctx.ThrowExceptions = Options.ThrowExceptions;
-            ctx.OutMode = Options.OutMode;
-            return ctx;
+            return HostEnvironment.CreateContext();
         }
 
         /// <inheritdoc />
@@ -172,7 +179,7 @@ namespace JinianNet.JNTemplate
                 name = text.GetHashCode().ToString();
             }
             ITemplate template;
-            if (Options.EnableCompile)
+            if (Mode == EngineMode.Compiled)
             {
                 template = new CompileTemplate(CreateContext(), text);
             }
@@ -194,48 +201,28 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public ITemplate LoadTemplate(string name, string path)
         {
-            if (Options.EnableCompile)
-            {
-                return LoadCompileTemplate(name, path);
-            }
-
             var ctx = CreateContext();
-            var res = ctx.Load(path);
-            if (res == null)
+            if (string.IsNullOrEmpty(name) &&
+                string.IsNullOrEmpty(name = ctx.FindFullPath(path)))
             {
                 throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
-
-            var t = LoadTemplate<Template>(name, path, ctx);
-            t.TemplateContent = res.Content;
-            return t;
-        }
-
-        /// <summary>
-        /// Loads the template on the specified path.
-        /// </summary>
-        /// <param name="name">Unique key of the template</param>
-        /// <param name="path">The fully qualified path of the file to load.</param>
-        /// <returns>An instance of a template.</returns>
-        private ITemplate LoadCompileTemplate(string name, string path)
-        {
-            var ctx = CreateContext();
-            if (string.IsNullOrEmpty(name))
+            ITemplate template;
+            if (Mode == EngineMode.Compiled)
             {
-                name = ctx.FindFullPath(path);
-                if (string.IsNullOrEmpty(name))
+                template = LoadTemplate<CompileTemplate>(name, path, ctx);
+                if (HostEnvironment.Results.Keys.Contains(name))
                 {
-                    throw new TemplateException($"Path:\"{path}\", the file could not be found.");
+                    return template;
                 }
             }
-            var template = LoadTemplate<CompileTemplate>(name, path, ctx);
-            //template.CompileDelegate = (t) =>
-            //{
-            //    Options.Templates.GetOrAdd()
-            //}
-            if (Options.CompilerResults.Keys.Contains(name))
+            else
             {
-                return template;
+                template = LoadTemplate<Template>(name, path, ctx);
+                if (ctx.EnableTemplateCache && ctx.Cache.Get(name) != null)
+                {
+                    return template;
+                }
             }
             var res = ctx.Load(path);
             if (res == null)
@@ -245,6 +232,50 @@ namespace JinianNet.JNTemplate
             template.TemplateContent = res.Content;
             return template;
         }
+
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public Task<ITemplate> LoadTemplateAsync(string path)
+        {
+            return LoadTemplateAsync(null, path);
+        }
+
+        /// <inheritdoc />
+        public async Task<ITemplate> LoadTemplateAsync(string name, string path)
+        {
+            var ctx = CreateContext();
+            if (string.IsNullOrEmpty(name) &&
+                string.IsNullOrEmpty(name = ctx.FindFullPath(path)))
+            {
+                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
+            }
+            ITemplate template;
+            if (Mode == EngineMode.Compiled)
+            {
+                template = LoadTemplate<CompileTemplate>(name, path, ctx);
+                if (HostEnvironment.Results.Keys.Contains(name))
+                {
+                    return template;
+                }
+            }
+            else
+            {
+                template = LoadTemplate<Template>(name, path, ctx);
+                if (ctx.EnableTemplateCache
+                    && (await ctx.Cache.GetAsync(name)) != null)
+                {
+                    return template;
+                }
+            }
+            var res = await ctx.LoadAsync(path);
+            if (res == null)
+            {
+                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
+            }
+            template.TemplateContent = res.Content;
+            return template;
+        }
+#endif
 
         /// <summary>
         /// Loads the template on the specified path.
@@ -257,7 +288,21 @@ namespace JinianNet.JNTemplate
         private T LoadTemplate<T>(string name, string path, TemplateContext context)
             where T : ITemplate, new()
         {
-            T template = new T();
+            return LoadTemplate<T>(name, path, context, new T());
+        }
+
+        /// <summary>
+        /// Loads the template on the specified path.
+        /// </summary>
+        /// <typeparam name="T">Type of template. </typeparam>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <param name="template"></param>
+        /// <returns>An instance of a template.</returns>
+        private T LoadTemplate<T>(string name, string path, TemplateContext context, T template)
+            where T : ITemplate
+        {
             template.Context = context;
             template.TemplateKey = name;
             if (string.IsNullOrEmpty(template.TemplateKey))
@@ -266,19 +311,17 @@ namespace JinianNet.JNTemplate
             }
             if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
-                template.Context.CurrentPath = Options.Loader.GetDirectoryName(path);
+                template.Context.CurrentPath = HostEnvironment.Loader.GetDirectoryName(path);
             }
             return template;
         }
 
-
-
         /// <inheritdoc />
         public IEngine AppendResourcePath(string path)
         {
-            if (!Options.ResourceDirectories.Contains(path))
+            if (!HostEnvironment.ResourceDirectories.Contains(path))
             {
-                Options.ResourceDirectories.Add(path);
+                HostEnvironment.ResourceDirectories.Add(path);
             }
             return this;
         }
@@ -292,7 +335,7 @@ namespace JinianNet.JNTemplate
             }
             string value;
 
-            if (Options.Variable.TryGetValue(key, out value))
+            if (HostEnvironment.EnvironmentVariable.TryGetValue(key, out value))
             {
                 return value;
             }
@@ -308,11 +351,11 @@ namespace JinianNet.JNTemplate
             }
             if (value == null)
             {
-                Options.Variable.Remove(key);
+                HostEnvironment.EnvironmentVariable.Remove(key);
             }
             else
             {
-                Options.Variable[key] = value;
+                HostEnvironment.EnvironmentVariable[key] = value;
             }
         }
 
@@ -323,7 +366,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException(nameof(loader));
             }
-            Options.Loader = loader;
+            HostEnvironment.Loader = loader;
             return this;
         }
 
@@ -334,8 +377,14 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException(nameof(provider));
             }
-            Options.ScopeProvider = provider;
-            Options.Data = provider.CreateScope();
+            HostEnvironment.ScopeProvider = provider;
+            var data = provider.CreateScope();
+            var original = HostEnvironment.Options.Data;
+            foreach (KeyValuePair<string, object> kv in data)
+            {
+                data.Set(kv.Key, kv.Value, data.GetType(kv.Key));
+            }
+
             return this;
         }
 
@@ -346,26 +395,24 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException(nameof(cache));
             }
-            Options.Cache = cache;
+            HostEnvironment.Cache = cache;
             return this;
         }
 
         /// <inheritdoc />
-        public IEngine UseOptions(RuntimeOptions options)
+        public IEngine UseOptions(IOptions options)
         {
-            if (Options != options)
+            if (HostEnvironment.Options != options)
             {
-                Options = options;
-                if (options.Parser.Count == 0)
-                {
-                    Initialize();
-                }
+                HostEnvironment.Options = options;
+                Initialize();
             }
             return this;
         }
 
         private void Initialize()
         {
+            Reset();
             for (var i = 0; i < registrars.Length; i++)
             {
                 Dynamic
@@ -386,7 +433,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public IEngine EnableCompile()
         {
-            Options.EnableCompile = true;
+            HostEnvironment.Options.Mode = EngineMode.Compiled;
             Initialize();
             return this;
         }
@@ -395,7 +442,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public IEngine DisableCompile()
         {
-            Options.EnableCompile = false;
+            HostEnvironment.Options.Mode = EngineMode.Interpreted;
             Initialize();
             return this;
         }
@@ -405,13 +452,13 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void Clean()
         {
-            if (Options.EnableCompile)
+            if (Mode == EngineMode.Compiled)
             {
-                Options.CompilerResults?.Clear();
+                HostEnvironment.Results?.Clear();
             }
             else
             {
-                Options.Cache?.Clear();
+                HostEnvironment.Cache?.Clear();
             }
         }
 
@@ -421,38 +468,48 @@ namespace JinianNet.JNTemplate
             Func<ITag, CompileContext, Type> guessMethod,
             int index = 0) where T : ITag
         {
-            Options.Parser.Register(parseMethod, index);
-            Options.Builder?.Register<T>(compileMethod);
-            Options.Guesser?.Register<T>(guessMethod);
+            HostEnvironment.Parser.Register(parseMethod, index);
+            HostEnvironment.Builder?.Register<T>(compileMethod);
+            HostEnvironment.Guesser?.Register<T>(guessMethod);
         }
 
         /// <inheritdoc />
         public void RegisterParseFunc(Func<TemplateParser, TokenCollection, ITag> func,
             int index = 0)
         {
-            this.Options.Parser.Register(func, index);
+            HostEnvironment.Parser.Register(func, index);
         }
 
         /// <inheritdoc />
         public void RegisterCompileFunc<T>(Func<ITag, CompileContext, MethodInfo> func)
             where T : ITag
         {
-            this.Options.Builder?.Register<T>(func);
+            HostEnvironment.Builder?.Register<T>(func);
         }
 
         /// <inheritdoc />
         public void RegisterGuessFunc<T>(Func<ITag, CompileContext, Type> func)
             where T : ITag
         {
-            this.Options.Guesser?.Register<T>(func);
+            HostEnvironment.Guesser?.Register<T>(func);
         }
 
         /// <inheritdoc />
         public void RegisterExecuteFunc<T>(Func<ITag, TemplateContext, object> func)
            where T : ITag
         {
-            this.Options.ExecutorBuilder?.Register<T>(func);
+            HostEnvironment.ExecutorBuilder?.Register<T>(func);
         }
+
+        /// <inheritdoc />
+        public void Reset()
+        {
+            HostEnvironment.ExecutorBuilder.Clear();
+            HostEnvironment.Guesser.Clear();
+            HostEnvironment.Builder.Clear();
+            HostEnvironment.Parser.Clear();
+        }
+
         #endregion
     }
 }

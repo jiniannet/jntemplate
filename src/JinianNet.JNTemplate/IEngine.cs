@@ -10,19 +10,20 @@ using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Caching;
 using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
-using System.Collections.Generic;
+using JinianNet.JNTemplate.Hosting;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
     /// <summary>
     /// The template engine
     /// </summary>
-    public interface IEngine
+    public interface IEngine : IHost
     {
         /// <summary>
-        /// Gets the <see cref="RuntimeOptions"/>.
+        /// Enable or disenable the compile mode.
         /// </summary>
-        RuntimeOptions Options { get; }
+        EngineMode Mode { get; }
 
         /// <summary>
         /// Configuration engine which <see cref="Action{IConfig}"/>.
@@ -93,26 +94,28 @@ namespace JinianNet.JNTemplate
         /// <returns>An instance of a template.</returns>
         ITemplate LoadTemplate(string name, string path);
 
+#if !NF40 && !NF45
+        /// <summary>
+        /// Loads the template on the specified path.
+        /// </summary>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <returns>An instance of a template.</returns>
+        Task<ITemplate> LoadTemplateAsync(string path);
+
+        /// <summary>
+        /// Loads the template on the specified path.
+        /// </summary>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <returns>An instance of a template.</returns>
+        Task<ITemplate> LoadTemplateAsync(string name, string path);
+#endif
 
         /// <summary>
         /// Appends the specified directory name to the resource path list.
         /// </summary>
         /// <param name="path">The name of the directory to be appended to the resource path.</param>
         IEngine AppendResourcePath(string path);
-
-        /// <summary>
-        /// Gets an value from environment variables.
-        /// </summary>
-        /// <param name="key">The key of the value to get.</param>
-        /// <returns>The value associated with the specified key.</returns>
-        string GetEnvironmentVariable(string key);
-
-        /// <summary>
-        /// Sets an value from environment variables.
-        /// </summary>
-        /// <param name="key">The key of the value to set.</param>
-        /// <param name="value">The variable to add to.</param>
-        void SetEnvironmentVariable(string key, string value);
 
         /// <summary>
         /// Sets an <see cref="IResourceLoader"/> values from engine.
@@ -134,10 +137,10 @@ namespace JinianNet.JNTemplate
 
 
         /// <summary>
-        /// Initialize the engine with default <see cref="RuntimeOptions"/>.
+        /// Initialize the engine with default <see cref="IOptions"/>.
         /// </summary>
-        /// <param name="options">The <see cref="RuntimeOptions"/> to add set.</param> 
-        IEngine UseOptions(RuntimeOptions options);
+        /// <param name="options">The <see cref="IOptions"/> to add set.</param> 
+        IEngine UseOptions(IOptions options);
 
         /// <summary>
         /// Initialize the engine with default options.
@@ -173,38 +176,6 @@ namespace JinianNet.JNTemplate
            Func<ITag, CompileContext, MethodInfo> compileMethod,
            Func<ITag, CompileContext, Type> guessMethod,
            int index = 0) where T : ITag;
-
-        /// <summary>
-        /// Register an new parsing method.
-        /// </summary>
-        /// <param name="func">parser of the new tag.</param>
-        /// <param name="index">The zero-based index.</param>
-        void RegisterParseFunc(Func<TemplateParser, TokenCollection, ITag> func,
-           int index = 0);
-
-        /// <summary>
-        /// Register an new compile method.
-        /// </summary>
-        /// <typeparam name="T">Type of the new tag. </typeparam> 
-        /// <param name="func">compile method of the new tag.</param> 
-        void RegisterCompileFunc<T>(Func<ITag, CompileContext, MethodInfo> func)
-           where T : ITag;
-
-        /// <summary>
-        /// Register an new guess method.
-        /// </summary>
-        /// <typeparam name="T">Type of the new tag. </typeparam> 
-        /// <param name="func">guess method of the new tag.</param>
-        void RegisterGuessFunc<T>(Func<ITag, CompileContext, Type> func)
-           where T : ITag;
-
-        /// <summary>
-        /// Register an new excute method.
-        /// </summary>
-        /// <typeparam name="T">Type of the new tag. </typeparam> 
-        /// <param name="func">excute method of the new tag.</param>
-        void RegisterExecuteFunc<T>(Func<ITag, TemplateContext, object> func)
-           where T : ITag;
 
     }
 }

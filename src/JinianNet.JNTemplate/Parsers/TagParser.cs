@@ -83,5 +83,13 @@ namespace JinianNet.JNTemplate.Parsers
                 delegates.Add(func);
             }
         }
+
+        /// <summary>
+        /// Removes all elements from <see cref="TagParser"/>
+        /// </summary>
+        public void Clear()
+        {
+            delegates.Clear();
+        }
     }
 }

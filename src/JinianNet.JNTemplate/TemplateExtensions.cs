@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
@@ -31,7 +32,6 @@ namespace JinianNet.JNTemplate
 
             return document;
         }
-
         /// <summary>
         /// Set a new value for variables.
         /// </summary>
@@ -93,5 +93,25 @@ namespace JinianNet.JNTemplate
                 template.Context.TempData.Set(key, value, null);
             }
         }
+
+#if !NF40 && !NF45
+        /// <summary>
+        /// Renders the template.
+        /// </summary>
+        /// <param name="template">The <see cref="ITemplate"/>.</param>
+        /// <returns>The template contents.</returns>
+        public static async Task<string> RenderAsync(this ITemplate template)
+        {
+            string document;
+
+            using (var writer = new StringWriter())
+            {
+                await template.RenderAsync(writer);
+                document = writer.ToString();
+            }
+
+            return document;
+        }
+#endif
     }
 }

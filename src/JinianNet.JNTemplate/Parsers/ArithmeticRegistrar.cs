@@ -302,7 +302,7 @@ namespace JinianNet.JNTemplate.Parsers
                     }
                     else
                     {
-                        parameters.Add(TagExecutor.Execute(t.Children[i], context));
+                        parameters.Add(context.Execute(t.Children[i]));
                     }
                 }
                 var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
