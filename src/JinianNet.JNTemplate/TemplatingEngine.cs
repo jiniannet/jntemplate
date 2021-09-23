@@ -90,7 +90,6 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Options.TagSuffix = option.TagSuffix;
             HostEnvironment.Options.TagFlag = option.TagFlag;
             HostEnvironment.Options.Encoding = option.Encoding;
-            HostEnvironment.Options.EnableTemplateCache = option.EnableTemplateCache;
             HostEnvironment.Options.ThrowExceptions = option.ThrowExceptions;
             HostEnvironment.Options.TypeDetectPattern = option.TypeDetectPattern;
             HostEnvironment.Options.OutMode = option.OutMode;
@@ -104,12 +103,6 @@ namespace JinianNet.JNTemplate
                     }
                 }
             }
-            var mode = option.EnableCompile ? EngineMode.Compiled : EngineMode.Interpreted;
-
-            if (mode != HostEnvironment.Options.Mode)
-            {
-                HostEnvironment.Options.Mode = mode;
-            }
             if (option.GlobalData != null && option.GlobalData.Count > 0)
             {
                 foreach (var kv in option.GlobalData)
@@ -121,9 +114,17 @@ namespace JinianNet.JNTemplate
                     HostEnvironment.Options.Data.Set(kv.Key, kv.Value, kv.Value.GetType());
                 }
             }
+            var mode = option.EnableCompile ? EngineMode.Compiled : EngineMode.Interpreted;
+
             if (HostEnvironment.Options.TypeDetectPattern == TypeDetect.None && mode == EngineMode.Compiled)
             {
                 HostEnvironment.Options.TypeDetectPattern = TypeDetect.Standard;
+            }
+
+            if (mode != HostEnvironment.Options.Mode)
+            {
+                HostEnvironment.Options.Mode = mode;
+                Initialize();
             }
             return this;
         }

@@ -148,7 +148,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <returns></returns>
-        public static string CompileFileAndExec(this TemplateContext context, string path)
+        public static ICompilerResult CompileFile(this TemplateContext context, string path)
         {
             var full = context.FindFullPath(path);
             if (full == null)
@@ -164,11 +164,45 @@ namespace JinianNet.JNTemplate
                 }
                 return context.Environment.Compile(fullName, res.Content, (c) => context.CopyTo(c));
             });
+            return template;
+        }
+
+        /// <summary>
+        /// Compiles and renders a template.
+        /// </summary>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <returns></returns>
+        public static string CompileAndRenderFile(this TemplateContext context, string path)
+        {
+            var template = CompileFile(context, path);
             using (var sw = new System.IO.StringWriter())
             {
                 template.Render(sw, context);
                 return sw.ToString();
             }
+        }
+        /// <summary>
+        /// Compiles and renders a template.
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static ICompilerResult CompileTemplate(this TemplateContext context, string name, string content)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                return new EmptyCompileTemplate();
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                name = content.GetHashCode().ToString();
+            }
+            return context.Environment.Results.GetOrAdd(name, (fullName) =>
+            {
+                return context.Environment.Compile(fullName, content, (c) => context.CopyTo(c));
+            });
         }
 
         /// <summary>

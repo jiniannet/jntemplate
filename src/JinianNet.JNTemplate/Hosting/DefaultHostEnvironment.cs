@@ -2,13 +2,13 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate;
 using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Runtime;
+using System;
 using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Hosting
@@ -19,11 +19,9 @@ namespace JinianNet.JNTemplate.Hosting
     public class DefaultHostEnvironment : IHostEnvironment
     {
 
-
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="rootPath"></param>
         /// <param name="options"></param>
         /// <param name="parser"></param>
         /// <param name="compileBuilder"></param>
@@ -32,8 +30,7 @@ namespace JinianNet.JNTemplate.Hosting
         /// <param name="scopeProvider"></param>
         /// <param name="cache"></param>
         /// <param name="resourceLoader"></param>
-        public DefaultHostEnvironment(string rootPath = null
-            , IOptions options = null
+        public DefaultHostEnvironment(IOptions options = null
             , TagParser parser = null
             , CompileBuilder compileBuilder = null
             , TypeGuesser typeGuesser = null
@@ -46,7 +43,7 @@ namespace JinianNet.JNTemplate.Hosting
             this.ResourceDirectories = new List<string>();
             this.EnvironmentVariable = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             this.Options = options ?? new RuntimeOptions();
-            RootPath = string.IsNullOrEmpty(rootPath) ? rootPath : System.IO.Directory.GetCurrentDirectory();
+            RootPath = System.IO.Directory.GetCurrentDirectory();
             Parser = parser ?? new TagParser();
             Builder = compileBuilder ?? new CompileBuilder();
             Guesser = typeGuesser ?? new TypeGuesser();
@@ -54,7 +51,14 @@ namespace JinianNet.JNTemplate.Hosting
             ScopeProvider = scopeProvider ?? new DefaultScopeProvider();
             Cache = cache ?? new MemoryCache();
             Loader = resourceLoader ?? new FileLoader();
-
+            ApplicationName = Guid.NewGuid().ToString("N");
+            EnvironmentName =
+#if DEBUG
+                "DEBUG"
+#else
+                "RELEASE"
+#endif
+                ;
             if (Options.Data == null
                 && ScopeProvider != null)
             {

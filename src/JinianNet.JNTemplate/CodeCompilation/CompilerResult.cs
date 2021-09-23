@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using JinianNet.JNTemplate.Exceptions;
 
@@ -48,8 +49,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
 #if !NF40 && !NF45
         /// <inheritdoc />
-        public virtual Task RenderAsync(TextWriter writer, TemplateContext context)
+        public virtual Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var textWriter = writer;
             var templateContext = context;
             return Task.Run(() => Render(textWriter, templateContext));

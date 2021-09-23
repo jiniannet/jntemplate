@@ -4,19 +4,21 @@
  ********************************************************************************/
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.CodeCompilation
 {
     /// <summary>
     /// Returns a blank template.
     /// </summary>
-    public class EmptyCompileTemplate : CompileTemplate
+    public class EmptyCompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableElement"/> class
         /// </summary>
         public EmptyCompileTemplate()
-            : base()
         {
 
         }
@@ -31,9 +33,11 @@ namespace JinianNet.JNTemplate.CodeCompilation
             this.TemplateContent = message;
         }
 
+        /// <inheritdoc />
+        public bool EnableCompile => true;
 
         /// <inheritdoc />
-        public override void Render(TextWriter writer, TemplateContext context)
+        public void Render(TextWriter writer, TemplateContext context)
         {
             if (!string.IsNullOrWhiteSpace(this.TemplateContent) && context.ThrowExceptions)
             {
@@ -41,5 +45,30 @@ namespace JinianNet.JNTemplate.CodeCompilation
             }
         }
 
+        /// <inheritdoc />
+        public void Render(TextWriter writer)
+        {
+            Render(writer, this.Context);
+        }
+
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return RenderAsync(writer, this.Context);
+        }
+
+        /// <inheritdoc />
+        public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!string.IsNullOrWhiteSpace(this.TemplateContent) && context.ThrowExceptions)
+            {
+                return writer.WriteAsync(TemplateContent);
+            }
+            return Task.CompletedTask;
+        }
+#endif
     }
 }

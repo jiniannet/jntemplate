@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate
         public Context(IHostEnvironment hostEnvironment)
         {
             this.OutMode = hostEnvironment.Options.OutMode;
-            this.CurrentPath = hostEnvironment.RootPath;
+            //this.CurrentPath = hostEnvironment.RootPath;
             this.Charset = hostEnvironment.Options.Encoding;
             this.ThrowExceptions = hostEnvironment.Options.ThrowExceptions;
             this.Environment = hostEnvironment;

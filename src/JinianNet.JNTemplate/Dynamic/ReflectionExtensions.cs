@@ -9,6 +9,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -17,7 +19,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public static class ReflectionExtensions
     {
-        private static ConcurrentDictionary<string, MethodInfo[]> dict = new ConcurrentDictionary<string, MethodInfo[]>(StringComparer.OrdinalIgnoreCase);
+        private static ConcurrentDictionary<string, object> dict = new ConcurrentDictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         /// <summary>
         /// Searches for the public property with the specified name.
         /// </summary>
@@ -116,8 +118,8 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetCacheMethods(this Type type, string name)
         {
-            var cacheKey = $"{type.FullName}.{name}";
-            return dict.GetOrAdd(cacheKey, (key) =>
+            var cacheKey = $"MS${type.FullName}.{name}";
+            return (MethodInfo[])dict.GetOrAdd(cacheKey, (key) =>
             {
                 return GetMethodInfos(type, name);
             });
@@ -431,39 +433,53 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static object CallPropertyOrField(this object container, string name, Type type = null)
         {
-            Type t = type ?? container.GetType();
-            if (!char.IsDigit(name[0]))
+            type = type ?? container.GetType();
+            var key = $"PI${type.FullName}.{name}";
+            var method = (Delegate)dict.GetOrAdd(key, (cacheKey) =>
             {
-#if !NET20_NOTUSER
-                PropertyInfo p = GetPropertyInfo(t, name);
-                //Property
-                if (p != null)
+                try
                 {
-                    return p.GetValue(container, null);
-                }
-#if NEEDFIELD
-                //Field
-                FieldInfo f = t.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
-                if (f != null)
-                {
-                    return f.GetValue(container);
-                }
-#endif
-#else
-                System.Linq.Expressions.MemberExpression exp;
-#if NEEDFIELD
-                exp = System.Linq.Expressions.Expression.PropertyOrField(System.Linq.Expressions.Expression.Constant(container), name);
-#else
-                exp = System.Linq.Expressions.Expression.Property(System.Linq.Expressions.Expression.Constant(container), name);
-#endif
-                if (exp != null)
-                {
-                    return System.Linq.Expressions.Expression.Lambda(exp).Compile().DynamicInvoke();
-                }
-#endif
-            }
+                    var parameter = Expression.Parameter(type);
+                    if (container != null)
+                    {
+                        Expression body = Expression.PropertyOrField(parameter, name);
+                        var expression = Expression.Lambda(body, parameter);
+                        return expression.Compile();
+                    }
+                    else
+                    {
+                        var p = type.GetPropertyInfo(name);
+                        if (p != null)
+                        {
+                            var isStatic = p.GetGetMethod().IsStatic;
+                            Expression body = Expression.MakeMemberAccess(isStatic ? null : parameter, p);
+                            var expression = isStatic ? Expression.Lambda(body) : Expression.Lambda(body, parameter);
+                            return expression.Compile();
+                        }
 
-            return null;
+                        var f = type.GetFieldInfo(name);
+                        if (f != null)
+                        {
+                            var isStatic = f.IsStatic;
+                            Expression body = Expression.MakeMemberAccess(isStatic ? null : parameter, f);
+                            var expression = isStatic ? Expression.Lambda(body) : Expression.Lambda(body, parameter);
+                            return expression.Compile();
+                        }
+
+                        return null;
+                    }
+                }
+                catch (Exception excetion)
+                {
+                    System.Diagnostics.Debug.WriteLine(excetion);
+                    return null;
+                }
+            });
+            if (container == null)
+            {
+                return method?.DynamicInvoke();
+            }
+            return method?.DynamicInvoke(container);
         }
 
         /// <summary>
@@ -477,6 +493,7 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             return CallMethod(container?.GetType(), container, name, args);
         }
+
         /// <summary>
         /// Calls the specified method and returns the result of execution
         /// </summary>
@@ -487,75 +504,12 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>The result of execution.</returns>
         public static object CallMethod(this Type type, object container, string name, object[] args)
         {
-            Type[] types = new Type[args.Length];
-            bool hasNullValue = false;
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i] != null)
-                {
-                    types[i] = args[i].GetType();
-                }
-                else
-                {
-                    hasNullValue = true;
-                }
-            }
-
+            Type[] types = args.Select(m => m?.GetType()).ToArray();
             MethodInfo method = GetMethodInfo(type, name, types);
 
             if (method != null)
             {
-                //if (hasParam)
-                //{
-                //    Array arr;
-                //    if (types.Length - 1 == args.Length)
-                //    {
-                //        arr = null;
-                //    }
-                //    else
-                //    {
-                //        arr = Array.CreateInstance(types[types.Length - 1].GetElementType(), args.Length - types.Length + 1);
-                //        for (int i = types.Length - 1; i < args.Length; i++)
-                //        {
-                //            arr.SetValue(args[i], i - (types.Length - 1));
-                //        }
-
-                //        object[] newArgs = new object[types.Length];
-
-                //        for (int i = 0; i < newArgs.Length - 1; i++)
-                //        {
-                //            newArgs[i] = args[i];
-                //        }
-                //        newArgs[newArgs.Length - 1] = arr;
-
-                //        return method.Invoke(container, newArgs);
-                //    }
-                //}
-
-                var pi = method.GetParameters();
-                if (types.Length == 1 && types[0] == typeof(Dictionary<object, object>)
-                    && (pi.Length != 1 || !pi[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
-                {
-                    args = ChangeParameters((Dictionary<object, object>)args[0], pi);
-                }
-                else if (hasNullValue)
-                {
-                    for (int i = 0; i < args.Length; i++)
-                    {
-                        if (args[i] == null
-                            && !pi[i].ParameterType.IsClass
-                            && pi[i].DefaultValue != DBNull.Value)
-                        {
-                            args[i] = pi[i].DefaultValue;
-                        }
-                        //else
-                        //{
-                        //    args[i] = DefaultForType(pi[i].ParameterType);
-                        //}
-                    }
-                }
-                return method.Invoke(container, args);
-
+                return Call(type, method, container, args);
             }
 
             return null;
@@ -586,7 +540,8 @@ namespace JinianNet.JNTemplate.Dynamic
             var info = GetPropertyGetMethod(t, "Item");
             if (info != null)
             {
-                return info.Invoke(container, new object[] { propIndex });
+                return Call(t, info, container, new object[] { propIndex });
+                //return info.Invoke(container, new object[] { propIndex });
             }
             return null;
         }
@@ -626,6 +581,75 @@ namespace JinianNet.JNTemplate.Dynamic
             return GetIEnumerableGenericType(type) != null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="genericType"></param>
+        /// <param name="container"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static object CallGenericMethod(this object container, string name, Type[] genericType, params object[] args)
+        {
+            var type = container.GetType();
+            var genericMethod = type.GetMethod(name).MakeGenericMethod(genericType);
+            return Call(type, genericMethod, container, args);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="method"></param>
+        /// <param name="container"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static object Call(this Type type, MethodInfo method, object container, object[] args)
+        {
+            ParameterInfo[] pi = method.GetParameters();
+            var keys = pi.Select(m => m.ParameterType.Name).ToArray();
+            var name = $"D${type.FullName}.{method.Name}({string.Join(",", keys)})";
+
+            var action = (Delegate)dict.GetOrAdd(name, (cacheKey) =>
+            {
+                try
+                {
+                    var parameters = new List<ParameterExpression>();
+                    for (int i = 0; i < pi.Length; i++)
+                    {
+                        parameters.Add(Expression.Parameter(pi[i].ParameterType, pi[i].Name));
+                    }
+
+                    ParameterExpression model = method.IsStatic ? null : Expression.Parameter(type, "__instance_");
+                    MethodCallExpression call = Expression.Call(model, method, parameters.ToArray());
+                    if (!method.IsStatic)
+                    {
+                        parameters.Insert(0, model);
+                    }
+                    return Expression.Lambda(call, parameters.ToArray()).Compile();
+                }
+                catch (Exception excetion)
+                {
+                    System.Diagnostics.Debug.WriteLine(excetion);
+                    return null;
+                }
+            });
+            object[] values;
+            if (method.IsStatic)
+            {
+                values = args;
+            }
+            else
+            {
+                values = new object[args.Length + 1];
+                for (var i = 1; i < values.Length; i++)
+                {
+                    values[i] = args[i - 1];
+                }
+                values[0] = container;
+            }
+            return action?.DynamicInvoke(values);
+        }
 
         #region ToIEnumerable
         /// <summary>
@@ -635,21 +659,17 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>A <see cref="IEnumerable"/> for the object.</returns>
         public static IEnumerable ToIEnumerable(this object dataSource)
         {
-#if NF20 || NF40
-            IListSource source;
-#endif
-            IEnumerable result;
             if (dataSource == null)
             {
                 return null;
             }
 
-            if ((result = dataSource as IEnumerable) != null)
+            if (dataSource is IEnumerable enumerable)
             {
-                return result;
+                return enumerable;
             }
 #if NF20 || NF40
-            if ((source = dataSource as IListSource) != null)
+            if (dataSource is IListSource source)
             {
                 IList list = source.GetList();
                 if (!source.ContainsListCollection)
@@ -668,9 +688,9 @@ namespace JinianNet.JNTemplate.Dynamic
                     {
                         object component = list[0];
                         object value = descriptor.GetValue(component);
-                        if ((value != null) && ((result = value as IEnumerable) != null))
+                        if ((value != null) && (value is IEnumerable toEnumerable))
                         {
-                            return result;
+                            return toEnumerable;
                         }
                     }
                     return null;

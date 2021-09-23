@@ -143,7 +143,12 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => RemoveMany(keys));
+            RemoveMany(keys);
+#if NETSTANDARD2_0 || NF45
+            return Task.FromResult(0);
+#else
+            return Task.CompletedTask;
+#endif
         }
         /// <inheritdoc />
         public Task RefreshManyAsync(IEnumerable<string> keys, CancellationToken token = default)
@@ -152,7 +157,12 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => RemoveMany(keys));
+            RefreshMany(keys);
+#if NETSTANDARD2_0 || NF45
+            return Task.FromResult(0);
+#else
+            return Task.CompletedTask;
+#endif
         }
 
         /// <inheritdoc />
@@ -164,7 +174,12 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => Remove(key));
+            Remove(key);
+#if NETSTANDARD2_0 || NF45
+            return Task.FromResult(0);
+#else
+            return Task.CompletedTask;
+#endif
         }
         /// <inheritdoc />
         public Task SetManyAsync(IEnumerable<KeyValuePair<string, object>> items, DistributedCacheEntryOptions options = null, CancellationToken token = default)
@@ -173,7 +188,12 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => SetMany(items));
+            SetMany(items);
+#if NETSTANDARD2_0 || NF45
+            return Task.FromResult(0);
+#else
+            return Task.CompletedTask;
+#endif
         }
         /// <inheritdoc />
         public Task<IEnumerable<KeyValuePair<string, object>>> GetManyAsync(IEnumerable<string> keys, CancellationToken token = default)
@@ -182,7 +202,7 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => GetMany(keys));
+            return Task.FromResult(GetMany(keys));
         }
 
         /// <inheritdoc />
@@ -192,7 +212,7 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => Get(key));
+            return Task.FromResult(Get(key));
         }
         /// <inheritdoc />
         public Task<object> GetOrAddAsync(string key, Func<Task<object>> factory, Func<DistributedCacheEntryOptions> optionsFactory = null, CancellationToken token = default)
@@ -201,7 +221,7 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => GetOrAdd(key, factory, optionsFactory));
+            return Task.FromResult(GetOrAdd(key, factory, optionsFactory));
         }
 
         /// <inheritdoc />
@@ -211,13 +231,18 @@ namespace JinianNet.JNTemplate.Caching
             {
                 token.ThrowIfCancellationRequested();
             }
-            return Task.Run(() => Set(key, value));
+            Set(key, value);
+#if NETSTANDARD2_0 || NF45
+            return Task.FromResult(0);
+#else
+            return Task.CompletedTask;
+#endif
         }
         /// <inheritdoc />
         public Task RefreshAsync(string key, CancellationToken token = default)
         {
 #if NETSTANDARD2_0 || NF45
-            return Task.Delay(0);
+            return Task.FromResult(0);
 #else
             return Task.CompletedTask;
 #endif

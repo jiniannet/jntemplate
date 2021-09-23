@@ -316,7 +316,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return result;
                 }
 
-                result = parentValue.CallPropertyOrField(t.Name);
+                result = parentValue.CallPropertyOrField(t.Name,type);
 
                 if (result != null && result is Delegate)
                 {

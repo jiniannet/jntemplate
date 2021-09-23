@@ -35,14 +35,5 @@ namespace JinianNet.JNTemplate
 
         /// <inheritdoc />
         public bool EnableCompile => false;
-
-#if !NF40 && !NF45
-        /// <inheritdoc />
-        public virtual Task RenderAsync(TextWriter writer)
-        {
-            var textWriter = writer;
-            return Task.Run(() => Render(textWriter));
-        }
-#endif
     }
 }

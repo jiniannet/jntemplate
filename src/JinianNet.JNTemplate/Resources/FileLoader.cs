@@ -200,18 +200,18 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="fullPath">The fully qualified path or file name to load.</param>
         /// <param name="encoding">The <see cref="Encoding"/>.</param> 
         /// <returns>An string.</returns>
-        private async Task<string> LoadResourceAsync(string fullPath, Encoding encoding)
+        private Task<string> LoadResourceAsync(string fullPath, Encoding encoding)
         {
             if (encoding == null)
             {
                 encoding = Encoding.UTF8;
             }
 #if NFW || NETSTANDARD2_0
-            return await Task.Run(() => {
+            return Task.Run(() => {
                 return System.IO.File.ReadAllText(fullPath, encoding);
             });
 #else
-            return await System.IO.File.ReadAllTextAsync(fullPath, encoding);
+            return System.IO.File.ReadAllTextAsync(fullPath, encoding);
 #endif
         }
         /// <inheritdoc />

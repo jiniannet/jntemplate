@@ -7,13 +7,15 @@ using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Hosting;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
     /// <summary>
     ///  The compile template.
     /// </summary>
-    public class CompileTemplate : CompileTemplateBase, ICompileTemplate, ITemplate
+    public class CompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
 
         /// <summary>
@@ -37,17 +39,14 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public override void Render(TextWriter writer, TemplateContext context)
+        public bool EnableCompile => true;
+
+        /// <inheritdoc />
+        public virtual void Render(TextWriter writer, TemplateContext context)
         {
             var text = this.TemplateContent;
-            var environment = context.Environment;
-            var t = environment.Results.GetOrAdd(this.TemplateKey, (key) =>
-            {
-                return environment.Compile(key, text, (ctx) =>
-                  {
-                      context.CopyTo(ctx);
-                  });
-            });
+            var t = context.CompileTemplate(this.TemplateKey, text);
+
             if (t == null)
             {
                 throw new TemplateException($"compile error.");
@@ -62,5 +61,25 @@ namespace JinianNet.JNTemplate
             }
         }
 
+        /// <inheritdoc />
+        public void Render(TextWriter writer)
+        {
+            Render(writer, this.Context);
+        }
+#if !NF40 && !NF45
+        /// <inheritdoc />
+        public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.Run(() => Render(writer, context));
+        }
+
+        /// <inheritdoc />
+        public Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return RenderAsync(writer, this.Context);
+        }
+#endif
     }
 }

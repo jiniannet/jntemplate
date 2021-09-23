@@ -52,7 +52,7 @@ namespace JinianNet.JNTemplate.Configuration
         public List<string> ResourceDirectories { get; set; } = new List<string>();
 
         /// <inheritdoc />
-        public bool EnableCompile { get; } = true;
+        public bool EnableCompile { get; set; } = true;
 
         /// <inheritdoc />
         public bool EnableTemplateCache { get; set; } = true;

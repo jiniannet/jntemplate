@@ -6,6 +6,8 @@ using System;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace JinianNet.JNTemplate
 {
@@ -46,6 +48,29 @@ namespace JinianNet.JNTemplate
                         var tagResult = this.Context.Execute(collection[i]);
                         if (tagResult != null)
                         {
+                            if (tagResult is Task task)
+                            {
+                                var type = tagResult.GetType();
+                                if (type.IsGenericType)
+                                {
+                                    var taskResult = (Task<string>)this.CallGenericMethod("ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+#if NF40
+                                    taskResult.Wait();
+                                    writer.Write(taskResult.Result);
+#else
+                                    writer.Write(taskResult.GetAwaiter().GetResult());
+#endif
+                                }
+                                else
+                                {
+#if NF40
+                                    task.Wait();
+#else
+                                    task.ConfigureAwait(false).GetAwaiter();
+#endif
+                                }
+                                continue;
+                            }
                             writer.Write(tagResult.ToString());
                         }
                     }
@@ -110,6 +135,105 @@ namespace JinianNet.JNTemplate
                 writer.Write(tag.ToSource());
             }
         }
+#if !NF40 && !NF45
 
+
+        /// <summary>
+        /// Throw exception.
+        /// </summary>
+        /// <param name="e">Represents errors that occur during application execution.</param>
+        /// <param name="tag">Represents errors tag.</param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        private async Task ThrowExceptionAsync(TemplateException e, ITag tag, System.IO.TextWriter writer)
+        {
+            this.Context.AddError(e);
+            if (!this.Context.ThrowExceptions)
+            {
+                await writer.WriteAsync(tag.ToSource());
+            }
+        }
+
+        /// <summary>
+        /// Performs the render for a template.
+        /// </summary>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
+        public virtual Task RenderAsync(System.IO.TextWriter writer, CancellationToken cancellationToken = default)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled(cancellationToken);
+            }
+            var text = this.TemplateContent;
+            var tags = ReadAll(text);
+            return RenderAsync(writer, tags);
+        }
+
+        /// <summary>
+        /// Performs the render for a tags.
+        /// </summary>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        /// <param name="collection">The tags collection.</param>
+        /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
+        public virtual async Task RenderAsync(System.IO.TextWriter writer, ITag[] collection, CancellationToken cancellationToken = default)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("\"writer\" cannot be null.");
+            }
+
+            if (collection != null && collection.Length > 0)
+            {
+                for (int i = 0; i < collection.Length; i++)
+                {
+                    try
+                    {
+                        var tagResult = this.Context.Execute(collection[i]);
+                        if (tagResult != null)
+                        {
+                            if (tagResult is Task task)
+                            {
+                                var type = tagResult.GetType();
+                                if (type.IsGenericType)
+                                {
+                                    var taskResult = (Task<string>)this.CallGenericMethod("ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+                                    var taskValue = await taskResult;
+                                    await writer.WriteAsync(taskValue);
+                                }
+                                else
+                                {
+                                    await task;
+                                }
+                                continue;
+                            }
+                            await writer.WriteAsync(tagResult.ToString());
+                        }
+                    }
+                    catch (TemplateException e)
+                    {
+                        await ThrowExceptionAsync(e, collection[i], writer);
+                    }
+                    catch (System.Exception e)
+                    {
+                        var baseException = e.GetBaseException();
+                        await ThrowExceptionAsync(new ParseException(collection[i], baseException), collection[i], writer);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public async Task<string> ExcuteTaskAsync<T>(Task<T> task)
+        {
+            var result = await task;
+            return result?.ToString();
+        }
+
+#endif
     }
 }

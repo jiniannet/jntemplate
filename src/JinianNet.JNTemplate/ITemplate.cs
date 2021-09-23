@@ -4,6 +4,7 @@
  ********************************************************************************/
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -42,7 +43,8 @@ namespace JinianNet.JNTemplate
         /// Performs the render for a template.
         /// </summary>
         /// <param name="writer">See the <see cref="TextWriter"/>.</param>
-        Task RenderAsync(TextWriter writer);
+        /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
+        Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default);
 #endif
     }
 }

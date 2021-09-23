@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.CodeCompilation
@@ -25,7 +26,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// </summary>
         /// <param name="writer">The <see cref="TextWriter"/>.</param>
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        Task RenderAsync(TextWriter writer, TemplateContext context);
+        /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
+        Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default);
 #endif
     }
 }

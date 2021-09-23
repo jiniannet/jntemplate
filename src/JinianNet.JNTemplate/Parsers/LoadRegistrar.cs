@@ -118,7 +118,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Ldloc_0);
-                    il.Emit(OpCodes.Call, typeof(TemplateContextExtensions).GetMethodInfo("CompileFileAndExec", new Type[] { typeof(TemplateContext), typeof(string)}));
+                    il.Emit(OpCodes.Call, typeof(TemplateContextExtensions).GetMethodInfo("CompileAndRenderFile", new Type[] { typeof(TemplateContext), typeof(string) }));
                     il.Emit(OpCodes.Stloc, 2);
 
                     il.Emit(OpCodes.Br, labelSuccess);
