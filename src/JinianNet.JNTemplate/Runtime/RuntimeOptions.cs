@@ -28,10 +28,12 @@ namespace JinianNet.JNTemplate.Runtime
             this.TagFlag = '$';
             this.TagPrefix = "${";
             this.TagSuffix = "}";
-            this.ThrowExceptions = true; 
+            this.ThrowExceptions = true;
             this.TypeDetectPattern = TypeDetect.Standard;
             this.OutMode = OutMode.None;
             this.Mode = EngineMode.Compiled;
+            this.DisableeLogogram = false;
+            this.EnableTemplateCache = true;
         }
         /// <inheritdoc />
         public bool DisableeLogogram { get; set; }
@@ -48,15 +50,14 @@ namespace JinianNet.JNTemplate.Runtime
         public Encoding Encoding { set; get; }
 
         /// <inheritdoc />
-        public bool EnableCompile { get; set; }
+        public bool EnableCompile
+        {
+            get => Mode == EngineMode.Compiled;
+            set => Mode = value ? EngineMode.Compiled : EngineMode.Interpreted;
+        }
 
         /// <inheritdoc />
-        [Obsolete("please use the `Mode`")]
-        public bool EnableTemplateCache
-        {
-            set { this.Mode = value ? EngineMode.Compiled : EngineMode.Interpreted; }
-            get { return this.Mode == EngineMode.Compiled; }
-        }
+        public bool EnableTemplateCache { get; set; }
 
         /// <inheritdoc />
         public bool ThrowExceptions { get; set; }

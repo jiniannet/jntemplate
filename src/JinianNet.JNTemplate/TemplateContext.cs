@@ -30,7 +30,8 @@ namespace JinianNet.JNTemplate
             : base(hostEnvironment)
         {
             this.TempData = data;
-            this.AllErrors = new List<System.Exception>();
+            this.AllErrors = new List<Exception>();
+            this.EnableTemplateCache = hostEnvironment.Options?.EnableTemplateCache ?? true;
         }
 
         /// <summary>
@@ -105,6 +106,7 @@ namespace JinianNet.JNTemplate
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
             ctx.OutMode = context.OutMode;
+            ctx.EnableTemplateCache = context.EnableTemplateCache;
             return ctx;
         }
     }

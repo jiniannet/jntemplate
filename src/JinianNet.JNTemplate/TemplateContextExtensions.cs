@@ -199,10 +199,18 @@ namespace JinianNet.JNTemplate
             {
                 name = content.GetHashCode().ToString();
             }
-            return context.Environment.Results.GetOrAdd(name, (fullName) =>
+
+            Func<string, ICompilerResult> func = (fullName) =>
             {
                 return context.Environment.Compile(fullName, content, (c) => context.CopyTo(c));
-            });
+            };
+
+            if (!context.EnableTemplateCache && context.Debug)
+            {
+                return func(name);
+            }
+
+            return context.Environment.Results.GetOrAdd(name, func);
         }
 
         /// <summary>

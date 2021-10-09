@@ -71,7 +71,22 @@ namespace JinianNet.JNTemplate
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.Run(() => Render(writer, context));
+            var text = this.TemplateContent;
+            var t = context.CompileTemplate(this.TemplateKey, text);
+
+            if (t == null)
+            {
+                throw new TemplateException($"compile error.");
+            }
+            try
+            {
+                return t.RenderAsync(writer, context, cancellationToken);
+            }
+            catch (System.Exception e)
+            {
+                context.AddError(e);
+                return Task.FromException(e);
+            }
         }
 
         /// <inheritdoc />

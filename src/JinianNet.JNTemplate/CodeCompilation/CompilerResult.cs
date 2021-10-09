@@ -54,7 +54,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
             cancellationToken.ThrowIfCancellationRequested();
             var textWriter = writer;
             var templateContext = context;
-            return Task.Run(() => Render(textWriter, templateContext));
+            Render(textWriter, templateContext);
+            return Task.CompletedTask;
         }
 #endif
     }

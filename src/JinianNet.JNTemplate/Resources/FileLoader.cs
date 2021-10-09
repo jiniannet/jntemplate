@@ -207,9 +207,8 @@ namespace JinianNet.JNTemplate.Resources
                 encoding = Encoding.UTF8;
             }
 #if NFW || NETSTANDARD2_0
-            return Task.Run(() => {
-                return System.IO.File.ReadAllText(fullPath, encoding);
-            });
+            var text =  System.IO.File.ReadAllText(fullPath, encoding);
+            return Task.FromResult<string>(text);
 #else
             return System.IO.File.ReadAllTextAsync(fullPath, encoding);
 #endif
