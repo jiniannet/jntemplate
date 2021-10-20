@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Linq;
 using System.Collections;
+using System.Linq;
 using System.Collections.Concurrent;
 
 namespace JinianNet.JNTemplate.Dynamic
@@ -17,6 +17,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// </summary>
     public class ObjectBuilder
     {
+        static ConcurrentDictionary<string, Type> dict = new ConcurrentDictionary<string, Type>();
 
         /// <summary>
         /// Copies all properties of an object
@@ -133,6 +134,20 @@ namespace JinianNet.JNTemplate.Dynamic
         /// </summary>
         /// <param name="baseType">base type</param>
         /// <returns></returns>
+        public static Type GetOrGenerateType(Type baseType)
+        {
+            var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{baseType.FullName}";
+            return dict.GetOrAdd(typeName,key=> {
+                return GenerateTypeFrom(baseType);
+            });
+        }
+
+
+        /// <summary>
+        /// define object
+        /// </summary>
+        /// <param name="baseType">base type</param>
+        /// <returns></returns>
         public static Type GenerateTypeFrom(Type baseType)
         {
             var name = baseType.GetHashCode().ToString().Replace("-", "_");
@@ -149,7 +164,6 @@ namespace JinianNet.JNTemplate.Dynamic
             typeBuilder.CreateType();
 #endif
         }
-
 
         /// <summary>
         /// Constructs a TypeBuilder for a private type with the specified name in this module.

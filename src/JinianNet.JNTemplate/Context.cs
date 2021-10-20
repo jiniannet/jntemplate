@@ -26,6 +26,7 @@ namespace JinianNet.JNTemplate
             this.Charset = hostEnvironment.Options.Encoding;
             this.ThrowExceptions = hostEnvironment.Options.ThrowExceptions;
             this.Environment = hostEnvironment;
+            this.EnableCache = hostEnvironment.Options.EnableCache;
 #if DEBUG
             this.Debug = true;
 #else
@@ -62,6 +63,11 @@ namespace JinianNet.JNTemplate
         /// Gets the cache of the engine.
         /// </summary>
         public ICache Cache => Environment.Cache;
+
+        /// <summary>
+        /// Enable or Disenable the cache.
+        /// </summary>
+        public bool EnableCache { get; set; }
 
         /// <summary>
         /// Gets or sets the debug mode.

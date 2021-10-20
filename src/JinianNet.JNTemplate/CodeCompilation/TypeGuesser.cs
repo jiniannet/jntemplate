@@ -74,7 +74,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     return type;
                 }
             }
-            throw new CompileException(tag,$"[{name}]:\"{tag.ToSource()}\" is not defined!");
+            throw new CompileException(tag, $"[{name}]:\"{tag.ToSource()}\" is not defined!");
         }
 
         /// <summary>
@@ -96,6 +96,20 @@ namespace JinianNet.JNTemplate.CodeCompilation
             if (gType != null)
             {
                 return gType.GetGenericArguments();
+            }
+
+            if (type == typeof(System.Data.DataTable))
+            {
+                return new Type[] { typeof(System.Data.DataRow) };
+            }
+
+            var ms = type.GetMethods();
+            var objType = typeof(object);
+            foreach (var m in ms)
+            {
+                if (m.Name.Equals("get_Item", StringComparison.CurrentCultureIgnoreCase) &&
+                    m.ReturnType != objType)
+                    return new Type[] { m.ReturnType };
             }
             return new Type[] { typeof(object) };
         }

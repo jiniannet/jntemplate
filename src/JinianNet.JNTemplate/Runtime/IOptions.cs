@@ -53,7 +53,13 @@ namespace JinianNet.JNTemplate.Runtime
         /// <summary>
         /// Enable or disenable the cache.
         /// </summary>
+        [Obsolete("please use the `EnableCache`")]
         bool EnableTemplateCache { get; set; }
+
+        /// <summary>
+        /// Enable or disenable the cache.
+        /// </summary>
+        bool EnableCache { get; set; }
 
         /// <summary>
         /// Gets or sets whether throw exceptions.

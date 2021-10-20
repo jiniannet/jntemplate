@@ -31,7 +31,6 @@ namespace JinianNet.JNTemplate
         {
             this.TempData = data;
             this.AllErrors = new List<Exception>();
-            this.EnableTemplateCache = hostEnvironment.Options?.EnableTemplateCache ?? true;
         }
 
         /// <summary>
@@ -42,7 +41,8 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Enable or Disenable the cache.
         /// </summary>
-        public bool EnableTemplateCache { get; set; }
+        [Obsolete("please use the `EnableCache`")]
+        public bool EnableTemplateCache { get => EnableCache; set => EnableCache = value; }
 
         /// <summary>
         /// Gets or sets the <see cref="IVariableScope"/> of the context.
@@ -106,7 +106,7 @@ namespace JinianNet.JNTemplate
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;
             ctx.OutMode = context.OutMode;
-            ctx.EnableTemplateCache = context.EnableTemplateCache;
+            ctx.EnableCache = context.EnableCache;
             return ctx;
         }
     }

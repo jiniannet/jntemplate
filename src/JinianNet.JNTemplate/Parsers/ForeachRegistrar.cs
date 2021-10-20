@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading.Tasks;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
@@ -63,11 +64,18 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 var t = tag as ForeachTag;
                 var sourceType = c.GuessType(t.Source);
+                var isAsync = false;
+                if (sourceType.IsGenericType
+                && sourceType.GetGenericTypeDefinition() == typeof(Task<>))
+                {
+                    sourceType = sourceType.GetGenericArguments()[0];
+                    isAsync = true;
+                }
                 if (sourceType.IsArray)
                 {
-                    return ArrayForeachCompile(c, t, sourceType);
+                    return ArrayForeachCompile(c, t, sourceType, isAsync);
                 }
-                return EnumerableForeachCompile(c, t, sourceType);
+                return EnumerableForeachCompile(c, t, sourceType, isAsync);
             };
         }
         /// <inheritdoc />
@@ -83,10 +91,12 @@ namespace JinianNet.JNTemplate.Parsers
         /// 
         /// </summary>
         /// <param name="tag"></param>
+        /// <param name="isAsync"></param>
         /// <param name="c"></param>
         /// <param name="sourceType"></param>
         /// <returns></returns>
-        public static MethodInfo EnumerableForeachCompile(CompileContext c, ForeachTag tag, Type sourceType)
+        public static MethodInfo EnumerableForeachCompile(CompileContext c, ForeachTag tag, Type sourceType,
+            bool isAsync)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
             var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
@@ -96,7 +106,9 @@ namespace JinianNet.JNTemplate.Parsers
             var type = c.GuessType(t);
             var variableScopeType = typeof(IVariableScope);
             var templateContextType = typeof(TemplateContext);
+
             var childType = TypeGuesser.InferChildType(sourceType);
+
             var enumerableType = sourceType.GetIEnumerableGenericType();// typeof(System.Collections.IEnumerable);
             Type enumeratorType;
             bool mustTo = false;
@@ -116,7 +128,8 @@ namespace JinianNet.JNTemplate.Parsers
             }
             var old = c.Data;
             var scope = c.CreateVariableScope(old);
-            c.Data = scope;            c.Set(t.Name, childType[0]);
+            c.Data = scope; 
+            c.Set(t.Name, childType[0]);
             c.Set("foreachIndex", typeof(int));
             var mb = c.CreateReutrnMethod<ForeachTag>(type);
             var il = mb.GetILGenerator();
@@ -152,6 +165,14 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Ldarg_1);
             var method = c.CompileTag(t.Source);
             il.Emit(OpCodes.Call, method);
+            if (isAsync)
+            {
+                il.Emit(OpCodes.Call, typeof(Utility).GetGenericMethod(new Type[] { sourceType }, "ExcuteTask", null));
+            }
+            if(sourceType == typeof(System.Data.DataTable))
+            {
+                il.Emit(OpCodes.Callvirt, sourceType.GetPropertyGetMethod("Rows"));
+            }
             il.Emit(OpCodes.Stloc_1);
             il.Emit(OpCodes.Ldloc_1);
             il.Emit(OpCodes.Ldnull);
@@ -236,8 +257,12 @@ namespace JinianNet.JNTemplate.Parsers
         /// <param name="tag"></param>
         /// <param name="c"></param>
         /// <param name="sourceType"></param>
+        /// <param name="isAsync"></param> 
         /// <returns></returns>
-        public static MethodInfo ArrayForeachCompile(CompileContext c, ForeachTag tag, Type sourceType)
+        public static MethodInfo ArrayForeachCompile(CompileContext c,
+            ForeachTag tag,
+            Type sourceType,
+            bool isAsync)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
             var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
@@ -297,7 +322,10 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Ldarg_1);
             var method = c.CompileTag(t.Source);
             il.Emit(OpCodes.Call, method);
-
+            if (isAsync)
+            {
+                il.Emit(OpCodes.Call, typeof(Utility).GetGenericMethod(new Type[] { sourceType }, "ExcuteTask", null));
+            }
             il.Emit(OpCodes.Stloc_1);
             il.Emit(OpCodes.Ldloc_1);
             il.Emit(OpCodes.Ldnull);
@@ -374,6 +402,15 @@ namespace JinianNet.JNTemplate.Parsers
                     using (var writer = new StringWriter())
                     {
                         object value = context.Execute(t.Source);
+                        if (value is Task task)
+                        {
+                            var type = value.GetType();
+                            if (!type.IsGenericType)
+                            {
+                                throw new CompileException(tag, "[ForeachTag]:source error.");
+                            }
+                            value = typeof(Utility).CallGenericMethod(null, "ExcuteTask", type.GetGenericArguments(), value);
+                        }
                         var enumerable = value.ToIEnumerable();
                         TemplateContext ctx;
                         if (enumerable != null)

@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestPrecompiled()
         {
-            if (Engine.EnableCompile)
+            if (Engine.Mode == EngineMode.Compiled)
             {
                 var path = string.Join(Path.DirectorySeparatorChar, new string[] { Environment.CurrentDirectory, "templets", "default", "questionlist.html" });
                 var r = Engine.CompileFile(path, path, (ctx) =>
@@ -43,7 +43,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestCompiledText()
         {
-            if (Engine.EnableCompile)
+            if (Engine.Mode == EngineMode.Compiled)
             {
                 var name = "hello";
                 var r = Engine.Compile(name, "hello,$name", (ctx) =>

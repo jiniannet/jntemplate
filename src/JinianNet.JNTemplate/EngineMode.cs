@@ -12,16 +12,12 @@ namespace JinianNet.JNTemplate
     public enum EngineMode
     {
         /// <summary>
-        /// None
-        /// </summary>
-        None = 0,
-        /// <summary>
         /// Interpreted
         /// </summary>
-        Interpreted = 1,
+        Interpreted = 0,
         /// <summary>
         /// Compiled
         /// </summary>
-        Compiled = 2
+        Compiled = 1
     }
 }

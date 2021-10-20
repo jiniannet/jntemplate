@@ -10,11 +10,12 @@ using JinianNet.JNTemplate.Exceptions;
 using System;
 using JinianNet.JNTemplate.Runtime;
 using JinianNet.JNTemplate.Hosting;
-using JinianNet.JNTemplate.Dynamic;
-using System.IO;
+using JinianNet.JNTemplate.Dynamic; 
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
+using System.Threading;
+using JinianNet.JNTemplate.Resources;
 
 namespace JinianNet.JNTemplate
 {
@@ -130,6 +131,75 @@ namespace JinianNet.JNTemplate
                 options.TagFlag,
                 options.DisableeLogogram);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static ITag[] Lexer(this Context ctx, string text)
+        {
+            return Lexer(ctx, null, text);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="cacheKey"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static ITag[] Lexer(this Context ctx, string cacheKey, string text)
+        {
+            return Lexer(ctx, cacheKey, new StringReader(text));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public static ITag[] Lexer(this Context ctx, IReader reader)
+        {
+            return Lexer(ctx, null, reader);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="cacheKey"></param>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public static ITag[] Lexer(this Context ctx, string cacheKey, IReader reader)
+        {
+            var enable = ctx.Environment.Options.Mode == EngineMode.Interpreted
+                && !string.IsNullOrEmpty(cacheKey)
+                && ctx.EnableCache;
+
+            ITag[] tags;
+            if (enable && (tags = ctx.Cache.Get<ITag[]>(cacheKey)) != null)
+            {
+                return tags;
+            }
+            var text = reader.ReadToEnd();
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return new ITag[0];
+            }
+
+            var lexer = CreateTemplateLexer(ctx, text);
+            var ts = lexer.Execute();
+            var parser = CreateTemplateParser(ctx, ts);
+            tags = parser.Execute();
+
+            if (enable)
+            {
+                ctx.Cache.Set(cacheKey, tags);
+            }
+
+            return tags;
+        }
 
         /// <summary>
         /// Create an <see cref="TemplateParser"/> object.
@@ -182,36 +252,191 @@ namespace JinianNet.JNTemplate
                 return sw.ToString();
             }
         }
+
         /// <summary>
         /// Compiles and renders a template.
         /// </summary>
-        /// <param name="content"></param>
+        /// <param name="reader"></param>
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static ICompilerResult CompileTemplate(this TemplateContext context, string name, string content)
+        public static ICompilerResult CompileTemplate(this TemplateContext context, string name, IReader reader)
         {
-            if (string.IsNullOrEmpty(content))
+            if (reader == null)
             {
                 return new EmptyCompileTemplate();
             }
+
             if (string.IsNullOrEmpty(name))
             {
-                name = content.GetHashCode().ToString();
+                name = reader.GetHashCode().ToString();
             }
 
-            Func<string, ICompilerResult> func = (fullName) =>
-            {
-                return context.Environment.Compile(fullName, content, (c) => context.CopyTo(c));
-            };
+            var env = context.Environment;
 
-            if (!context.EnableTemplateCache && context.Debug)
+            if (!context.EnableCache)
             {
-                return func(name);
+                System.Diagnostics.Trace.TraceWarning("WARN:The template cache is disabled.");
+
+                return env.Compile(name, reader.ReadToEnd(), (c) => context.CopyTo(c));
+
             }
 
-            return context.Environment.Results.GetOrAdd(name, func);
+            return env.Results.GetOrAdd(name, (fullName) =>
+            {
+                return env.Compile(fullName, reader.ReadToEnd(), (c) => context.CopyTo(c));
+
+            });
         }
+
+        /// <summary>
+        /// Performs the render for a tags.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        /// <param name="collection">The tags collection.</param>
+        public static void Render(this TemplateContext ctx, System.IO.TextWriter writer, ITag[] collection)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("\"writer\" cannot be null.");
+            }
+
+            if (collection != null && collection.Length > 0)
+            {
+                for (int i = 0; i < collection.Length; i++)
+                {
+                    try
+                    {
+                        var tagResult = Execute(ctx, collection[i]);
+                        if (tagResult != null)
+                        {
+                            if (tagResult is Task task)
+                            {
+                                var type = tagResult.GetType();
+                                if (type.IsGenericType)
+                                {
+                                    var taskResult = typeof(Utility).CallGenericMethod(null, "ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+#if NF40
+                                    writer.Write((string)taskResult);
+#else
+                                    writer.Write(((Task<string>)taskResult).GetAwaiter().GetResult());
+#endif
+                                }
+                                else
+                                {
+#if NF40
+                                    task.Wait();
+#else
+                                    task.ConfigureAwait(false).GetAwaiter();
+#endif
+                                }
+                                continue;
+                            }
+                            writer.Write(tagResult.ToString());
+                        }
+                    }
+                    catch (TemplateException e)
+                    {
+                        ThrowException(ctx, e, collection[i], writer);
+                    }
+                    catch (System.Exception e)
+                    {
+                        var baseException = e.GetBaseException();
+                        ThrowException(ctx, new ParseException(collection[i], baseException), collection[i], writer);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Throw exception.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="e">Represents errors that occur during application execution.</param>
+        /// <param name="tag">Represents errors tag.</param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        public static void ThrowException(this TemplateContext ctx, TemplateException e, ITag tag, System.IO.TextWriter writer)
+        {
+            ctx.AddError(e);
+            if (ctx.ThrowExceptions)
+            {
+                writer.Write(tag.ToSource());
+            }
+        }
+
+#if !NF40 && !NF45
+
+        /// <summary>
+        /// Performs the render for a tags.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        /// <param name="collection">The tags collection.</param>
+        /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
+        public static async Task RenderAsync(this TemplateContext ctx, System.IO.TextWriter writer, ITag[] collection, CancellationToken cancellationToken = default)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("\"writer\" cannot be null.");
+            }
+
+            if (collection != null && collection.Length > 0)
+            {
+                for (int i = 0; i < collection.Length; i++)
+                {
+                    try
+                    {
+                        var tagResult = Execute(ctx, collection[i]);
+                        if (tagResult != null)
+                        {
+                            if (tagResult is Task task)
+                            {
+                                var type = tagResult.GetType();
+                                if (type.IsGenericType)
+                                {
+                                    var taskResult = (Task<string>)typeof(Utility).CallGenericMethod(null, "ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+                                    var taskValue = await taskResult;
+                                    await writer.WriteAsync(taskValue);
+                                }
+                                else
+                                {
+                                    await task;
+                                }
+                                continue;
+                            }
+                            await writer.WriteAsync(tagResult.ToString());
+                        }
+                    }
+                    catch (TemplateException e)
+                    {
+                        await ThrowExceptionAsync(ctx, e, collection[i], writer);
+                    }
+                    catch (System.Exception e)
+                    {
+                        var baseException = e.GetBaseException();
+                        await ThrowExceptionAsync(ctx, new ParseException(collection[i], baseException), collection[i], writer);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Throw exception.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="e">Represents errors that occur during application execution.</param>
+        /// <param name="tag">Represents errors tag.</param>
+        /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
+        public static async Task ThrowExceptionAsync(this TemplateContext ctx, TemplateException e, ITag tag, System.IO.TextWriter writer)
+        {
+            ctx.AddError(e);
+            if (!ctx.ThrowExceptions)
+            {
+                await writer.WriteAsync(tag.ToSource());
+            }
+        }
+#endif
 
         /// <summary>
         /// Execute the tags.

@@ -45,9 +45,9 @@ namespace JinianNet.JNTemplate
         public static string Version => Const.Version;
 
         /// <summary>
-        /// Enable or disenable the compile mode.
+        /// 
         /// </summary>
-        public static bool EnableCompile => Current.Mode == EngineMode.Compiled;
+        public static EngineMode Mode => Current.Mode;
 
         /// <summary>
         /// Configuration engine which <see cref="Action{T}"/>.
@@ -171,6 +171,24 @@ namespace JinianNet.JNTemplate
            int index = 0) where T : Nodes.ITag
         {
             Current.Register<T>(parseMethod, compileMethod, guessMethod);
+        }
+
+        /// <summary>
+        /// Enable compilation mode.
+        /// </summary>
+        /// <returns></returns>
+        public static void EnableCompile()
+        {
+            Current.EnableCompile();
+        }
+
+        /// <summary>
+        /// Enable compilation mode.
+        /// </summary>
+        /// <returns></returns>
+        public static void DisableCompile()
+        {
+            Current.DisableCompile();
         }
     }
 }

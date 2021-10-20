@@ -4,22 +4,24 @@
  ********************************************************************************/
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// The base class of template.
+    /// 
     /// </summary>
-    public abstract class TemplateBase
+    public class StringReader : System.IO.StringReader, IReader
     {
         /// <summary>
-        /// Gets or sets the key(unique) of the template.
+        /// 
         /// </summary>
-        public string TemplateKey { get; set; }
+        /// <param name="text"></param>
+        public StringReader(string text)
+            :base(text)
+        {
 
-        /// <summary>
-        /// Gets or sets the context of the template.
-        /// </summary>
-        public TemplateContext Context { get; set; }
+        }
     }
 }

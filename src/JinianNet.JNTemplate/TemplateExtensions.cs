@@ -78,13 +78,7 @@ namespace JinianNet.JNTemplate
             if (template.EnableCompile)
             {
                 var anonymousType = value.GetType();
-                var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{anonymousType.GetHashCode()}";
-                var type = template.Context.Cache.Get<Type>(typeName);
-                if (type == null)
-                {
-                    type = ObjectBuilder.GenerateTypeFrom(anonymousType);
-                    template.Context.Cache.Set(typeName, type);
-                }
+                var type = ObjectBuilder.GetOrGenerateType(anonymousType);
                 var newObj = ObjectBuilder.FromAnonymousObject(value, type);
                 template.Context.TempData.Set(key, newObj, type);
             }

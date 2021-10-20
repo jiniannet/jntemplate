@@ -25,11 +25,21 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary>
-        public VariableScope()
+        /// <param name="parent"></param>
+        public VariableScope(IVariableScope parent)
         {
-            this.Parent = null;
+            this.Parent = parent;
             this.dic = new Dictionary<string, VariableElement>(StringComparer.OrdinalIgnoreCase);
             this.DetectPattern = TypeDetect.Absolute;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VariableScope"/> class
+        /// </summary> 
+        public VariableScope() 
+            : this(null)
+        {
+
         }
 
         /// <inheritdoc />

@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// </summary>
     public class EmptyCompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
-
+        private string message;
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableElement"/> class
         /// </summary>
@@ -30,18 +30,24 @@ namespace JinianNet.JNTemplate.CodeCompilation
         public EmptyCompileTemplate(string message)
             : base()
         {
-            this.TemplateContent = message;
+            this.message = message;
         }
 
         /// <inheritdoc />
         public bool EnableCompile => true;
 
         /// <inheritdoc />
+        public void Dispose()
+        {
+
+        }
+
+        /// <inheritdoc />
         public void Render(TextWriter writer, TemplateContext context)
         {
-            if (!string.IsNullOrWhiteSpace(this.TemplateContent) && context.ThrowExceptions)
+            if (!string.IsNullOrWhiteSpace(this.message) && context.ThrowExceptions)
             {
-                writer.Write(TemplateContent);
+                writer.Write(message);
             }
         }
 
@@ -63,9 +69,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!string.IsNullOrWhiteSpace(this.TemplateContent) && context.ThrowExceptions)
+            if (!string.IsNullOrWhiteSpace(this.message) && context.ThrowExceptions)
             {
-                return writer.WriteAsync(TemplateContent);
+                return writer.WriteAsync(message);
             }
             return Task.CompletedTask;
         }

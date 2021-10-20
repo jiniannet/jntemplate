@@ -58,11 +58,8 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         throw new CompileException(tag, $"[LoadTag] : \"{strTag.Value}\" cannot be found.");
                     }
-                    var lexer = c.CreateTemplateLexer(res.Content);
-                    var ts = lexer.Execute();
 
-                    var parser = c.CreateTemplateParser(ts);
-                    var tags = parser.Execute();
+                    var tags = c.Lexer(res.Content);
 
                     c.BlockCompile(il, tags);
                 }
@@ -151,18 +148,22 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return null;
                 }
-                var res = context.Load(path.ToString());
-                if (res != null)
+                var res = context.FindFullPath(path.ToString());
+                if (string.IsNullOrEmpty(res))
                 {
-                    var render = new TemplateRender();
-                    render.Context = context;
-                    using (System.IO.StringWriter writer = new StringWriter())
-                    {
-                        render.Render(writer, render.ReadAll(res.Content));
-                        return writer.ToString();
-                    }
+                    return null;
                 }
-                return null;
+
+                var reader = new Resources.ResourceReader(res, context);
+
+                var tags = context.Lexer(res, reader);
+
+
+                using (System.IO.StringWriter writer = new StringWriter())
+                {
+                    context.Render(writer, tags);
+                    return writer.ToString();
+                }
             };
         }
     }

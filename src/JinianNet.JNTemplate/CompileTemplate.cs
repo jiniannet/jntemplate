@@ -5,6 +5,7 @@
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Hosting;
+using JinianNet.JNTemplate.Resources;
 using System;
 using System.IO;
 using System.Threading;
@@ -18,24 +19,17 @@ namespace JinianNet.JNTemplate
     public class CompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CompileTemplate"/> class
-        /// </summary> 
-        public CompileTemplate()
-            : this(null, null)
-        {
-        }
-
+        private IReader reader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompileTemplate"/> class
         /// </summary>
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        /// <param name="text">The template contents.</param>
-        public CompileTemplate(TemplateContext context, string text)
+        /// <param name="reader">The template contents.</param>
+        public CompileTemplate(TemplateContext context, IReader reader)
         {
-            Context = context;
-            TemplateContent = text;
+            this.Context = context;
+            this.reader = reader;
         }
 
         /// <inheritdoc />
@@ -44,8 +38,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public virtual void Render(TextWriter writer, TemplateContext context)
         {
-            var text = this.TemplateContent;
-            var t = context.CompileTemplate(this.TemplateKey, text);
+            var t = context.CompileTemplate(this.TemplateKey, this.reader);
 
             if (t == null)
             {
@@ -66,13 +59,15 @@ namespace JinianNet.JNTemplate
         {
             Render(writer, this.Context);
         }
+
+
 #if !NF40 && !NF45
         /// <inheritdoc />
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var text = this.TemplateContent;
-            var t = context.CompileTemplate(this.TemplateKey, text);
+
+            var t = context.CompileTemplate(this.TemplateKey, this.reader);
 
             if (t == null)
             {
@@ -92,7 +87,6 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             return RenderAsync(writer, this.Context);
         }
 #endif

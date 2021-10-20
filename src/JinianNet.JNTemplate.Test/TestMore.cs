@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Test
         public void YestUserTag()
         {
             //这是一个简单的自定义标签
-            if (Engine.EnableCompile)
+            if (Engine.Mode == EngineMode.Compiled)
             {
                 Engine.Register<TestTag>((p, tc) =>
                 {

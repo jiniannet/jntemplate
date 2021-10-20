@@ -3,23 +3,26 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
+using System.Threading.Tasks;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// The base class of template.
+    /// 
     /// </summary>
-    public abstract class TemplateBase
+    public interface IReader
     {
         /// <summary>
-        /// Gets or sets the key(unique) of the template.
+        /// 
         /// </summary>
-        public string TemplateKey { get; set; }
-
+        /// <returns></returns>
+        string ReadToEnd();
+#if !NF40
         /// <summary>
-        /// Gets or sets the context of the template.
+        /// 
         /// </summary>
-        public TemplateContext Context { get; set; }
+        /// <returns></returns>
+        Task<string> ReadToEndAsync();
+#endif
     }
 }

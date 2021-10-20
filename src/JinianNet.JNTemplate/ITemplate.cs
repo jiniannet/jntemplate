@@ -24,10 +24,6 @@ namespace JinianNet.JNTemplate
         /// </summary>
         string TemplateKey { get; set; }
         /// <summary>
-        /// Gets or sets the content of the template.
-        /// </summary>
-        string TemplateContent { get; set; }
-        /// <summary>
         /// Performs the render for a template.
         /// </summary>
         /// <param name="writer">See the <see cref="TextWriter"/>.</param>

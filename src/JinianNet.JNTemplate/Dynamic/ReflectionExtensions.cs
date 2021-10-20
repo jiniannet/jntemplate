@@ -537,12 +537,16 @@ namespace JinianNet.JNTemplate.Dynamic
                 return ((string)container)[(int)propIndex];
             }
             Type t = container.GetType();
-            var info = GetPropertyGetMethod(t, "Item");
-            if (info != null)
+            var method = t.GetMethodInfo("get_Item", new Type[] { propIndex.GetType() });
+            if (method != null)
             {
-                return Call(t, info, container, new object[] { propIndex });
-                //return info.Invoke(container, new object[] { propIndex });
+                return Call(t, method, container, new object[] { propIndex });
             }
+            //var info = GetPropertyGetMethod(t, "Item");
+            //if (info != null)
+            //{
+            //    return Call(t, info, container, new object[] { propIndex }); 
+            //}
             return null;
         }
 
@@ -592,6 +596,21 @@ namespace JinianNet.JNTemplate.Dynamic
         public static object CallGenericMethod(this object container, string name, Type[] genericType, params object[] args)
         {
             var type = container.GetType();
+            var genericMethod = type.GetMethod(name).MakeGenericMethod(genericType);
+            return Call(type, genericMethod, container, args);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="genericType"></param>
+        /// <param name="container"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static object CallGenericMethod(this Type type, object container, string name, Type[] genericType, params object[] args)
+        {
             var genericMethod = type.GetMethod(name).MakeGenericMethod(genericType);
             return Call(type, genericMethod, container, args);
         }
@@ -663,12 +682,10 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return null;
             }
-
-            if (dataSource is IEnumerable enumerable)
+            if (dataSource is System.Data.DataTable dt)
             {
-                return enumerable;
+                return dt.Rows;
             }
-#if NF20 || NF40
             if (dataSource is IListSource source)
             {
                 IList list = source.GetList();
@@ -696,7 +713,10 @@ namespace JinianNet.JNTemplate.Dynamic
                     return null;
                 }
             }
-#endif
+            if (dataSource is IEnumerable enumerable)
+            {
+                return enumerable;
+            }
             return null;
 
         }

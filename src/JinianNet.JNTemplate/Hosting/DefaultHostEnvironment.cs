@@ -43,16 +43,16 @@ namespace JinianNet.JNTemplate.Hosting
             this.ResourceDirectories = new List<string>();
             this.EnvironmentVariable = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             this.Options = options ?? new RuntimeOptions();
-            RootPath = System.IO.Directory.GetCurrentDirectory();
-            Parser = parser ?? new TagParser();
-            Builder = compileBuilder ?? new CompileBuilder();
-            Guesser = typeGuesser ?? new TypeGuesser();
-            ExecutorBuilder = executorBuilder ?? new ExecutorBuilder();
-            ScopeProvider = scopeProvider ?? new DefaultScopeProvider();
-            Cache = cache ?? new MemoryCache();
-            Loader = resourceLoader ?? new FileLoader();
-            ApplicationName = Guid.NewGuid().ToString("N");
-            EnvironmentName =
+            this.RootPath = System.IO.Directory.GetCurrentDirectory();
+            this.Parser = parser ?? new TagParser();
+            this.Builder = compileBuilder ?? new CompileBuilder();
+            this.Guesser = typeGuesser ?? new TypeGuesser();
+            this.ExecutorBuilder = executorBuilder ?? new ExecutorBuilder();
+            this.ScopeProvider = scopeProvider ?? new DefaultScopeProvider();
+            this.Cache = cache ?? new MemoryCache();
+            this.Loader = resourceLoader ?? new FileLoader();
+            this.ApplicationName = Guid.NewGuid().ToString("N"); 
+            this.EnvironmentName =
 #if DEBUG
                 "DEBUG"
 #else

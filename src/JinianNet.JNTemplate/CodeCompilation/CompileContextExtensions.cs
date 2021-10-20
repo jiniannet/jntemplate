@@ -240,11 +240,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public static ICompilerResult Compile(this CompileContext ctx, string content)
         {
-            var lexer = ctx.CreateTemplateLexer(content);
-            var ts = lexer.Execute();
-
-            var parser = ctx.CreateTemplateParser(ts);
-            var tags = parser.Execute();
+            var tags = TemplateContextExtensions.Lexer(ctx,content);
 
             return Compile(ctx, tags);
         }

@@ -94,13 +94,13 @@ namespace JinianNet.JNTemplate
         /// <returns>An instance of a template.</returns>
         ITemplate LoadTemplate(string name, string path);
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && OLDKEEP
         /// <summary>
         /// Loads the template on the specified path.
         /// </summary>
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <returns>An instance of a template.</returns>
-        Task<ITemplate> LoadTemplateAsync(string path);
+        //Task<ITemplate> LoadTemplateAsync(string path);
 
         /// <summary>
         /// Loads the template on the specified path.
@@ -108,7 +108,7 @@ namespace JinianNet.JNTemplate
         /// <param name="name">Unique key of the template</param>
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <returns>An instance of a template.</returns>
-        Task<ITemplate> LoadTemplateAsync(string name, string path);
+        //Task<ITemplate> LoadTemplateAsync(string name, string path);
 #endif
 
         /// <summary>

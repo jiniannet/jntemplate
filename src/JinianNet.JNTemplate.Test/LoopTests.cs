@@ -76,5 +76,45 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();
             Assert.Equal("1234567", render);
         }
+
+        /// <summary>
+        /// 测试DataTable
+        /// </summary>
+        [Fact]
+        public void TestDataTable()
+        {
+            var dt = new System.Data.DataTable();
+            dt.Columns.Add("id", typeof(int));
+            dt.Rows.Add(7);
+            dt.Rows.Add(0);
+            dt.Rows.Add(2);
+            dt.Rows.Add(0);
+            dt.Rows.Add(6);
+            var templateContent = "$for(row in list)${row[\"id\"]}$end";
+            var template = Engine.CreateTemplate("TestDataTable", templateContent);
+            template.Set("list", dt);
+            var render = template.Render();
+            Assert.Equal("70206", render);
+        }
+
+        /// <summary>
+        /// 测试DataTable
+        /// </summary>
+        [Fact]
+        public void TestDataTableRows()
+        {
+            var dt = new System.Data.DataTable();
+            dt.Columns.Add("id", typeof(int));
+            dt.Rows.Add(7);
+            dt.Rows.Add(0);
+            dt.Rows.Add(2);
+            dt.Rows.Add(0);
+            dt.Rows.Add(6);
+            var templateContent = "$for(row in dt.Rows)${row[\"id\"]}$end";
+            var template = Engine.CreateTemplate("TestDataTableRows", templateContent);
+            template.Set("dt", dt);
+            var render = template.Render();
+            Assert.Equal("70206", render);
+        }
     }
 }

@@ -13,7 +13,7 @@ using JinianNet.JNTemplate.Exceptions;
 using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 
 namespace JinianNet.JNTemplate
 {
@@ -180,16 +180,17 @@ namespace JinianNet.JNTemplate
                 name = text.GetHashCode().ToString();
             }
             ITemplate template;
+            var reader = new StringReader(text);
             if (Mode == EngineMode.Compiled)
             {
-                template = new CompileTemplate(CreateContext(), text);
+                template = new CompileTemplate(CreateContext(), reader);
             }
             else
             {
-                template = new Template(CreateContext(), text);
+                template = new Template(CreateContext(), reader);
             }
             template.TemplateKey = name;
-            template.Context.CurrentPath = System.IO.Directory.GetCurrentDirectory();
+            template.Context.CurrentPath = HostEnvironment.RootPath;
             return template;
         }
 
@@ -204,112 +205,30 @@ namespace JinianNet.JNTemplate
         {
             var ctx = CreateContext();
             if (string.IsNullOrEmpty(name) &&
-                string.IsNullOrEmpty(name = ctx.FindFullPath(path)))
+                string.IsNullOrEmpty(path = name = ctx.FindFullPath(path)))
             {
                 throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
             ITemplate template;
             if (Mode == EngineMode.Compiled)
             {
-                template = LoadTemplate<CompileTemplate>(name, path, ctx);
+                IReader reader;
                 if (HostEnvironment.Results.Keys.Contains(name))
                 {
-                    return template;
+                    reader = new NullTextReader();
                 }
+                else
+                {
+                    reader = new ResourceReader(path, ctx);
+                }
+                template = new CompileTemplate(ctx, reader);
             }
             else
             {
-                template = LoadTemplate<Template>(name, path, ctx);
-                if (ctx.EnableTemplateCache && ctx.Cache.Get(name) != null)
-                {
-                    return template;
-                }
+                var reader = new ResourceReader(path, ctx);
+                template = new Template(ctx, reader);
             }
-            var res = ctx.Load(path);
-            if (res == null)
-            {
-                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
-            }
-            template.TemplateContent = res.Content;
-            return template;
-        }
-
-#if !NF40 && !NF45
-        /// <inheritdoc />
-        public Task<ITemplate> LoadTemplateAsync(string path)
-        {
-            return LoadTemplateAsync(null, path);
-        }
-
-        /// <inheritdoc />
-        public async Task<ITemplate> LoadTemplateAsync(string name, string path)
-        {
-            var ctx = CreateContext();
-            if (string.IsNullOrEmpty(name) &&
-                string.IsNullOrEmpty(name = ctx.FindFullPath(path)))
-            {
-                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
-            }
-            ITemplate template;
-            if (Mode == EngineMode.Compiled)
-            {
-                template = LoadTemplate<CompileTemplate>(name, path, ctx);
-                if (HostEnvironment.Results.Keys.Contains(name))
-                {
-                    return template;
-                }
-            }
-            else
-            {
-                template = LoadTemplate<Template>(name, path, ctx);
-                if (ctx.EnableTemplateCache
-                    && (await ctx.Cache.GetAsync(name)) != null)
-                {
-                    return template;
-                }
-            }
-            var res = await ctx.LoadAsync(path);
-            if (res == null)
-            {
-                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
-            }
-            template.TemplateContent = res.Content;
-            return template;
-        }
-#endif
-
-        /// <summary>
-        /// Loads the template on the specified path.
-        /// </summary>
-        /// <typeparam name="T">Type of template. </typeparam>
-        /// <param name="name">Unique key of the template</param>
-        /// <param name="path">The fully qualified path of the file to load.</param>
-        /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        /// <returns>An instance of a template.</returns>
-        private T LoadTemplate<T>(string name, string path, TemplateContext context)
-            where T : ITemplate, new()
-        {
-            return LoadTemplate<T>(name, path, context, new T());
-        }
-
-        /// <summary>
-        /// Loads the template on the specified path.
-        /// </summary>
-        /// <typeparam name="T">Type of template. </typeparam>
-        /// <param name="name">Unique key of the template</param>
-        /// <param name="path">The fully qualified path of the file to load.</param>
-        /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        /// <param name="template"></param>
-        /// <returns>An instance of a template.</returns>
-        private T LoadTemplate<T>(string name, string path, TemplateContext context, T template)
-            where T : ITemplate
-        {
-            template.Context = context;
             template.TemplateKey = name;
-            if (string.IsNullOrEmpty(template.TemplateKey))
-            {
-                template.TemplateKey = path;
-            }
             if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
                 template.Context.CurrentPath = HostEnvironment.Loader.GetDirectoryName(path);

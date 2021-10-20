@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate.Runtime
             this.OutMode = OutMode.None;
             this.Mode = EngineMode.Compiled;
             this.DisableeLogogram = false;
-            this.EnableTemplateCache = true;
+            this.EnableCache = true;
         }
         /// <inheritdoc />
         public bool DisableeLogogram { get; set; }
@@ -50,6 +50,7 @@ namespace JinianNet.JNTemplate.Runtime
         public Encoding Encoding { set; get; }
 
         /// <inheritdoc />
+        [Obsolete("please use the `Mode`")]
         public bool EnableCompile
         {
             get => Mode == EngineMode.Compiled;
@@ -57,7 +58,11 @@ namespace JinianNet.JNTemplate.Runtime
         }
 
         /// <inheritdoc />
-        public bool EnableTemplateCache { get; set; }
+        [Obsolete("please use the `EnableCache`")]
+        public bool EnableTemplateCache { get => EnableCache; set => EnableCache = value; }
+
+        /// <inheritdoc />
+        public bool EnableCache { get; set; }
 
         /// <inheritdoc />
         public bool ThrowExceptions { get; set; }

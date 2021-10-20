@@ -2,7 +2,8 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System; 
+using System;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate
 {
@@ -217,5 +218,45 @@ namespace JinianNet.JNTemplate
         {
             return default(T);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static T ExcuteTask<T>(Task<T> task)
+        {
+            if (task == null)
+            {
+                return default(T);
+            }
+#if NF40
+            task.Wait();
+            return task.Result;
+#else
+            return task.GetAwaiter().GetResult();
+#endif
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <returns></returns>
+#if NF40
+        public string ExcuteTaskAsync<T>(Task<T> task)
+        {
+            task.Wait();
+            return task.Result?.ToString();
+        }
+#else
+        public async Task<string> ExcuteTaskAsync<T>(Task<T> task)
+        {
+            var result = await task;
+            return result?.ToString();
+        }
+#endif
     }
 }
