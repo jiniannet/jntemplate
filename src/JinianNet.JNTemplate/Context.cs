@@ -27,11 +27,8 @@ namespace JinianNet.JNTemplate
             this.ThrowExceptions = hostEnvironment.Options.ThrowExceptions;
             this.Environment = hostEnvironment;
             this.EnableCache = hostEnvironment.Options.EnableCache;
-#if DEBUG
-            this.Debug = true;
-#else
-            this.Debug = false;
-#endif
+            this.Debug = System.Diagnostics.Debugger.IsAttached;
+
         }
 
         /// <summary>

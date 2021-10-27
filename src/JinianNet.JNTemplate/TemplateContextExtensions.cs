@@ -274,10 +274,9 @@ namespace JinianNet.JNTemplate
 
             var env = context.Environment;
 
-            if (!context.EnableCache)
+            if (!context.EnableCache && context.Debug)
             {
                 System.Diagnostics.Trace.TraceWarning("WARN:The template cache is disabled.");
-
                 return env.Compile(name, reader.ReadToEnd(), (c) => context.CopyTo(c));
 
             }
