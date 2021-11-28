@@ -54,7 +54,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         ///  Gets or sets the cache of the environment.
         /// </summary>
-        public IHostEnvironment Environment { get; }
+        internal IHostEnvironment Environment { get; }
 
         /// <summary>
         /// Gets the cache of the engine.
@@ -70,5 +70,9 @@ namespace JinianNet.JNTemplate
         /// Gets or sets the debug mode.
         /// </summary>
         public bool Debug { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public EngineMode Mode => Environment.Options.Mode;
     }
 }

@@ -46,7 +46,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        ICompilerResult CompileFile(string name, string path, Action<CompileContext> action = null);
+        IResult CompileFile(string name, string path, Action<CompileContext> action = null);
 
         /// <summary>
         /// Compile a template with a given contents
@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate
         /// <param name="content">The template contents.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        ICompilerResult Compile(string name, string content, Action<CompileContext> action = null);
+        IResult Compile(string name, string content, Action<CompileContext> action = null);
 
         /// <summary>
         /// Creates template context.
@@ -94,6 +94,40 @@ namespace JinianNet.JNTemplate
         /// <returns>An instance of a template.</returns>
         ITemplate LoadTemplate(string name, string path);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="text"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        string Parse<T>(string text, T data);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        string Parse(string text, Action<TemplateContext> action);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="file"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        string Parse<T>(System.IO.FileInfo file, T data);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        string Parse(System.IO.FileInfo file, Action<TemplateContext> action);
 #if !NF40 && !NF45 && OLDKEEP
         /// <summary>
         /// Loads the template on the specified path.

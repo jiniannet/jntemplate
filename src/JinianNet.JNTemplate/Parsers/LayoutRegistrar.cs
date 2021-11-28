@@ -10,6 +10,7 @@ using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Exceptions;
+using System.Collections.Generic;
 
 namespace JinianNet.JNTemplate.Parsers
 {
@@ -65,9 +66,8 @@ namespace JinianNet.JNTemplate.Parsers
 
                 for (int i = 0; i < tags.Length; i++)
                 {
-                    if (tags[i] is BodyTag)
+                    if (tags[i] is BodyTag body)
                     {
-                        BodyTag body = (BodyTag)tags[i];
                         for (int j = 0; j < t.Children.Count; j++)
                         {
                             body.AddChild(t.Children[j]);
@@ -105,25 +105,25 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     return null;
                 }
-                var reader = new Resources.ResourceReader(res, context);
+                var reader = new Resources.ResourceReader(res);
 
-                var tags = context.Lexer(res, reader);
-
-                for (int i = 0; i < tags.Length; i++)
+                var result = (InterpretResult)context.InterpretTemplate(res, reader);
+                var tags = new List<ITag>();
+                for (int i = 0; i < result.Tags.Length; i++)
                 {
-                    if (tags[i] is BodyTag)
+                    if (result.Tags[i] is BodyTag _)
                     {
-                        BodyTag body = (BodyTag)tags[i];
                         for (int j = 0; j < t.Children.Count; j++)
                         {
-                            body.AddChild(t.Children[j]);
+                            tags.Add(t.Children[j]);
                         }
-                        tags[i] = body;
+                        continue;
                     }
+                    tags.Add(result.Tags[i]);
                 }
                 using (System.IO.StringWriter writer = new StringWriter())
                 {
-                    context.Render(writer, tags);
+                    context.Render(writer, tags.ToArray());
                     return writer.ToString();
                 }
 

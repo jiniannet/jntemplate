@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Hosting
         /// <summary>
         /// Gets or sets the compiler result collection.
         /// </summary>
-        ResultCollection<ICompilerResult> Results { get; }
+        ResultCollection<IResult> Results { get; }
         /// <summary>
         /// Gets or sets the tag parser of the engine.
         /// </summary>

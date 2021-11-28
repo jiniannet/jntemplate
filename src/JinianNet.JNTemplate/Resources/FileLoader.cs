@@ -18,10 +18,8 @@ namespace JinianNet.JNTemplate.Resources
         /// <inheritdoc />
         public ResourceInfo Load(Context ctx, string filename)
         {
-            if (!filename.IsAbsolutePath())
-            {
-                filename = Find(ctx, filename);
-            }
+
+            filename = Find(ctx, filename);
 
             if (string.IsNullOrEmpty(filename) || !File.Exists(filename))
             {

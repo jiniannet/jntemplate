@@ -38,14 +38,14 @@ namespace JinianNet.JNTemplate.Resources
             {
                 return false;
             }
-            if (path[0] == Path.DirectorySeparatorChar && path[1] == path[0])
+            if ((path[0] == Path.DirectorySeparatorChar || path[0] == '/') && path[1] == path[0]) //ex. \\mypc\wwwroot\index.html
             {
                 return true;
             }
             return (path.Length >= 3)
+                && IsValidDriveChar(path[0])
                 && (path[1] == Path.VolumeSeparatorChar)
-                && path[2] == Path.DirectorySeparatorChar
-                && IsValidDriveChar(path[0]);
+                && (path[2] == Path.DirectorySeparatorChar || path[2] == '/'); //ex. d:\wwwroot\index.html
 
         }
 
@@ -64,7 +64,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <returns></returns>
         private static bool IsUnixAbsolutePath(string path)
         {
-            return path != null && path.Length > 0 && path[0] == Path.DirectorySeparatorChar;
+            return path != null && path.Length > 0 && path[0] == Path.DirectorySeparatorChar; //ex. \home\wwwroot\index.html
         }
     }
 }

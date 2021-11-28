@@ -16,13 +16,13 @@ namespace JinianNet.JNTemplate.Resources
         /// 
         /// </summary>
         /// <returns></returns>
-        string ReadToEnd();
+        string ReadToEnd(Context context);
 #if !NF40
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<string> ReadToEndAsync();
+        Task<string> ReadToEndAsync(Context context);
 #endif
     }
 }

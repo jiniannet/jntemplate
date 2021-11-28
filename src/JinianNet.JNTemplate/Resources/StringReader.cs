@@ -25,16 +25,21 @@ namespace JinianNet.JNTemplate.Resources
 
 
         /// <inheritdoc />
-        public string ReadToEnd()
+        public string ReadToEnd(Context context)
         {
             return content;
         }
 #if !NF40
         /// <inheritdoc />
-        public Task<string> ReadToEndAsync()
+        public Task<string> ReadToEndAsync(Context context)
         {
             return Task.FromResult(content);
         }
 #endif
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return content?.GetHashCode() ?? 0;
+        }
     }
 }

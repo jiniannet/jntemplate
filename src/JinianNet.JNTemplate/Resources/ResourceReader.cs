@@ -15,27 +15,24 @@ namespace JinianNet.JNTemplate.Resources
     public class ResourceReader : IReader
     {
         private string resourcePath;
-        private TemplateContext ctx;
         private string content;
         private bool isComplete;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="context"></param>
-        public ResourceReader(string path, TemplateContext context)
+        /// <param name="path"></param> 
+        public ResourceReader(string path)
         {
             this.resourcePath = path;
-            this.ctx = context;
             this.isComplete = false;
         }
         /// <inheritdoc />
-        public string ReadToEnd()
+        public string ReadToEnd(Context context)
         {
             if (!isComplete)
             {
-                var res = ctx.Load(this.resourcePath);
+                var res = context.Load(this.resourcePath);
                 if (res != null)
                 {
                     content = res.Content;
@@ -49,16 +46,16 @@ namespace JinianNet.JNTemplate.Resources
 #if !NF40
         /// <inheritdoc />
 #if NF45
-        public Task<string> ReadToEndAsync()
+        public Task<string> ReadToEndAsync(Context context)
         {
-            return Task.FromResult(ReadToEnd());
+            return Task.FromResult(ReadToEnd(context));
         }
 #else
-        public async Task<string> ReadToEndAsync()
+        public async Task<string> ReadToEndAsync(Context context)
         {
             if (!isComplete)
             {
-                var res = await ctx.LoadAsync(this.resourcePath);
+                var res = await context.LoadAsync(this.resourcePath);
                 if (res != null)
                 {
                     content = res.Content;
@@ -70,6 +67,13 @@ namespace JinianNet.JNTemplate.Resources
 #endif
 #endif
         #endregion
+
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return resourcePath?.GetHashCode() ?? 0;
+        }
     }
 }
 

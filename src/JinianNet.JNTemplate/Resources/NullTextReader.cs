@@ -15,6 +15,12 @@ namespace JinianNet.JNTemplate.Resources
     public class NullTextReader : TextReader,IReader
     {
         /// <inheritdoc />
+        public string ReadToEnd(Context context)
+        {
+            return ReadToEnd();
+        }
+
+        /// <inheritdoc />
         public override string ReadToEnd()
         {
             return string.Empty;
@@ -29,5 +35,15 @@ namespace JinianNet.JNTemplate.Resources
         {
             return null;
         }
+#if !NF40
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Task<string> ReadToEndAsync(Context context)
+        {
+            return Task.FromResult(string.Empty);
+        }
+#endif
     }
 }

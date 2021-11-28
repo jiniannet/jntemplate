@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net40;net45;net46;net47;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net40;net45;net46;net5.0;net6.0</TargetFrameworks>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -43,6 +43,7 @@
     <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Debug\net47\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Debug\net48\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Debug\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Debug\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <NoWarn>1701;1702;1705</NoWarn>
@@ -58,6 +59,7 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NFW;NF47</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;DEBUG;NFW;NF48</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NET5;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;DEBUG;NET6;NET</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -72,6 +74,7 @@
     <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Release\net47\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Release\net48\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Release\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Release\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
     <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
@@ -83,6 +86,7 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NFW;NF47</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;RELEASE;NFW;NF48</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;RELEASE;NET5;NET</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;RELEASE;NET6;NET</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'"> 

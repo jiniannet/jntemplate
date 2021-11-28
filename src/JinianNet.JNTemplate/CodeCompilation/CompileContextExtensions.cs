@@ -287,8 +287,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
 #else
             ctx.TypeBuilder.CreateType();
 #endif
-            ctx.Dispose();
-
             if (type == null)
             {
                 return null;

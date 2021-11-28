@@ -3,17 +3,17 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
-using System.Collections.Generic;
 using JinianNet.JNTemplate.Hosting;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Exceptions;
-using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
-using System.Threading.Tasks; 
 
 namespace JinianNet.JNTemplate
 {
@@ -130,14 +130,14 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public ICompilerResult CompileFile(string name, string path, Action<CompileContext> action = null)
+        public IResult CompileFile(string name, string path, Action<CompileContext> action = null)
         {
             return HostEnvironment.Results[name] = HostEnvironment.CompileFile(name, path, action);
         }
 
 
         /// <inheritdoc />
-        public ICompilerResult Compile(string name, string content, Action<CompileContext> action = null)
+        public IResult Compile(string name, string content, Action<CompileContext> action = null)
         {
             if (string.IsNullOrEmpty(content))
             {
@@ -166,6 +166,101 @@ namespace JinianNet.JNTemplate
             return HostEnvironment.CreateContext();
         }
 
+
+        /// <inheritdoc />
+        public string Parse<T>(string text, T data)
+        {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+            var name = text.GetHashCode().ToString();
+            return Parse<T>(name, new StringReader(text), data);
+        }
+
+        /// <inheritdoc /> 
+        public string Parse(string text, Action<TemplateContext> action)
+        {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+            var name = text.GetHashCode().ToString();
+            return Parse(name, new StringReader(text), action);
+        }
+
+
+        /// <inheritdoc /> 
+        public string Parse<T>(System.IO.FileInfo file, T data)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+            return Parse<T>(file.FullName, new ResourceReader(file.FullName), data);
+        }
+
+        /// <inheritdoc /> 
+        public string Parse(System.IO.FileInfo file, Action<TemplateContext> action)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+            return Parse(file.FullName, new ResourceReader(file.FullName), action);
+        }
+
+        /// <inheritdoc />
+        private string Parse<T>(string name, IReader reader, T data)
+        {
+            if (data == null)
+            {
+                return Parse(name, reader, (Action<TemplateContext>)null);
+            }
+            if (data is System.Collections.IDictionary dict)
+            {
+                return Parse(name, reader, ctx =>
+                {
+                    var keys = dict.Keys;
+                    foreach (var key in keys)
+                    {
+                        if (key == null)
+                        {
+                            continue;
+                        }
+                        var value = dict[key];
+                        ctx.TempData.Set(key.ToString(), value, value?.GetType() ?? typeof(object));
+                    }
+                });
+            }
+            return Parse(name, reader, ctx => ctx.TempData.Set<T>("Model", data));
+        }
+
+        /// <inheritdoc />
+        public string Parse(string name, IReader reader, Action<TemplateContext> action)
+        {
+            var ctx = CreateContext();
+            action?.Invoke(ctx);
+            if (Mode == EngineMode.Compiled)
+            {
+                return CompileParse(name, ctx, reader);
+            }
+            return InterpretParse(name, ctx, reader);
+        }
+
+        private string CompileParse(string name, TemplateContext ctx, IReader reader)
+        {
+            var result = ctx.CompileTemplate(name, reader);
+            using (var write = new System.IO.StringWriter())
+            {
+                result.Render(write, ctx);
+                return write.ToString();
+            }
+        }
+
+        private string InterpretParse(string name, TemplateContext ctx, IReader reader)
+        {
+            var result = ctx.InterpretTemplate(name, reader);
+            using (var write = new System.IO.StringWriter())
+            {
+                result.Render(write, ctx);
+                return write.ToString();
+            }
+        }
+
+
         /// <inheritdoc />
         public ITemplate CreateTemplate(string text)
         {
@@ -179,16 +274,9 @@ namespace JinianNet.JNTemplate
             {
                 name = text.GetHashCode().ToString();
             }
-            ITemplate template;
+
             var reader = new StringReader(text);
-            if (Mode == EngineMode.Compiled)
-            {
-                template = new CompileTemplate(CreateContext(), reader);
-            }
-            else
-            {
-                template = new Template(CreateContext(), reader);
-            }
+            var template = new Template(CreateContext(), reader);
             template.TemplateKey = name;
             template.Context.CurrentPath = HostEnvironment.RootPath;
             return template;
@@ -209,25 +297,8 @@ namespace JinianNet.JNTemplate
             {
                 throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
-            ITemplate template;
-            if (Mode == EngineMode.Compiled)
-            {
-                IReader reader;
-                if (HostEnvironment.Results.Keys.Contains(name))
-                {
-                    reader = new NullTextReader();
-                }
-                else
-                {
-                    reader = new ResourceReader(path, ctx);
-                }
-                template = new CompileTemplate(ctx, reader);
-            }
-            else
-            {
-                var reader = new ResourceReader(path, ctx);
-                template = new Template(ctx, reader);
-            }
+            var reader = new ResourceReader(path);
+            var template = new Template(ctx, reader);
             template.TemplateKey = name;
             if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
@@ -348,8 +419,6 @@ namespace JinianNet.JNTemplate
             return UseOptions(new RuntimeOptions());
         }
 
-
-
         /// <inheritdoc />
         public IEngine EnableCompile()
         {
@@ -372,14 +441,8 @@ namespace JinianNet.JNTemplate
         /// </summary>
         public void Clean()
         {
-            if (Mode == EngineMode.Compiled)
-            {
-                HostEnvironment.Results?.Clear();
-            }
-            else
-            {
-                HostEnvironment.Cache?.Clear();
-            }
+            HostEnvironment.Results?.Clear();
+            //HostEnvironment.Cache?.Clear();
         }
 
         /// <inheritdoc />
@@ -428,7 +491,10 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Guesser.Clear();
             HostEnvironment.Builder.Clear();
             HostEnvironment.Parser.Clear();
+            Clean();
         }
+
+
 
         #endregion
     }

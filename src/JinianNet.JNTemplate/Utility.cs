@@ -188,26 +188,6 @@ namespace JinianNet.JNTemplate
             return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <summary>
-        /// Returns md5 code for this string.
-        /// </summary>
-        /// <param name="input">The input to compute the md5 code for.</param>
-        /// <returns>a hex string</returns>
-        public static string Md5(string input)
-        {
-            using (var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
-            {
-                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
-                byte[] data = md5.ComputeHash(bytes);
-                string byte2String = null;
-
-                for (int i = 0; i < data.Length; i++)
-                {
-                    byte2String += data[i].ToString("x2");
-                }
-                return byte2String;
-            }
-        }
 
         /// <summary>
         /// Generates default values based on the specified type

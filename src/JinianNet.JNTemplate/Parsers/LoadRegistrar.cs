@@ -154,14 +154,13 @@ namespace JinianNet.JNTemplate.Parsers
                     return null;
                 }
 
-                var reader = new Resources.ResourceReader(res, context);
+                var reader = new Resources.ResourceReader(res);
 
-                var tags = context.Lexer(res, reader);
-
+                var result = context.InterpretTemplate(res, reader);
 
                 using (System.IO.StringWriter writer = new StringWriter())
                 {
-                    context.Render(writer, tags);
+                    result.Render(writer, context);
                     return writer.ToString();
                 }
             };

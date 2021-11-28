@@ -2,20 +2,15 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-
-using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Nodes;
-using JinianNet.JNTemplate.Parsers;
-using JinianNet.JNTemplate.Exceptions;
 using System;
-using JinianNet.JNTemplate.Runtime;
-using JinianNet.JNTemplate.Hosting;
-using JinianNet.JNTemplate.Dynamic; 
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Threading;
+using JinianNet.JNTemplate.Hosting;
+using JinianNet.JNTemplate.Dynamic; 
 using JinianNet.JNTemplate.Resources;
+using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate
 {
@@ -137,69 +132,63 @@ namespace JinianNet.JNTemplate
         /// <param name="ctx"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static ITag[] Lexer(this Context ctx, string text)
+        public static IResult InterpretTemplate(this Context ctx, string text)
         {
-            return Lexer(ctx, null, text);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="cacheKey"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static ITag[] Lexer(this Context ctx, string cacheKey, string text)
-        {
-            return Lexer(ctx, cacheKey, new StringReader(text));
+            return InterpretTemplate(ctx, text.GetHashCode().ToString(), new StringReader(text));
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="context"></param>
+        /// <param name="name"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public static ITag[] Lexer(this Context ctx, IReader reader)
+        public static IResult InterpretTemplate(this Context context, string name, IReader reader)
         {
-            return Lexer(ctx, null, reader);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="cacheKey"></param>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        public static ITag[] Lexer(this Context ctx, string cacheKey, IReader reader)
-        {
-            var enable = ctx.Environment.Options.Mode == EngineMode.Interpreted
-                && !string.IsNullOrEmpty(cacheKey)
-                && ctx.EnableCache;
 
-            ITag[] tags;
-            if (enable && (tags = ctx.Cache.Get<ITag[]>(cacheKey)) != null)
+            if (string.IsNullOrEmpty(name))
             {
-                return tags;
+                throw new ArgumentNullException(nameof(name));
             }
-            var text = reader.ReadToEnd();
+
+            var env = context.Environment;
+
+            if (!context.EnableCache)
+            {
+                return new InterpretResult(Lexer(context, reader.ReadToEnd(context)));
+            }
+
+            return env.Results.GetOrAdd(name, (fullName) =>
+            {
+                return new InterpretResult(Lexer(context, reader.ReadToEnd(context)));
+            });
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="text"></param> 
+        /// <returns></returns>
+        public static ITag[] Lexer(this Context context, string text)
+        {
 
             if (string.IsNullOrEmpty(text))
             {
                 return new ITag[0];
             }
 
-            var lexer = CreateTemplateLexer(ctx, text);
+            var lexer = CreateTemplateLexer(context, text);
             var ts = lexer.Execute();
-            var parser = CreateTemplateParser(ctx, ts);
-            tags = parser.Execute();
+            var parser = CreateTemplateParser(context, ts);
 
-            if (enable)
-            {
-                ctx.Cache.Set(cacheKey, tags);
-            }
+            return parser.Execute();
 
-            return tags;
         }
+
+
 
         /// <summary>
         /// Create an <see cref="TemplateParser"/> object.
@@ -218,7 +207,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <returns></returns>
-        public static ICompilerResult CompileFile(this TemplateContext context, string path)
+        public static IResult CompileFile(this TemplateContext context, string path)
         {
             var full = context.FindFullPath(path);
             if (full == null)
@@ -260,7 +249,7 @@ namespace JinianNet.JNTemplate
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static ICompilerResult CompileTemplate(this TemplateContext context, string name, IReader reader)
+        public static IResult CompileTemplate(this TemplateContext context, string name, IReader reader)
         {
             if (reader == null)
             {
@@ -269,7 +258,7 @@ namespace JinianNet.JNTemplate
 
             if (string.IsNullOrEmpty(name))
             {
-                name = reader.GetHashCode().ToString();
+                throw new ArgumentNullException(nameof(name));
             }
 
             var env = context.Environment;
@@ -277,13 +266,13 @@ namespace JinianNet.JNTemplate
             if (!context.EnableCache && context.Debug)
             {
                 System.Diagnostics.Trace.TraceWarning("WARN:The template cache is disabled.");
-                return env.Compile(name, reader.ReadToEnd(), (c) => context.CopyTo(c));
+                return env.Compile(name, reader.ReadToEnd(context), (c) => context.CopyTo(c));
 
             }
 
             return env.Results.GetOrAdd(name, (fullName) =>
             {
-                return env.Compile(fullName, reader.ReadToEnd(), (c) => context.CopyTo(c));
+                return env.Compile(fullName, reader.ReadToEnd(context), (c) => context.CopyTo(c));
 
             });
         }

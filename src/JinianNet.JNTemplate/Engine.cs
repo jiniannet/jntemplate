@@ -74,7 +74,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        public static ICompilerResult CompileFile(string name, string path, Action<CompileContext> action = null)
+        public static IResult CompileFile(string name, string path, Action<CompileContext> action = null)
         {
             return Current.CompileFile(name, path, action);
         }
@@ -86,7 +86,7 @@ namespace JinianNet.JNTemplate
         /// <param name="content">The template contents.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        public static ICompilerResult Compile(string name, string content, Action<CompileContext> action = null)
+        public static IResult Compile(string name, string content, Action<CompileContext> action = null)
         {
             return Current.Compile(name, content, action);
         }
@@ -152,9 +152,36 @@ namespace JinianNet.JNTemplate
         /// Creates template context.
         /// </summary>
         /// <returns>An instance of a <see cref="TemplateContext"/>.</returns>
-        public TemplateContext CreateContext()
+        public static TemplateContext CreateContext()
         {
             return Current.CreateContext();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="text"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+
+        /// <inheritdoc />
+        public static string Parse<T>(string text, T data)
+        {
+            return Current.Parse<T>(text,data);
+        } 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="file"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string Parse<T>(System.IO.FileInfo file, T data)
+        {
+            return Current.Parse<T>(file, data);
         }
 
         /// <summary>

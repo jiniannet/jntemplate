@@ -57,25 +57,27 @@ namespace JinianNet.JNTemplate.Hosting
         /// <returns></returns>
         public static ICompilerResult CompileFile(this IHostEnvironment environment, string name, string path, Action<CompileContext> action = null)
         {
-            var ctx = environment.GenerateContext(name);
-            if (string.IsNullOrEmpty(path))
+            using (var ctx = environment.GenerateContext(name))
             {
-                throw new ArgumentNullException(nameof(path));
+                if (string.IsNullOrEmpty(path))
+                {
+                    throw new ArgumentNullException(nameof(path));
+                }
+                if (action != null)
+                {
+                    action(ctx);
+                }
+                var res = environment.Loader.Load(ctx, path);
+                if (res == null)
+                {
+                    throw new TemplateException($"Path:\"{path}\", the file could not be found.");
+                }
+                if (string.IsNullOrEmpty(ctx.Name))
+                {
+                    ctx.Name = res.FullPath;
+                }
+                return ctx.Compile(res.Content);
             }
-            if (action != null)
-            {
-                action(ctx);
-            }
-            var res = environment.Loader.Load(ctx, path);
-            if (res == null)
-            {
-                throw new TemplateException($"Path:\"{path}\", the file could not be found.");
-            }
-            if (string.IsNullOrEmpty(ctx.Name))
-            {
-                ctx.Name = res.FullPath;
-            }
-            return ctx.Compile(res.Content);
         }
 
 
@@ -129,12 +131,14 @@ namespace JinianNet.JNTemplate.Hosting
             {
                 name = content.GetHashCode().ToString();
             }
-            var ctx = environment.GenerateContext(name);
-            if (action != null)
+            using (var ctx = environment.GenerateContext(name))
             {
-                action(ctx);
+                if (action != null)
+                {
+                    action(ctx);
+                }
+                return ctx.Compile(content);
             }
-            return ctx.Compile(content);
         }
 
         /// <summary>

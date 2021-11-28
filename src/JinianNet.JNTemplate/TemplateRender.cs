@@ -30,8 +30,8 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
         public virtual void Render(System.IO.TextWriter writer)
         {
-            var tags = Context.Lexer(this.TemplateKey, Reader);
-            this.Context.Render(writer, tags);
+            var interpretResult = Context.InterpretTemplate(this.TemplateKey, Reader);
+            interpretResult.Render(writer, Context);
         }
 
 
@@ -41,14 +41,14 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
         /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
-        public virtual Task RenderAsync(System.IO.TextWriter writer, CancellationToken cancellationToken = default)
+        public Task RenderAsync(System.IO.TextWriter writer, CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
             {
                 return Task.FromCanceled(cancellationToken);
             }
-            var tags = Context.Lexer(this.TemplateKey, Reader);
-            return this.Context.RenderAsync(writer, tags, cancellationToken);
+            var interpretResult = Context.InterpretTemplate(this.TemplateKey, Reader);
+            return interpretResult.RenderAsync(writer, Context, cancellationToken);
         }
 #endif
     }

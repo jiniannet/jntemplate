@@ -39,7 +39,7 @@ namespace JinianNet.JNTemplate.Hosting
             , ICache cache = null
             , IResourceLoader resourceLoader = null)
         {
-            this.Results = new ResultCollection<ICompilerResult>();
+            this.Results = new ResultCollection<IResult>();
             this.ResourceDirectories = new List<string>();
             this.EnvironmentVariable = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             this.Options = options ?? new RuntimeOptions();
@@ -76,7 +76,7 @@ namespace JinianNet.JNTemplate.Hosting
         public string EnvironmentName { get; set; }
 
         /// <inheritdoc />
-        public ResultCollection<ICompilerResult> Results { get; }
+        public ResultCollection<IResult> Results { get; }
 
         /// <inheritdoc />
         public TagParser Parser { set; get; }
