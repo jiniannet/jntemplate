@@ -76,11 +76,6 @@ namespace JinianNet.JNTemplate.Hosting
         IResourceLoader Loader { set; get; }
 
         /// <summary>
-        /// Gets or sets the global resource directories of the engine.
-        /// </summary>
-        /// <value></value>
-        List<string> ResourceDirectories { get; }
-        /// <summary>
         /// Gets or sets the environment variable of the engine.
         /// </summary>
         Dictionary<string, string> EnvironmentVariable { get; }

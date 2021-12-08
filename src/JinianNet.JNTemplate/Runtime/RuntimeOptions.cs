@@ -34,6 +34,7 @@ namespace JinianNet.JNTemplate.Runtime
             this.Mode = EngineMode.Compiled;
             this.DisableeLogogram = false;
             this.EnableCache = true;
+            this.ResourceDirectories = new List<string>();
         }
         /// <inheritdoc />
         public bool DisableeLogogram { get; set; }
@@ -75,5 +76,8 @@ namespace JinianNet.JNTemplate.Runtime
 
         /// <inheritdoc />
         public EngineMode Mode { get; set; }
+
+        /// <inheritdoc />
+        public List<string> ResourceDirectories { get; }
     }
 }

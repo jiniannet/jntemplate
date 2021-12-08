@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate
             //paths[0] = ctx.CurrentPath;
             //ctx.Options.ResourceDirectories.CopyTo(paths, 1);
             //return paths;
-            return ctx.Environment.ResourceDirectories.ToArray();
+            return ctx.Environment.Options.ResourceDirectories.ToArray();
         }
 
         /// <summary>

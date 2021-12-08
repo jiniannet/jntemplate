@@ -97,10 +97,7 @@ namespace JinianNet.JNTemplate
             {
                 foreach (var path in option.ResourceDirectories)
                 {
-                    if (!HostEnvironment.ResourceDirectories.Contains(path))
-                    {
-                        HostEnvironment.ResourceDirectories.Add(path);
-                    }
+                    AppendResourcePath(path);
                 }
             }
             if (option.GlobalData != null && option.GlobalData.Count > 0)
@@ -310,9 +307,10 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public IEngine AppendResourcePath(string path)
         {
-            if (!HostEnvironment.ResourceDirectories.Contains(path))
+            var options = HostEnvironment.Options;
+            if (!options.ResourceDirectories.Contains(path))
             {
-                HostEnvironment.ResourceDirectories.Add(path);
+                options.ResourceDirectories.Add(path);
             }
             return this;
         }

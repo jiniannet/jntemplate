@@ -40,7 +40,6 @@ namespace JinianNet.JNTemplate.Hosting
             , IResourceLoader resourceLoader = null)
         {
             this.Results = new ResultCollection<IResult>();
-            this.ResourceDirectories = new List<string>();
             this.EnvironmentVariable = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             this.Options = options ?? new RuntimeOptions();
             this.RootPath = System.IO.Directory.GetCurrentDirectory();
@@ -101,9 +100,6 @@ namespace JinianNet.JNTemplate.Hosting
 
         /// <inheritdoc />
         public IResourceLoader Loader { set; get; }
-
-        /// <inheritdoc />
-        public List<string> ResourceDirectories { get; }
 
         /// <inheritdoc />
         public Dictionary<string, string> EnvironmentVariable { set; get; }

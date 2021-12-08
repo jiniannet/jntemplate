@@ -79,5 +79,10 @@ namespace JinianNet.JNTemplate.Runtime
         /// Gets or sets the global data of the engine.
         /// </summary>
         IVariableScope Data { set; get; }
+        /// <summary>
+        /// Gets or sets the global resource directories of the engine.
+        /// </summary>
+        /// <value></value>
+        List<string> ResourceDirectories { get; }
     }
 }
