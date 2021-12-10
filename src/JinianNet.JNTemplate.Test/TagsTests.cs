@@ -418,6 +418,20 @@ $end
             Assert.Equal("48", render);
 
         }
+
+        /// <summary>
+        /// 测试换行符的识别
+        /// </summary>
+        [Fact]
+        public void TestNewline()
+        {
+            var templateContent = @"replace(/\n/g,<br>);";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+
+            Assert.Equal(templateContent, render);
+        }
+
         ///// <summary>
         ///// 测试标签大小写
         ///// </summary>
