@@ -211,7 +211,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     return;
                 }
                 before?.Invoke(il, true, false);
-                var text = textTag.ToString(ctx.OutMode); 
+                var text = textTag.ToString(ctx.OutMode);
                 il.Emit(OpCodes.Ldstr, text);
                 completed?.Invoke(il, typeof(string));
                 return;
@@ -313,26 +313,26 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             for (var i = 0; i < tags.Count; i++)
             {
-                il.CallTag(context, tags[i],(nil, hasReturn, needCall) =>
-                {
-                    if (hasReturn)
-                    {
-                        nil.Emit(OpCodes.Ldloc, stringBuildIndex);
-                    }
-                    if (needCall)
-                    {
-                        nil.Emit(OpCodes.Ldarg_0);
-                        nil.Emit(OpCodes.Ldloc, contextIndex);
-                    }
-                }, (nil, returnType) =>
-                {
-                    if (returnType == null)
-                    {
-                        return;
-                    }
-                    nil.StringAppend(context, returnType);
-                    nil.Emit(OpCodes.Pop);
-                });
+                il.CallTag(context, tags[i], (nil, hasReturn, needCall) =>
+                 {
+                     if (hasReturn)
+                     {
+                         nil.Emit(OpCodes.Ldloc, stringBuildIndex);
+                     }
+                     if (needCall)
+                     {
+                         nil.Emit(OpCodes.Ldarg_0);
+                         nil.Emit(OpCodes.Ldloc, contextIndex);
+                     }
+                 }, (nil, returnType) =>
+                 {
+                     if (returnType == null)
+                     {
+                         return;
+                     }
+                     nil.StringAppend(context, returnType);
+                     nil.Emit(OpCodes.Pop);
+                 });
             }
         }
 
@@ -383,6 +383,91 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     break;
             }
             il.Emit(OpCodes.Callvirt, appendMethod);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="il"></param>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public static void ConvertTo(this ILGenerator il, Type source, Type target)
+        {
+            switch (target.FullName)
+            {
+
+                case "System.Decimal":
+                    switch (source.FullName)
+                    {
+                        case "System.Int16":
+                        case "System.UInt16":
+                        case "System.Byte":
+                            il.Emit(OpCodes.Conv_I4);
+                            break;
+                    }
+                    il.Emit(OpCodes.Call, typeof(decimal).GetConstructor(new Type[] { source }));
+                    break;
+                case "System.Double":
+                    il.Emit(OpCodes.Conv_R8);
+                    break;
+                case "System.Single":
+                    il.Emit(OpCodes.Conv_R4);
+                    break;
+                case "System.Int64":
+                    il.Emit(OpCodes.Conv_I8);
+                    break;
+                case "System.UInt64":
+                    il.Emit(OpCodes.Conv_U8);
+                    break;
+                case "System.Int32":
+                    il.Emit(OpCodes.Conv_I4);
+                    break;
+                case "System.UInt32":
+                    il.Emit(OpCodes.Conv_U4);
+                    break;
+                case "System.Int16":
+                    il.Emit(OpCodes.Conv_I2);
+                    break;
+                case "System.UInt16":
+                    il.Emit(OpCodes.Conv_U2);
+                    break;
+                case "System.Byte":
+                    il.Emit(OpCodes.Conv_U1);
+                    break;
+                case "System.String":
+                    if (source.IsValueType)
+                    {
+                        var p = il.DeclareLocal(source);
+                        il.Emit(OpCodes.Stloc, p.LocalIndex);
+                        il.Emit(OpCodes.Ldloca, p.LocalIndex);
+                    }
+                    il.Call(source, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
+                    break;
+                default:
+                    if (source.IsValueType)
+                    {
+                        if (target.IsValueType)
+                        {
+                            il.Emit(OpCodes.Isinst, target);
+                        }
+                        else
+                        {
+                            il.Emit(OpCodes.Box, target);
+                        }
+                    }
+                    else
+                    {
+                        if (target.IsValueType)
+                        {
+                            il.Emit(OpCodes.Unbox, target);
+                        }
+                        else
+                        {
+                            il.Emit(OpCodes.Castclass, target);
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

@@ -169,9 +169,14 @@ namespace JinianNet.JNTemplate.Parsers
                         il.Emit(OpCodes.Ldfld, field);
                     }
                 }
+                var ps = method.GetParameters();
                 for (int i = 0; i < paramType.Length; i++)
                 {
                     il.Emit(OpCodes.Ldloc, i + 1);
+                    if (i < ps.Length && paramType[i] != ps[i].ParameterType)
+                    {
+                        il.ConvertTo(paramType[i], ps[i].ParameterType);
+                    }
                 }
                 il.Call(baseType, method);
                 //il.Emit(OpCodes.Callvirt, method);
@@ -316,7 +321,7 @@ namespace JinianNet.JNTemplate.Parsers
                     return result;
                 }
 
-                result = parentValue.CallPropertyOrField(t.Name,type);
+                result = parentValue.CallPropertyOrField(t.Name, type);
 
                 if (result != null && result is Delegate)
                 {
