@@ -185,13 +185,13 @@ namespace JinianNet.JNTemplate
         /// Enable compilation mode.
         /// </summary>
         /// <returns></returns>
-        IEngine EnableCompile();
+        IEngine UseCompileEngine();
 
         /// <summary>
         /// Disable compilation mode.
         /// </summary>
         /// <returns></returns>
-        IEngine DisableCompile();
+        IEngine UseInterpretationEngine();
 
         /// <summary>
         /// Clear compiled object and cache.

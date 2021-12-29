@@ -204,18 +204,18 @@ namespace JinianNet.JNTemplate
         /// Enable compilation mode.
         /// </summary>
         /// <returns></returns>
-        public static void EnableCompile()
+        public static void UseCompileEngine()
         {
-            Current.EnableCompile();
+            Current.UseCompileEngine();
         }
 
         /// <summary>
         /// Enable compilation mode.
         /// </summary>
         /// <returns></returns>
-        public static void DisableCompile()
+        public static void UseInterpretationEngine()
         {
-            Current.DisableCompile();
+            Current.UseInterpretationEngine();
         }
     }
 }

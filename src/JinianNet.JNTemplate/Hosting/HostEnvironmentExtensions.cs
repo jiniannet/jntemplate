@@ -76,6 +76,10 @@ namespace JinianNet.JNTemplate.Hosting
                 {
                     ctx.Name = res.FullPath;
                 }
+                if (string.IsNullOrEmpty(ctx.CurrentPath))
+                {
+                    ctx.CurrentPath = environment.Loader.GetDirectoryName(res.FullPath);
+                }
                 return ctx.Compile(res.Content);
             }
         }

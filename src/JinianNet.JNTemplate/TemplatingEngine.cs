@@ -44,7 +44,7 @@ namespace JinianNet.JNTemplate
                 "JinianNet.JNTemplate.Parsers.LoadRegistrar",
                 "JinianNet.JNTemplate.Parsers.IncludeRegistrar",
                 "JinianNet.JNTemplate.Parsers.FunctionRegistrar",
-                "JinianNet.JNTemplate.Parsers.JsonRegistrar",
+                "JinianNet.JNTemplate.Parsers.ArrayRegistrar",
                 "JinianNet.JNTemplate.Parsers.TextRegistrar",
                 "JinianNet.JNTemplate.Parsers.OperatorRegistrar",
                 "JinianNet.JNTemplate.Parsers.LogicRegistrar",
@@ -418,16 +418,15 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public IEngine EnableCompile()
+        public IEngine UseCompileEngine()
         {
             HostEnvironment.Options.Mode = EngineMode.Compiled;
             Initialize();
             return this;
         }
 
-
         /// <inheritdoc />
-        public IEngine DisableCompile()
+        public IEngine UseInterpretationEngine()
         {
             HostEnvironment.Options.Mode = EngineMode.Interpreted;
             Initialize();
