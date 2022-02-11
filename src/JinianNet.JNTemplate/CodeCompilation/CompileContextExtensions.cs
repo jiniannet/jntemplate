@@ -48,11 +48,24 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public static MethodBuilder CreateReutrnMethod<T>(this CompileContext ctx, Type returnType)
         {
+            return CreateReutrnMethod(ctx, typeof(T).Name, returnType);
+        }
+
+
+        /// <summary>
+        /// Adds a new method with has return to the type, with the specified name.
+        /// </summary> 
+        /// <param name="ctx">The <see cref="CompileContext"/>.</param>
+        /// <param name="methodName"></param>
+        /// <param name="returnType">The return type</param>
+        /// <returns></returns>
+        public static MethodBuilder CreateReutrnMethod(this CompileContext ctx, string methodName, Type returnType)
+        {
             if (returnType.FullName == "System.Void")
             {
-                return CreateReutrnMethod(ctx.TypeBuilder, $"Execute{typeof(T).Name}{ctx.Seed}", returnType);
+                return CreateReutrnMethod(ctx.TypeBuilder, $"Execute{methodName}{ctx.Seed}", returnType);
             }
-            return CreateReutrnMethod(ctx.TypeBuilder, $"Get{typeof(T).Name}{ctx.Seed}", returnType);
+            return CreateReutrnMethod(ctx.TypeBuilder, $"Get{methodName}{ctx.Seed}", returnType);
         }
 
         /// <summary>
@@ -240,7 +253,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public static ICompilerResult Compile(this CompileContext ctx, string content)
         {
-            var tags = TemplateContextExtensions.Lexer(ctx,content);
+            var tags = TemplateContextExtensions.Lexer(ctx, content);
 
             return Compile(ctx, tags);
         }
@@ -254,46 +267,112 @@ namespace JinianNet.JNTemplate.CodeCompilation
         private static ICompilerResult Compile(this CompileContext ctx, ITag[] tags)
         {
             var baseType = typeof(CompilerResult);
-            var typeBuilder = ObjectBuilder.DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}");
-            var targetMethod = baseType.GetMethodInfo("Render", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
-            var method = typeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
-            var methodGenerator = method.GetILGenerator();
-            ctx.TypeBuilder = typeBuilder;
-            var il = ctx.Generator = methodGenerator;
-            var labelPass = il.DefineLabel();
-
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Ldnull);
-            il.Emit(OpCodes.Ceq);
-            il.Emit(OpCodes.Brfalse_S, labelPass);
-            il.Emit(OpCodes.Ldstr, "writer cannot be null!");
-            il.Emit(OpCodes.Newobj, typeof(System.ArgumentNullException).GetConstructor(new Type[] { typeof(string) }));
-            il.Emit(OpCodes.Throw);
-
-            il.MarkLabel(labelPass);
+            ctx.TypeBuilder = ObjectBuilder.DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}");
+            var methods = new List<ITagCompileResult>();
 
             for (var i = 0; i < tags.Length; i++)
             {
-                CompileToRender(ctx, tags[i]);
+                if (tags[i] == null
+                    || tags[i] is EndTag _
+                    || tags[i] is CommentTag _)
+                {
+                    continue;
+                }
+
+                if (tags[i] is TextTag textTag)
+                {
+                    var text = textTag.ToString(ctx.OutMode);
+                    methods.Add(new TagCompileResult<string>(text, false)
+                    {
+                        Tag = tags[i],
+                        Type = tags[i].GetType()
+                    });
+                    continue;
+                }
+
+                if (tags[i] is ITypeTag value)
+                {
+                    methods.Add(new TagCompileResult<string>(value.Value?.ToString(), false)
+                    {
+                        Tag = tags[i],
+                        Type = tags[i].GetType()
+                    });
+                    continue;
+                }
+                var tagType = tags[i].GetType();
+                var tagMethod = TagToMenthod(ctx, tags[i], tagType);
+                if (tagMethod != null)
+                {
+                    methods.Add(new TagCompileResult<MethodInfo>(tagMethod, true)
+                    {
+                        Tag = tags[i],
+                        Type = tagType
+                    });
+                }
             }
 
-            il.Emit(OpCodes.Nop);
-            il.Emit(OpCodes.Ret);
+            CompileRender(ctx, baseType, methods);
 
-
+#if !NF40 && !NF45
+            CompileRenderTask(ctx, baseType, methods);
+#endif
             Type type =
 #if NETSTANDARD2_0
             ctx.TypeBuilder.AsType();
 #else
             ctx.TypeBuilder.CreateType();
 #endif
+
             if (type == null)
             {
                 return null;
             }
+
             var instance = type.CreateInstance<ICompilerResult>();
             return instance;
 
+        }
+
+        private static void CompileRender(CompileContext ctx, Type baseType, List<ITagCompileResult> ms)
+        {
+            var targetMethod = baseType.GetMethodInfo("RenderResult", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
+            var method = ctx.TypeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Family | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TextWriter), typeof(TemplateContext) });
+            var methodGenerator = method.GetILGenerator();
+            var il = ctx.Generator = methodGenerator;
+
+            for (var i = 0; i < ms.Count; i++)
+            {
+                if (ms[i] == null
+                    || ms[i].Result == null)
+                {
+                    continue;
+                }
+                if (!ms[i].IsMethod)
+                {
+                    TextWriter(il, ms[i].Result?.ToString());
+                    continue;
+                }
+                WriteMethodResult(ctx, ms[i]);
+
+            }
+
+            il.Emit(OpCodes.Nop);
+            il.Emit(OpCodes.Ret);
+
+            ctx.Generator = null;
+
+        }
+
+
+
+        private static void TextWriter(ILGenerator il, string text)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Ldstr, text);
+                il.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
+            }
         }
 
         /// <summary>
@@ -320,45 +399,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
             return method;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="context"></param>
-        public static void CompileToRender(this CompileContext context, ITag tag)
-        {
-            var tagType = tag.GetType();
-            if (tag is EndTag _
-            || tag is CommentTag _)
-            {
-                return;
-            }
-
-            if (tag is TextTag textTag)
-            {
-                var text = textTag.ToString(context.OutMode);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    context.Generator.Emit(OpCodes.Ldarg_1);
-                    context.Generator.Emit(OpCodes.Ldstr, text);
-                    context.Generator.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
-                }
-                return;
-            }
-
-            if (tag is ITypeTag value)
-            {
-                if (value.Value != null)
-                {
-                    context.Generator.Emit(OpCodes.Ldarg_1);
-                    context.Generator.Emit(OpCodes.Ldstr, value.Value.ToString());
-                    context.Generator.Emit(OpCodes.Callvirt, typeof(TextWriter).GetMethod("Write", new Type[] { typeof(string) }));
-                }
-                return;
-            }
-
-            CompileToRender(context, tag, tagType);
-        }
 
         /// <summary>
         /// Compiles the specified tag into a method.
@@ -371,12 +411,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
             return Compile(ctx, tag.GetType().Name, tag);
         }
 
-        private static void CompileToRender(this CompileContext context, ITag tag, Type tagType)
+        private static MethodInfo TagToMenthod(this CompileContext context, ITag tag, Type tagType)
         {
-            if (tag == null)
-            {
-                return;
-            }
             MethodInfo method = null;
             try
             {
@@ -395,23 +431,136 @@ namespace JinianNet.JNTemplate.CodeCompilation
             }
             catch (System.Exception exception)
             {
-                if (context.ThrowExceptions)
-                {
-                    throw;
-                }
-                context.Generator.Emit(OpCodes.Ldarg_2);
-                context.Generator.Emit(OpCodes.Ldstr, exception.ToString());
-                context.Generator.Emit(OpCodes.Newobj, typeof(CompileException).GetConstructor(new Type[] { typeof(string) }));
-                //context.Generator.Emit(OpCodes.Throw);
-                context.Generator.Emit(OpCodes.Callvirt, typeof(TemplateContext).GetMethod("AddError", new Type[] { typeof(System.Exception) }));
-                return;
+                return BuildErrorMethod(context, tagType, exception);
             }
-
-            CompileToRender(context, tag, tagType, method);
+            return method;
         }
 
-        private static void CompileToRender(this CompileContext context, ITag tag, Type tagType, MethodInfo method)
+        private static MethodInfo BuildErrorMethod(CompileContext context, Type tagType, Exception exception)
         {
+            if (context.ThrowExceptions)
+            {
+                throw exception;
+            }
+            var mb = context.CreateReutrnMethod(tagType.Name, typeof(string));
+            var il = mb.GetILGenerator(); 
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Ldstr, exception.ToString());
+            il.Emit(OpCodes.Newobj, typeof(CompileException).GetConstructor(new Type[] { typeof(string) }));
+            il.Emit(OpCodes.Callvirt, typeof(TemplateContext).GetMethod("AddError", new Type[] { typeof(System.Exception) }));
+            il.Emit(OpCodes.Ldstr, string.Empty);
+            il.Emit(OpCodes.Ret);
+            return mb.GetBaseDefinition();
+        }
+#if !NET40
+        private static void CompileRenderTask(CompileContext ctx, Type baseType, List<ITagCompileResult> ms)
+        {
+            var targetMethod = baseType.GetMethodInfo("GetRenderTask", new Type[] { typeof(TemplateContext) });
+            var method = ctx.TypeBuilder.DefineMethod(targetMethod.Name, MethodAttributes.Family | MethodAttributes.Virtual | MethodAttributes.HideBySig, targetMethod.ReturnType, new Type[] { typeof(TemplateContext) });
+            var methodGenerator = method.GetILGenerator();
+
+            var il = ctx.Generator = methodGenerator;
+
+            //il.DeclareLocal(typeof(List<System.Threading.Tasks.Task<string>>));
+            //il.Emit(OpCodes.Newobj, typeof(List<System.Threading.Tasks.Task<string>>).GetConstructor(new Type[0]));
+            il.DeclareLocal(typeof(List<object>));
+            il.Emit(OpCodes.Newobj, typeof(List<object>).GetConstructor(new Type[0]));
+            il.Emit(OpCodes.Stloc_0);
+
+            for (var i = 0; i < ms.Count; i++)
+            {
+                if (ms[i] == null
+                    || ms[i].Result == null)
+                {
+                    continue;
+                }
+
+                if (!ms[i].IsMethod)
+                {
+                    GenerateTask(il, ms[i].Result?.ToString());
+                    continue;
+                }
+
+                CompileTask(ctx, ms[i].Tag, ms[i].Type, ms[i].Result as MethodInfo);
+
+            }
+
+            il.Emit(OpCodes.Ldloc_0);
+            il.Emit(OpCodes.Ret);
+            ctx.Generator = null;
+        }
+
+        private static void GenerateTask(ILGenerator il, string text)
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                il.Emit(OpCodes.Ldloc_0);
+                il.Emit(OpCodes.Ldstr, text);
+                //il.Emit(OpCodes.Call, typeof(System.Threading.Tasks.Task).GetGenericMethod(new Type[] { typeof(string) }, "FromResult", new Type[] { typeof(string) }));
+                //il.Emit(OpCodes.Callvirt, typeof(List<System.Threading.Tasks.Task<string>>).GetMethod("Add", new Type[] { typeof(System.Threading.Tasks.Task<string>) }));
+                il.Emit(OpCodes.Callvirt, typeof(List<object>).GetMethod("Add", new Type[] { typeof(object) }));
+            }
+        }
+
+        private static void CompileTask(this CompileContext context, ITag tag, Type tagType, MethodInfo method)
+        {
+            var taskType = typeof(System.Threading.Tasks.Task);
+            //MethodInfo addMethod = typeof(List<System.Threading.Tasks.Task<string>>).GetMethod("Add", new Type[] { typeof(System.Threading.Tasks.Task<string>) });
+
+            MethodInfo addMethod = typeof(List<object>).GetMethod("Add", new Type[] { typeof(object) });
+            var hasReturn = method.ReturnType != typeof(void);
+            if (hasReturn)
+            {
+                context.Generator.Emit(OpCodes.Ldloc_0);
+            }
+            context.Generator.Emit(OpCodes.Ldarg_0);
+            context.Generator.Emit(OpCodes.Ldarg_1);
+            context.Generator.Emit(OpCodes.Call, method);
+            if (!hasReturn)
+            {
+                return;
+            }
+            if (method.ReturnType.IsMatchType(taskType))
+            {
+                if (method.ReturnType.IsGenericType)
+                {
+                    if (method.ReturnType.GenericTypeArguments.Length == 1 && method.ReturnType.GenericTypeArguments[0] != typeof(string))
+                    {
+                        var callMethod = typeof(Utility).GetGenericMethod(method.ReturnType.GenericTypeArguments, "ExcuteTaskAsync", new Type[] { method.ReturnType });
+                        context.Generator.Emit(OpCodes.Call, callMethod);
+                    }
+                }
+                else
+                {
+                    var callMethod = typeof(Utility).GetMethod("ExcuteTaskAsync", new Type[] { method.ReturnType });
+                    context.Generator.Emit(OpCodes.Call, callMethod);
+                }
+            }
+            else
+            {
+                if (method.ReturnType.IsValueType)
+                {
+                    var varLocal = context.Generator.DeclareLocal(method.ReturnType);
+                    context.Generator.Emit(OpCodes.Stloc, varLocal.LocalIndex);
+                    context.Generator.LoadVariable(method.ReturnType, varLocal.LocalIndex);
+                }
+                if (method.ReturnType != typeof(string))
+                {
+                    context.Generator.Call(method.ReturnType, typeof(object).GetMethod("ToString", Type.EmptyTypes));
+                }
+                //var callMethod = typeof(System.Threading.Tasks.Task).GetGenericMethod(new Type[] { typeof(string) }, "FromResult", new Type[] { typeof(string) });
+                //context.Generator.Emit(OpCodes.Call, callMethod);
+            }
+
+            context.Generator.Emit(OpCodes.Callvirt, addMethod);
+        }
+#endif
+
+        private static void WriteMethodResult(this CompileContext context, ITagCompileResult r)
+        {
+            var method = r.Result as MethodInfo;
+            var tagType = r.Type;
+            var tag = r.Tag;
             var type = method.ReturnType;
             var isAsync = false;
             var taskType = typeof(System.Threading.Tasks.Task);

@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Parsers
                             continue;
                         }
                         var itemTag = parser.Read(tcs[i]);
-                        if (itemTag is not null && itemTag is ITypeTag t)
+                        if (itemTag != null && itemTag is ITypeTag t)
                         {
                             list.Add(t.Value);
                             continue;

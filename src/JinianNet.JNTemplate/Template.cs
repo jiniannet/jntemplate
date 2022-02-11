@@ -40,6 +40,24 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public virtual void Render(TextWriter writer, TemplateContext context)
         {
+            try
+            {
+                GetResult(context)?.Render(writer, context);
+            }
+            catch (System.Exception e)
+            {
+                context.AddError(e);
+            }
+        }
+
+        /// <inheritdoc />
+        public void Render(TextWriter writer)
+        {
+            Render(writer, this.Context);
+        }
+
+        private IResult GetResult(TemplateContext context)
+        {
             if (templateResult == null)
             {
                 if (this.Context.Mode == EngineMode.Interpreted)
@@ -55,20 +73,7 @@ namespace JinianNet.JNTemplate
                     throw new TemplateException($"template error.");
                 }
             }
-            try
-            {
-                templateResult.Render(writer, context);
-            }
-            catch (System.Exception e)
-            {
-                context.AddError(e);
-            }
-        }
-
-        /// <inheritdoc />
-        public void Render(TextWriter writer)
-        {
-            Render(writer, this.Context);
+            return templateResult;
         }
 
 
@@ -77,16 +82,9 @@ namespace JinianNet.JNTemplate
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            var t = context.CompileTemplate(this.TemplateKey, this.reader);
-
-            if (t == null)
-            {
-                throw new TemplateException($"template error.");
-            }
             try
             {
-                return t.RenderAsync(writer, context, cancellationToken);
+                return GetResult(context)?.RenderAsync(writer, context, cancellationToken);
             }
             catch (System.Exception e)
             {

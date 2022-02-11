@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +21,25 @@ namespace JinianNet.JNTemplate.CodeCompilation
     {
 
         /// <inheritdoc />
-        public abstract void Render(TextWriter writer, TemplateContext context);
+        public virtual void Render(TextWriter writer, TemplateContext context)
+        {
+            if (writer == null)
+            {
+                writer = new StringWriter();
+            }
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+            RenderResult(writer, context);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="context"></param>
+        protected abstract void RenderResult(TextWriter writer, TemplateContext context);
 
         /// <summary>
         /// 
@@ -49,14 +68,48 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
 #if !NF40 && !NF45
         /// <inheritdoc />
-        public virtual Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+        public virtual async Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (writer == null)
+            {
+                writer = new StringWriter();
+            }
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
             var textWriter = writer;
             var templateContext = context;
-            Render(textWriter, templateContext);
-            return Task.CompletedTask;
+
+            var tasks = GetRenderTask(templateContext);
+            foreach(var t in tasks)
+            {
+                if (t is Task<string> task)
+                {
+                    var text = await task;
+                    await textWriter.WriteAsync(text);
+                    continue;
+                }
+                if (t is string str)
+                {
+                    await textWriter.WriteAsync(str);
+                    continue;
+                }
+                await textWriter.WriteAsync(t?.ToString());
+            }
+            //return Task.WhenAll(tasks); i
+
+            //Render(textWriter, templateContext);
+            //return Task.CompletedTask;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected abstract List<object> GetRenderTask(TemplateContext context);
 #endif
     }
 }

@@ -222,6 +222,44 @@ namespace JinianNet.JNTemplate.Dynamic
             return typeBuilder;
         }
 
+
+        /// <summary>
+        /// Constructs a TypeBuilder for a private type with the specified name in this module.
+        /// </summary>
+        /// <param name="interfaceType">The interface that this type implements.</param>
+        /// <param name="parent">The type that the defined type extends.</param>
+        /// <param name="assemblyName">The display name of the assembly.</param>
+        /// <param name="moduleName">The name of the dynamic module.</param>
+        /// <param name="fileName">The name of the file to which the dynamic module should be saved.</param>
+        /// <param name="assemblyBuilder"></param>
+        /// <returns></returns>
+        public static TypeBuilder DefineType(AssemblyBuilder assemblyBuilder,Type interfaceType, Type parent, string assemblyName, string moduleName,string fileName)
+        {
+            ModuleBuilder moduleBuilder =
+#if NFW
+                !string.IsNullOrEmpty(fileName) ? assemblyBuilder.DefineDynamicModule(moduleName, fileName) : assemblyBuilder.DefineDynamicModule(moduleName);
+#else
+                assemblyBuilder.DefineDynamicModule(moduleName);
+#endif
+            TypeBuilder typeBuilder;
+            if (parent != null)
+            {
+                typeBuilder = moduleBuilder.DefineType(assemblyName, TypeAttributes.Public, parent);
+            }
+            else
+            {
+                typeBuilder = moduleBuilder.DefineType(assemblyName, TypeAttributes.Public);
+            }
+            CustomAttributeBuilder customAttributeBuilder = new CustomAttributeBuilder(typeof(SerializableAttribute).GetConstructor(Type.EmptyTypes), new Type[] { });
+            typeBuilder.SetCustomAttribute(customAttributeBuilder);
+            if (interfaceType != null)
+            {
+                typeBuilder.AddInterfaceImplementation(interfaceType);
+            }
+            return typeBuilder;
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

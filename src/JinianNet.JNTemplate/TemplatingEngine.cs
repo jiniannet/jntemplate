@@ -401,13 +401,16 @@ namespace JinianNet.JNTemplate
 
         private void Initialize()
         {
-            Reset();
-            for (var i = 0; i < registrars.Length; i++)
+            lock (this)
             {
-                Dynamic
-                    .ReflectionExtensions
-                    .CreateInstance<IRegistrar>(registrars[i])
-                    ?.Regiser(this);
+                Reset();
+                for (var i = 0; i < registrars.Length; i++)
+                {
+                    Dynamic
+                        .ReflectionExtensions
+                        .CreateInstance<IRegistrar>(registrars[i])
+                        ?.Regiser(this);
+                }
             }
         }
 
@@ -433,9 +436,7 @@ namespace JinianNet.JNTemplate
             return this;
         }
 
-        /// <summary>
-        /// Clear compiled object or cache.
-        /// </summary>
+        /// <inheritdoc />
         public void Clean()
         {
             HostEnvironment.Results?.Clear();
@@ -490,8 +491,6 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Parser.Clear();
             Clean();
         }
-
-
 
         #endregion
     }

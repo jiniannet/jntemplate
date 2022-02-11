@@ -219,23 +219,91 @@ namespace JinianNet.JNTemplate
 #endif
         }
 
+
+#if NF40
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-#if NF40
-        public string ExcuteTaskAsync<T>(Task<T> task)
+        public static string ExcuteTaskAsync<T>(Task<T> task)
         {
             task.Wait();
             return task.Result?.ToString();
         }
 #else
-        public async Task<string> ExcuteTaskAsync<T>(Task<T> task)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static async Task<string> ExcuteTaskAsync<T>(Task<T> task)
         {
             var result = await task;
             return result?.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static async Task<string> ExcuteTaskAsync(Task task)
+        {
+            await task;
+            return string.Empty;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Task WriteAsync(System.IO.TextWriter writer, string value)
+        {
+            return writer.WriteAsync(value);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Task WriteAsync(System.IO.TextWriter writer, object value)
+        {
+            return writer.WriteAsync(value?.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Task WriteAsync(System.IO.TextWriter writer, ValueType value)
+        {
+            return writer.WriteAsync(value?.ToString());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="writer"></param>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static async Task WriteTaskAsync<T>(System.IO.TextWriter writer, Task<T> task)
+        {
+            var result = await task;
+            string value = result?.ToString();
+            if (value != null)
+            {
+                await writer.WriteAsync(value?.ToString());
+            }
         }
 #endif
     }
