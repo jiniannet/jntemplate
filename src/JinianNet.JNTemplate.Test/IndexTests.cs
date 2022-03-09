@@ -1,8 +1,7 @@
-﻿using JinianNet.JNTemplate;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Xunit;
+using Xunit; 
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -34,7 +33,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$data[0][1]";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("data", new string[] { "abc", "def", "ghi" });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("b", render);
         }
         /// <summary>
@@ -47,7 +46,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("data", new string[] { "abc", "def", "ghi" });
             template.Set("arr", new int[] { 1, 4, 0, 8, 3 });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("def", render);
         }
 
@@ -64,7 +63,7 @@ namespace JinianNet.JNTemplate.Test
                 var r = (x + y) * 35;
                 return r;
             }));
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("2", render);//210
         }
@@ -81,7 +80,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
 
             template.Set("data",new int[] { 7, 0, 2, 0, 6 });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("7", render);
         }
 
@@ -98,7 +97,7 @@ namespace JinianNet.JNTemplate.Test
             dic["name"] = "你好！jntemplate";
             dic["age"] = "1";
             template.Set("data",dic);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("你好！jntemplate", render);
         }
 
@@ -114,7 +113,7 @@ namespace JinianNet.JNTemplate.Test
             dic["name"] = "你好！jntemplate";
             dic["age"] = "1";
             template.Set("data", dic);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("你好！jntemplate", render);
         }
 
@@ -128,7 +127,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$dict";
             var template = Engine.CreateTemplate("TestDictOutput",templateContent); 
             template.Set("dict", new Dictionary<string, object>());
-            var render = template.Render();
+            var render = template.Render();;
             Assert.StartsWith("System.Collections.Generic.Dictionary`2", render);
         }
 
@@ -142,7 +141,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
 
             template.Set("data",new System.Collections.Generic.List<int>(new int[] { 7, 0, 2, 0, 6 }));
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("7", render);
         }
 
@@ -158,7 +157,7 @@ namespace JinianNet.JNTemplate.Test
             dic["name"] = "你好！jntemplate";
             dic["age"] = "1";
             template.Set("data",dic);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("你好！jntemplate", render);
         }
     }

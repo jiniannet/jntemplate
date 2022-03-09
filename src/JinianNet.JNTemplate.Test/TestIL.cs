@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Test
 {
     public class TestIL
     {
-        public void CreateCallIndexValueProxy(Type type, object value, object index)
+        public async Task CreateCallIndexValueProxy(Type type, object value, object index)
         {
             //var ia = new ILActuator();
             //Type objectType = typeof(object); 

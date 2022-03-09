@@ -1,20 +1,22 @@
 ﻿using Xunit;
 using System;
+using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Test
 {
     /// <summary>
     /// 配置测试（因为配置是全局的，会影响其它类，所以需要单独拿出来测试）
     /// </summary>
-    public class ConfigTests
+    public class ConfigTests : TagsTestBase
     {
+
         /// <summary>
         /// 测试配置:自定义标签前后缀
         /// </summary>
         [Fact]
         public void TestConfig()
         {
-            var engine = new EngineBuilder().Build();
+            var engine = BuildEngine();
             engine.Configure((c) =>
             {
                 c.TagFlag = '@';
@@ -25,7 +27,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "你好，@name,欢迎来到{{name}}的世界";
             var template = engine.CreateTemplate(templateContent);
             template.Set("name", "jntemplate");
-            var render = template.Render();
+            var render = template.Render();;
             Console.WriteLine(render);
             Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
 
@@ -37,7 +39,7 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestTagConfig()
         {
-            var engine = new EngineBuilder().Build();
+            var engine = BuildEngine();
             engine.Configure((c) =>
             {
                 c.TagFlag = '$';
@@ -49,7 +51,7 @@ namespace JinianNet.JNTemplate.Test
             var template = engine.CreateTemplate(templateContent);
             template.Set("username", "jntemplate");
             template.Set("year",2020);
-            var render = template.Render();
+            var render = template.Render();;
             Console.WriteLine(render);
             Assert.Equal("hello,jntemplate{{jsVar}}2020!!", render);
 
@@ -61,14 +63,14 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestDisableeLogogram()
         {
-            var engine = new EngineBuilder().Build();
+            var engine = BuildEngine();
             engine.Configure((c) =>
             {
                 c.DisableeLogogram = true;
             });
             var templateContent = "var $a =34;";
             var template = engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("var $a =34;", render);
         }
 
@@ -89,7 +91,7 @@ $set(key6=6)
 $key5";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.OutMode = OutMode.StripWhiteSpace;
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("your data is:5", render);
         }
 
@@ -108,7 +110,7 @@ $end
 <ul>";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.OutMode = OutMode.Auto;
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal(
 @"<ul>
 <li>0</li>
@@ -127,12 +129,12 @@ $end
         [Fact]
         public void TestGlobalData()
         {
-            var engine = new EngineBuilder().Build();
+            var engine = BuildEngine();
             engine.Configure(o =>o.Data.Set("name","jntemplate"));
 
             var templateContent ="hello,${name}";
             var template = engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal($"hello,jntemplate", render);
         }
     }

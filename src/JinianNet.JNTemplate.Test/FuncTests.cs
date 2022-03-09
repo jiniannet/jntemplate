@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Test
                 return $"您输入的参数：{a}，{b}，{c}";
             });
 
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("您输入的参数：字符串，1，True", render);
         }
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$fun.Test(\"字符串\",1,true)";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("fun", new TemplateMethod());
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
 
@@ -55,7 +55,7 @@ namespace JinianNet.JNTemplate.Test
         //    var template = Engine.CreateTemplate(templateContent);
         //    template.Set("UserId", 110);
         //    template.Set("helper", new TemplateMethod());
-        //    var render = template.Render();
+        //    var render = template.Render();;
         //    //false是布尔类型的默认值
         //    Assert.Equal("您输入的参数是有：你好 110 False ", render);
         //}
@@ -76,7 +76,7 @@ namespace JinianNet.JNTemplate.Test
                 var r = x + y;
                 return r.ToString();
             });
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("6", render);
         }
@@ -94,7 +94,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return id.ToString();
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("15", render);
         }
 
@@ -118,7 +118,7 @@ namespace JinianNet.JNTemplate.Test
                     Sort = 1
                 }
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("1", render);
         }
 
@@ -135,7 +135,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return "input:" + text;
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("input:test data", render);
         }
 
@@ -151,7 +151,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return "input:" + text + " id:" + id;
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("input:test data id:9527", render);
         }
 
@@ -167,7 +167,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 Console.WriteLine("你输入了:" + text);
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("", render);
 
         }
@@ -181,7 +181,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${string.Concat(\"str1\",\"str2\")}";
             var template = Engine.CreateTemplate(templateContent);
             template.SetStaticType("string", typeof(string));
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("str1str2", render);
         }
 
@@ -198,7 +198,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 PropertyFunc = (i) => (i * 2).ToString()
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("200", render);
         }
 
@@ -215,7 +215,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 FieldFunc = (i) => (i * 2).ToString()
             });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("200", render);
         }
 
@@ -229,7 +229,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${calc(84+2,53)}";
             var template = Engine.CreateTemplate(templateContent);
             template.Set<Func<int, int, int>>("calc", (x, y) => x - y);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("33", render);
         }
     }

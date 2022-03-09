@@ -13,7 +13,7 @@
 //    public class TestCallProxy : ICallProxy
 //    {
 
-//        private void DefineGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
+//        private async Task DefineGetPropertyOrFieldProxy(Type type, Object value, String propertyName)
 //        {
 //            Type objectType = typeof(Object);
 //            Type stringType = typeof(String);
@@ -124,7 +124,7 @@
 
 //        }
 
-//        private void DefineExcuteMethodProxy(Type type, MethodInfo mi)
+//        private async Task DefineExcuteMethodProxy(Type type, MethodInfo mi)
 //        {
 //            Type objectType = typeof(Object);
 //            Type[] parameterTypes = {
@@ -205,7 +205,7 @@
 //            Call(type, il, mi);
 //            switch (mi.ReturnType.FullName)
 //            {
-//                case "System.Void":
+//                case "System.async Task":
 //                    il.Emit(OpCodes.Ldnull);
 //                    break;
 //                case "System.Object":
@@ -539,7 +539,7 @@
 //            Call(type, il, mi);
 //            switch (mi.ReturnType.FullName)
 //            {
-//                case "System.Void":
+//                case "System.async Task":
 //                    il.Emit(OpCodes.Ldnull);
 //                    break;
 //                case "System.Object":
@@ -651,7 +651,7 @@
 //        /// <param name="type"></param>
 //        /// <param name="il"></param>
 //        /// <param name="index"></param>
-//        private void Ldloc(Type type, ILGenerator il, Int32 index)
+//        private async Task Ldloc(Type type, ILGenerator il, Int32 index)
 //        {
 //            if (IsValueType(type))
 //            {
@@ -668,7 +668,7 @@
 //        /// <param name="type"></param>
 //        /// <param name="il"></param>
 //        /// <param name="index"></param>
-//        private void Ldarg(Type type, ILGenerator il, Int32 index)
+//        private async Task Ldarg(Type type, ILGenerator il, Int32 index)
 //        {
 //            if (IsValueType(type))
 //            {
@@ -685,7 +685,7 @@
 //        /// <param name="type"></param>
 //        /// <param name="il"></param>
 //        /// <param name="mi"></param>
-//        private void Call(Type type, ILGenerator il, MethodInfo mi)
+//        private async Task Call(Type type, ILGenerator il, MethodInfo mi)
 //        {
 //            if (mi.IsStatic || (!mi.IsAbstract && !mi.IsVirtual) || IsValueType(type))
 //            {

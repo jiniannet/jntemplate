@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Test
                 Name = "19"
             });
             template.Set("list", arr);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yesno", render);
         }
 
@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 Name = "File19"
             });
-            var render = template.Render();
+            var render =  template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"${if(3+5>20 && 1-2<7 && 1<2) }yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("no", render);
         }
 
@@ -71,7 +71,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${4<=5}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("True", render);
         }
@@ -84,7 +84,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${4==5||5==5}";//如果是复杂的表达式，应优先考虑使用括号来表达优先级，比如 ${(4==5)||(5==5)} 比简单使用  ${4==5||5==5} 更好
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("True", render);
         }
@@ -97,7 +97,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${4==5&&5==5}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("False", render);
         }
@@ -111,7 +111,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${if(3==8)}3=8 success${elseif(3>8)}3>8 success${elseif(2<5)}2<5 success${else}null${end}";
             var template = Engine.CreateTemplate(templateContent);
 
-            var render = template.Render();
+            var render = template.Render();;
 
             Assert.Equal("2<5 success", render);
         }
@@ -126,7 +126,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("CreteDate", DateTime.Now);
             template.Set("date", DateTime.Now);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -139,7 +139,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${if(dd)}yes${else}no$end";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("dd", new object());
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -151,7 +151,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "$if(3>2 && 5<2)yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent); ;
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("no", render);
         }
 
@@ -165,7 +165,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$if(v1 || 5<2)yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
             template.Set<object>("v1", null);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("no", render);
         }
 
@@ -184,7 +184,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("v2", 9);
             template.Set<object>("v1", null);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -197,7 +197,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${if(3>5)}3>5${elif(2==2)}2=2${else}not${end}";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("list", new int[] { 7, 0, 2, 0, 6 });
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("2=2", render);
         }
         /// <summary>
@@ -210,7 +210,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${if(model==null)}true${else}false${end}";
             var template = Engine.CreateTemplate("TestNull", templateContent);
             template.Set<object>("model", null);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("true", render);
         }
         /// <summary>
@@ -223,7 +223,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${if(model==null)}true${else}false${end}";
             var template = Engine.CreateTemplate("TestNotNull", templateContent);
             template.Set<object>("model", new object());
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("false", render);
         }
 
@@ -238,7 +238,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestNotTrue", templateContent);
             template.Set("Name", "jntemplate");
             template.SetStaticType("String", typeof(string));
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("ok", render);
         }
 
@@ -253,7 +253,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestFuncTrue", templateContent);
             template.Set<string>("Name", null);
             template.SetStaticType("String", typeof(string));
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("ok", render);
         }
 
@@ -269,7 +269,7 @@ namespace JinianNet.JNTemplate.Test
             template.Set("var1", "jntemplate");
             template.Set("var2", "jntemplate");
             template.SetStaticType("String", typeof(string));
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -286,7 +286,7 @@ namespace JinianNet.JNTemplate.Test
             template.Set("var1", "jntemplate");
             template.Set("var2", "jntemplate");
             template.SetStaticType("String", typeof(string));
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("no", render);
         }
 
@@ -302,7 +302,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestEnumEquals", templateContent);
             template.Set("enum1", PlatformID.Win32NT);
             template.Set("enum2", PlatformID.Win32NT);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("ok", render);
         }
 
@@ -317,7 +317,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestEnumNotEquals", templateContent);
             template.Set("enum1", PlatformID.Win32NT);
             template.Set("enum2", PlatformID.Unix);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("ok", render);
         }
 
@@ -338,7 +338,7 @@ namespace JinianNet.JNTemplate.Test
             var size = new ViewModel.Size();
             template.Set("struct1", size);
             template.Set("struct2", size);
-            var render =  template.Render();
+            var render =  template.Render();;
             Assert.Equal("ok", render);
         }
 
@@ -353,7 +353,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestStructNotEquals", templateContent);
             template.Set("struct1", new ViewModel.Size());
             template.Set("struct2", new ViewModel.Size());
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("ok", render);
         }
 #endif
@@ -366,7 +366,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if(\"key\"==\"key\")}yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -378,7 +378,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if((true))}yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -390,7 +390,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${if((3+8)-4>0)}yes${else}no${end}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -405,7 +405,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("id",4);
             template.Set("value", 8);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
 
@@ -419,7 +419,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("id", 4);
             template.Set("value", 8);
-            var render = template.Render();
+            var render = template.Render();;
             Assert.Equal("yes", render);
         }
     }

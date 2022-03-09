@@ -1,24 +1,21 @@
-开发注意事项：
+https://gitee.com/jiniannet/jntemplate.git
 
-1.解决方案与项目说明：
-	1.JinianNet.JNTemplateCore.sln(JinianNet.JNTemplateCore) 为.NET CORE项目，适用于VS2017
-	2.JinianNet.JNTemplate.sln(JinianNet.JNTemplate) 为.net framework/MONO项目，适用于VS2012/VS2013/VS2015/VS2017 
-	3.VS2005/VS2008无法直接打开本项目，但是运行build/build.win.bat 可以生成基于.net framework 2.0的DLL文件（位于lib/2.0目录），可用于VS2015/VS2018项目开发。
-	4.不支持.NET 1.1与.NET 1.0，不支持VS2003
-	5.build目录下build.mono.sh用于linux+mono构建，build.win.bat用于win+.net framework构建，build.core.bat用于.net core构建
 
-	          
-2.版本号规则：
-	2.1 版号号组成规则：
-		2.1.1 主版本.次版本.内部版本号.修订号
-		2.1.2 有极大更新，或者版本无法向下兼容时，主版本号加+1，有较大更新时，次版本号+1，BUG修复后发布时，内部版本号+1，每次代码更新，修订号+1
-	2.2 文件版本号：同 程序集版本号 但是 省略修订号
 
-3.引用/依赖规则：
-	项目必须保证最小的依赖,以保证项目的可移植性。
+# 开发注意事项：
 
-4.参与规则：
-	如果您想对jntemplate进行代码贡献，请在开源主页（https://github.com/jiniannet）上fork  dev分支，提交您的代码后，向我们进行 pull request即可！
+- 主仓库已经从GITHUB上迁移到进了GITEE，地址是 https://gitee.com/jiniannet/jntemplate
+- 如果您想对jntemplate进行代码贡献，在GITEE上在 向我们提交 pull request即可！提交注意事项如下：
 
-5.注意事项
-	1.如果正式使用，请到nuget下载最新版本或者到gitub下载master分支自行生成。dev分支属于开发分支，虽然功能比较新，但是存在变更的风险，请谨慎使用。
+
+## 修复BUG流程
+1. 在GITEE上提交一个ISSUES，详细描述问题情况，提供重现代码
+2. fork一个分支，修改代码，在提交代码及合并请求时都注明 FIX #ISSUES ID 及简短说明，如:FIX #9525 修复某某问题
+3. 在JinianNet.JNTemplate.Test里面提供单元测试用例
+
+## 增加功能流程
+1. 在GITEE上提交一个ISSUES，详细描述新需求的具体情况，及应用场景
+2. fork一个分支，修改代码，在提交代码及合并请求时都注明 UPDATE #ISSUES ID 及简短说明，如:UPDATE #9525 增加了某某功能
+3. 在JinianNet.JNTemplate.Test里面提供单元测试用例
+
+注意：新功能必须是通用的，不能局限于某一个平台，如果无法通过评审，提交有可能被拒绝。
