@@ -22,34 +22,44 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public sealed class TemplatingEngine : IEngine
     {
-        #region
-        private static string[] registrars = new string[] {
-                "JinianNet.JNTemplate.Parsers.CommentRegistrar",
-                "JinianNet.JNTemplate.Parsers.BooleanRegistrar",
-                "JinianNet.JNTemplate.Parsers.NumberRegistrar",
-                "JinianNet.JNTemplate.Parsers.ElseRegistrar",
-                "JinianNet.JNTemplate.Parsers.EleseRegistrar",
-                "JinianNet.JNTemplate.Parsers.EndRegistrar",
-                "JinianNet.JNTemplate.Parsers.BodyRegistrar",
-                "JinianNet.JNTemplate.Parsers.NullRegistrar",
-                "JinianNet.JNTemplate.Parsers.VariableRegistrar",
-                "JinianNet.JNTemplate.Parsers.IndexValueRegistrar",
-                "JinianNet.JNTemplate.Parsers.StringRegistrar",
-                "JinianNet.JNTemplate.Parsers.ForeachRegistrar",
-                "JinianNet.JNTemplate.Parsers.ForRegistrar",
-                "JinianNet.JNTemplate.Parsers.SetRegistrar",
-                "JinianNet.JNTemplate.Parsers.IfRegistrar",
-                "JinianNet.JNTemplate.Parsers.ElseifRegistrar",
-                "JinianNet.JNTemplate.Parsers.LayoutRegistrar",
-                "JinianNet.JNTemplate.Parsers.LoadRegistrar",
-                "JinianNet.JNTemplate.Parsers.IncludeRegistrar",
-                "JinianNet.JNTemplate.Parsers.FunctionRegistrar",
-                "JinianNet.JNTemplate.Parsers.ArrayRegistrar",
-                "JinianNet.JNTemplate.Parsers.TextRegistrar",
-                "JinianNet.JNTemplate.Parsers.OperatorRegistrar",
-                "JinianNet.JNTemplate.Parsers.LogicRegistrar",
-                "JinianNet.JNTemplate.Parsers.ArithmeticRegistrar",
-                "JinianNet.JNTemplate.Parsers.ReferenceRegistrar"};
+        #region Registrar
+        //private static Lazy< IRegistrar[]> LazyRegistrars = new Lazy<IRegistrar[]>(()=> LoadDefaultRegistrar(),true);
+        private static IRegistrar[] LoadDefaultRegistrar()
+        {
+            return new IRegistrar[] {
+                LoadRegistrar<Parsers.CommentRegistrar>(),
+                LoadRegistrar<Parsers.BooleanRegistrar>(),
+                LoadRegistrar<Parsers.NumberRegistrar>(),
+                LoadRegistrar<Parsers.ElseRegistrar>(),
+                LoadRegistrar<Parsers.EndRegistrar>(),
+                LoadRegistrar<Parsers.BodyRegistrar>(),
+                LoadRegistrar<Parsers.NullRegistrar>(),
+                LoadRegistrar<Parsers.VariableRegistrar>(),
+                LoadRegistrar<Parsers.IndexValueRegistrar>(),
+                LoadRegistrar<Parsers.StringRegistrar>(),
+                LoadRegistrar<Parsers.ForeachRegistrar>(),
+                LoadRegistrar<Parsers.ForRegistrar>(),
+                LoadRegistrar<Parsers.SetRegistrar>(),
+                LoadRegistrar<Parsers.IfRegistrar>(),
+                LoadRegistrar<Parsers.ElseifRegistrar>(),
+                LoadRegistrar<Parsers.LayoutRegistrar>(),
+                LoadRegistrar<Parsers.LoadRegistrar>(),
+                LoadRegistrar<Parsers.IncludeRegistrar>(),
+                LoadRegistrar<Parsers.FunctionRegistrar>(),
+                LoadRegistrar<Parsers.ArrayRegistrar>(),
+                LoadRegistrar<Parsers.TextRegistrar>(),
+                LoadRegistrar<Parsers.OperatorRegistrar>(),
+                LoadRegistrar<Parsers.LogicRegistrar>(),
+                LoadRegistrar<Parsers.ArithmeticRegistrar>(),
+                LoadRegistrar<Parsers.ReferenceRegistrar>()
+            };
+        }
+
+        private static IRegistrar LoadRegistrar<T>()
+            where T : IRegistrar, new()
+        {
+            return new T();
+        }
         #endregion
 
         #region
@@ -288,18 +298,19 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public ITemplate LoadTemplate(string name, string path)
         {
+            var templatePath = path;
             var ctx = CreateContext();
             if (string.IsNullOrEmpty(name) &&
-                string.IsNullOrEmpty(path = name = ctx.FindFullPath(path)))
+                string.IsNullOrEmpty(templatePath = name = ctx.FindFullPath(path)))
             {
                 throw new TemplateException($"Path:\"{path}\", the file could not be found.");
             }
-            var reader = new ResourceReader(path);
+            var reader = new ResourceReader(templatePath);
             var template = new Template(ctx, reader);
             template.TemplateKey = name;
             if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
-                template.Context.CurrentPath = HostEnvironment.Loader.GetDirectoryName(path);
+                template.Context.CurrentPath = HostEnvironment.Loader.GetDirectoryName(templatePath);
             }
             return template;
         }
@@ -404,12 +415,10 @@ namespace JinianNet.JNTemplate
             lock (this)
             {
                 Reset();
-                for (var i = 0; i < registrars.Length; i++)
+                var list = LoadDefaultRegistrar();// LazyRegistrars.Value;
+                for (var i = 0; i < list.Length; i++)
                 {
-                    Dynamic
-                        .ReflectionExtensions
-                        .CreateInstance<IRegistrar>(registrars[i])
-                        ?.Regiser(this);
+                    list[i]?.Regiser(this);
                 }
             }
         }
@@ -423,20 +432,28 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public IEngine UseCompileEngine()
         {
-            HostEnvironment.Options.Mode = EngineMode.Compiled;
-            Initialize();
+            if (HostEnvironment.Options.Mode != EngineMode.Compiled)
+            {
+                HostEnvironment.Options.Mode = EngineMode.Compiled;
+                Initialize();
+            }
             return this;
         }
 
         /// <inheritdoc />
         public IEngine UseInterpretationEngine()
         {
-            HostEnvironment.Options.Mode = EngineMode.Interpreted;
-            Initialize();
+            if (HostEnvironment.Options.Mode != EngineMode.Interpreted)
+            {
+                HostEnvironment.Options.Mode = EngineMode.Interpreted;
+                Initialize();
+            }
             return this;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Clear compiled object or cache.
+        /// </summary>
         public void Clean()
         {
             HostEnvironment.Results?.Clear();
@@ -491,6 +508,8 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Parser.Clear();
             Clean();
         }
+
+
 
         #endregion
     }

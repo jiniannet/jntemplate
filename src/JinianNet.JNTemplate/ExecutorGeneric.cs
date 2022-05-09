@@ -22,11 +22,13 @@ namespace JinianNet.JNTemplate
         }
 #if !NF40 && !NF45
         /// <inheritdoc />
-        public virtual async Task<T> ExecuteAsync()
+        public virtual Task<T> ExecuteAsync()
         {
-            return await Task<T>.Run(()=> {
-                return this.Execute();
-            });
+            var r = this.Execute();
+            return Task.FromResult<T>(r);
+            //return Task<T>.Run(()=> {
+            //    return this.Execute();
+            //});
         }
         /// <inheritdoc />
         async Task<object> IExecutor.ExecuteAsync()

@@ -150,7 +150,7 @@ namespace JinianNet.JNTemplate
                 case "System.String":
                     return ToBoolean(input.ToString());
                 case "System.Boolean":
-                    return bool.Parse(input.ToString());
+                    return (bool)input;
                 default:
                     return true;
             }
@@ -172,7 +172,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static bool AllowWord(char value)
         {
-            return char.IsLower(value) || char.IsUpper(value) || char.IsNumber(value) || value == '_';
+            return IsLetter(value) || char.IsNumber(value) || value == '_';
         }
 
         /// <summary>
