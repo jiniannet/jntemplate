@@ -421,6 +421,57 @@ $end
 
         }
 
+
+
+
+
+        /// <summary>
+        /// 测试数组标签
+        /// </summary>
+        [Fact]
+        public void TestArrayTag()
+        {
+            var templateContent = @"${set(arr={1,2,3,4})}len:$arr.Length type:$arr";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("len:4 type:System.Object[]", render);
+        }
+
+
+
+        /// <summary>
+        /// 测试数组标签
+        /// </summary>
+        [Fact]
+        public void TestMixArrayTag()
+        {
+            var templateContent = @"$set(arr={1,2,""jntemplate"",4,true})$arr[2].ToString()";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("jntemplate", render);
+        }
+
+
+        /// <summary>
+        /// 测试数组标签
+        /// </summary>
+        [Fact]
+        public void TestArrayForTag()
+        {
+            var templateContent = @"
+$set(arr={7,0,2,0,6})
+$for(i in arr)
+$i
+$end";
+            var template = Engine.CreateTemplate(templateContent);
+            var render = template.Render();
+
+            Assert.Equal("70206", render.Replace("\r\n","").TrimEnd());
+        }
+
+
         /// <summary>
         /// 测试换行符的识别
         /// </summary>
