@@ -74,16 +74,17 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     var parentType = c.GuessType(t.Parent);
 
-                    var property = parentType.GetPropertyInfo( t.Name);
+                    var property = parentType.GetPropertyInfo(t.Name);
                     if (property == null)
                     {
                         var field = parentType.GetFieldInfo(t.Name);
                         if (field == null)
                         {
-                            throw new CompileException(tag, $"[VariableTag] : {parentType.Name} Cannot find property {t.Name}");
-                        }
-                        if (!field.IsStatic)
-                        {
+                            var indexMethod = parentType.GetMethodInfo("get_Item", new Type[] { typeof(string) });
+                            if (indexMethod == null)
+                            {
+                                throw new CompileException(tag, $"[VariableTag] : {parentType.Name} Cannot find property {t.Name}");
+                            }
                             var method = c.CompileTag(t.Parent);
                             il.DeclareLocal(parentType);
                             il.Emit(OpCodes.Ldarg_0);
@@ -91,11 +92,26 @@ namespace JinianNet.JNTemplate.Parsers
                             il.Emit(OpCodes.Call, method);
                             il.Emit(OpCodes.Stloc, 2);
                             il.LoadVariable(parentType, 2);
-                            il.Emit(OpCodes.Ldfld, field);
+                            il.Emit(OpCodes.Ldstr, t.Name);
+                            il.Call(parentType, indexMethod);
                         }
                         else
                         {
-                            il.Emit(OpCodes.Ldsfld, field);
+                            if (!field.IsStatic)
+                            {
+                                var method = c.CompileTag(t.Parent);
+                                il.DeclareLocal(parentType);
+                                il.Emit(OpCodes.Ldarg_0);
+                                il.Emit(OpCodes.Ldarg_1);
+                                il.Emit(OpCodes.Call, method);
+                                il.Emit(OpCodes.Stloc, 2);
+                                il.LoadVariable(parentType, 2);
+                                il.Emit(OpCodes.Ldfld, field);
+                            }
+                            else
+                            {
+                                il.Emit(OpCodes.Ldsfld, field);
+                            }
                         }
                         il.Emit(OpCodes.Stloc, 1);
                     }
@@ -147,6 +163,8 @@ namespace JinianNet.JNTemplate.Parsers
                     return c.Data.GetType(t.Name);
                 }
                 var parentType = c.GuessType(t.Parent);
+                if (parentType == typeof(System.Data.DataRow))
+                    return typeof(object);
                 var p = parentType.GetPropertyInfo(t.Name);
                 if (p != null)
                 {
@@ -156,6 +174,11 @@ namespace JinianNet.JNTemplate.Parsers
                 if (f != null)
                 {
                     return f.FieldType;
+                }
+                var m = parentType.GetMethodInfo("get_Item", new Type[] { typeof(string) });
+                if (m != null)
+                {
+                    return m.ReturnType;
                 }
                 throw new CompileException(tag, $"[VariableTag]: \"{t.Name}\" is not defined");
             };
@@ -182,11 +205,17 @@ namespace JinianNet.JNTemplate.Parsers
                 {
                     type = baseValue.GetType();
                 }
+
                 if (type == null)
                 {
-                    return null;
+                    throw new CompileException(tag, $"[VariableTag]: \"{t.Name}\" is not defined");
                 }
-                return baseValue.CallPropertyOrField(t.Name, type);
+                var data = baseValue.CallPropertyOrField(t.Name, type);
+                if (data == null && baseValue != null)
+                {
+                    return baseValue.CallIndexValue(t.Name);
+                }
+                return data;
             });
         }
     }

@@ -347,7 +347,7 @@ namespace JinianNet.JNTemplate
         public static void ThrowException(this TemplateContext ctx, TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
             ctx.AddError(e);
-            if (ctx.ThrowExceptions)
+            if (!ctx.ThrowExceptions)
             {
                 writer.Write(tag.ToSource());
             }
