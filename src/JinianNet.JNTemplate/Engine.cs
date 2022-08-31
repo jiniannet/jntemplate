@@ -168,8 +168,8 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public static string Parse<T>(string text, T data)
         {
-            return Current.Parse<T>(text,data);
-        } 
+            return Current.Parse<T>(text, data);
+        }
 
 
         /// <summary>
@@ -206,7 +206,14 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static void UseCompileEngine()
         {
-            Current.UseCompileEngine();
+            if (engine == null)
+            {
+                engine = new EngineBuilder().UseCompileEngine().Build();
+            }
+            else
+            {
+                engine.UseCompileEngine();
+            }
         }
 
         /// <summary>
@@ -215,7 +222,14 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static void UseInterpretationEngine()
         {
-            Current.UseInterpretationEngine();
+            if (engine == null)
+            {
+                engine = new EngineBuilder().UseInterpretationEngine().Build();
+            }
+            else
+            {
+                engine.UseInterpretationEngine();
+            }
         }
     }
 }

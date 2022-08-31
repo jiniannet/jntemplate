@@ -5,10 +5,12 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Concurrent;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Caching
 {
@@ -54,7 +56,11 @@ namespace JinianNet.JNTemplate.Caching
         /// <inheritdoc />
         public void Remove(string key)
         {
+#if NF35 || NF20
+            dict.Remove(key);
+#else
             dict.TryRemove(key, out var value);
+#endif
         }
 
         /// <inheritdoc />
@@ -135,7 +141,7 @@ namespace JinianNet.JNTemplate.Caching
                 Remove(key);
             }
         }
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public Task RemoveManyAsync(IEnumerable<string> keys, CancellationToken token = default)
         {

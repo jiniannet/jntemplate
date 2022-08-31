@@ -2,8 +2,9 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+#if !NF35 && !NF20
 using System.Threading.Tasks;
-
+#endif
 
 namespace JinianNet.JNTemplate
 {
@@ -20,7 +21,7 @@ namespace JinianNet.JNTemplate
         {
             return this.Execute();
         }
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public virtual Task<T> ExecuteAsync()
         {

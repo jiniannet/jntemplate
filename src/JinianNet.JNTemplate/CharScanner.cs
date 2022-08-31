@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate
         private const char EOF = '\0';
         private int index;
         private int start;
-        private string document;
+        private char[] document;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CharScanner"/> class
@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate
         /// <param name="text">The contents.</param>
         public CharScanner(string text)
         {
-            this.document = (text ?? string.Empty);
+            this.document = (text ?? string.Empty).ToCharArray();
         }
         /// <summary>
         /// The zero-based index in the <see cref="CharScanner"/> at which scanned.
@@ -155,7 +155,7 @@ namespace JinianNet.JNTemplate
         /// <returns>A string.</returns>
         public string GetString()
         {
-            string value = GetString(this.start,this.index);
+            string value = GetString(this.start, this.index);
             this.start = this.index;
             return value;
         }
@@ -224,7 +224,7 @@ namespace JinianNet.JNTemplate
                     cs.Add(this.document[i]);
                 }
             }
-            if(cs.Count==0)
+            if (cs.Count == 0)
             {
                 return null;
             }
@@ -238,11 +238,11 @@ namespace JinianNet.JNTemplate
         /// <returns>A string.</returns>
         public string GetString(int x, int y)
         {
-            if(x >= y)
+            if (x >= y)
             {
                 return null;
             }
-            return this.document.Substring(x, y - x);
+            return new string(this.document, x, y - x);
         }
     }
 }

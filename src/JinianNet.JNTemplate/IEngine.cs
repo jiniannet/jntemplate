@@ -11,7 +11,9 @@ using JinianNet.JNTemplate.Caching;
 using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Hosting;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate
 {
@@ -128,7 +130,7 @@ namespace JinianNet.JNTemplate
         /// <param name="action"></param>
         /// <returns></returns>
         string Parse(System.IO.FileInfo file, Action<TemplateContext> action);
-#if !NF40 && !NF45 && OLDKEEP
+#if !NF40 && !NF45 && !NF35 && !NF20 && OLDKEEP
         /// <summary>
         /// Loads the template on the specified path.
         /// </summary>

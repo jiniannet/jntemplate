@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Caching
 {
@@ -109,7 +111,7 @@ namespace JinianNet.JNTemplate.Caching
         void RemoveMany(
             IEnumerable<TCacheKey> keys
         );
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <summary>
         /// Removes the cache items for given keys from cache.
         /// </summary>

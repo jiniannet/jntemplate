@@ -9,7 +9,9 @@ using JinianNet.JNTemplate.Resources;
 using System;
 using System.IO;
 using System.Threading;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate
 {
@@ -77,7 +79,7 @@ namespace JinianNet.JNTemplate
         }
 
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {

@@ -4,7 +4,6 @@
  ********************************************************************************/
 using System;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
@@ -14,7 +13,9 @@ using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
-
+#if !NF35 && !NF20
+using System.Threading.Tasks;
+#endif
 namespace JinianNet.JNTemplate
 {
     /// <summary>

@@ -3,7 +3,6 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.Threading.Tasks;
 using System.Threading;
 using JinianNet.JNTemplate.Hosting;
 using JinianNet.JNTemplate.Dynamic; 
@@ -11,6 +10,9 @@ using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Exceptions;
+#if !NF35 && !NF20
+using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate
 {
@@ -48,7 +50,7 @@ namespace JinianNet.JNTemplate
             return ctx.Environment.Loader.Load(ctx, fileName);
         }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <summary>
         /// Loads the contents of an resource file on the specified path.
         /// </summary>
@@ -299,6 +301,7 @@ namespace JinianNet.JNTemplate
                         var tagResult = Execute(ctx, collection[i]);
                         if (tagResult != null)
                         {
+#if !NF35 && !NF20
                             if (tagResult is Task task)
                             {
                                 var type = tagResult.GetType();
@@ -321,6 +324,7 @@ namespace JinianNet.JNTemplate
                                 }
                                 continue;
                             }
+#endif
                             writer.Write(tagResult.ToString());
                         }
                     }
@@ -353,7 +357,7 @@ namespace JinianNet.JNTemplate
             }
         }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
 
         /// <summary>
         /// Performs the render for a tags.

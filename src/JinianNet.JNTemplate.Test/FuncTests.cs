@@ -42,6 +42,18 @@ namespace JinianNet.JNTemplate.Test
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
 
+        /// <summary>
+        /// 测试INT与INT?类型的自动转换
+        /// </summary>
+        [Fact]
+        public void TestParamNullable()
+        {
+            var templateContent = "$fun.TestNullable(70206)";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("fun", new TemplateMethod());
+            var render = template.Render(); ;
+            Assert.Equal("input:70206", render);
+        }
 
         ///// <summary>
         ///// 测试可选参数(实参以JSON格式支持)

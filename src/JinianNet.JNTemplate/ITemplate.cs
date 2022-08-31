@@ -5,8 +5,9 @@
 using System;
 using System.IO;
 using System.Threading;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
-
+#endif
 
 namespace JinianNet.JNTemplate
 {
@@ -34,7 +35,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         bool EnableCompile { get; }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <summary>
         /// Performs the render for a template.
         /// </summary>

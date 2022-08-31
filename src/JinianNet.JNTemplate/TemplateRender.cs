@@ -6,7 +6,9 @@ using System;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 using System.Threading;
 using System.IO;
 using JinianNet.JNTemplate.Resources;
@@ -35,7 +37,7 @@ namespace JinianNet.JNTemplate
         }
 
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <summary>
         /// Performs the render for a template.
         /// </summary>

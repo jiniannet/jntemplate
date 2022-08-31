@@ -32,7 +32,7 @@ namespace JinianNet.JNTemplate.Dynamic
             var ps = original.GetProperties();
             foreach (var p in ps)
             {
-#if NF40 || NF20
+#if NF40 || NF35 || NF20
                 var data = p.GetValue(value,null);
                 target.GetProperty(p.Name).SetValue(result, data,null);
 #else
@@ -137,7 +137,8 @@ namespace JinianNet.JNTemplate.Dynamic
         public static Type GetOrGenerateType(Type baseType)
         {
             var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{baseType.FullName}";
-            return dict.GetOrAdd(typeName,key=> {
+            return dict.GetOrAdd(typeName, key =>
+            {
                 return GenerateTypeFrom(baseType);
             });
         }
@@ -198,28 +199,12 @@ namespace JinianNet.JNTemplate.Dynamic
         public static TypeBuilder DefineType(Type interfaceType, Type parent, string assemblyName, string moduleName)
         {
             AssemblyBuilder assemblyBuilder
-#if NF40 || NF20
+#if NF40 || NF35 || NF20
                 =AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
 #else
                 = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
 #endif
-            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(moduleName);
-            TypeBuilder typeBuilder;
-            if (parent != null)
-            {
-                typeBuilder = moduleBuilder.DefineType(assemblyName, TypeAttributes.Public, parent);
-            }
-            else
-            {
-                typeBuilder = moduleBuilder.DefineType(assemblyName, TypeAttributes.Public);
-            }
-            CustomAttributeBuilder customAttributeBuilder = new CustomAttributeBuilder(typeof(SerializableAttribute).GetConstructor(Type.EmptyTypes), new Type[] { });
-            typeBuilder.SetCustomAttribute(customAttributeBuilder);
-            if (interfaceType != null)
-            {
-                typeBuilder.AddInterfaceImplementation(interfaceType);
-            }
-            return typeBuilder;
+            return DefineType(assemblyBuilder, interfaceType, parent, assemblyName, moduleName, null);
         }
 
 
@@ -233,7 +218,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="fileName">The name of the file to which the dynamic module should be saved.</param>
         /// <param name="assemblyBuilder"></param>
         /// <returns></returns>
-        public static TypeBuilder DefineType(AssemblyBuilder assemblyBuilder,Type interfaceType, Type parent, string assemblyName, string moduleName,string fileName)
+        public static TypeBuilder DefineType(AssemblyBuilder assemblyBuilder, Type interfaceType, Type parent, string assemblyName, string moduleName, string fileName)
         {
             ModuleBuilder moduleBuilder =
 #if NFW

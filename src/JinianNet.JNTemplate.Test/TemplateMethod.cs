@@ -10,6 +10,13 @@ namespace JinianNet.JNTemplate.Test
             return "";
         }
 
+        public string TestNullable(int? value)
+        {
+            if (value == null)
+                return "input:null";
+            return $"input:{value}";
+        }
+
         public string Test(string message, int id, bool result)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

@@ -28,8 +28,8 @@ namespace JinianNet.JNTemplate.Test
         {
             var builder = new EngineBuilder();
             if (Engine.Mode == EngineMode.Interpreted)
-                return builder.DisableCompile().Build();
-            return builder.EnableCompile().Build();
+                return builder.UseInterpretationEngine().Build();
+            return builder.UseCompileEngine().Build();
         }
 
       

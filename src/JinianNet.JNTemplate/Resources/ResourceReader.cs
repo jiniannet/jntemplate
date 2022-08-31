@@ -5,7 +5,9 @@
 using System;
 using System.IO;
 using System.Threading;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Resources
 {
@@ -43,7 +45,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         #region Task based Async APIs
-#if !NF40
+#if !NF40 && !NF35 && !NF20
         /// <inheritdoc />
 #if NF45
         public Task<string> ReadToEndAsync(Context context)

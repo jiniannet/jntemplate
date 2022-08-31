@@ -3,8 +3,9 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
-
+#endif
 namespace JinianNet.JNTemplate
 {
     /// <summary>
@@ -198,7 +199,7 @@ namespace JinianNet.JNTemplate
         {
             return default(T);
         }
-
+#if !NF35 && !NF20
         /// <summary>
         /// 
         /// </summary>
@@ -305,6 +306,7 @@ namespace JinianNet.JNTemplate
                 await writer.WriteAsync(value?.ToString());
             }
         }
+#endif
 #endif
     }
 }

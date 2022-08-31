@@ -6,7 +6,9 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Resources
 {
@@ -176,7 +178,7 @@ namespace JinianNet.JNTemplate.Resources
             return string.Join(System.IO.Path.DirectorySeparatorChar.ToString(), values.ToArray());
         }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
 
         /// <inheritdoc />
         [Obsolete]

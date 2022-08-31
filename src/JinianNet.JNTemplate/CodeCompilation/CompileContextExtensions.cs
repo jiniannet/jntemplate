@@ -313,7 +313,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             CompileRender(ctx, baseType, methods);
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
             CompileRenderTask(ctx, baseType, methods);
 #endif
             Type type =
@@ -452,7 +452,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             il.Emit(OpCodes.Ret);
             return mb.GetBaseDefinition();
         }
-#if !NET40
+#if !NF40 && !NF35 && !NF20
         private static void CompileRenderTask(CompileContext ctx, Type baseType, List<ITagCompileResult> ms)
         {
             var targetMethod = baseType.GetMethodInfo("GetRenderTask", new Type[] { typeof(TemplateContext) });
@@ -520,6 +520,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 return;
             }
+
             if (method.ReturnType.IsMatchType(taskType))
             {
                 if (method.ReturnType.IsGenericType)
@@ -563,7 +564,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
             var tag = r.Tag;
             var type = method.ReturnType;
             var isAsync = false;
+#if !NF35 && !NF20
             var taskType = typeof(System.Threading.Tasks.Task);
+#endif
             MethodInfo taskAwaiterMethod = null;
             MethodInfo resultMethod = null;
 
@@ -572,7 +575,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             var exBlock = il.BeginExceptionBlock();
             //var lableThrow = il.DefineLabel();
             var labelPass = il.DefineLabel();
-
+#if !NF35 && !NF20
             if (type.IsMatchType(taskType))
             {
                 isAsync = true;
@@ -580,6 +583,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 resultMethod = taskAwaiterMethod.ReturnType.GetMethodInfo("GetResult", Type.EmptyTypes);
                 type = resultMethod.ReturnType;
             }
+#endif
             if (type.FullName != "System.Void")
             {
                 il.DeclareLocal(type);

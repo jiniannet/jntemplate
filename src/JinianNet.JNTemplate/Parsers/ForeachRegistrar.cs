@@ -7,14 +7,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text; 
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
-
+#if !NF35 && !NF20
+using System.Threading.Tasks;
+#endif
 namespace JinianNet.JNTemplate.Parsers
 {
     /// <summary>
@@ -65,12 +66,14 @@ namespace JinianNet.JNTemplate.Parsers
                 var t = tag as ForeachTag;
                 var sourceType = c.GuessType(t.Source);
                 var isAsync = false;
+#if !NF35 && !NF20
                 if (sourceType.IsGenericType
                 && sourceType.GetGenericTypeDefinition() == typeof(Task<>))
                 {
                     sourceType = sourceType.GetGenericArguments()[0];
                     isAsync = true;
                 }
+#endif
                 if (sourceType.IsArray)
                 {
                     return ArrayForeachCompile(c, t, sourceType, isAsync);
@@ -402,6 +405,7 @@ namespace JinianNet.JNTemplate.Parsers
                     using (var writer = new StringWriter())
                     {
                         object value = context.Execute(t.Source);
+#if !NF35 && !NF20
                         if (value is Task task)
                         {
                             var type = value.GetType();
@@ -411,6 +415,7 @@ namespace JinianNet.JNTemplate.Parsers
                             }
                             value = typeof(Utility).CallGenericMethod(null, "ExcuteTask", type.GetGenericArguments(), value);
                         }
+#endif
                         var enumerable = value.ToIEnumerable();
                         TemplateContext ctx;
                         if (enumerable != null)

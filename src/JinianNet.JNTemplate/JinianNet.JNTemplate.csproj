@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net40;net45;net46;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net35;net40;net45;net46;net5.0;net6.0</TargetFrameworks>
     <AssemblyName>JinianNet.JNTemplate</AssemblyName>
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -37,6 +37,7 @@
     <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Debug\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Debug\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Debug\net20\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net35'">bin\Debug\net35\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Debug\net40\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Debug\net45\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Debug\net46\JinianNet.JNTemplate.xml</DocumentationFile>
@@ -53,6 +54,7 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;DEBUG;NFW;NF20</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;DEBUG;NFW;NF35</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;DEBUG;NFW;NF40</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;DEBUG;NFW;NF45</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NFW;NF46</DefineConstants>
@@ -68,6 +70,7 @@
     <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Release\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Release\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Release\net20\JinianNet.JNTemplate.xml</DocumentationFile>
+    <DocumentationFile Condition="'$(TargetFramework)' == 'net35'">bin\Release\net35\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Release\net40\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Release\net45\JinianNet.JNTemplate.xml</DocumentationFile>
     <DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Release\net46\JinianNet.JNTemplate.xml</DocumentationFile>
@@ -80,6 +83,7 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;RELEASE;NFW;NF20</DefineConstants>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;RELEASE;NFW;NF35</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;RELEASE;NFW;NF40</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;RELEASE;NFW;NF45</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NFW;NF46</DefineConstants>

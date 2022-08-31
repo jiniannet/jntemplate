@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.CodeCompilation
@@ -66,7 +68,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             ctx.AddError(templateException);
         }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public virtual async Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {

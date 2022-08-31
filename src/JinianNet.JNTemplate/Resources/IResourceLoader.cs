@@ -4,7 +4,9 @@
  ********************************************************************************/
 using System;
 using System.Text;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
+#endif
 
 namespace JinianNet.JNTemplate.Resources
 {
@@ -37,7 +39,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <returns>Directory information for path, or null if path denotes a root directory or is null.</returns>
         string GetDirectoryName(string fullPath);
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
 
         /// <summary>
         /// Loads the resource on the specified path.

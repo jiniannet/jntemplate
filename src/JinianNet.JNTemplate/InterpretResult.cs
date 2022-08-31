@@ -3,10 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Threading; 
 using JinianNet.JNTemplate.Nodes;
-
+#if !NF35 && !NF20
+using System.Threading.Tasks;
+#endif
 namespace JinianNet.JNTemplate
 {
     /// <summary>
@@ -34,7 +35,7 @@ namespace JinianNet.JNTemplate
             context.Render(writer, Tags);
         }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
         {

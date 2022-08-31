@@ -13,7 +13,12 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class EngineBuilder
     {
-        private bool enableCompile = true;
+        private bool enableCompile =
+#if NF35 || NF20
+            false;
+#else
+            true;
+#endif
 
         /// <summary>
         /// Build a engine.
@@ -30,7 +35,7 @@ namespace JinianNet.JNTemplate
         /// Enable compilation mode.
         /// </summary>
         /// <returns></returns>
-        public EngineBuilder EnableCompile()
+        public EngineBuilder UseCompileEngine()
         {
             this.enableCompile = true;
             return this;
@@ -40,7 +45,7 @@ namespace JinianNet.JNTemplate
         /// Disable compilation mode.
         /// </summary>
         /// <returns></returns>
-        public EngineBuilder DisableCompile()
+        public EngineBuilder UseInterpretationEngine()
         {
             this.enableCompile = false;
             return this;

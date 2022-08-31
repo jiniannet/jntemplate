@@ -3,8 +3,9 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
-
+#endif
 namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
@@ -17,7 +18,7 @@ namespace JinianNet.JNTemplate.Resources
         /// </summary>
         /// <returns></returns>
         string ReadToEnd(Context context);
-#if !NF40
+#if !NF40 && !NF35 && !NF20
         /// <summary>
         /// 
         /// </summary>

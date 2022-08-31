@@ -118,7 +118,7 @@ namespace JinianNet.JNTemplate.Parsers
                     else
                     {
                         var getMethod =
-#if NF40
+#if NF40 || NF35 || NF20
                         property.GetGetMethod();
 #else
                         property.GetMethod;

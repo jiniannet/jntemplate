@@ -59,7 +59,7 @@ namespace JinianNet.JNTemplate.Parsers
                         else
                         {
                             funcType = property.PropertyType;
-#if NF40 || NF20
+#if NF40 || NF20 || NF35
                             childMethd = property.GetGetMethod();
 #else
                             childMethd = property.GetMethod;
@@ -175,8 +175,32 @@ namespace JinianNet.JNTemplate.Parsers
                     il.Emit(OpCodes.Ldloc, i + 1);
                     if (i < ps.Length && paramType[i] != ps[i].ParameterType)
                     {
-                        il.ConvertTo(paramType[i], ps[i].ParameterType);
+                        if (ps[i].ParameterType.Name == "Nullable`1")
+                        {
+                            var genericType =
+#if NF40 || NF35 || NF20
+                            ps[i].ParameterType.GetGenericArguments()[0]
+#else
+                            ps[i].ParameterType.GenericTypeArguments[0]
+#endif
+                            ;
+
+                            if (genericType == paramType[i])
+                            {
+                                var nullableType = typeof(Nullable<>).MakeGenericType(paramType[i]);
+                                il.Emit(OpCodes.Newobj, nullableType.GetConstructor(new Type[] { paramType[i] }));
+                            }
+                            else
+                            {
+                                throw new CompileException(tag, $"[FunctaionTag]: \"{t.Name}\" parameter error. Expected \"{ps[i].ParameterType.Name}\" but got \"{ paramType[i].Name}\"");
+                            }
+                        }
+                        else
+                        {
+                            il.ConvertTo(paramType[i], ps[i].ParameterType);
+                        }
                     }
+
                 }
                 il.Call(baseType, method);
                 //il.Emit(OpCodes.Callvirt, method);

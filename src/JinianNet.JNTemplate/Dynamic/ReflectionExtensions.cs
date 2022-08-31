@@ -60,7 +60,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return null;
             }
-#if NF40 || NF20
+#if NF40 || NF35 || NF20
             return p.GetGetMethod();
 #else
             return p.GetMethod;
@@ -90,7 +90,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return null;
             }
-#if NF40 || NF20
+#if NF40 || NF35 || NF20
             return p.GetSetMethod();
 #else
             return p.SetMethod;
@@ -439,7 +439,12 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 try
                 {
-                    var parameter = Expression.Parameter(type);
+                    var parameter =
+#if NF35 || NF20
+                    Expression.Parameter(type,name);
+#else
+                    Expression.Parameter(type);
+#endif
                     if (container != null)
                     {
                         Expression body = Expression.PropertyOrField(parameter, name);
@@ -670,7 +675,7 @@ namespace JinianNet.JNTemplate.Dynamic
             return action?.DynamicInvoke(values);
         }
 
-        #region ToIEnumerable
+#region ToIEnumerable
         /// <summary>
         ///  Returns an enumerable that iterates through the object.
         /// </summary>
@@ -720,6 +725,6 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
 
         }
-        #endregion
+#endregion
     }
 }

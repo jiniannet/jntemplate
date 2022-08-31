@@ -5,8 +5,9 @@
 using System;
 using System.IO;
 using System.Threading;
+#if !NF35 && !NF20
 using System.Threading.Tasks;
-
+#endif
 namespace JinianNet.JNTemplate.CodeCompilation
 {
     /// <summary>
@@ -45,7 +46,13 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <inheritdoc />
         public void Render(TextWriter writer, TemplateContext context)
         {
-            if (!string.IsNullOrWhiteSpace(this.message) && context.ThrowExceptions)
+            if (
+#if NF35 || NF20
+                !string.IsNullOrEmpty(this.message)
+#else
+                !string.IsNullOrWhiteSpace(this.message)
+#endif
+                && context.ThrowExceptions)
             {
                 writer.Write(message);
             }
@@ -57,7 +64,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             Render(writer, this.Context);
         }
 
-#if !NF40 && !NF45
+#if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default)
         {
