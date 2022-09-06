@@ -165,7 +165,7 @@ namespace JinianNet.JNTemplate.Parsers
                         if (needCall)
                         {
                             nil.Emit(OpCodes.Ldarg_0);
-                            nil.Emit(OpCodes.Ldarg_1);
+                            nil.Emit(OpCodes.Ldloc_1);
                         }
                     }, (nil, returnType) =>
                     {
