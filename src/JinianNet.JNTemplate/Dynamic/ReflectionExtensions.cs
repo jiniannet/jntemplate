@@ -434,13 +434,30 @@ namespace JinianNet.JNTemplate.Dynamic
         public static object CallPropertyOrField(this object container, string name, Type type = null)
         {
             type = type ?? container.GetType();
+#if NF20
+            if (!char.IsDigit(name[0]))
+            {
+                PropertyInfo p = type.GetPropertyInfo(name);
+                if (p != null)
+                {
+                    return p.GetValue(container, null);
+                }
+                FieldInfo f = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+                if (f != null)
+                {
+                    return f.GetValue(container);
+                }
+            }
+
+            return null;
+#else
             var key = $"PI${type.FullName}.{name}";
             var method = (Delegate)dict.GetOrAdd(key, (cacheKey) =>
             {
                 try
                 {
                     var parameter =
-#if NF35 || NF20
+#if NF35
                     Expression.Parameter(type,name);
 #else
                     Expression.Parameter(type);
@@ -485,6 +502,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 return method?.DynamicInvoke();
             }
             return method?.DynamicInvoke(container);
+#endif
         }
 
         /// <summary>
@@ -514,6 +532,38 @@ namespace JinianNet.JNTemplate.Dynamic
 
             if (method != null)
             {
+#if NF20
+                bool hasNullValue = false;
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (args[i] != null)
+                    {
+                        types[i] = args[i].GetType();
+                    }
+                    else
+                    {
+                        hasNullValue = true;
+                    }
+                }
+                var pi = method.GetParameters();
+                if (types.Length == 1 && types[0] == typeof(Dictionary<object, object>)
+                    && (pi.Length != 1 || !pi[0].ParameterType.IsSubclassOf(typeof(IDictionary))))
+                {
+                    args = ChangeParameters((Dictionary<object, object>)args[0], pi);
+                }
+                else if (hasNullValue)
+                {
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        if (args[i] == null
+                            && !pi[i].ParameterType.IsClass
+                            && pi[i].DefaultValue != DBNull.Value)
+                        {
+                            args[i] = pi[i].DefaultValue;
+                        }
+                    }
+                }
+#endif
                 return Call(type, method, container, args);
             }
 
@@ -630,6 +680,9 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static object Call(this Type type, MethodInfo method, object container, object[] args)
         {
+#if NF20
+            return method.Invoke(container, args);
+#else
             ParameterInfo[] pi = method.GetParameters();
             var keys = pi.Select(m => m.ParameterType.Name).ToArray();
             var name = $"D${type.FullName}.{method.Name}({string.Join(",", keys)})";
@@ -673,9 +726,10 @@ namespace JinianNet.JNTemplate.Dynamic
                 values[0] = container;
             }
             return action?.DynamicInvoke(values);
+#endif
         }
 
-#region ToIEnumerable
+        #region ToIEnumerable
         /// <summary>
         ///  Returns an enumerable that iterates through the object.
         /// </summary>
@@ -725,6 +779,6 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
 
         }
-#endregion
+        #endregion
     }
 }
