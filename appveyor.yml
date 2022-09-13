@@ -3,7 +3,6 @@ image:
   - Visual Studio 2022
   - Ubuntu
 build:
-build:
   project: JinianNet.JNTemplate.sln
   verbosity: minimal
 configuration: Release
