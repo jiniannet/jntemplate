@@ -86,7 +86,7 @@ $end
             {
                 Url = "jiniannet.com"
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("jiniannet.com", render);
         }
 
@@ -104,7 +104,7 @@ $end
                 Title = "jiniannet.com",
                 Type = DemoType.Yes
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("Yes", render);
         }
 
@@ -117,7 +117,7 @@ $end
             var templateContent = "${TagsTests.Value}";
             var template = Engine.CreateTemplate(templateContent);
             template.SetStaticType("TagsTests", typeof(TagsTests));
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("8888", render);
         }
 
@@ -132,7 +132,7 @@ $end
             var templateContent = "$Plat";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("Plat", PlatformID.Win32NT);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("Win32NT", render);
         }
 
@@ -145,7 +145,7 @@ $end
             var templateContent = "$set(aGroupName = \"Begin\"+value)$aGroupName";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("value", 30);
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal("Begin30", render);
         }
@@ -161,7 +161,7 @@ $end
             var templateContent = "$date.Year.ToString().Length";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("date", DateTime.Now);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("4", render);
         }
 
@@ -174,7 +174,7 @@ $end
             var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("name", "jntemplate");
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("你好,欢迎使用", render);
         }
 
@@ -187,7 +187,7 @@ $end
             var templateContent = @"$foreach(l in LinksList(true))$set(i=0)$set(i=i+1)${i}$end";
             var template = Engine.CreateTemplate(templateContent);
             template.Set<Func<bool, string[]>>("LinksList", (x) => new string[] { "1", "2", "3", "4" });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("1111", render);
         }
 
@@ -200,7 +200,7 @@ $end
             var templateContent = @"$set(i=0)$foreach(l in LinksList(true))$set(i=i+1)${i}$end${i}";
             var template = Engine.CreateTemplate(templateContent);
             template.Set<Func<bool, string[]>>("LinksList", (x) => new string[] { "1", "2", "3", "4" });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("12344", render);
         }
 
@@ -288,7 +288,7 @@ $end
         //    var templateContent = "$fun.TestParams(\"字符串\",1,true)";
         //    var template = Engine.CreateTemplate(templateContent);
         //    template.Set("fun"]=( new TemplateMethod());
-        //    var render = template.Render();;
+        //    var render = template.Render();
         //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         //}
 
@@ -301,7 +301,7 @@ $end
         //    var templateContent = "$fun.TestParams2(\"您输入的参数是有：\",\"字符串\",1,true)";
         //    var template = Engine.CreateTemplate(templateContent);
         //    template.Set("fun"]=( new TemplateMethod());
-        //    var render = template.Render();;
+        //    var render = template.Render();
         //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         //}
 
@@ -316,7 +316,7 @@ $end
             var templateContent = "($a)人";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("a", "1");
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal("(1)人", render);
         }
@@ -329,7 +329,7 @@ $end
         {
             var templateContent = "$set(str=\"3845254\\\\\\\"3366845\\\\\")$str";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("3845254\\\"3366845\\", render);
 
         }
@@ -342,7 +342,7 @@ $end
         {
             var templateContent = "var ${\"$\"}a =34;";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("var $a =34;", render);
         }
 
@@ -372,7 +372,7 @@ $end
             }
             var template = Engine.LoadTemplate(fileName);
             template.Set("name", "jntemplate");
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
         }
 
@@ -385,7 +385,7 @@ $end
         {
             var templateContent = "${12}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("12", render);
 
         }
@@ -399,7 +399,7 @@ $end
             var templateContent = "$data";
             var template = Engine.CreateTemplate("TestListOfTOutput",templateContent);
             template.Set("data", new List<object>());
-            var render = template.Render();;
+            var render = template.Render();
             Assert.StartsWith("System.Collections.Generic.List`1", render);
         }
 
@@ -416,7 +416,7 @@ $end
                 Name = "user",
                 Id = 48
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("48", render);
 
         }
@@ -468,7 +468,7 @@ $end";
             var template = Engine.CreateTemplate(templateContent);
             var render = template.Render();
 
-            Assert.Equal("70206", render.Replace("\r\n","").TrimEnd());
+            Assert.Equal("70206", render.Replace("\r","").Replace("\n","").TrimEnd());
         }
 
 
@@ -480,7 +480,7 @@ $end";
         {
             var templateContent = @"replace(/\n/g,<br>);";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal(templateContent, render);
         }
@@ -494,7 +494,7 @@ $end";
         //    var templateContent  = "$date.Year";
         //    var template = Engine.CreateTemplate(templateContent);
         //    template.Set("date"]=(DateTime.Now);
-        //    var render = template.Render();;
+        //    var render = template.Render();
         //    Assert.Equal(DateTime.Now.Year.ToString(), render);
         //}
     }

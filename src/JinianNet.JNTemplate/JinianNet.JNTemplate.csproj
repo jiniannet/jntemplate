@@ -6,7 +6,7 @@
     <RootNamespace>JinianNet.JNTemplate</RootNamespace>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.3.1-beta1</Version>
+    <Version>2.3.1</Version>
     <Authors>JinianNet.com</Authors>
     <Company>JinianNet.com</Company>
     <Product>JNTemplate</Product>
@@ -25,8 +25,8 @@
     <PostBuildEvent></PostBuildEvent>
     <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <FileVersion>2.3.1.0</FileVersion>
-    <AssemblyVersion>2.3.1.0</AssemblyVersion>
+    <FileVersion>2.3.1.2</FileVersion>
+    <AssemblyVersion>2.3.1.2</AssemblyVersion>
     <DelaySign>false</DelaySign> 
   </PropertyGroup>
 
@@ -94,8 +94,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'"> 
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

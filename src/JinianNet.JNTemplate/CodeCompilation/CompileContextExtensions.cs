@@ -316,13 +316,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 #if !NF40 && !NF45 && !NF35 && !NF20
             CompileRenderTask(ctx, baseType, methods);
 #endif
-            Type type =
-#if NETSTANDARD2_0
-            ctx.TypeBuilder.AsType();
-#else
-            ctx.TypeBuilder.CreateType();
-#endif
-
+            Type type = ObjectBuilder.BuildType(ctx.TypeBuilder);
             if (type == null)
             {
                 return null;

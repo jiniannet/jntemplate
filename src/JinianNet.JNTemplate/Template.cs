@@ -78,7 +78,6 @@ namespace JinianNet.JNTemplate
             return templateResult;
         }
 
-
 #if !NF40 && !NF45 && !NF35 && !NF20
         /// <inheritdoc />
         public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)

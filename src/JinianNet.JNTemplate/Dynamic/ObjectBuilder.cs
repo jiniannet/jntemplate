@@ -158,12 +158,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 ImplementationProperty(p.PropertyType, typeBuilder, p.Name);
             }
-            return
-#if NETSTANDARD2_0
-            typeBuilder.AsType();
-#else
-            typeBuilder.CreateType();
-#endif
+            return BuildType(typeBuilder);
         }
 
         /// <summary>
@@ -245,6 +240,25 @@ namespace JinianNet.JNTemplate.Dynamic
         }
 
 
+
+        /// <summary>
+        /// Gets a type object that represents this type.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns>An object that represents this type.</returns>
+        public static Type BuildType(TypeBuilder builder)
+        {
+#if NETSTANDARD2_0
+            var typeInfo = builder.CreateTypeInfo();
+            if (typeInfo == null)
+                return null;
+            return typeInfo.AsType();
+#else
+            return builder.CreateType();
+#endif
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -258,13 +272,7 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 ImplementationProperty(f.Value, typeBuilder, f.Key);
             }
-            var type =
-#if NETSTANDARD2_0
-            typeBuilder.AsType();
-#else
-            typeBuilder.CreateType();
-#endif
-            return type;
+            return BuildType(typeBuilder);
         }
 
         /// <summary>

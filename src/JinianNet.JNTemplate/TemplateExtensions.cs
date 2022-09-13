@@ -34,15 +34,28 @@ namespace JinianNet.JNTemplate
 
             return document;
         }
+
         /// <summary>
         /// Set a new value for variables.
         /// </summary>
         /// <param name="template">The <see cref="ITemplate"/>.</param>
         /// <param name="key">The key of the element to get</param> 
         /// <param name="value">The element with the specified key.</param>
-        public static void Set<T>(this ITemplate template, string key, T value)
+        /// <param name="type">The type with the specified key.</param>
+        public static void Set(this ITemplate template, string key, object value, Type type)
         {
-            template.Context.TempData.Set<T>(key, value);
+            template.Context.TempData.Set(key, value, type ?? value?.GetType());
+        }
+
+        /// <summary>
+        /// Set a new value for variables.
+        /// </summary>
+        /// <param name="template">The <see cref="ITemplate"/>.</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
+        public static void Set<T>(ITemplate template, string key, T value)
+        {
+            template.Set<T>(key, value);
         }
 
         /// <summary>
@@ -60,6 +73,15 @@ namespace JinianNet.JNTemplate
             template.Context.TempData.Set(key, null, type);
         }
 
+        /// <summary>
+        /// Set a static type for variables.
+        /// </summary>
+        /// <param name="template">The <see cref="ITemplate"/>.</param> 
+        /// <param name="type">The type with the specified key.</param>
+        public static void SetStaticType(this ITemplate template, Type type)
+        {
+            template.Context.TempData.Set(type.Name, null, type);
+        }
 
         /// <summary>
         /// Set a anonymous object for variables.

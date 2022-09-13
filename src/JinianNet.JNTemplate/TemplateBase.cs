@@ -21,5 +21,16 @@ namespace JinianNet.JNTemplate
         /// Gets or sets the context of the template.
         /// </summary>
         public TemplateContext Context { get; set; }
+
+
+        /// <summary>
+        /// Set a new value for variables.
+        /// </summary>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
+        public void Set<T>(string key, T value)
+        {
+            this.Context.TempData.Set<T>(key, value);
+        }
     }
 }

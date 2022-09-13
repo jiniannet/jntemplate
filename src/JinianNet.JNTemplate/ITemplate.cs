@@ -35,6 +35,14 @@ namespace JinianNet.JNTemplate
         /// </summary>
         bool EnableCompile { get; }
 
+
+        /// <summary>
+        /// Set a new value for variables.
+        /// </summary>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
+        void Set<T>(string key, T value);
+
 #if !NF40 && !NF45 && !NF35 && !NF20
         /// <summary>
         /// Performs the render for a template.
