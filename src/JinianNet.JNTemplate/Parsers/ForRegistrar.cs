@@ -207,7 +207,7 @@ namespace JinianNet.JNTemplate.Parsers
                         cm = typeof(Utility).GetMethodInfo("ToBoolean", new Type[] { typeof(object) });
                         if (m.ReturnType.IsValueType)
                         {
-                            il.Emit(OpCodes.Box, typeof(object));
+                            il.Emit(OpCodes.Box, m.ReturnType);
                         }
                         else
                         {

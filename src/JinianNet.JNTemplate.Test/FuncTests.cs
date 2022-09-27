@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Test
                 return $"您输入的参数：{a}，{b}，{c}";
             });
 
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal("您输入的参数：字符串，1，True", render);
         }
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$fun.Test(\"字符串\",1,true)";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("fun", new TemplateMethod());
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("您输入的参数是有：字符串 1 True ", render);
         }
 
@@ -51,7 +51,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$fun.TestNullable(70206)";
             var template = Engine.CreateTemplate(templateContent);
             template.Set("fun", new TemplateMethod());
-            var render = template.Render(); ;
+            var render = template.Render();
             Assert.Equal("input:70206", render);
         }
 
@@ -88,7 +88,7 @@ namespace JinianNet.JNTemplate.Test
                 var r = x + y;
                 return r.ToString();
             });
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal("6", render);
         }
@@ -106,7 +106,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return id.ToString();
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("15", render);
         }
 
@@ -130,7 +130,7 @@ namespace JinianNet.JNTemplate.Test
                     Sort = 1
                 }
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("1", render);
         }
 
@@ -147,7 +147,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return "input:" + text;
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("input:test data", render);
         }
 
@@ -163,7 +163,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 return "input:" + text + " id:" + id;
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("input:test data id:9527", render);
         }
 
@@ -179,7 +179,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 Console.WriteLine("你输入了:" + text);
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("", render);
 
         }
@@ -193,7 +193,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${string.Concat(\"str1\",\"str2\")}";
             var template = Engine.CreateTemplate(templateContent);
             template.SetStaticType("string", typeof(string));
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("str1str2", render);
         }
 
@@ -210,7 +210,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 PropertyFunc = (i) => (i * 2).ToString()
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("200", render);
         }
 
@@ -227,7 +227,7 @@ namespace JinianNet.JNTemplate.Test
             {
                 FieldFunc = (i) => (i * 2).ToString()
             });
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("200", render);
         }
 
@@ -241,8 +241,94 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "${calc(84+2,53)}";
             var template = Engine.CreateTemplate(templateContent);
             template.Set<Func<int, int, int>>("calc", (x, y) => x - y);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("33", render);
+        }
+
+        /// <summary>
+        /// 类型转换 字符串转OBJECT，引用类型之间转换， 
+        /// </summary>
+        [Fact]
+        public void TestFuncStringToObject()
+        {
+            var templateContent = "${toValue(title)}";
+            var template = Engine.CreateTemplate(Guid.NewGuid().ToString(), templateContent);
+            template.Set<string>("title", "jntemplate");
+            template.Set<Func<object, string>>("toValue", o => o?.ToString() + "!");
+            var render = template.Render();
+            Assert.Equal("jntemplate!", render);
+        }
+
+        /// <summary>
+        /// 类型转换 OBJECT转字符串，引用类型之间转换， 
+        /// </summary>
+        [Fact]
+        public void TestFuncObjectTString()
+        {
+            var templateContent = "${toValue(obj)}";
+            var template = Engine.CreateTemplate(Guid.NewGuid().ToString(), templateContent);
+            template.Set("obj", new  Object());
+            template.Set<Func<string, string>>("toValue", o => o);
+            var render = template.Render();
+            Assert.Equal("System.Object", render);
+        }
+
+
+        /// <summary>
+        /// 类型转换 INT转OBJ，装箱， 
+        /// </summary>
+        [Fact]
+        public void TestFuncIntToObject()
+        {
+            var templateContent = "${toValue(70)}";
+            var template = Engine.CreateTemplate(Guid.NewGuid().ToString(), templateContent);
+            template.Set<Func<object, int>>("toValue", (x) => (int)x);
+            var render = template.Render();
+            Assert.Equal("70", render);
+        }
+
+
+
+        /// <summary>
+        /// 类型转换 Bool转OBJ，装箱， 
+        /// </summary>
+        [Fact]
+        public void TestFuncBoolToObject()
+        {
+            var templateContent = "${toValue(true)}";
+            var template = Engine.CreateTemplate(Guid.NewGuid().ToString(), templateContent);
+            template.Set<Func<object, bool>>("toValue", (x) => (bool)x);
+            var render = template.Render();
+            Assert.Equal("True", render);
+        }
+
+
+        /// <summary>
+        /// 类型转换 INT转DEC，值类型之间转换
+        /// </summary>
+        [Fact]
+        public void TestFuncIntToDecimal()
+        {
+            var templateContent = "${toValue(86)}";
+            var template = Engine.CreateTemplate(Guid.NewGuid().ToString(), templateContent);
+            template.Set<Func<decimal, string>>("toValue", (x) => x.ToString("#0.00"));
+            var render = template.Render();
+            Assert.Equal("86.00", render);
+        }
+
+
+        /// <summary>
+        /// 类型转换  Decimal转Int，值类型之间转换
+        /// </summary>
+        [Fact]
+        public void TestFuncDecimalToInt()
+        {
+            var templateContent = "${toValue(var)}";
+            var template = Engine.CreateTemplate(Guid.NewGuid().ToString(), templateContent);
+            template.Set<Decimal>("var", new decimal(86.86));
+            template.Set<Func<int, string>>("toValue", (x) => x.ToString());
+            var render = template.Render();
+            Assert.Equal("86", render);
         }
     }
 }
