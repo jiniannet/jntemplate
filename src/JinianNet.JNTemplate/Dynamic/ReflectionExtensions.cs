@@ -133,7 +133,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetMethodInfos(this Type type, string name)
         {
-            IEnumerable<MethodInfo> ms = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            IEnumerable<MethodInfo> ms = GetMethodInfos(type);
             List<MethodInfo> result = new List<MethodInfo>();
             foreach (MethodInfo m in ms)
             {
@@ -145,6 +145,36 @@ namespace JinianNet.JNTemplate.Dynamic
             return result.ToArray();
         }
 
+        private static MethodInfo[] GetMethodInfos(this Type type)
+        {
+            return type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static MethodInfo GetExplicitOrImplicit(Type source, Type target)
+        {
+            var ms = GetMethodInfos(source);
+            foreach (MethodInfo m in ms)
+            {
+                if (m.Name.Equals("op_Explicit", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("op_Implicit", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (m.ReturnType == target)
+                    {
+                        var ps = m.GetParameters();
+                        if (ps.Length == 1 && ps[0].ParameterType == source)
+                        {
+                            return m;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
 
         /// <summary>
         /// Searches for the public or private method with the specified name.

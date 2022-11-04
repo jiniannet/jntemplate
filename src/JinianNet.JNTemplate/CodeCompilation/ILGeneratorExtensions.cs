@@ -393,9 +393,27 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="target"></param>
         public static void ConvertTo(this ILGenerator il, Type source, Type target)
         {
+            var op = Dynamic.ReflectionExtensions.GetExplicitOrImplicit(source, target);
+            if (op != null)
+            {
+                il.Emit(OpCodes.Call, op);
+            }
+            else
+            {
+                ObviousConvertTo(il, source, target);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="il"></param>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public static void ObviousConvertTo(this ILGenerator il, Type source, Type target)
+        {
             switch (target.FullName)
             {
-
                 case "System.Decimal":
                     switch (source.FullName)
                     {
@@ -405,7 +423,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                             il.Emit(OpCodes.Conv_I4);
                             break;
                     }
-                    il.Emit(OpCodes.Call, typeof(decimal).GetConstructor(new Type[] { source }));
+                    il.Emit(OpCodes.Newobj, typeof(decimal).GetConstructor(new Type[] { source }));
                     break;
                 case "System.Double":
                     il.Emit(OpCodes.Conv_R8);
@@ -452,7 +470,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                         }
                         else
                         {
-                            il.Emit(OpCodes.Box, target);
+                            il.Emit(OpCodes.Box, source);
                         }
                     }
                     else
