@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 #define NEEDFIELD
+//#define USEEXPRESSION
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -118,7 +119,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetCacheMethods(this Type type, string name)
         {
-            var cacheKey = $"MS${type.FullName}.{name}";
+            var cacheKey = $"MS${type.GetHashCode()}.{name}";
             return (MethodInfo[])dict.GetOrAdd(cacheKey, (key) =>
             {
                 return GetMethodInfos(type, name);
@@ -464,7 +465,7 @@ namespace JinianNet.JNTemplate.Dynamic
         public static object CallPropertyOrField(this object container, string name, Type type = null)
         {
             type = type ?? container.GetType();
-#if NF20
+#if NF20 || !USEEXPRESSION
             if (!char.IsDigit(name[0]))
             {
                 PropertyInfo p = type.GetPropertyInfo(name);
@@ -481,7 +482,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             return null;
 #else
-            var key = $"PI${type.FullName}.{name}";
+            var key = $"PI${type.GetHashCode()}.{name}";
             var method = (Delegate)dict.GetOrAdd(key, (cacheKey) =>
             {
                 try
@@ -557,12 +558,20 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns>The result of execution.</returns>
         public static object CallMethod(this Type type, object container, string name, object[] args)
         {
-            Type[] types = args.Select(m => m?.GetType()).ToArray();
+            Type[] types;
+            if (args != null)
+            {
+                types = args.Select(m => m?.GetType()).ToArray();
+            }
+            else
+            {
+                types = new Type[0];
+            }
             MethodInfo method = GetMethodInfo(type, name, types);
 
             if (method != null)
             {
-#if NF20
+#if NF20 || !USEEXPRESSION
                 bool hasNullValue = false;
                 for (int i = 0; i < args.Length; i++)
                 {
@@ -710,12 +719,12 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static object Call(this Type type, MethodInfo method, object container, object[] args)
         {
-#if NF20
+#if NF20 || !USEEXPRESSION
             return method.Invoke(container, args);
 #else
             ParameterInfo[] pi = method.GetParameters();
-            var keys = pi.Select(m => m.ParameterType.Name).ToArray();
-            var name = $"D${type.FullName}.{method.Name}({string.Join(",", keys)})";
+            var keys = pi.Select(m => m.ParameterType.GetHashCode()).ToArray();
+            var name = $"D${type.GetHashCode()}.{method.Name}({string.Join(",", keys)})";
 
             var action = (Delegate)dict.GetOrAdd(name, (cacheKey) =>
             {

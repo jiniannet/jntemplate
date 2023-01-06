@@ -98,8 +98,7 @@ namespace JinianNet.JNTemplate.Hosting
                 if (environment.Options.Data != null && environment.Options.Data.Count > 0)
                 {
                     vs.Parent = environment.Options.Data;
-                }
-                vs.DetectPattern = environment.Options.TypeDetectPattern;
+                } 
             }
             return vs;
         }
@@ -115,8 +114,7 @@ namespace JinianNet.JNTemplate.Hosting
             var vs = environment?.ScopeProvider?.CreateScope();
             if (vs != null)
             {
-                vs.Parent = parent;
-                vs.DetectPattern = parent?.DetectPattern ?? environment.Options.TypeDetectPattern;
+                vs.Parent = parent; 
             }
             return vs;
         }

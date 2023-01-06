@@ -15,9 +15,6 @@ namespace JinianNet.JNTemplate
     {
         private IDictionary<string, VariableElement> dic;
 
-
-        /// <inheritdoc />
-        public TypeDetect DetectPattern { get; set; }
         /// <inheritdoc />
         public IVariableScope Parent { get; set; }
 
@@ -28,14 +25,13 @@ namespace JinianNet.JNTemplate
         public VariableScope(IVariableScope parent)
         {
             this.Parent = parent;
-            this.dic = new Dictionary<string, VariableElement>(StringComparer.OrdinalIgnoreCase);
-            this.DetectPattern = TypeDetect.Absolute;
+            this.dic = new Dictionary<string, VariableElement>(StringComparer.OrdinalIgnoreCase); 
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableScope"/> class
         /// </summary> 
-        public VariableScope() 
+        public VariableScope()
             : this(null)
         {
 
@@ -152,6 +148,7 @@ namespace JinianNet.JNTemplate
                 {
                     return val.Value.GetType();
                 }
+                return null;
             }
             if (Parent != null)
             {
@@ -164,19 +161,11 @@ namespace JinianNet.JNTemplate
         {
             Set(key, value, typeof(T));
         }
+
         /// <inheritdoc />
         public void Set(string key, object value, Type type)
         {
-            if (this.DetectPattern == TypeDetect.None
-            || (this.DetectPattern == TypeDetect.Standard && value != null)
-            || (this.DetectPattern == TypeDetect.Auto && value != null && value.GetType() == type))
-            {
-                SetElement(key, new VariableElement(null, value));
-            }
-            else
-            {
-                SetElement(key, new VariableElement(type, value));
-            }
+            SetElement(key, new VariableElement(type, value));
         }
 
         /// <inheritdoc />

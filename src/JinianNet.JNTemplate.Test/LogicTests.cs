@@ -422,5 +422,20 @@ namespace JinianNet.JNTemplate.Test
             var render = template.Render();;
             Assert.Equal("yes", render);
         }
+
+
+        /// <summary>
+        /// 测试 || 与 &&的组合
+        /// </summary>
+        [Fact]
+        public void TestIfOnes()
+        {
+            var templateContent = "$if(isCollecting)${collectingMoney}${end}";
+            var template = Engine.CreateTemplate(templateContent);
+            template.Set("isCollecting", true);
+            template.Set("collectingMoney", 88.8M);
+            var render = template.Render(); ;
+            Assert.Equal("88.8", render);
+        }
     }
 }

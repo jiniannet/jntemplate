@@ -66,7 +66,18 @@ namespace JinianNet.JNTemplate.Parsers
 
 
                     il.Emit(OpCodes.Ldloc_0);
-                    il.ObjectTo(type);
+                    if (type != typeof(object))
+                    {
+                        if (type.IsValueType)
+                        {
+                            il.Emit(OpCodes.Unbox_Any, type);
+                        }
+                        else
+                        {
+                            il.Emit(OpCodes.Castclass, type);
+                        }
+                    }
+                    //il.ObjectTo(type);
                     il.Emit(OpCodes.Stloc_1);
                     il.Emit(OpCodes.Br, labelEnd);
                 }
@@ -142,9 +153,36 @@ namespace JinianNet.JNTemplate.Parsers
                 il.MarkLabel(labelInit);
                 if (t.Parent == null)
                 {
-                    var defaultMethod = typeof(Utility).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
-                    il.Emit(OpCodes.Call, defaultMethod);
-                    il.Emit(OpCodes.Stloc, 1);
+                    if (type.IsClass)
+                    {
+                        il.Emit(OpCodes.Ldnull);
+                        il.Emit(OpCodes.Stloc, 1);
+                    }
+                    else
+                    {
+                        switch (type.Name)
+                        {
+                            case "Boolean":
+                            case "Int16":
+                            case "Int32":
+                                il.Emit(OpCodes.Ldc_I4, 0);
+                                break;
+                            case "Int64":
+                                il.Emit(OpCodes.Ldc_I8, 0L);
+                                break;
+                            case "Single":
+                                il.Emit(OpCodes.Ldc_R4, 0F);
+                                break;
+                            case "Double":
+                                il.Emit(OpCodes.Ldc_R8, 0D);
+                                break;
+                            default:
+                                var defaultMethod = typeof(Utility).GetGenericMethod(new Type[] { type }, "GenerateDefaultValue", Type.EmptyTypes);
+                                il.Emit(OpCodes.Call, defaultMethod);
+                                break;
+                        }
+                        il.Emit(OpCodes.Stloc, 1);
+                    }
                 }
                 il.MarkLabel(labelEnd);
                 il.Emit(OpCodes.Ldloc_1);

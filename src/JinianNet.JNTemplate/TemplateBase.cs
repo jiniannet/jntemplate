@@ -2,6 +2,7 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Dynamic;
 using System;
 using System.IO;
 
@@ -30,7 +31,7 @@ namespace JinianNet.JNTemplate
         /// <param name="value">The element with the specified key.</param>
         public void Set<T>(string key, T value)
         {
-            this.Context.TempData.Set<T>(key, value);
+            this.Context.Set(key, value, typeof(T));
         }
     }
 }

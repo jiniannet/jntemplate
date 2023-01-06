@@ -44,7 +44,7 @@ namespace JinianNet.JNTemplate
         /// <param name="type">The type with the specified key.</param>
         public static void Set(this ITemplate template, string key, object value, Type type)
         {
-            template.Context.TempData.Set(key, value, type ?? value?.GetType());
+            TemplateContextExtensions.Set(template.Context, key, value, type);
         }
 
         /// <summary>
@@ -66,6 +66,10 @@ namespace JinianNet.JNTemplate
         /// <param name="type">The type with the specified key.</param>
         public static void SetStaticType(this ITemplate template, string key, Type type)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
             if (string.IsNullOrEmpty(key))
             {
                 key = type.Name;
@@ -80,6 +84,10 @@ namespace JinianNet.JNTemplate
         /// <param name="type">The type with the specified key.</param>
         public static void SetStaticType(this ITemplate template, Type type)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
             template.Context.TempData.Set(type.Name, null, type);
         }
 
@@ -91,23 +99,17 @@ namespace JinianNet.JNTemplate
         /// <param name="value">The value with the specified key.</param>
         public static void SetAnonymousObject(this ITemplate template, string key, object value)
         {
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+
             if (template.EnableCompile)
             {
-                var anonymousType = value.GetType();
-                var type = ObjectBuilder.GetOrGenerateType(anonymousType);
-                var newObj = ObjectBuilder.FromAnonymousObject(value, type);
-                template.Context.TempData.Set(key, newObj, type);
+                TemplateContextExtensions.SetAnonymousObject(template.Context, key, value);
             }
             else
             {
+                if (string.IsNullOrEmpty(key))
+                {
+                    throw new ArgumentNullException(nameof(key));
+                }
                 template.Context.TempData.Set(key, value, null);
             }
         }
