@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text; 
+using System.Text;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
@@ -131,7 +131,7 @@ namespace JinianNet.JNTemplate.Parsers
             }
             var old = c.Data;
             var scope = c.CreateVariableScope(old);
-            c.Data = scope; 
+            c.Data = scope;
             c.Set(t.Name, childType[0]);
             c.Set("foreachIndex", typeof(int));
             var mb = c.CreateReutrnMethod<ForeachTag>(type);
@@ -172,7 +172,7 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 il.Emit(OpCodes.Call, typeof(Utility).GetGenericMethod(new Type[] { sourceType }, "ExcuteTask", null));
             }
-            if(sourceType == typeof(System.Data.DataTable))
+            if (sourceType == typeof(System.Data.DataTable))
             {
                 il.Emit(OpCodes.Callvirt, sourceType.GetPropertyGetMethod("Rows"));
             }
@@ -426,9 +426,9 @@ namespace JinianNet.JNTemplate.Parsers
                             while (ienum.MoveNext())
                             {
                                 i++;
-                                ctx.TempData.Set(t.Name, ienum.Current, ienum.Current == null ? typeof(object) : ienum.Current.GetType());
+                                ctx.TempData.Set(t.Name, ienum.Current, null);
                                 //为了兼容以前的用户 foreachIndex 保留
-                                ctx.TempData.Set("foreachIndex", i);
+                                ctx.TempData.Set("foreachIndex", i, null);
                                 for (int n = 0; n < t.Children.Count; n++)
                                 {
                                     object result = ctx.Execute(t.Children[n]);

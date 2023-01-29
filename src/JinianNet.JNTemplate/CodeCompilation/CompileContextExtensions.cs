@@ -216,28 +216,28 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         internal static Type GuessIfType(this CompileContext ctx, ElseifTag tag)
         {
-            var types = new List<Type>();
-            var hasVoid = false;
-            for (var i = 0; i < tag.Children.Count; i++)
-            {
-                var type = ctx.GuessType(tag.Children[i]);
-                if (type.FullName == "System.Void")
-                {
-                    hasVoid = true;
-                }
-                else
-                {
-                    types.Add(type);
-                }
-            }
-            if (types.Count == 1)
-            {
-                return types[0];
-            }
-            if (types.Count == 0 && hasVoid)
-            {
-                return typeof(void);
-            }
+            //var types = new List<Type>();
+            //var hasVoid = false;
+            //for (var i = 0; i < tag.Children.Count; i++)
+            //{
+            //    var type = ctx.GuessType(tag.Children[i]);
+            //    if (type.FullName == "System.Void")
+            //    {
+            //        hasVoid = true;
+            //    }
+            //    else
+            //    {
+            //        types.Add(type);
+            //    }
+            //}
+            //if (types.Count == 1)
+            //{
+            //    return types[0];
+            //}
+            //if (types.Count == 0 && hasVoid)
+            //{
+            //    return typeof(void);
+            //}
             return typeof(string);
         }
         #endregion

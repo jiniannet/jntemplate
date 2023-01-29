@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate.Test
         //    var template = Engine.CreateTemplate(templateContent);
         //    template.Set("UserId", 110);
         //    template.Set("helper", new TemplateMethod());
-        //    var render = template.Render();;
+        //    var render = template.Render();
         //    //false是布尔类型的默认值
         //    Assert.Equal("您输入的参数是有：你好 110 False ", render);
         //}
@@ -177,7 +177,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set<Action<string>>("action", (text) =>
             {
-                Console.WriteLine("你输入了:" + text);
+                Console.WriteLine("input:" + text);
             });
             var render = template.Render();
             Assert.Equal("", render);

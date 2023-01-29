@@ -76,6 +76,10 @@ namespace JinianNet.JNTemplate.Parsers
                 var type = c.GuessType(t);
                 var mb = c.CreateReutrnMethod<IndexValueTag>(type);
                 var il = mb.GetILGenerator();
+                if (t.Parent == null)
+                {
+                    throw new CompileException(tag, $"[IndexValutTag] : tag error on {t.ToSource()}.");
+                }
                 var parentType = c.GuessType(t.Parent);
                 bool toArray = false;
                 if (parentType.FullName == "System.String")

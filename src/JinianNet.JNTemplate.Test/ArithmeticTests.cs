@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${3000-1000--200-20}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("2180", render);
         }
 
@@ -48,7 +48,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"${10000 != 0 +  0 + 10000}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("False", render);
 
         }
@@ -62,7 +62,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"${10000 * 2 + 2 *  4 * 10 / 8 - 24 + 0 + 0 + 0 + 0 * 1 * 2 * 3 * 4}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal("19986", render);
 
@@ -75,7 +75,7 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = "${(8+2)*(5+5) - ((2+8)/2)}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("95", render);
         }
 

@@ -253,28 +253,29 @@ namespace JinianNet.JNTemplate.Parsers
         {
             return (tag, c) =>
             {
-                var t = tag as IfTag;
-                Type type = null;
-                for (var i = 0; i < t.Children.Count; i++)
-                {
-                    if (t.Children[i] is EndTag)
-                    {
-                        continue;
-                    }
-                    var cType = c.GuessType(t.Children[i]);
-                    if (type == null)
-                    {
-                        type = cType;
-                    }
-                    else
-                    {
-                        if (cType == null || type.FullName != cType.FullName)
-                        {
-                            return typeof(string);
-                        }
-                    }
-                }
-                return type;
+                //var t = tag as IfTag;
+                //Type type = null;
+                //for (var i = 0; i < t.Children.Count; i++)
+                //{
+                //    if (t.Children[i] is EndTag)
+                //    {
+                //        continue;
+                //    }
+                //    var cType = c.GuessType(t.Children[i]);
+                //    if (type == null)
+                //    {
+                //        type = cType;
+                //    }
+                //    else
+                //    {
+                //        if (cType == null || type.FullName != cType.FullName)
+                //        {
+                //            return typeof(string);
+                //        }
+                //    }
+                //}
+                //return type;
+                return typeof(string);
             };
         }
         /// <inheritdoc />

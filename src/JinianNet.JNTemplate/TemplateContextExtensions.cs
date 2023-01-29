@@ -5,7 +5,7 @@
 using System;
 using System.Threading;
 using JinianNet.JNTemplate.Hosting;
-using JinianNet.JNTemplate.Dynamic; 
+using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
@@ -440,6 +440,87 @@ namespace JinianNet.JNTemplate
         {
             var func = ctx.ExecutorBuilder.Build(tag);
             return func(tag, ctx);
+        }
+
+
+
+        /// <summary>
+        /// Set a anonymous object for variables.
+        /// </summary>
+        /// <param name="c">The <see cref="TemplateContext"/>.</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The value with the specified key.</param> 
+        public static void SetAnonymousObject(this TemplateContext c, string key, object value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+            SetAnonymousObject(c, key, value, value.GetType());
+        }
+
+        /// <summary>
+        /// Set a anonymous object for variables.
+        /// </summary>
+        /// <param name="c">The <see cref="TemplateContext"/>.</param>
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The value with the specified key.</param>
+        /// <param name="anonymousType">The <see cref="Type"/>.</param>
+        public static void SetAnonymousObject(this TemplateContext c, string key, object value, Type anonymousType)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            var type = ObjectBuilder.GetOrGenerateType(anonymousType);
+            if (value != null)
+            {
+                value = ObjectBuilder.FromAnonymousObject(value, type);
+            }
+            c.TempData.Set(key, value, type);
+        }
+
+
+        /// <summary>
+        /// Set a new value for variables.
+        /// </summary>
+        /// <param name="ctx">The <see cref="TemplateContext"/>.</param> 
+        /// <param name="key">The key of the element to get</param> 
+        /// <param name="value">The element with the specified key.</param>
+        /// <param name="type">The type with the specified key.</param>
+        public static void Set(this TemplateContext ctx, string key, object value, Type type)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            if (ctx.Mode == EngineMode.Compiled)
+            {
+                type = type ?? value?.GetType();
+                if (type != null && !type.IsVisible)
+                {
+                    if (!type.Name.Contains("AnonymousType"))
+                    {
+                        throw new ArgumentException($"The type \"{type.FullName}\" is not accessible");
+                    }
+                    TemplateContextExtensions.SetAnonymousObject(ctx, key, value, type);
+                }
+                else
+                {
+                    ctx.TempData.Set(key, value, type);
+                }
+            }
+            else
+            {
+                if (value == null)
+                {
+                    ctx.TempData.Set(key, value, type);
+                }
+                else
+                {
+                    ctx.TempData.Set(key, value, null);
+                }
+            }
         }
 
         /// <summary>

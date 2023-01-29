@@ -136,7 +136,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static Type GetOrGenerateType(Type baseType)
         {
-            var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{baseType.FullName}";
+            var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{baseType.GetHashCode()}";
             return dict.GetOrAdd(typeName, key =>
             {
                 return GenerateTypeFrom(baseType);

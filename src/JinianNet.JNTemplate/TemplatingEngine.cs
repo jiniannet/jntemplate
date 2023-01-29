@@ -219,21 +219,57 @@ namespace JinianNet.JNTemplate
             }
             if (data is System.Collections.IDictionary dict)
             {
-                return Parse(name, reader, ctx =>
-                {
-                    var keys = dict.Keys;
-                    foreach (var key in keys)
-                    {
-                        if (key == null)
-                        {
-                            continue;
-                        }
-                        var value = dict[key];
-                        ctx.TempData.Set(key.ToString(), value, value?.GetType() ?? typeof(object));
-                    }
-                });
+                return ParseDictionary(name, reader, dict);
             }
-            return Parse(name, reader, ctx => ctx.TempData.Set<T>("Model", data));
+            var t = data.GetType();
+            if (t.IsNotPublic && t.Name.Contains("Anonymous"))
+                return ParseAnonymous(name, reader, t, data);
+
+            string key;
+            if (!t.IsArray && !t.IsEnum)
+                key = t.Name;
+            else
+                key = "Model";
+            return Parse(name, reader, ctx => ctx.Set(key, data, typeof(T)));
+        }
+        private string ParseAnonymous(string name, IReader reader, Type type, object data)
+        {
+            var ps = type.GetProperties();
+            var fs = type.GetFields();
+
+            return Parse(name, reader, ctx =>
+            {
+                foreach (var f in fs)
+                    ctx.Set(f.Name, f.GetValue(data), f.FieldType);
+                foreach (var p in ps)
+                    ctx.Set(p.Name, p.GetValue(data, null), p.PropertyType);
+            });
+        }
+        private string ParseDictionary(string name, IReader reader, System.Collections.IDictionary dict)
+        {
+            var type = dict.GetType();
+            Type defaultType;
+            if (type.IsGenericType && type.GetGenericArguments().Length == 2)
+            {
+                defaultType = type.GetGenericArguments()[1];
+            }
+            else
+            {
+                defaultType = typeof(object);
+            }
+            return Parse(name, reader, ctx =>
+            {
+                var keys = dict.Keys;
+                foreach (var key in keys)
+                {
+                    if (key == null)
+                    {
+                        continue;
+                    }
+                    var value = dict[key];
+                    ctx.Set(key.ToString(), value, value?.GetType() ?? defaultType);
+                }
+            });
         }
 
         /// <inheritdoc />
@@ -381,9 +417,9 @@ namespace JinianNet.JNTemplate
             HostEnvironment.ScopeProvider = provider;
             var data = provider.CreateScope();
             var original = HostEnvironment.Options.Data;
-            foreach (KeyValuePair<string, object> kv in data)
+            foreach (KeyValuePair<string, object> kv in original)
             {
-                data.Set(kv.Key, kv.Value, data.GetType(kv.Key));
+                data.Set(kv.Key, kv.Value, original.GetType(kv.Key));
             }
 
             return this;

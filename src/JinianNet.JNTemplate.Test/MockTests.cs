@@ -27,7 +27,7 @@ namespace JinianNet.JNTemplate.Test
             var template = engine.CreateTemplate("<li>1</li><li>$model.id</li><li>3</li>");
             template.Set("model",new object());
             var result = "<li>1</li><li></li><li>3</li>";
-            var html = template.Render();;
+            var html = template.Render();
             Assert.Equal(result, html);
         }
 
@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.LoadTemplate("TestMockPage", path);
             template.Context.OutMode = OutMode.Auto;
             FillData(template);
-            var result = template.Render();;
+            var result = template.Render();
             //将生成的文件放到result目录下可以查看实际生成效果
             //File.WriteAllText(string.Join(Path.DirectorySeparatorChar, new string[] { Environment.CurrentDirectory, "templets", "default", $"result_{Guid.NewGuid()}.html" }), result);
             Assert.Equal(result.Replace("\r", "").Replace("\t", "").Replace("\n", "").Replace(" ", ""), RESULT);

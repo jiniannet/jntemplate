@@ -16,11 +16,6 @@ namespace JinianNet.JNTemplate
     {
 
         /// <summary>
-        /// Gets or sets the  detect patterns.
-        /// </summary>
-        TypeDetect DetectPattern { get; set; }
-
-        /// <summary>
         /// Removes all items from the <see cref="IVariableScope"/>.
         /// </summary>
         /// <param name="all">is removes all</param>
