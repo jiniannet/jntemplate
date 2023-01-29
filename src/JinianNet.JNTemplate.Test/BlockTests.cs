@@ -23,7 +23,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestLoadParent",templateContent);
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets"; 
 
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("this is public", render);
         }
 
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate("TestLoadVar", templateContent);
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets";
             template.Set("path", $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}public.html");
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("this is public", render);
         }
 
@@ -52,7 +52,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("name","jntemplate");
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}default";
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("你好，$name", render);
         }
 
@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("path", "include/header.txt");
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}default";
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("你好，$name", render);
         }
 
@@ -81,7 +81,7 @@ namespace JinianNet.JNTemplate.Test
             var template = Engine.CreateTemplate(templateContent);
             template.Set("name","jntemplate");
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}default";
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
         }
 
@@ -95,7 +95,7 @@ namespace JinianNet.JNTemplate.Test
             var templateContent = "$layout(\"include/layout.txt\")<h1>主体内容<h1>";
             var template = Engine.CreateTemplate(templateContent);
             template.Context.CurrentPath = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}templets{Path.DirectorySeparatorChar}default";
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("这是LAYOUT头部<h1>主体内容<h1>这是LAYOUT尾部", render);
         }
 
@@ -115,7 +115,7 @@ namespace JinianNet.JNTemplate.Test
                 });
             var template = Engine.LoadTemplate(path); 
             template.Set("name", "jntemplate");
-            var render = template.Render();;
+            var render = template.Render();
             Assert.Equal("你好，jntemplate", render);
         }
     }

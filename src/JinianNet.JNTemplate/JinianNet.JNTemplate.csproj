@@ -1,110 +1,117 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net20;net35;net40;net45;net46;net5.0;net6.0</TargetFrameworks>
-    <AssemblyName>JinianNet.JNTemplate</AssemblyName>
-    <RootNamespace>JinianNet.JNTemplate</RootNamespace>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.3.2</Version>
-    <Authors>JinianNet.com</Authors>
-    <Company>JinianNet.com</Company>
-    <Product>JNTemplate</Product>
-    <Description>Open source templating engine for .net!</Description>
-    <Copyright>© JinianNet.com. All rights reserved.</Copyright>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageLicense>https://github.com/jiniannet/jntemplate/blob/master/License.txt</PackageLicense>
-    <PackageProjectUrl>http://www.jiniannet.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/jiniannet/jntemplate.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>templating engine template 模板引擎</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <NeutralLanguage />
-    <SignAssembly>False</SignAssembly>
-    <PreBuildEvent></PreBuildEvent>
-    <PostBuildEvent></PostBuildEvent>
-    <AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <FileVersion>2.3.3.0</FileVersion>
-    <AssemblyVersion>2.3.3.0</AssemblyVersion>
-    <DelaySign>false</DelaySign> 
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net20;net35;net40;net45;net46;net5.0;net6.0;net7.0</TargetFrameworks>
+		<AssemblyName>JinianNet.JNTemplate</AssemblyName>
+		<RootNamespace>JinianNet.JNTemplate</RootNamespace>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>2.3.3</Version>
+		<Authors>JinianNet.com</Authors>
+		<Company>JinianNet.com</Company>
+		<Product>JNTemplate</Product>
+		<Description>Open source templating engine for .net!</Description>
+		<Copyright>© JinianNet.com. All rights reserved.</Copyright>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicense>https://github.com/jiniannet/jntemplate/blob/master/License.txt</PackageLicense>
+		<PackageProjectUrl>http://www.jiniannet.com/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/jiniannet/jntemplate.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>templating engine template 模板引擎</PackageTags>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<NeutralLanguage />
+		<SignAssembly>False</SignAssembly>
+		<PreBuildEvent></PreBuildEvent>
+		<PostBuildEvent></PostBuildEvent>
+		<AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
+		<PackageLicenseFile>License.txt</PackageLicenseFile>
+		<FileVersion>2.3.3.0</FileVersion>
+		<AssemblyVersion>2.3.3.0</AssemblyVersion>
+		<DelaySign>false</DelaySign>
+	</PropertyGroup>
 
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.0'">bin\Debug\netstandard2.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.1'">bin\Debug\netstandard2.1\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Debug\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Debug\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Debug\net20\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net35'">bin\Debug\net35\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Debug\net40\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Debug\net45\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Debug\net46\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Debug\net47\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Debug\net48\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Debug\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Debug\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <TreatSpecificWarningsAsErrors />
-    <NoWarn>1701;1702;1705</NoWarn>
-    <Optimize>True</Optimize>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;DEBUG;NFW;NF20</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;DEBUG;NFW;NF35</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;DEBUG;NFW;NF40</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;DEBUG;NFW;NF45</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NFW;NF46</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NFW;NF47</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;DEBUG;NFW;NF48</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NET5;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;DEBUG;NET6;NET</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.0'">bin\Debug\netstandard2.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.1'">bin\Debug\netstandard2.1\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Debug\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Debug\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Debug\net20\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net35'">bin\Debug\net35\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Debug\net40\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Debug\net45\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Debug\net46\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Debug\net47\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Debug\net48\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Debug\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Debug\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net7.0'">bin\Debug\net7.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">bin\Debug\net8.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<TreatSpecificWarningsAsErrors />
+		<NoWarn>1701;1702;1705</NoWarn>
+		<Optimize>True</Optimize>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;DEBUG;NFW;NF20</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;DEBUG;NFW;NF35</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;DEBUG;NFW;NF40</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;DEBUG;NFW;NF45</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NFW;NF46</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NFW;NF47</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;DEBUG;NFW;NF48</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NET5;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;DEBUG;NET6;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;DEBUG;NET7;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.0'">bin\Release\netstandard2.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.1'">bin\Release\netstandard2.1\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Release\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Release\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Release\net20\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net35'">bin\Release\net35\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Release\net40\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Release\net45\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Release\net46\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Release\net47\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Release\net48\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Release\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Release\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;RELEASE;NFW;NF20</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;RELEASE;NFW;NF35</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;RELEASE;NFW;NF40</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;RELEASE;NFW;NF45</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NFW;NF46</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NFW;NF47</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;RELEASE;NFW;NF48</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;RELEASE;NET5;NET</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;RELEASE;NET6;NET</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.0'">bin\Release\netstandard2.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netstandard2.1'">bin\Release\netstandard2.1\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp2.1'">bin\Release\netcoreapp2.1\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'netcoreapp3.1'">bin\Release\netcoreapp3.1\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net20'">bin\Release\net20\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net35'">bin\Release\net35\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net40'">bin\Release\net40\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net45'">bin\Release\net45\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net46'">bin\Release\net46\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net47'">bin\Release\net47\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net48'">bin\Release\net48\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net5.0'">bin\Release\net5.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Release\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net7.0'">bin\Release\net7.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">bin\Release\net8.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;RELEASE;NFW;NF20</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;RELEASE;NFW;NF35</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;RELEASE;NFW;NF40</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net45'">TRACE;RELEASE;NFW;NF45</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NFW;NF46</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NFW;NF47</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;RELEASE;NFW;NF48</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;RELEASE;NET5;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;RELEASE;NET6;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;RELEASE;NET7;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;RELEASE;NET8;NET</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'"> 
-    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+		<PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\License.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="icon.png" Pack="true" Visible="false" PackagePath="" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\License.txt">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="icon.png" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
 
 </Project>
- 

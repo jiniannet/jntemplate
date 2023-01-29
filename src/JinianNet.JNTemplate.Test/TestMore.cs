@@ -67,7 +67,7 @@ namespace JinianNet.JNTemplate.Test
 
             var templateContent = "${:hello}";
             var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal("say hello", render);
         }
@@ -83,7 +83,7 @@ namespace JinianNet.JNTemplate.Test
             engine.UseLoader(new TestLoader());
             var template = engine.LoadTemplate("11111");
             template.Set("name", "jntemplate");
-            var render = template.Render();;
+            var render = template.Render();
 
             Assert.Equal($"当前是模板：11111 hello,jntemplate", render);
         }
@@ -158,7 +158,7 @@ ${end}";
                 });
                 return list;
             });
-            var render = template.Render();;
+            var render = template.Render();
             var result = @"<divclass=""goods1almostGoodsBox""><ahref='1'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称一</p><pclass=""goodsDescribgoodsText"">衣</p><pclass=""pricegoodsText"">￥200</p></a></div><divclass=""goodsalmostGoodsBox""><ahref='2'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称二</p><pclass=""goodsDescribgoodsText"">外</p><pclass=""pricegoodsText"">￥120</p></a></div><divclass=""goodsalmostGoodsBox""><ahref='3'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称三</p><pclass=""goodsDescribgoodsText"">中</p><pclass=""pricegoodsText"">￥15.80</p></a></div>";
             Assert.Equal(result, render.Replace("\r", "").Replace("\t", "").Replace("\n", "").Replace(" ", ""));
         }
