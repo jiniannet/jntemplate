@@ -11,6 +11,8 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     [Serializable]
     public abstract class ComplexTag : Tag, ITag
-    { 
+    {
+        /// <inheritdoc />
+        public override bool IsSimple => false;
     }
 }

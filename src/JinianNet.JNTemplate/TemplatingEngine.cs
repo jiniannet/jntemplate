@@ -13,6 +13,7 @@ using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
+using JinianNet.JNTemplate.Parsers;
 #if !NF35 && !NF20
 using System.Threading.Tasks;
 #endif
@@ -25,39 +26,40 @@ namespace JinianNet.JNTemplate
     {
         #region Registrar
         //private static Lazy< IRegistrar[]> LazyRegistrars = new Lazy<IRegistrar[]>(()=> LoadDefaultRegistrar(),true);
-        private static IRegistrar[] LoadDefaultRegistrar()
+        private static ITagVisitor[] LoadDefaultVisitor()
         {
-            return new IRegistrar[] {
-                LoadRegistrar<Parsers.CommentRegistrar>(),
-                LoadRegistrar<Parsers.BooleanRegistrar>(),
-                LoadRegistrar<Parsers.NumberRegistrar>(),
-                LoadRegistrar<Parsers.ElseRegistrar>(),
-                LoadRegistrar<Parsers.EndRegistrar>(),
-                LoadRegistrar<Parsers.BodyRegistrar>(),
-                LoadRegistrar<Parsers.NullRegistrar>(),
-                LoadRegistrar<Parsers.VariableRegistrar>(),
-                LoadRegistrar<Parsers.IndexValueRegistrar>(),
-                LoadRegistrar<Parsers.StringRegistrar>(),
-                LoadRegistrar<Parsers.ForeachRegistrar>(),
-                LoadRegistrar<Parsers.ForRegistrar>(),
-                LoadRegistrar<Parsers.SetRegistrar>(),
-                LoadRegistrar<Parsers.IfRegistrar>(),
-                LoadRegistrar<Parsers.ElseifRegistrar>(),
-                LoadRegistrar<Parsers.LayoutRegistrar>(),
-                LoadRegistrar<Parsers.LoadRegistrar>(),
-                LoadRegistrar<Parsers.IncludeRegistrar>(),
-                LoadRegistrar<Parsers.FunctionRegistrar>(),
-                LoadRegistrar<Parsers.ArrayRegistrar>(),
-                LoadRegistrar<Parsers.TextRegistrar>(),
-                LoadRegistrar<Parsers.OperatorRegistrar>(),
-                LoadRegistrar<Parsers.LogicRegistrar>(),
-                LoadRegistrar<Parsers.ArithmeticRegistrar>(),
-                LoadRegistrar<Parsers.ReferenceRegistrar>()
+            return new ITagVisitor[] {
+                LoadVisitor<Parsers.CommentVisitor>(),
+                LoadVisitor<Parsers.BooleanVisitor>(),
+                LoadVisitor<Parsers.NumberVisitor>(),
+                LoadVisitor<Parsers.ElseVisitor>(),
+                LoadVisitor<Parsers.EndVisitor>(),
+                LoadVisitor<Parsers.BodyVisitor>(),
+                LoadVisitor<Parsers.NullVisitor>(),
+                LoadVisitor<Parsers.VariableVisitor>(),
+                LoadVisitor<Parsers.IndexValueVisitor>(),
+                LoadVisitor<Parsers.StringVisitor>(),
+                LoadVisitor<Parsers.ForeachVisitor>(),
+                LoadVisitor<Parsers.ForVisitor>(),
+                LoadVisitor<Parsers.SetVisitor>(),
+                LoadVisitor<Parsers.IfVisitor>(),
+                LoadVisitor<Parsers.ElseifVisitor>(),
+                LoadVisitor<Parsers.LayoutVisitor>(),
+                LoadVisitor<Parsers.LoadVisitor>(),
+                LoadVisitor<Parsers.IncludeVisitor>(),
+                LoadVisitor<Parsers.FunctionVisitor>(),
+                LoadVisitor<Parsers.ArrayVisitor>(),
+                LoadVisitor<Parsers.TextVisitor>(),
+                LoadVisitor<Parsers.OperatorVisitor>(),
+                LoadVisitor<Parsers.LogicVisitor>(),
+                LoadVisitor<Parsers.ArithmeticVisitor>(),
+                LoadVisitor<Parsers.JsonVisitor>(),
+                LoadVisitor<Parsers.ReferenceVisitor>()
             };
         }
 
-        private static IRegistrar LoadRegistrar<T>()
-            where T : IRegistrar, new()
+        private static ITagVisitor LoadVisitor<T>()
+            where T : ITagVisitor, new()
         {
             return new T();
         }
@@ -102,7 +104,7 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Options.TagFlag = option.TagFlag;
             HostEnvironment.Options.Encoding = option.Encoding;
             HostEnvironment.Options.ThrowExceptions = option.ThrowExceptions;
-            HostEnvironment.Options.TypeDetectPattern = option.TypeDetectPattern;
+            //HostEnvironment.Options.TypeDetectPattern = option.TypeDetectPattern;
             HostEnvironment.Options.OutMode = option.OutMode;
             if (option.ResourceDirectories?.Count > 0)
             {
@@ -124,10 +126,10 @@ namespace JinianNet.JNTemplate
             }
             var mode = option.EnableCompile ? EngineMode.Compiled : EngineMode.Interpreted;
 
-            if (HostEnvironment.Options.TypeDetectPattern == TypeDetect.None && mode == EngineMode.Compiled)
-            {
-                HostEnvironment.Options.TypeDetectPattern = TypeDetect.Standard;
-            }
+            //if (HostEnvironment.Options.TypeDetectPattern == TypeDetect.None && mode == EngineMode.Compiled)
+            //{
+            //    HostEnvironment.Options.TypeDetectPattern = TypeDetect.Standard;
+            //}
 
             if (mode != HostEnvironment.Options.Mode)
             {
@@ -225,11 +227,14 @@ namespace JinianNet.JNTemplate
             if (t.IsNotPublic && t.Name.Contains("Anonymous"))
                 return ParseAnonymous(name, reader, t, data);
 
-            string key;
-            if (!t.IsArray && !t.IsEnum)
-                key = t.Name;
-            else
-                key = "Model";
+            string key = HostEnvironment.Options.ModelName;
+            if (string.IsNullOrEmpty(key))
+            {
+                if (!t.IsArray && !t.IsEnum)
+                    key = t.Name;
+                else
+                    key = "Model";
+            }
             return Parse(name, reader, ctx => ctx.Set(key, data, typeof(T)));
         }
         private string ParseAnonymous(string name, IReader reader, Type type, object data)
@@ -452,10 +457,10 @@ namespace JinianNet.JNTemplate
             lock (this)
             {
                 Reset();
-                var list = LoadDefaultRegistrar();// LazyRegistrars.Value;
+                var list = LoadDefaultVisitor();// LazyRegistrars.Value;
                 for (var i = 0; i < list.Length; i++)
                 {
-                    list[i]?.Regiser(this);
+                    HostEnvironment.Resolver.Register(list[i]);
                 }
             }
         }
@@ -497,56 +502,41 @@ namespace JinianNet.JNTemplate
             //HostEnvironment.Cache?.Clear();
         }
 
+
         /// <inheritdoc />
+        [Obsolete]
         public void Register<T>(Func<TemplateParser, TokenCollection, ITag> parseMethod,
             Func<ITag, CompileContext, MethodInfo> compileMethod,
             Func<ITag, CompileContext, Type> guessMethod,
             int index = 0) where T : ITag
         {
-            HostEnvironment.Parser.Register(parseMethod, index);
-            HostEnvironment.Builder?.Register<T>(compileMethod);
-            HostEnvironment.Guesser?.Register<T>(guessMethod);
+            var visitor = new DynamicVisitor(typeof(T), parseMethod, compileMethod, guessMethod);
+            HostEnvironment.Resolver.Register(index, visitor);
         }
 
         /// <inheritdoc />
-        public void RegisterParseFunc(Func<TemplateParser, TokenCollection, ITag> func,
-            int index = 0)
-        {
-            HostEnvironment.Parser.Register(func, index);
-        }
-
-        /// <inheritdoc />
-        public void RegisterCompileFunc<T>(Func<ITag, CompileContext, MethodInfo> func)
-            where T : ITag
-        {
-            HostEnvironment.Builder?.Register<T>(func);
-        }
-
-        /// <inheritdoc />
-        public void RegisterGuessFunc<T>(Func<ITag, CompileContext, Type> func)
-            where T : ITag
-        {
-            HostEnvironment.Guesser?.Register<T>(func);
-        }
-
-        /// <inheritdoc />
+        [Obsolete]
         public void RegisterExecuteFunc<T>(Func<ITag, TemplateContext, object> func)
            where T : ITag
         {
-            HostEnvironment.ExecutorBuilder?.Register<T>(func);
+            var visitor = new DynamicVisitor(typeof(T), func);
+            HostEnvironment.Resolver.Register(visitor);
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            HostEnvironment.ExecutorBuilder.Clear();
-            HostEnvironment.Guesser.Clear();
-            HostEnvironment.Builder.Clear();
-            HostEnvironment.Parser.Clear();
             Clean();
         }
 
-
+        /// <summary>
+        /// Register an new excute method.
+        /// </summary>
+        /// <param name="visitor"></param>
+        public void Register(ITagVisitor visitor)
+        {
+            HostEnvironment.Resolver.Register(0, visitor);
+        }
 
         #endregion
     }

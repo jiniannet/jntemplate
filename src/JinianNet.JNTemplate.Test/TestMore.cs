@@ -48,21 +48,21 @@ namespace JinianNet.JNTemplate.Test
             }
             else
             {
-                Engine.Current.RegisterParseFunc((p, tc) =>
-                {
-                    if (tc.Count == 2 && tc.First.Text == ":")
-                    {
-                        return new TestTag
-                        {
-                            Document = tc[1].Text
-                        };
-                    }
-                    return null;
-                });
-                Engine.Current.RegisterExecuteFunc<TestTag>((tag, c) =>
-                {
-                    return $"say {(tag as TestTag).Document}";
-                });
+                //Engine.Current.RegisterParseFunc((p, tc) =>
+                //{
+                //    if (tc.Count == 2 && tc.First.Text == ":")
+                //    {
+                //        return new TestTag
+                //        {
+                //            Document = tc[1].Text
+                //        };
+                //    }
+                //    return null;
+                //});
+                //Engine.Current.RegisterExecuteFunc<TestTag>((tag, c) =>
+                //{
+                //    return $"say {(tag as TestTag).Document}";
+                //});
             }
 
             var templateContent = "${:hello}";

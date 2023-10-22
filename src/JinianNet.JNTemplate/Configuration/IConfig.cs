@@ -62,10 +62,11 @@ namespace JinianNet.JNTemplate.Configuration
         /// </summary>
         bool ThrowExceptions { get; set; }
 
-        /// <summary>
-        /// Gets or sets the detect patterns.
-        /// </summary>
-        TypeDetect TypeDetectPattern { get; set; }
+        // /// <summary>
+        // /// Gets or sets the detect patterns.
+        // /// </summary> 
+        //TypeDetect TypeDetectPattern { get; set; }
+
         /// <summary>
         /// Gets or sets the output mode.
         /// </summary>

@@ -36,8 +36,21 @@ namespace JinianNet.JNTemplate.Nodes
         /// </summary>
         bool Out { get; }
         /// <summary>
-        /// Gets or sets the output mode
+        /// Gets or sets the previous tag output mode
         /// </summary>
-        ITag Previous { get; set; }
+        bool Previous { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool Next { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        bool IsPrimitive { get; }
+        /// <summary>
+        /// Gets a Boolean value indicating whether this Tag is simple type.
+        /// </summary>
+        bool IsSimple { get; }
     }
 }

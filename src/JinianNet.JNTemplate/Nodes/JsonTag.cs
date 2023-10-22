@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// JsonTag
     /// </summary>
     [Serializable]
-    public class JsonTag : ComplexTag
+    public class JsonTag : BasisTag
     {
         /// <summary>
         /// Gets or sets the data of the tag.

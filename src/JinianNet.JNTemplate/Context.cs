@@ -30,6 +30,10 @@ namespace JinianNet.JNTemplate
             this.Debug = System.Diagnostics.Debugger.IsAttached;
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Resolver Resolver => Environment.Resolver;
 
         /// <summary>
         /// Gets or sets the render mode.

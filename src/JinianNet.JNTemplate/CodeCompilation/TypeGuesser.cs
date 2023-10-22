@@ -14,69 +14,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// Type Guess
     /// </summary>
     public class TypeGuesser
-    {
-        Dictionary<string, Func<ITag, CompileContext, Type>> dict;
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TypeGuesser"/> class.
-        /// </summary>
-        public TypeGuesser()
-        {
-            dict = new Dictionary<string, Func<ITag, CompileContext, Type>>(StringComparer.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Register a guess mehtod for the tag.
-        /// </summary>
-        /// <typeparam name="T">The type of tag.</typeparam>
-        /// <param name="func">The guess method.</param>
-        public void Register<T>(Func<ITag, CompileContext, Type> func) where T : ITag
-        {
-            var name = typeof(T).Name;
-            Register(name, func);
-        }
-
-
-        /// <summary>
-        /// Register a guess mehtod for the tag.
-        /// </summary>
-        /// <param name="name">The name of the tag.</param>
-        /// <param name="func">The guess method.</param>
-        public void Register(string name, Func<ITag, CompileContext, Type> func)
-        {
-            dict[name] = func;
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Type"/> with the specified tag.
-        /// </summary>
-        /// <param name="tag">The tag of the type to get.</param>
-        /// <param name="ctx">The <see cref="CompileContext"/>.</param>
-        /// <returns></returns>
-        public Type GetType(ITag tag, CompileContext ctx)
-        {
-            return GetType(tag.GetType().Name, tag, ctx);
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Type"/> with the specified tag.
-        /// </summary>
-        /// <param name="name">The tag name of the type to get.</param>
-        /// <param name="tag">The tag of the type to get.</param>
-        /// <param name="ctx">The <see cref="CompileContext"/>.</param>
-        /// <returns>The type with the specified tag, if found; otherwise, null.</returns>
-        public Type GetType(string name, ITag tag, CompileContext ctx)
-        {
-            if (dict.TryGetValue(name, out var func))
-            {
-                var type = func(tag, ctx);
-                if (type != null)
-                {
-                    return type;
-                }
-            }
-            throw new CompileException(tag, $"[{name}]:\"{tag.ToSource()}\" is not defined!");
-        }
-
+    { 
         /// <summary>
         /// Gets the child <see cref="Type"/> with the specified <see cref="Type"/>.
         /// </summary>
@@ -313,14 +251,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
             }
             return false;
         }
-
-
-        /// <summary>
-        /// Removes all elements from <see cref="TypeGuesser"/>
-        /// </summary>
-        public void Clear()
-        {
-            dict.Clear();
-        }
+         
     }
 }

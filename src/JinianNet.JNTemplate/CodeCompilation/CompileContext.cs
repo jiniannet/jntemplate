@@ -45,17 +45,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// Used to cache some compiled methods . 
         /// </summary>
         public Dictionary<string, MethodInfo> Methods { get; set; }
-
-        /// <summary>
-        /// Gets the <see cref="CompileBuilder"/>
-        /// </summary>
-        public CompileBuilder CompileBuilder  => Environment.Builder;
-
-        /// <summary>
-        /// Gets the <see cref="CompileBuilder"/>
-        /// </summary>
-        public TypeGuesser TypeGuesser => Environment.Guesser;
-
         /// <summary>
         /// Set the type of compilation parameters 
         /// </summary>

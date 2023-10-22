@@ -10,8 +10,9 @@ namespace JinianNet.JNTemplate.Nodes
     /// BasisTag
     /// </summary>
     [Serializable]
-    public abstract class BasisTag  : Tag,ITag
+    public abstract class BasisTag : Tag, ITag
     {
- 
+        /// <inheritdoc />
+        public override bool IsSimple => true;
     }
 }

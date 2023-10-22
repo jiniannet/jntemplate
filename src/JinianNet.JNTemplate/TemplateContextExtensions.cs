@@ -36,6 +36,8 @@ namespace JinianNet.JNTemplate
             //paths[0] = ctx.CurrentPath;
             //ctx.Options.ResourceDirectories.CopyTo(paths, 1);
             //return paths;
+            if (ctx.Environment.Options.ResourceDirectories?.Count == 0)
+                return new string[] { System.IO.Directory.GetCurrentDirectory() };
             return ctx.Environment.Options.ResourceDirectories.ToArray();
         }
 
@@ -174,12 +176,12 @@ namespace JinianNet.JNTemplate
         /// <param name="context"></param>
         /// <param name="text"></param> 
         /// <returns></returns>
-        public static ITag[] Lexer(this Context context, string text)
+        public static TagCollection Lexer(this Context context, string text)
         {
 
             if (string.IsNullOrEmpty(text))
             {
-                return new ITag[0];
+                return new TagCollection();
             }
 
             var lexer = CreateTemplateLexer(context, text);
@@ -200,7 +202,7 @@ namespace JinianNet.JNTemplate
         /// <returns>An TemplateParser.</returns>
         public static TemplateParser CreateTemplateParser(this Context ctx, Token[] ts)
         {
-            return new TemplateParser(ctx.Environment.Parser, ts);
+            return new TemplateParser(ctx.Environment.Resolver, ts);
         }
 
         /// <summary>
@@ -285,60 +287,53 @@ namespace JinianNet.JNTemplate
         /// <param name="ctx"></param>
         /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
         /// <param name="collection">The tags collection.</param>
-        public static void Render(this TemplateContext ctx, System.IO.TextWriter writer, ITag[] collection)
+        public static void Render(this TemplateContext ctx, System.IO.TextWriter writer, TagCollection collection)
         {
             if (writer == null)
             {
                 throw new ArgumentNullException("\"writer\" cannot be null.");
             }
+            if (collection == null || collection.Count <= 0)
+                return;
 
-            if (collection != null && collection.Length > 0)
+            for (int i = 0; i < collection.Count; i++)
             {
-                for (int i = 0; i < collection.Length; i++)
+                try
                 {
-                    try
-                    {
-                        var tagResult = Execute(ctx, collection[i]);
-                        if (tagResult != null)
-                        {
+                    var tagResult = Execute(ctx, collection[i]);
+                    if (tagResult == null)
+                        continue;
 #if !NF35 && !NF20
-                            if (tagResult is Task task)
-                            {
-                                var type = tagResult.GetType();
-                                if (type.IsGenericType)
-                                {
-                                    var taskResult = typeof(Utility).CallGenericMethod(null, "ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+                    if (tagResult is Task task)
+                    {
 #if NF40
-                                    writer.Write((string)taskResult);
+                        task.Wait();
 #else
-                                    writer.Write(((Task<string>)taskResult).GetAwaiter().GetResult());
+                        task.ConfigureAwait(false).GetAwaiter();
 #endif
-                                }
-                                else
-                                {
-#if NF40
-                                    task.Wait();
-#else
-                                    task.ConfigureAwait(false).GetAwaiter();
-#endif
-                                }
-                                continue;
-                            }
-#endif
-                            writer.Write(tagResult.ToString());
+                        var pi = task.GetType().GetPropertyInfo("Result");
+                        if (pi != null)
+                        {
+                            var value = pi.GetValue(task, null);
+                            writer.Write(value?.ToString());
                         }
+                        continue;
                     }
-                    catch (TemplateException e)
-                    {
-                        ThrowException(ctx, e, collection[i], writer);
-                    }
-                    catch (System.Exception e)
-                    {
-                        var baseException = e.GetBaseException();
-                        ThrowException(ctx, new ParseException(collection[i], baseException), collection[i], writer);
-                    }
+#endif
+                    writer.Write(tagResult.ToString());
+
+                }
+                catch (TemplateException e)
+                {
+                    ThrowException(ctx, e, collection[i], writer);
+                }
+                catch (System.Exception e)
+                {
+                    var baseException = e.GetBaseException();
+                    ThrowException(ctx, new ParseException(collection[i], baseException), collection[i], writer);
                 }
             }
+
         }
 
         /// <summary>
@@ -366,49 +361,47 @@ namespace JinianNet.JNTemplate
         /// <param name="writer">See the <see cref="System.IO.TextWriter"/>.</param>
         /// <param name="collection">The tags collection.</param>
         /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
-        public static async Task RenderAsync(this TemplateContext ctx, System.IO.TextWriter writer, ITag[] collection, CancellationToken cancellationToken = default)
+        public static async Task RenderAsync(this TemplateContext ctx, System.IO.TextWriter writer, TagCollection collection, CancellationToken cancellationToken = default)
         {
             if (writer == null)
             {
                 throw new ArgumentNullException("\"writer\" cannot be null.");
             }
-
-            if (collection != null && collection.Length > 0)
+            if (collection == null || collection.Count <= 0)
+                return;
+            for (int i = 0; i < collection.Count; i++)
             {
-                for (int i = 0; i < collection.Length; i++)
+                try
                 {
-                    try
+                    var tagResult = Execute(ctx, collection[i]);
+                    if (tagResult != null)
                     {
-                        var tagResult = Execute(ctx, collection[i]);
-                        if (tagResult != null)
+                        if (tagResult is Task task)
                         {
-                            if (tagResult is Task task)
+                            var type = tagResult.GetType();
+                            if (type.IsGenericType)
                             {
-                                var type = tagResult.GetType();
-                                if (type.IsGenericType)
-                                {
-                                    var taskResult = (Task<string>)typeof(Utility).CallGenericMethod(null, "ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
-                                    var taskValue = await taskResult;
-                                    await writer.WriteAsync(taskValue);
-                                }
-                                else
-                                {
-                                    await task;
-                                }
-                                continue;
+                                var taskResult = (Task<string>)typeof(Utility).CallGenericMethod(null, "ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+                                var taskValue = await taskResult;
+                                await writer.WriteAsync(taskValue);
                             }
-                            await writer.WriteAsync(tagResult.ToString());
+                            else
+                            {
+                                await task;
+                            }
+                            continue;
                         }
+                        await writer.WriteAsync(OutputFormat(ctx, tagResult));
                     }
-                    catch (TemplateException e)
-                    {
-                        await ThrowExceptionAsync(ctx, e, collection[i], writer);
-                    }
-                    catch (System.Exception e)
-                    {
-                        var baseException = e.GetBaseException();
-                        await ThrowExceptionAsync(ctx, new ParseException(collection[i], baseException), collection[i], writer);
-                    }
+                }
+                catch (TemplateException e)
+                {
+                    await ThrowExceptionAsync(ctx, e, collection[i], writer);
+                }
+                catch (System.Exception e)
+                {
+                    var baseException = e.GetBaseException();
+                    await ThrowExceptionAsync(ctx, new ParseException(collection[i], baseException), collection[i], writer);
                 }
             }
         }
@@ -438,8 +431,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static object Execute(this TemplateContext ctx, ITag tag)
         {
-            var func = ctx.ExecutorBuilder.Build(tag);
-            return func(tag, ctx);
+            return ctx.Resolver.Excute(tag,ctx); 
         }
 
 
@@ -472,12 +464,27 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            var type = ObjectBuilder.GetOrGenerateType(anonymousType);
-            if (value != null)
+            if (value == null)
+                return;
+            if (value is Array arr)
             {
-                value = ObjectBuilder.FromAnonymousObject(value, type);
+                var eType = anonymousType.GetElementType();
+                var type = ObjectBuilder.GetOrGenerateType(eType);
+                var newArr = Array.CreateInstance(type, arr.Length);
+                for (var i = 0; i < arr.Length; i++)
+                {
+                    var item = ObjectBuilder.FromAnonymousObject(arr.GetValue(i), type);
+                    newArr.SetValue(item, i);
+                }
+                c.TempData.Set(key, newArr, newArr.GetType());
+
             }
-            c.TempData.Set(key, value, type);
+            else
+            {
+                var type = ObjectBuilder.GetOrGenerateType(anonymousType);
+                value = ObjectBuilder.FromAnonymousObject(value, type);
+                c.TempData.Set(key, value, type);
+            }
         }
 
 
@@ -497,11 +504,14 @@ namespace JinianNet.JNTemplate
             if (ctx.Mode == EngineMode.Compiled)
             {
                 type = type ?? value?.GetType();
-                if (type != null && !type.IsVisible)
+                var isArray = type?.IsArray ?? false;
+                Type elementType = isArray ? type.GetElementType() : type;
+
+                if (elementType != null && !elementType.IsVisible)
                 {
-                    if (!type.Name.Contains("AnonymousType"))
+                    if (!elementType.Name.Contains("AnonymousType"))
                     {
-                        throw new ArgumentException($"The type \"{type.FullName}\" is not accessible");
+                        throw new ArgumentException($"The type \"{elementType.FullName}\" is not accessible");
                     }
                     TemplateContextExtensions.SetAnonymousObject(ctx, key, value, type);
                 }
@@ -526,14 +536,62 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool MustFormat(this TemplateContext ctx, object value)
+        {
+            if (value == null)
+                return false;
+            var type = value.GetType();
+            return MustFormat(ctx, type);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool MustFormat(this TemplateContext ctx, Type type)
+        {
+            foreach (var f in ctx.Environment.OutputFormatters)
+            {
+                if (f.CanWriteType(type))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string OutputFormat(this Context ctx, object value)
+        {
+            if (value == null)
+                return null;
+            var type = value.GetType();
+            foreach (var f in ctx.Environment.OutputFormatters)
+            {
+                if (f.CanWriteType(type))
+                    return f.Format(value);
+            }
+            return value.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="name"></param>
         /// <param name="tag"></param>
         /// <param name="ctx"></param>
         /// <returns></returns>
         private static object Execute(this TemplateContext ctx, string name, ITag tag)
         {
-            var func = ctx.ExecutorBuilder.Build(name);
-            return func(tag, ctx);
+            return ctx.Resolver.Excute(tag, ctx); 
         }
     }
 }

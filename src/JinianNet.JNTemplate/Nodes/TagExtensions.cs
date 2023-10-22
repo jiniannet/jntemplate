@@ -10,6 +10,11 @@ namespace JinianNet.JNTemplate.Nodes
     /// </summary>
     public static class TagExtensions
     {
+        static char[][] newLines = new char[][] {
+            new char[]{ '\r','\n' },
+            new char[]{ '\n' },
+        };
+
         /// <summary>
         /// Returns a source code that represents the current tag.
         /// </summary>
@@ -47,6 +52,27 @@ namespace JinianNet.JNTemplate.Nodes
             return sb.ToString();
         }
 
+        private static int StartsWithNewLine(string text)
+        {
+            for (var i = 0; i < newLines.Length; i++)
+            {
+                if (text.Length < newLines[i].Length)
+                    continue;
+                var find = true;
+                for (var j = 0; j < newLines[i].Length; j++)
+                {
+                    if (text[j] != newLines[i][j])
+                    {
+                        find = false;
+                        break;
+                    } 
+                }
+                if(find)
+                    return newLines[i].Length;
+            }
+            return 0;
+        }
+
         /// <summary>
         /// Returns tag instance of <see cref="string"/> 
         /// </summary>
@@ -55,26 +81,35 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public static string ToString(this TextTag tag, OutMode mode)
         {
+            var text = tag?.FirstToken?.Text;
+            if (string.IsNullOrEmpty(text))
+                return text;
             switch (mode)
             {
                 case OutMode.Auto:
-                    if ((tag.Previous == null || !tag.Previous.Out) && !string.IsNullOrEmpty(tag.Text))
+                    if (!tag.Previous)
                     {
-                        if (tag.Text.Length > 1 && tag.Text[0] == '\r' && tag.Text[1] == '\n')
+                        int len = StartsWithNewLine(text);
+                        if (len > 0)
                         {
-                            return tag.Text.Substring(2);
-                        }
-
-                        if (tag.Text.Length > 0 && tag.Text[0] == '\n')
-                        {
-                            return tag.Text.Substring(1);
+                            if (string.IsNullOrEmpty(text.Trim()))
+                            {
+                                return string.Empty;
+                            }
+                            text = text.Substring(len);
                         }
                     }
-                    return tag.Text;
+                    if (!tag.Next && text.Length > 0 && text[text.Length - 1] == ' ')
+                    {
+                        var preText = text.TrimEnd(' ');
+                        if (preText.Length > 0 && preText[preText.Length - 1] == '\n')
+                            text = preText;
+                    }
+                    return text;
                 case OutMode.StripWhiteSpace:
-                    return tag.Text?.Trim();
+                    return text.Trim();
                 default:
-                    return tag.Text;
+                    return text;
             }
         }
     }

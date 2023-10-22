@@ -21,73 +21,66 @@ namespace JinianNet.JNTemplate.Parsers
     /// <summary>
     /// The <see cref="ForeachTag"/> registrar
     /// </summary>
-    public class ForeachRegistrar : TagRegistrar<ForeachTag>, IRegistrar
+    public class ForeachVisitor : TagVisitor<ForeachTag>, ITagVisitor
     {
         /// <inheritdoc />
-        public override Func<TemplateParser, TokenCollection, ITag> BuildParseMethod()
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
-            return (parser, tc) =>
+
+            if (tc.Count > 5
+                && (Utility.IsEqual(Const.KEY_FOREACH, tc.First.Text) || Utility.IsEqual(Const.KEY_FOR, tc.First.Text))
+                && tc[1].TokenKind == TokenKind.LeftParentheses
+                && tc[2].TokenKind == TokenKind.TextData
+                && Utility.IsEqual(tc[3].Text, Const.KEY_IN)
+                && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
-                if (tc != null
-                                && parser != null
-                                && tc.Count > 5
-                                && (Utility.IsEqual(Const.KEY_FOREACH, tc.First.Text) || Utility.IsEqual(Const.KEY_FOR, tc.First.Text))
-                                && tc[1].TokenKind == TokenKind.LeftParentheses
-                                && tc[2].TokenKind == TokenKind.TextData
-                                && Utility.IsEqual(tc[3].Text, Const.KEY_IN)
-                                && tc.Last.TokenKind == TokenKind.RightParentheses)
+
+                var tag = new ForeachTag();
+                tag.Name = tc[2].Text;
+                tag.Source = parser.ReadSimple(tc[4, -1]);
+                if (tag.Source == null)
+                    return null;
+                while (parser.MoveNext())
                 {
-
-                    var tag = new ForeachTag();
-                    tag.Name = tc[2].Text;
-                    tag.Source = parser.Read(tc[4, -1]);
-
-                    while (parser.MoveNext())
+                    tag.Children.Add(parser.Current);
+                    if (parser.Current is EndTag)
                     {
-                        tag.Children.Add(parser.Current);
-                        if (parser.Current is EndTag)
-                        {
-                            return tag;
-                        }
+                        return tag;
                     }
-
-                    throw new ParseException($"foreach is not properly closed by a end tag: {tc.ToString()}", tc.First.BeginLine, tc.First.BeginColumn);
-
                 }
-                return null;
-            };
+
+                throw new ParseException($"foreach is not properly closed by a end tag: {tc.ToString()}", tc.First.BeginLine, tc.First.BeginColumn);
+
+            }
+            return null;
+
         }
 
         /// <inheritdoc />
-        public override Func<ITag, CompileContext, MethodInfo> BuildCompileMethod()
+        public MethodInfo Compile(ITag tag, CompileContext c)
         {
-            return (tag, c) =>
-            {
-                var t = tag as ForeachTag;
-                var sourceType = c.GuessType(t.Source);
-                var isAsync = false;
+            var t = tag as ForeachTag;
+            var sourceType = c.GuessType(t.Source);
+            var isAsync = false;
 #if !NF35 && !NF20
-                if (sourceType.IsGenericType
-                && sourceType.GetGenericTypeDefinition() == typeof(Task<>))
-                {
-                    sourceType = sourceType.GetGenericArguments()[0];
-                    isAsync = true;
-                }
+            if (sourceType.IsGenericType
+            && sourceType.GetGenericTypeDefinition() == typeof(Task<>))
+            {
+                sourceType = sourceType.GetGenericArguments()[0];
+                isAsync = true;
+            }
 #endif
-                if (sourceType.IsArray)
-                {
-                    return ArrayForeachCompile(c, t, sourceType, isAsync);
-                }
-                return EnumerableForeachCompile(c, t, sourceType, isAsync);
-            };
+            if (sourceType.IsArray)
+            {
+                return ArrayForeachCompile(c, t, sourceType, isAsync);
+            }
+            return EnumerableForeachCompile(c, t, sourceType, isAsync);
+
         }
         /// <inheritdoc />
-        public override Func<ITag, CompileContext, Type> BuildGuessMethod()
+        public Type GuessType(ITag tag, CompileContext c)
         {
-            return (tag, c) =>
-            {
-                return typeof(string);
-            };
+            return typeof(string);
         }
 
         /// <summary>
@@ -395,9 +388,9 @@ namespace JinianNet.JNTemplate.Parsers
 
         }
         /// <inheritdoc />
-        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        public object Excute(ITag tag, TemplateContext context)
         {
-            return (tag, context) =>
+
             {
                 var t = tag as ForeachTag;
                 if (t.Source != null)

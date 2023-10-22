@@ -198,6 +198,16 @@ namespace JinianNet.JNTemplate.Nodes
             return this.list.Contains(item);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="kind"></param>
+        /// <returns></returns>
+        public bool Any(TokenKind kind)
+        {
+            return list.FindIndex(m => m.TokenKind == kind) != -1;
+        }
+
         /// <inheritdoc />
         public void CopyTo(Token[] array, int arrayIndex)
         {
@@ -281,5 +291,6 @@ namespace JinianNet.JNTemplate.Nodes
         {
             return base.GetHashCode();
         }
+
     }
 }

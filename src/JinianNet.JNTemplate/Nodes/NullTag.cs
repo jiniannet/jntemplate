@@ -13,6 +13,8 @@ namespace JinianNet.JNTemplate.Nodes
     public class NullTag : SpecialTag
     {
         /// <inheritdoc />
+        public override bool IsPrimitive => true;
+        /// <inheritdoc />
         public override string ToString()
         {
             return string.Empty;

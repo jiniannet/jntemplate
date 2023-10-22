@@ -11,33 +11,30 @@ using System;
 namespace JinianNet.JNTemplate.Parsers
 {
     /// <summary>
-    /// The <see cref="OperatorRegistrar"/> registrar
+    /// The <see cref="OperatorVisitor"/> registrar
     /// </summary>
-    public class OperatorRegistrar : TagRegistrar<OperatorTag>, IRegistrar
+    public class OperatorVisitor : TagVisitor<OperatorTag>, ITagVisitor
     {
         /// <inheritdoc />
-        public override Func<TemplateParser, TokenCollection, ITag> BuildParseMethod()
+        public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
             return null;
         }
         /// <inheritdoc />
-        public override Func<ITag, CompileContext, MethodInfo> BuildCompileMethod()
+        public MethodInfo Compile(ITag tag, CompileContext c)
         {
             return null;
         }
         /// <inheritdoc />
-        public override Func<ITag, CompileContext, Type> BuildGuessMethod()
+        public Type GuessType(ITag tag, CompileContext c)
         {
             return null;
         }
         /// <inheritdoc />
-        public override Func<ITag, TemplateContext, object> BuildExcuteMethod()
+        public object Excute(ITag tag, TemplateContext context)
         {
-            return (tag, context) =>
-            {
-                var t = tag as OperatorTag;
-                return t.Value;
-            };
+            var t = tag as OperatorTag;
+            return t.Value;
         }
     }
 }

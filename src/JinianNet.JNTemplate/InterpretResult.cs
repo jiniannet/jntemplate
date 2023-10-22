@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate
         /// 
         /// </summary>
         /// <param name="tags"></param>
-        public InterpretResult(ITag[] tags)
+        public InterpretResult(TagCollection tags)
         {
             this.Tags = tags;
         }
@@ -27,7 +27,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// 
         /// </summary>
-        public ITag[] Tags { get; set; }
+        public TagCollection Tags { get; set; }
 
         /// <inheritdoc />
         public void Render(TextWriter writer, TemplateContext context)
