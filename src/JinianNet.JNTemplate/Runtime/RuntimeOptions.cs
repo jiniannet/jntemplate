@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate.Runtime
             this.DisableeLogogram = false;
             this.EnableCache = true;
             this.ResourceDirectories = new List<string>();
-            this.ModelName = "Model";
+            this.ModelName = "";// "Model";
         }
         /// <inheritdoc />
         public string ModelName { get; set; }
