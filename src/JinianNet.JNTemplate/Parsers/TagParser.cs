@@ -29,8 +29,14 @@ namespace JinianNet.JNTemplate.Parsers
         /// </summary>
         public int Count => delegates.Count;
 
-        /// <inheritdoc />
-        public ITag Parsing(TemplateParser parser, TokenCollection tc)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parser"></param>
+        /// <param name="tc"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public ITag Parsing(TemplateParser parser, TokenCollection tc, Func<ITag, bool> func)
         {
             if (tc == null
                 || tc.Count == 0
@@ -53,6 +59,8 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         t.LastToken = tc.Last;
                     }
+                    if (func != null && !func(t))
+                        continue;
                     return t;
                 }
             }

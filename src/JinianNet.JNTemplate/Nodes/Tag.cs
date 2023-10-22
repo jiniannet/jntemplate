@@ -21,7 +21,13 @@ namespace JinianNet.JNTemplate.Nodes
         /// <inheritdoc />
         public virtual bool Out => true;
         /// <inheritdoc />
-        public ITag Previous { get; set; }
+        public bool Previous { get; set; }
+        /// <inheritdoc />
+        public bool Next { get; set; }
+        /// <inheritdoc />
+        public virtual bool IsPrimitive => false;
+        /// <inheritdoc />
+        public abstract bool IsSimple { get; }
         /// <inheritdoc />
         public virtual void AddChild(ITag node)
         {

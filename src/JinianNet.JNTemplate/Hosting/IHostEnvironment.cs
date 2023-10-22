@@ -43,21 +43,7 @@ namespace JinianNet.JNTemplate.Hosting
         /// <summary>
         /// Gets or sets the tag parser of the engine.
         /// </summary>
-        TagParser Parser { set; get; }
-        /// <summary>
-        /// Gets or sets the tag <see cref="CompileBuilder"/> of the engine.
-        /// </summary>
-        CompileBuilder Builder { set; get; }
-
-        /// <summary>
-        /// Gets or sets the tag <see cref="CompileBuilder"/> of the engine.
-        /// </summary>
-        TypeGuesser Guesser { set; get; }
-
-        /// <summary>
-        /// Gets or sets the tag <see cref="ExecutorBuilder"/> of the engine.
-        /// </summary>
-        ExecutorBuilder ExecutorBuilder { set; get; }
+        Resolver Resolver { get; }
 
         /// <summary>
         /// Gets or sets the <see cref="IScopeProvider"/> of the engine.
@@ -78,6 +64,11 @@ namespace JinianNet.JNTemplate.Hosting
         /// <summary>
         /// Gets or sets the environment variable of the engine.
         /// </summary>
-        Dictionary<string, string> EnvironmentVariable { get; }
+        IDictionary<string, string> EnvironmentVariable { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IOutputFormatter"/> of the engine.
+        /// </summary>
+        IList<IOutputFormatter> OutputFormatters { get; }
     }
 }

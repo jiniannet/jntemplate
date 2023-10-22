@@ -12,6 +12,9 @@ namespace JinianNet.JNTemplate.Test
     public class TestTag : Tag, ITag
     {
         public string Document { get; set; }
+
+        public override bool IsSimple => true;
+
     }
 
 

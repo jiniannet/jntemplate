@@ -29,13 +29,16 @@ namespace JinianNet.JNTemplate.Runtime
             this.TagPrefix = "${";
             this.TagSuffix = "}";
             this.ThrowExceptions = true;
-            this.TypeDetectPattern = TypeDetect.Standard;
+            //this.TypeDetectPattern = TypeDetect.Standard;
             this.OutMode = OutMode.None;
             this.Mode = EngineMode.Compiled;
             this.DisableeLogogram = false;
             this.EnableCache = true;
             this.ResourceDirectories = new List<string>();
+            this.ModelName = "Model";
         }
+        /// <inheritdoc />
+        public string ModelName { get; set; }
         /// <inheritdoc />
         public bool DisableeLogogram { get; set; }
         /// <inheritdoc />
@@ -67,8 +70,8 @@ namespace JinianNet.JNTemplate.Runtime
 
         /// <inheritdoc />
         public bool ThrowExceptions { get; set; }
-        /// <inheritdoc />
-        public TypeDetect TypeDetectPattern { get; set; }
+        // /// <inheritdoc />
+        //public TypeDetect TypeDetectPattern { get; set; }
         /// <inheritdoc />
         public OutMode OutMode { get; set; }
         /// <inheritdoc />

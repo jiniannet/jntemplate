@@ -14,5 +14,7 @@ namespace JinianNet.JNTemplate.Nodes
     {
         /// <inheritdoc />
         public override bool Out => false;
+        /// <inheritdoc />
+        public override bool IsPrimitive => true;
     }
 }

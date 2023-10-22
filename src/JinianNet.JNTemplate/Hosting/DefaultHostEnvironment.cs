@@ -43,14 +43,12 @@ namespace JinianNet.JNTemplate.Hosting
             this.EnvironmentVariable = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
             this.Options = options ?? new RuntimeOptions();
             this.RootPath = System.IO.Directory.GetCurrentDirectory();
-            this.Parser = parser ?? new TagParser();
-            this.Builder = compileBuilder ?? new CompileBuilder();
-            this.Guesser = typeGuesser ?? new TypeGuesser();
-            this.ExecutorBuilder = executorBuilder ?? new ExecutorBuilder();
             this.ScopeProvider = scopeProvider ?? new DefaultScopeProvider();
             this.Cache = cache ?? new MemoryCache();
             this.Loader = resourceLoader ?? new FileLoader();
-            this.ApplicationName = Guid.NewGuid().ToString("N"); 
+            this.ApplicationName = Guid.NewGuid().ToString("N");
+            this.OutputFormatters = new List<IOutputFormatter>();
+            this.Resolver = new Resolver();
             this.EnvironmentName =
 #if DEBUG
                 "DEBUG"
@@ -78,18 +76,6 @@ namespace JinianNet.JNTemplate.Hosting
         public ResultCollection<IResult> Results { get; }
 
         /// <inheritdoc />
-        public TagParser Parser { set; get; }
-
-        /// <inheritdoc />
-        public CompileBuilder Builder { set; get; }
-
-        /// <inheritdoc />
-        public TypeGuesser Guesser { set; get; }
-
-        /// <inheritdoc />
-        public ExecutorBuilder ExecutorBuilder { set; get; }
-
-        /// <inheritdoc />
         public IScopeProvider ScopeProvider { set; get; }
 
         /// <inheritdoc />
@@ -102,9 +88,15 @@ namespace JinianNet.JNTemplate.Hosting
         public IResourceLoader Loader { set; get; }
 
         /// <inheritdoc />
-        public Dictionary<string, string> EnvironmentVariable { set; get; }
+        public IDictionary<string, string> EnvironmentVariable { set; get; }
 
         /// <inheritdoc />
         public IOptions Options { get; set; }
+
+        /// <inheritdoc />
+        public IList<IOutputFormatter> OutputFormatters  { get; private set; }
+
+        /// <inheritdoc />
+        public Resolver Resolver { get; private set; }
     }
 }

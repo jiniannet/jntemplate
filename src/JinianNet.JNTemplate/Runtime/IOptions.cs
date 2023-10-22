@@ -16,6 +16,10 @@ namespace JinianNet.JNTemplate.Runtime
     public interface IOptions
     {
         /// <summary>
+        /// 
+        /// </summary>
+        string ModelName { get; set; }
+        /// <summary>
         /// Gets or sets whether disablee logogram .
         /// </summary>
         bool DisableeLogogram { get; set; }
@@ -66,10 +70,11 @@ namespace JinianNet.JNTemplate.Runtime
         /// </summary>
         bool ThrowExceptions { get; set; }
 
-        /// <summary>
-        /// Gets or sets the detect patterns.
-        /// </summary>
-        TypeDetect TypeDetectPattern { get; set; }
+        // /// <summary>
+        // /// Gets or sets the detect patterns.
+        // /// </summary>
+        // TypeDetect TypeDetectPattern { get; set; }
+
         /// <summary>
         /// Gets or sets the output mode.
         /// </summary>

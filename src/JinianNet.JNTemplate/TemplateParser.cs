@@ -13,27 +13,27 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Provides methods for parsing template strings.
     /// </summary>
-    public class TemplateParser : Executor<ITag[]>, IEnumerator<ITag>
+    public class TemplateParser : Executor<TagCollection>, IEnumerator<ITag>
     {
         private ITag tag;
         private Token[] tokens;
         private int index;
         private TagCollection tags;
-        private TagParser tagParser;
+        private Resolver resolver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateParser"/> class
         /// </summary> 
-        /// <param name="p">The <see cref="TagParser"/>.</param>
+        /// <param name="r">The <see cref="Resolver"/>.</param>
         /// <param name="ts">The collection of tokens.</param>
-        public TemplateParser(TagParser p, Token[] ts)
+        public TemplateParser(Resolver r, Token[] ts)
             : base()
         {
             if (ts == null)
             {
                 throw new ArgumentNullException("\"ts\" cannot be null.");
             }
-            this.tagParser = p;
+            this.resolver = r;
             this.tokens = ts;
             Reset();
         }
@@ -78,14 +78,14 @@ namespace JinianNet.JNTemplate
                 TokenCollection tc = new TokenCollection();
                 if (t1 == null)
                 {
-                    return null;  
+                    return null;
                 }
                 do
                 {
                     this.index++;
                     t2.Next = GetToken();
                     t2 = t2.Next;
-                    if(t2 == null)
+                    if (t2 == null)
                     {
                         break;
                     }
@@ -146,15 +146,37 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="tc">The collection of tokens.</param>
         /// <returns></returns>
+        public ITag ReadSimple(TokenCollection tc)
+        {
+            return Read(tc, m => m.IsSimple);
+        }
+
+        /// <summary>
+        /// Reads the next tag from the tokens.
+        /// </summary>
+        /// <param name="tc">The collection of tokens.</param>
+        /// <returns></returns>
         public ITag Read(TokenCollection tc)
+        {
+            return Read(tc, null);
+        }
+        /// <summary>
+        /// Reads the next tag from the tokens.
+        /// </summary>
+        /// <param name="tc">The collection of tokens.</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public ITag Read(TokenCollection tc, Func<ITag, bool> func)
         {
             if (tc == null || tc.Count == 0)
             {
                 throw new ParseException("Invalid TokenCollection!");
             }
-            return tagParser.Parsing(this, tc.TrimParentheses());
+            var tag = resolver.Parsing(this, tc.TrimParentheses());//func
+            if (func != null && !func(tag))
+                return null;
+            return tag;
         }
-
         private bool IsTagEnd()
         {
             return IsTagEnd(GetToken());
@@ -203,7 +225,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public override ITag[] Execute()
+        public override TagCollection Execute()
         {
             if (tags == null)
             {
@@ -214,7 +236,7 @@ namespace JinianNet.JNTemplate
                     tags.Add(Current);
                 }
             }
-            return tags.ToArray();
+            return tags;
         }
     }
 }

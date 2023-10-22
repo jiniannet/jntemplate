@@ -34,7 +34,23 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 if (Count > 0)
                 {
-                    item.Previous = list[list.Count - 1];
+                    //if (list[list.Count - 1] is TextTag t)
+                    //{
+                    //    var text = t.OriginalText.TrimEnd(' ');
+                    //    if (text.Length > 0 && text[text.Length - 1] == '\n')
+                    //        t.Text = text;
+                    //}
+                    //else
+                    //{
+                    //    if(item is TextTag c)
+                    //    {
+                    //        var text = c.OriginalText.TrimStart(' ');
+                    //        if ((text.Length > 0 && text[0] == '\n') || (text.Length > 1 && text[0] == '\r' && text[1] == '\n'))
+                    //            c.Text = text;
+                    //    }
+                    //}
+                    item.Previous = list[list.Count - 1].Out;
+                    list[list.Count - 1].Next = item.Out;
                 }
                 this.list.Add(item);
             }
@@ -70,12 +86,14 @@ namespace JinianNet.JNTemplate.Nodes
                 list[index] = value;
                 if (index > 0)
                 {
-                    list[index].Previous = list[index - 1];
+                    value.Previous = list[index - 1].Out;
+                    list[index - 1].Next = value.Out;
                 }
                 var next = index + 1;
                 if (next < Count)
                 {
-                    this[next].Previous = this[index];
+                    this[next].Previous = value.Out;
+                    value.Next = this[next].Out;
                 }
             }
         }
@@ -104,8 +122,12 @@ namespace JinianNet.JNTemplate.Nodes
             var next = index + 1;
             if (next < Count)
             {
-                this[next].Previous = this[index].Previous;
-                this[index].Previous = null;
+                this[next].Previous = this[index].Previous; 
+            }
+            var prev = index - 1;
+            if(prev > 0)
+            {
+                this[prev].Next = this[index].Next;
             }
         }
 

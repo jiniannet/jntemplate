@@ -21,34 +21,34 @@ namespace JinianNet.JNTemplate.Parsers
         /// <inheritdoc />
         public virtual void Regiser(IHost host)
         {
-            var parseMethod = BuildParseMethod();
-            if (parseMethod != null)
-            {
-                host.RegisterParseFunc(parseMethod, -1);
-            }
-            var options = host.HostEnvironment.Options;
-            if (options.Mode == EngineMode.Compiled)
-            {
-                var compileMethod = BuildCompileMethod();
-                if (compileMethod != null)
-                {
-                    host.RegisterCompileFunc<T>(compileMethod);
-                }
+            //var parseMethod = BuildParseMethod();
+            //if (parseMethod != null)
+            //{
+            //    host.RegisterParseFunc(parseMethod, -1);
+            //}
+            //var options = host.HostEnvironment.Options;
+            //if (options.Mode == EngineMode.Compiled)
+            //{
+            //    var compileMethod = BuildCompileMethod();
+            //    if (compileMethod != null)
+            //    {
+            //        host.RegisterCompileFunc<T>(compileMethod);
+            //    }
 
-                var guessMethod = BuildGuessMethod();
-                if (guessMethod != null)
-                {
-                    host.RegisterGuessFunc<T>(guessMethod);
-                }
-            }
-            else
-            {
-                var excuteMethod = BuildExcuteMethod();
-                if (excuteMethod != null)
-                {
-                    host.RegisterExecuteFunc<T>(excuteMethod);
-                }
-            }
+            //    var guessMethod = BuildGuessMethod();
+            //    if (guessMethod != null)
+            //    {
+            //        host.RegisterGuessFunc<T>(guessMethod);
+            //    }
+            //}
+            //else
+            //{
+            //    var excuteMethod = BuildExcuteMethod();
+            //    if (excuteMethod != null)
+            //    {
+            //        host.RegisterExecuteFunc<T>(excuteMethod);
+            //    }
+            //}
         }
 
 

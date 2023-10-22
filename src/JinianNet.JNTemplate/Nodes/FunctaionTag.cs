@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate.Nodes
     /// FunctaionTag
     /// </summary>
     [Serializable]
-    public class FunctaionTag : ChildrenTag
+    public class FunctionTag : ChildrenTag
     {
         /// <summary>
         /// The method name of the tag.

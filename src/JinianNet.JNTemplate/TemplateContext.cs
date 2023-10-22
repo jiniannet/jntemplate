@@ -34,11 +34,6 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Gets the <see cref="ExecutorBuilder"/>
-        /// </summary>
-        public ExecutorBuilder ExecutorBuilder => Environment.ExecutorBuilder;
-
-        /// <summary>
         /// Enable or Disenable the cache.
         /// </summary>
         [Obsolete("please use the `EnableCache`")]

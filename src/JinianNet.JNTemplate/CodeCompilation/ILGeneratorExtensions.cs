@@ -24,50 +24,22 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The target type.</param>
         public static void ObjectTo(this ILGenerator il, Type type)
         {
-            var toString = typeof(object).GetMethodInfo("ToString", Type.EmptyTypes);
-            switch (type.FullName)
+            var m = type.GetMethod("Parse", new[] { typeof(string) });
+            if (m != null)
             {
-                case "System.Int32":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Int32).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.Int64":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Int64).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.Int16":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Int16).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.Decimal":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Decimal).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.Single":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Single).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.Double":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Double).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.Boolean":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    il.Emit(OpCodes.Call, typeof(Boolean).GetMethod("Parse", new[] { typeof(string) }));
-                    break;
-                case "System.String":
-                    il.Emit(OpCodes.Callvirt, toString);
-                    break;
-                default:
-                    if (type.IsValueType)
-                    {
-                        il.Emit(OpCodes.Unbox_Any, type);
-                    }
-                    else
-                    {
-                        il.Emit(OpCodes.Castclass, type);
-                    }
-                    break;
+                var toString = typeof(object).GetMethodInfo("ToString", Type.EmptyTypes);
+                il.Emit(OpCodes.Callvirt, toString);
+                il.Emit(OpCodes.Call, m);
+                return;
+            }
+
+            if (type.IsValueType)
+            {
+                il.Emit(OpCodes.Unbox_Any, type);
+            }
+            else
+            {
+                il.Emit(OpCodes.Castclass, type);
             }
         }
 
@@ -309,7 +281,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="tags">The <see cref="IList{ITag}"/></param>
         /// <param name="stringBuildIndex">The index on which <see cref="StringBuilder"/> resides.</param>
         /// <param name="contextIndex">The index on which <see cref="CompileContext"/> resides.</param>
-        public static void StringAppend(this ILGenerator il, CompileContext context, IList<ITag> tags, int stringBuildIndex, int contextIndex)
+        public static void StringAppend(this ILGenerator il, CompileContext context, TagCollection tags, int stringBuildIndex, int contextIndex)
         {
             for (var i = 0; i < tags.Count; i++)
             {
@@ -347,40 +319,31 @@ namespace JinianNet.JNTemplate.CodeCompilation
         public static void StringAppend(this ILGenerator il, CompileContext c, Type returnType)
         {
             var stringBuilderType = typeof(StringBuilder);
-            MethodInfo appendMethod;
-            switch (returnType.FullName)
+            MethodInfo appendMethod = null;
+            var ms = stringBuilderType.GetCacheMethods("Append");
+            foreach (var m in ms)
             {
-                case "System.Object":
-                case "System.String":
-                case "System.Decimal":
-                case "System.Single":
-                case "System.UInt64":
-                case "System.Int64":
-                case "System.UInt32":
-                case "System.Boolean":
-                case "System.Double":
-                case "System.Char":
-                case "System.UInt16":
-                case "System.Int16":
-                case "System.Byte":
-                case "System.SByte":
-                case "System.Int32":
-                    appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { returnType });
+                var ps = m.GetParameters();
+                if (ps.Length == 1 && returnType.FullName == ps[0].ParameterType.FullName && m.IsPublic)
+                {
+                    appendMethod = m;
                     break;
-                default:
-                    if (returnType.IsValueType)
-                    {
-                        var p = il.DeclareLocal(returnType);
-                        il.Emit(OpCodes.Stloc, p.LocalIndex);
-                        LoadVariable(il, returnType, p.LocalIndex);
-                        il.Call(returnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
-                        appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { typeof(string) });
-                    }
-                    else
-                    {
-                        appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { typeof(object) });
-                    }
-                    break;
+                }
+            }
+            if (appendMethod == null)
+            {
+                if (returnType.IsValueType)
+                {
+                    var p = il.DeclareLocal(returnType);
+                    il.Emit(OpCodes.Stloc, p.LocalIndex);
+                    LoadVariable(il, returnType, p.LocalIndex);
+                    il.Call(returnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
+                    appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { typeof(string) });
+                }
+                else
+                {
+                    appendMethod = stringBuilderType.GetMethodInfo("Append", new Type[] { typeof(object) });
+                }
             }
             il.Emit(OpCodes.Callvirt, appendMethod);
         }

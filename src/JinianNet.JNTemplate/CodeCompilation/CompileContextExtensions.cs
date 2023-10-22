@@ -92,7 +92,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public static Type GuessType(this CompileContext ctx, ITag tag)
         {
-            return ctx.TypeGuesser.GetType(tag, ctx);
+            return ctx.Resolver.GetType(tag, ctx);
         }
 
 
@@ -115,14 +115,14 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="ctx"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        internal static void BlockCompile(this CompileContext ctx, ILGenerator il, ITag[] tags)
+        internal static void BlockCompile(this CompileContext ctx, ILGenerator il, TagCollection tags)
         {
             var stringBuilderType = typeof(StringBuilder);
             il.DeclareLocal(stringBuilderType);
             il.DeclareLocal(typeof(string));
             il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
             il.Emit(OpCodes.Stloc_0);
-            for (var i = 0; i < tags.Length; i++)
+            for (var i = 0; i < tags.Count; i++)
             {
                 il.CallTag(ctx, tags[i], (nil, hasReturn, needCall) =>
                 {
@@ -264,13 +264,17 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="tags">The array of the tag.</param>
         /// <param name="ctx">The <see cref="CompileContext"/>.</param>
         /// <returns></returns>
-        private static ICompilerResult Compile(this CompileContext ctx, ITag[] tags)
+        private static ICompilerResult Compile(this CompileContext ctx, TagCollection tags)
         {
             var baseType = typeof(CompilerResult);
+            //var fileName = "233.dll";
+            //var builder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}"), AssemblyBuilderAccess.RunAndSave);
+            //ctx.TypeBuilder = ObjectBuilder.DefineType(builder, baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}", "DynamicMocule", fileName);
+
             ctx.TypeBuilder = ObjectBuilder.DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}");
             var methods = new List<ITagCompileResult>();
 
-            for (var i = 0; i < tags.Length; i++)
+            for (var i = 0; i < tags.Count; i++)
             {
                 if (tags[i] == null
                     || tags[i] is EndTag _
@@ -321,7 +325,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 return null;
             }
-
+            //builder.Save(fileName);
             var instance = type.CreateInstance<ICompilerResult>();
             return instance;
 
@@ -384,8 +388,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 return mi;
             }
-            var func = context.CompileBuilder.Build(name);
-            var method = func(tag, context);
+            var method = context.Resolver.Compile(tag, context);
             if (tagKey != null)
             {
                 context.Methods[tagKey] = method;
@@ -517,19 +520,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             if (method.ReturnType.IsMatchType(taskType))
             {
-                if (method.ReturnType.IsGenericType)
-                {
-                    if (method.ReturnType.GenericTypeArguments.Length == 1 && method.ReturnType.GenericTypeArguments[0] != typeof(string))
-                    {
-                        var callMethod = typeof(Utility).GetGenericMethod(method.ReturnType.GenericTypeArguments, "ExcuteTaskAsync", new Type[] { method.ReturnType });
-                        context.Generator.Emit(OpCodes.Call, callMethod);
-                    }
-                }
-                else
-                {
-                    var callMethod = typeof(Utility).GetMethod("ExcuteTaskAsync", new Type[] { method.ReturnType });
-                    context.Generator.Emit(OpCodes.Call, callMethod);
-                }
+                var callMethod = typeof(Utility).GetMethod("ExcuteTaskAsync", new Type[] { method.ReturnType });
+                context.Generator.Emit(OpCodes.Call, callMethod);
             }
             else
             {

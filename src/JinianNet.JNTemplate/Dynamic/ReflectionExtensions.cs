@@ -12,6 +12,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Linq;
+using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -134,8 +135,8 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetMethodInfos(this Type type, string name)
         {
-            IEnumerable<MethodInfo> ms = GetMethodInfos(type);
-            List<MethodInfo> result = new List<MethodInfo>();
+            var ms = GetMethodInfos(type);
+            var result = new List<MethodInfo>();
             foreach (MethodInfo m in ms)
             {
                 if (m.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
@@ -164,13 +165,13 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 if (m.Name.Equals("op_Explicit", StringComparison.OrdinalIgnoreCase) || m.Name.Equals("op_Implicit", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (m.ReturnType == target)
+                    if (m.ReturnType != target)
+                        continue;
+
+                    var ps = m.GetParameters();
+                    if (ps.Length == 1 && ps[0].ParameterType == source)
                     {
-                        var ps = m.GetParameters();
-                        if (ps.Length == 1 && ps[0].ParameterType == source)
-                        {
-                            return m;
-                        }
+                        return m;
                     }
                 }
             }
@@ -473,13 +474,12 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     return p.GetValue(container, null);
                 }
-                FieldInfo f = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
-                if (f != null)
-                {
-                    return f.GetValue(container);
-                }
             }
-
+            FieldInfo f = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            if (f != null)
+            {
+                return f.GetValue(container);
+            }
             return null;
 #else
             var key = $"PI${type.GetHashCode()}.{name}";
@@ -609,6 +609,57 @@ namespace JinianNet.JNTemplate.Dynamic
             return null;
         }
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="pis"></param>
+        /// <returns></returns>
+        public static object[] ChangeArguments(this object[] args, ParameterInfo[] pis)
+        {
+            var newArgs = new object[pis.Length];
+            for (var i = 0; i < pis.Length; i++)
+            {
+                if (args.Length <= i || args[i] == null)
+                {
+                    if (pis[i].IsOptional)
+                        newArgs[i] = (pis[i].DefaultValue != null && pis[i].DefaultValue != DBNull.Value) ? pis[i].DefaultValue : DefaultForType(pis[i].ParameterType);
+                    continue;
+                }
+                newArgs[i] = args[i];
+                var type = args[i].GetType();
+                if (type == pis[i].ParameterType)
+                    continue;
+                if (pis[i].ParameterType.Name == "Nullable`1")
+                {
+                    var genericType =
+#if NF40 || NF35 || NF20
+                            pis[i].ParameterType.GetGenericArguments()[0]
+#else
+                            pis[i].ParameterType.GenericTypeArguments[0]
+#endif
+                            ;
+
+                    var genericValue = args[i];
+                    if (genericType != type)
+                    {
+                        genericValue = Convert.ChangeType(args[i], genericType);
+                    }
+                    newArgs[i] = Activator.CreateInstance(pis[i].ParameterType, new object[] { genericValue });
+                    continue;
+                }
+                var changeObj = Convert.ChangeType(args[i], pis[i].ParameterType);
+                if (changeObj != null)
+                {
+                    newArgs[i] = changeObj;
+                    continue;
+                }
+                throw new TemplateException($"[FunctaionTag]: parameter error. Expected \"{pis[i].ParameterType.Name}\" but got \"{type.Name}\"");
+            }
+
+            return newArgs;
+        }
+
+        /// <summary>
         /// Get the index value.
         /// </summary>
         /// <param name="container">The object.</param>
@@ -719,10 +770,13 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static object Call(this Type type, MethodInfo method, object container, object[] args)
         {
+            ParameterInfo[] pi = method.GetParameters();
+            args = args.ChangeArguments(pi);
 #if NF20 || !USEEXPRESSION
+
             return method.Invoke(container, args);
 #else
-            ParameterInfo[] pi = method.GetParameters();
+
             var keys = pi.Select(m => m.ParameterType.GetHashCode()).ToArray();
             var name = $"D${type.GetHashCode()}.{method.Name}({string.Join(",", keys)})";
 
