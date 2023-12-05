@@ -214,6 +214,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         public static bool CanUseEqual(Type type)
         {
+            if (type.FullName == "System.Decimal")
+                return false;
             return IsNumber(type)
                  || type.FullName == "System.Boolean"
                  || type.IsEnum;

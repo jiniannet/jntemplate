@@ -243,7 +243,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The type.</param>
         public static void EmitEquals(this ILGenerator il, Type type)
         {
-            var equals = type.GetMethodInfo("Equals", new Type[] { type });
+            var equals = type.GetMethodInfo("op_Equality", new Type[] { type });
+            if (equals == null)
+                equals = type.GetMethodInfo("Equals", new Type[] { type });
             //var ps = equals.GetParameters();
             //if (ps.Length == 1
             //    && ps[0].ParameterType != type)

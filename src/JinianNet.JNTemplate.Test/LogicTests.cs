@@ -1,6 +1,7 @@
 ﻿using JinianNet.JNTemplate;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -436,6 +437,21 @@ namespace JinianNet.JNTemplate.Test
             template.Set("collectingMoney", 88.8M);
             var render = template.Render(); ;
             Assert.Equal("88.8", render);
+        }
+
+
+        /// <summary>
+        /// fixs #I8CNOA
+        /// </summary>
+        [Fact]
+        public void TestIfWithDecimal()
+        {
+            var templateContent = "${if(num>0)}Yes${else}No${end}";
+            var template = Engine.CreateTemplate(templateContent); 
+            decimal num = 1;
+            template.Set("num", num);
+            var render = template.Render();
+            Assert.Equal("Yes", render);
         }
     }
 }

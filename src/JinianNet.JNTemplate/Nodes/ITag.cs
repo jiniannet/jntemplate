@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate.Nodes
         bool Previous { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets or sets the next tag output mode
         /// </summary>
         bool Next { get; set; }
         /// <summary>

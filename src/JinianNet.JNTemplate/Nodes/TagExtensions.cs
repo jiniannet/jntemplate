@@ -92,7 +92,7 @@ namespace JinianNet.JNTemplate.Nodes
                         int len = StartsWithNewLine(text);
                         if (len > 0)
                         {
-                            if (string.IsNullOrEmpty(text.Trim()))
+                            if (text.Length <= len)
                             {
                                 return string.Empty;
                             }

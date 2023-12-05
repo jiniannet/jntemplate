@@ -5,6 +5,7 @@
 using System;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
+using System.Runtime.CompilerServices;
 
 namespace JinianNet.JNTemplate
 {
@@ -15,6 +16,7 @@ namespace JinianNet.JNTemplate
     {
         private static volatile object state = new object();
         private static IEngine engine;
+        private static string engineVersion;
 
         /// <summary>
         /// Gets or sets the engine instance.
@@ -42,7 +44,18 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// The engine version.
         /// </summary>
-        public static string Version => Const.Version;
+        public static string Version
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(engineVersion))
+                {
+                    var ver = typeof(Engine).Assembly.GetName().Version;
+                    engineVersion = $"{ver.Major}.{ver.Minor}.{ver.Build}";
+                }
+                return engineVersion;
+            }
+        }
 
         /// <summary>
         /// 
