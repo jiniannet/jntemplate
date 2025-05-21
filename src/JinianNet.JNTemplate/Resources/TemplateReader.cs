@@ -31,7 +31,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <inheritdoc />
-        public string ReadToEnd(Context context)
+        public string ReadToEnd(ITemplateContext context)
         {
             if (!isComplete)
             {
@@ -49,12 +49,12 @@ namespace JinianNet.JNTemplate.Resources
 #if !NF40 && !NF35 && !NF20
         /// <inheritdoc />
 #if NF45
-        public Task<string> ReadToEndAsync(Context context)
+        public Task<string> ReadToEndAsync(ITemplateContext context)
         {
             return Task.FromResult(ReadToEnd(context));
         }
 #else
-        public async Task<string> ReadToEndAsync(Context context)
+        public async Task<string> ReadToEndAsync(ITemplateContext context)
         {
             if (!isComplete)
             {

@@ -69,7 +69,7 @@ namespace System.Linq
         /// <returns></returns>
         public static TSource FirstOrDefault<TSource>(this List<TSource> source)
         {
-            if (source != null)
+            if (source != null && source.Count > 0)
             {
                 return source[0];
             }

@@ -11,7 +11,7 @@ namespace JinianNet.JNTemplate.Resources
     /// <summary>
     /// 
     /// </summary>
-    public class StringReader : /*System.IO.StringReader,*/ IReader
+    public class StringReader : /*System.IO.StringReader,*/ IResourceReader
     {
         private string content;
         /// <summary>
@@ -26,13 +26,13 @@ namespace JinianNet.JNTemplate.Resources
 
 
         /// <inheritdoc />
-        public string ReadToEnd(Context context)
+        public string ReadToEnd(ITemplateContext context)
         {
             return content;
         }
 #if !NF40 && !NF35 && !NF20
         /// <inheritdoc />
-        public Task<string> ReadToEndAsync(Context context)
+        public Task<string> ReadToEndAsync(ITemplateContext context)
         {
             return Task.FromResult(content);
         }

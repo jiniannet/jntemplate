@@ -7,7 +7,6 @@ using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Runtime;
 using JinianNet.JNTemplate.Resources;
-using JinianNet.JNTemplate.Caching;
 using System.Reflection;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Hosting;
@@ -48,7 +47,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        IResult CompileFile(string name, string path, Action<CompileContext> action = null);
+        ITemplateResult CompileFile(string name, string path, Action<CompileContext> action = null);
 
         /// <summary>
         /// Compile a template with a given contents
@@ -57,7 +56,7 @@ namespace JinianNet.JNTemplate
         /// <param name="content">The template contents.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        IResult Compile(string name, string content, Action<CompileContext> action = null);
+        ITemplateResult Compile(string name, string content, Action<CompileContext> action = null);
 
         /// <summary>
         /// Creates template context.
@@ -166,10 +165,10 @@ namespace JinianNet.JNTemplate
         IEngine UseScopeProvider(IScopeProvider provider);
 
         /// <summary>
-        /// Sets an <see cref="ICache"/> values from engine.
+        /// Sets an <see cref="TemplateCache"/> values from engine.
         /// </summary>
-        /// <param name="cache">The <see cref="ICache"/> to add set.</param> 
-        IEngine UseCache(ICache cache);
+        /// <param name="cache">The <see cref="TemplateCache"/> to add set.</param> 
+        IEngine UseCache(ITemplateCache cache);
 
 
         /// <summary>
@@ -194,6 +193,34 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <returns></returns>
         IEngine UseInterpretationEngine();
+
+        /// <summary>
+        /// enable template file Watcher.
+        /// </summary>
+        /// <returns></returns>
+        IEngine EnableFileWatcher();
+
+        /// <summary>
+        /// disable template file Watcher.
+        /// </summary>
+        /// <returns></returns>
+        IEngine DisabledFileWatcher();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        IEngine Use(Action<IHostEnvironment> action);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        IEngine UseWatcherProvider(ITemplateWatcherProvider provider);
+ 
 
         /// <summary>
         /// Clear compiled object and cache.

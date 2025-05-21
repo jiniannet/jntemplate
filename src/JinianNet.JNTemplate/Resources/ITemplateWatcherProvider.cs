@@ -2,32 +2,19 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-
 using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Resources
 {
     /// <summary>
-    /// To type detect patterns.
+    /// 
     /// </summary>
-    [Obsolete]
-    public enum TypeDetect
+    public interface ITemplateWatcherProvider
     {
         /// <summary>
-        /// None
+        /// Initializes a new instance of the <see cref="ITemplateWatcher"/> class
         /// </summary>
-        None = 0,
-        /// <summary>
-        /// Standard
-        /// </summary>
-        Standard,
-        /// <summary>
-        /// Auto
-        /// </summary>
-        Auto,
-        /// <summary>
-        /// Absolute
-        /// </summary>
-        Absolute
+        /// <returns></returns>
+        ITemplateWatcher Create();
     }
 }

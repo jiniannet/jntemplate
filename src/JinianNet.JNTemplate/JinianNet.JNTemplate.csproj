@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;net20;net35;net40;net45;net46;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net20;net35;net40;net46;net48;net5.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<AssemblyName>JinianNet.JNTemplate</AssemblyName>
 		<RootNamespace>JinianNet.JNTemplate</RootNamespace>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>2.4.2</Version>
+		<Version>2.4.3</Version>
 		<Authors>JinianNet.com</Authors>
 		<Company>JinianNet.com</Company>
 		<Product>JNTemplate</Product>
@@ -25,9 +25,11 @@
 		<PostBuildEvent></PostBuildEvent>
 		<AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
 		<PackageLicenseFile>License.txt</PackageLicenseFile>
-		<FileVersion>2.4.2.0</FileVersion>
-		<AssemblyVersion>2.4.2.0</AssemblyVersion>
+		<FileVersion>2.4.3.0</FileVersion>
+		<AssemblyVersion>2.4.3.0</AssemblyVersion>
 		<DelaySign>false</DelaySign>
+		<PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
+		<Title>jntemplate</Title>
 	</PropertyGroup>
 
 
@@ -47,6 +49,8 @@
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Debug\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net7.0'">bin\Debug\net7.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">bin\Debug\net8.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net9.0'">bin\Debug\net9.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net10.0'">bin\Debug\net10.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<TreatSpecificWarningsAsErrors />
 		<NoWarn>1701;1702;1705</NoWarn>
@@ -66,6 +70,8 @@
 		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;DEBUG;NET6;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;DEBUG;NET7;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net9.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net10.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -84,6 +90,8 @@
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net6.0'">bin\Release\net6.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net7.0'">bin\Release\net7.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">bin\Release\net8.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net9.0'">bin\Release\net9.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net10.0'">bin\Release\net10.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
@@ -99,6 +107,8 @@
 		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;RELEASE;NET6;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;RELEASE;NET7;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;RELEASE;NET8;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net9.0'">TRACE;RELEASE;NET9;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net10.0'">TRACE;RELEASE;NET10;NET</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
@@ -134,6 +144,10 @@
 		<None Include="..\..\License.txt">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\..\README-NUGET.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
 		</None>
 		<None Include="icon.png" Pack="true" Visible="false" PackagePath="" />
 	</ItemGroup>

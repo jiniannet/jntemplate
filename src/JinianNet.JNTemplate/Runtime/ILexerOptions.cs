@@ -2,32 +2,32 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-
 using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate.Runtime
 {
     /// <summary>
-    /// To type detect patterns.
+    /// 
     /// </summary>
-    [Obsolete]
-    public enum TypeDetect
+    public interface ILexerOptions
     {
         /// <summary>
-        /// None
+        /// Gets or sets whether disablee logogram .
         /// </summary>
-        None = 0,
+        bool DisableeLogogram { get; set; }
         /// <summary>
-        /// Standard
-        /// </summary>
-        Standard,
+        /// Gets or sets the tag prefix .
+        /// </summary> 
+        string TagPrefix { get; set; }
+
         /// <summary>
-        /// Auto
-        /// </summary>
-        Auto,
+        /// Gets or sets the tag suffix.
+        /// </summary> 
+        string TagSuffix { get; set; }
+
         /// <summary>
-        /// Absolute
-        /// </summary>
-        Absolute
+        /// Gets or sets the tag flag.
+        /// </summary> 
+        char TagFlag { get; set; }
     }
 }

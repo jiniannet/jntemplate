@@ -603,11 +603,11 @@ namespace JinianNet.JNTemplate.Dynamic
             while (post.Count > 0)
             {
                 object obj = post.Pop();
-                if (obj != null && obj.GetType().FullName == "JinianNet.JNTemplate.Operator")
+                if (obj != null && obj is Operator o)
                 {
                     object y = stack.Pop();
                     object x = stack.Pop();
-                    stack.Push(Calculate(x, y, OperatorConvert.ToString((Operator)obj)));
+                    stack.Push(Calculate(x, y, OperatorConvert.ToString(o)));
                 }
                 else
                 {

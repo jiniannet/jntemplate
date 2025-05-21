@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+
 #if !NF35 && !NF20
 using System.Threading.Tasks;
 #endif
@@ -155,6 +156,49 @@ namespace JinianNet.JNTemplate
                 default:
                     return true;
             }
+        }
+
+
+        /// <summary>
+        /// Returns the hash code for this string.
+        /// </summary>
+        /// <param name="value"> A 64-bit signed integer hash code.</param>
+        /// <returns></returns>
+        public static long ToHashCode(Type value)
+        {
+            if (value==null)
+                return 0L;
+            return 0x7fffffffL +  value.GetHashCode();
+        }
+
+        /// <summary>
+        /// Returns the hash code for this string.
+        /// </summary>
+        /// <param name="value"> A 64-bit signed integer hash code.</param>
+        /// <returns></returns>
+        public static long ToHashCode(string value)
+        {
+            if (value==null)
+                return 0L;
+            return 0x7fffffffL +  value.GetHashCode();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static string ContentToTemplateName(string content)
+        {
+            return $"ContentTemp{ToHashCode(content)}";
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string PathToTemplateName(string path)
+        {
+            return $"FileTemp{ToHashCode(path)}";
         }
         /// <summary>
         /// Indicates whether the specified Unicode character is categorized as a Unicode letter.

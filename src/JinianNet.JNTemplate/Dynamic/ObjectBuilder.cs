@@ -136,7 +136,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static Type GetOrGenerateType(Type baseType)
         {
-            var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{baseType.GetHashCode()}";
+            var typeName = $"{Const.ANONYMOUS_TYPE_CACHE}{Utility.ToHashCode(baseType)}";
             return dict.GetOrAdd(typeName, key =>
             {
                 return GenerateTypeFrom(baseType);
@@ -151,7 +151,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static Type GenerateTypeFrom(Type baseType)
         {
-            var name = baseType.GetHashCode().ToString().Replace("-", "_");
+            var name = Utility.ToHashCode(baseType);
             var typeBuilder = DefineType($"{ typeof(ObjectBuilder).Namespace}.Object{name}");
             var ps = baseType.GetProperties();
             foreach (var p in ps)

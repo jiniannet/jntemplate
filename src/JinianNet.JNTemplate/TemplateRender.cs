@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Gets or sets the <see cref="TextReader"/> of the template.
         /// </summary>
-        public IReader Reader { get; set; }
+        public IResourceReader Reader { get; set; }
 
         /// <summary>
         /// Performs the render for a template.

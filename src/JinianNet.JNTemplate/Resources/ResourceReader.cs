@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.Resources
     /// <summary>
     /// 
     /// </summary>
-    public class ResourceReader : IReader
+    public class ResourceReader : IResourceReader
     {
         private string resourcePath;
         private string content;
@@ -30,7 +30,7 @@ namespace JinianNet.JNTemplate.Resources
             this.isComplete = false;
         }
         /// <inheritdoc />
-        public string ReadToEnd(Context context)
+        public string ReadToEnd(ITemplateContext context)
         {
             if (!isComplete)
             {
@@ -48,12 +48,12 @@ namespace JinianNet.JNTemplate.Resources
 #if !NF40 && !NF35 && !NF20
         /// <inheritdoc />
 #if NF45
-        public Task<string> ReadToEndAsync(Context context)
+        public Task<string> ReadToEndAsync(ITemplateContext context)
         {
             return Task.FromResult(ReadToEnd(context));
         }
 #else
-        public async Task<string> ReadToEndAsync(Context context)
+        public async Task<string> ReadToEndAsync(ITemplateContext context)
         {
             if (!isComplete)
             {

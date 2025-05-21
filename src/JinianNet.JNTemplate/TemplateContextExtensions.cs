@@ -10,6 +10,14 @@ using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Exceptions;
+using JinianNet.JNTemplate.Runtime;
+using System.Collections.Generic;
+
+using System.Text;
+using System.Collections;
+
+
+
 #if !NF35 && !NF20
 using System.Threading.Tasks;
 #endif
@@ -24,9 +32,9 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Returns the names of directories (including their paths) in the <see cref="Context"/>.
         /// </summary>
-        /// <param name="ctx">The  <see cref="Context"/>.</param>
+        /// <param name="ctx">The  <see cref="ITemplateContext"/>.</param>
         /// <returns>An array of the full names (including paths) of directories in the <see cref="Context"/>.</returns>
-        public static string[] GetResourceDirectories(this Context ctx)
+        public static IEnumerable<string> GetResourceDirectories(this ITemplateContext ctx)
         {
             //if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.Options.ResourceDirectories.Contains(ctx.CurrentPath))
             //{
@@ -35,21 +43,21 @@ namespace JinianNet.JNTemplate
             //string[] paths = new string[ctx.Options.ResourceDirectories.Count + 1];
             //paths[0] = ctx.CurrentPath;
             //ctx.Options.ResourceDirectories.CopyTo(paths, 1);
-            //return paths;
-            if (ctx.Environment.Options.ResourceDirectories?.Count == 0)
+            //return paths; 
+            if (ctx.ResourceDirectories?.Count == 0)
                 return new string[] { System.IO.Directory.GetCurrentDirectory() };
-            return ctx.Environment.Options.ResourceDirectories.ToArray();
+            return ctx.ResourceDirectories;
         }
 
         /// <summary>
         /// Loads the contents of an resource file on the specified path.
         /// </summary>
         /// <param name="fileName">The path of the file to load.</param> 
-        /// <param name="ctx">The <see cref="Context"/>.</param>
+        /// <param name="ctx">The <see cref="ITemplateContext"/>.</param>
         /// <returns>The loaded resource.</returns>
-        public static Resources.ResourceInfo Load(this Context ctx, string fileName)
+        public static Resources.ResourceInfo Load(this ITemplateContext ctx, string fileName)
         {
-            return ctx.Environment.Loader.Load(ctx, fileName);
+            return ctx.ResourceManager.Load(ctx, fileName);
         }
 
 #if !NF40 && !NF45 && !NF35 && !NF20
@@ -57,11 +65,11 @@ namespace JinianNet.JNTemplate
         /// Loads the contents of an resource file on the specified path.
         /// </summary>
         /// <param name="fileName">The path of the file to load.</param> 
-        /// <param name="ctx">The <see cref="Context"/>.</param>
+        /// <param name="ctx">The <see cref="ITemplateContext"/>.</param>
         /// <returns>The loaded resource.</returns>
-        public static Task<Resources.ResourceInfo> LoadAsync(this Context ctx, string fileName)
+        public static Task<Resources.ResourceInfo> LoadAsync(this ITemplateContext ctx, string fileName)
         {
-            return ctx.Environment.Loader.LoadAsync(ctx, fileName);
+            return ctx.ResourceManager.LoadAsync(ctx, fileName);
         }
 #endif
 
@@ -69,50 +77,23 @@ namespace JinianNet.JNTemplate
         /// Returns the full path in the resource directorys.
         /// </summary>
         /// <param name="fileName">The relative or absolute path to the file to search.</param> 
-        /// <param name="ctx">The <see cref="Context"/>.</param>
+        /// <param name="ctx">The <see cref="ITemplateContext"/>.</param>
         /// <returns>The full path.</returns>
-        public static string FindFullPath(this Context ctx, string fileName)
+        public static string FindFullPath(this ITemplateContext ctx, string fileName)
         {
-            return ctx.Environment.Loader.Find(ctx, fileName);
+            return ctx.ResourceManager.Find(ctx, fileName);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IVariableScope"/> class
         /// </summary>
-        /// <param name="ctx">The <see cref="Context"/></param>
+        /// <param name="ctx">The <see cref="ITemplateContext"/></param>
         /// <returns></returns>
-        public static IVariableScope CreateVariableScope(this Context ctx)
+        public static IVariableScope CreateVariableScope(this ITemplateContext ctx)
         {
-            return ctx.Environment.CreateVariableScope();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IVariableScope"/> class
-        /// </summary>
-        /// <param name="ctx">The <see cref="Context"/></param>
-        /// <param name="parent">The <see cref="IVariableScope"/></param>
-        /// <returns></returns>
-        public static IVariableScope CreateVariableScope(this Context ctx, IVariableScope parent)
-        {
-            return ctx.Environment.CreateVariableScope(parent);
-        }
-
-        /// <summary>
-        /// Copies a range of elements from an <see cref="TemplateContext"/> starting at the first element and pastes them into another <see cref="CompileContext"/> starting at the first element.
-        /// </summary>
-        /// <param name="ctx1">The <see cref="TemplateContext"/> that contains the data to copy.</param>
-        /// <param name="ctx2">The <see cref="CompileContext"/> that receives the data.</param>
-        public static void CopyTo(this TemplateContext ctx1, CompileContext ctx2)
-        {
-            if (ctx1 != null && ctx2 != null)
-            {
-                ctx2.Data = ctx1.TempData;
-                ctx2.CurrentPath = ctx1.CurrentPath;
-                ctx2.Charset = ctx1.Charset;
-                ctx2.OutMode = ctx1.OutMode;
-                ctx2.ThrowExceptions = ctx1.ThrowExceptions;
-                ctx2.Debug = ctx1.Debug;
-            }
+            var vs =  ctx?.ScopeProvider?.CreateScope();
+            vs.Parent = ctx.TempData;
+            return vs;
         }
 
         /// <summary>
@@ -121,14 +102,9 @@ namespace JinianNet.JNTemplate
         /// <param name="ctx">The <see cref="Context"/>.</param>
         /// <param name="text">The template contents.</param>
         /// <returns>An TemplateParser.</returns>
-        public static TemplateLexer CreateTemplateLexer(this Context ctx, string text)
+        public static TemplateLexer CreateTemplateLexer(this ITemplateContext ctx, string text)
         {
-            var options = ctx.Environment.Options;
-            return new TemplateLexer(text,
-                options.TagPrefix,
-                options.TagSuffix,
-                options.TagFlag,
-                options.DisableeLogogram);
+            return new TemplateLexer(text, ctx);
         }
         /// <summary>
         /// 
@@ -136,9 +112,9 @@ namespace JinianNet.JNTemplate
         /// <param name="ctx"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static IResult InterpretTemplate(this Context ctx, string text)
+        public static ITemplateResult InterpretTemplate(this ITemplateContext ctx, string text)
         {
-            return InterpretTemplate(ctx, text.GetHashCode().ToString(), new StringReader(text));
+            return InterpretTemplate(ctx, Utility.ContentToTemplateName(text), new StringReader(text));
         }
 
         /// <summary>
@@ -148,7 +124,7 @@ namespace JinianNet.JNTemplate
         /// <param name="name"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public static IResult InterpretTemplate(this Context context, string name, IReader reader)
+        public static ITemplateResult InterpretTemplate(this ITemplateContext context, string name, IResourceReader reader)
         {
 
             if (string.IsNullOrEmpty(name))
@@ -156,17 +132,25 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentNullException(nameof(name));
             }
 
-            var env = context.Environment;
 
-            if (!context.EnableCache)
-            {
-                return new InterpretResult(Lexer(context, reader.ReadToEnd(context)));
-            }
+            ITemplateResult result;
+            if (context.EnableCache && (result = context.Cache[name])!=null)
+                return result;
 
-            return env.Results.GetOrAdd(name, (fullName) =>
-            {
-                return new InterpretResult(Lexer(context, reader.ReadToEnd(context)));
-            });
+            result = Interpre(reader, context);
+
+            if (context.EnableCache)
+                context.Cache[name] = result;
+
+            return result;
+        }
+
+
+        private static ITemplateResult Interpre(IResourceReader reader, ITemplateContext ctx)
+        {
+            var content = reader.ReadToEnd(ctx);
+            var tags = Lexer(ctx, content);
+            return new InterpretResult(tags);
         }
 
 
@@ -176,7 +160,7 @@ namespace JinianNet.JNTemplate
         /// <param name="context"></param>
         /// <param name="text"></param> 
         /// <returns></returns>
-        public static TagCollection Lexer(this Context context, string text)
+        public static TagCollection Lexer(this ITemplateContext context, string text)
         {
 
             if (string.IsNullOrEmpty(text))
@@ -200,9 +184,9 @@ namespace JinianNet.JNTemplate
         /// <param name="ctx">The <see cref="Context"/>.</param>
         /// <param name="ts">The token array.</param>
         /// <returns>An TemplateParser.</returns>
-        public static TemplateParser CreateTemplateParser(this Context ctx, Token[] ts)
+        public static TemplateParser CreateTemplateParser(this ITemplateContext ctx, Token[] ts)
         {
-            return new TemplateParser(ctx.Environment.Resolver, ts);
+            return new TemplateParser(ctx.Resolver, ts);
         }
 
         /// <summary>
@@ -211,21 +195,21 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <returns></returns>
-        public static IResult CompileFile(this TemplateContext context, string path)
+        public static ITemplateResult CompileFile(this TemplateContext context, string path)
         {
             var full = context.FindFullPath(path);
             if (full == null)
             {
-                throw new TemplateException($"\"{ path }\" cannot be found.");
+                throw new TemplateException($"\"{path}\" cannot be found.");
             }
-            var template = context.Environment.Results.GetOrAdd(full, (fullName) =>
+            var template = context.Cache.GetOrAdd(full, (fullName) =>
             {
                 var res = context.Load(fullName);
                 if (res == null)
                 {
                     throw new TemplateException($"Path:\"{path}\", the file could not be found.");
                 }
-                return context.Environment.Compile(fullName, res.Content, (c) => context.CopyTo(c));
+                return context.Compile(fullName, res.Content);
             });
             return template;
         }
@@ -253,7 +237,7 @@ namespace JinianNet.JNTemplate
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IResult CompileTemplate(this TemplateContext context, string name, IReader reader)
+        public static ITemplateResult CompileTemplate(this TemplateContext context, string name, IResourceReader reader)
         {
             if (reader == null)
             {
@@ -265,20 +249,65 @@ namespace JinianNet.JNTemplate
                 throw new ArgumentNullException(nameof(name));
             }
 
-            var env = context.Environment;
+            ITemplateResult result;
+            if (context.EnableCache && (result = context.Cache[name])!=null)
+                return result;
 
-            if (!context.EnableCache && context.Debug)
+            result = Compile(name, reader, context);
+
+            if (context.EnableCache)
+                context.Cache[name] = result;
+
+            return result;
+        }
+
+        private static ICompilerResult Compile(string name, IResourceReader reader, TemplateContext ctx)
+        {
+            var content = reader.ReadToEnd(ctx);
+            return ctx.Compile(name, content);
+        }
+
+
+
+
+        /// <summary>
+        /// Compile the text into a dynamic class.
+        /// </summary>
+        /// <param name="content">the context of the text</param>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="action">The parameter setting method.</param>
+        /// <param name="context">The <see cref="TemplateContext"/>.</param>
+        /// <returns></returns> 
+        public static ICompilerResult Compile(this TemplateContext context, string name, string content, Action<CompileContext> action = null)
+        {
+            if (string.IsNullOrEmpty(name))
             {
-                System.Diagnostics.Trace.TraceWarning("WARN:The template cache is disabled.");
-                return env.Compile(name, reader.ReadToEnd(context), (c) => context.CopyTo(c));
-
+                name = Utility.ContentToTemplateName(content);
             }
 
-            return env.Results.GetOrAdd(name, (fullName) =>
+            using (var ctx = context.GenerateContext(name, context.TempData))
             {
-                return env.Compile(fullName, reader.ReadToEnd(context), (c) => context.CopyTo(c));
+                if (action != null)
+                {
+                    action(ctx);
+                }
+                return ctx.Compile(content);
+            }
+        }
 
-            });
+        /// <summary>
+        /// Create a compilation context.
+        /// </summary>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="scope">The template data.</param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private static CompileContext GenerateContext(this ITemplateContext context, string name, IVariableScope scope)
+        {
+            var ctx = new CompileContext(context);
+            ctx.TempData = scope ?? context.CreateVariableScope();
+            return ctx;
+
         }
 
         /// <summary>
@@ -346,7 +375,7 @@ namespace JinianNet.JNTemplate
         public static void ThrowException(this TemplateContext ctx, TemplateException e, ITag tag, System.IO.TextWriter writer)
         {
             ctx.AddError(e);
-            if (!ctx.ThrowExceptions)
+            if (!ctx.DisableCodeOutput && !ctx.ThrowExceptions)
             {
                 writer.Write(tag.ToSource());
             }
@@ -431,7 +460,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static object Execute(this TemplateContext ctx, ITag tag)
         {
-            return ctx.Resolver.Excute(tag,ctx); 
+            return ctx.Resolver.Excute(tag, ctx);
         }
 
 
@@ -501,7 +530,7 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (ctx.Mode == EngineMode.Compiled)
+            if (ctx.IsCompileMode)
             {
                 type = type ?? value?.GetType();
                 var isArray = type?.IsArray ?? false;
@@ -555,11 +584,11 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static bool MustFormat(this TemplateContext ctx, Type type)
         {
-            foreach (var f in ctx.Environment.OutputFormatters)
-            {
-                if (f.CanWriteType(type))
-                    return true;
-            }
+            //foreach (var f in ctx.OutputFormatters)
+            //{
+            //    if (f.CanWriteType(type))
+            //        return true;
+            //}
             return false;
         }
 
@@ -569,16 +598,16 @@ namespace JinianNet.JNTemplate
         /// <param name="ctx"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static string OutputFormat(this Context ctx, object value)
+        public static string OutputFormat(this ITemplateContext ctx, object value)
         {
             if (value == null)
                 return null;
-            var type = value.GetType();
-            foreach (var f in ctx.Environment.OutputFormatters)
-            {
-                if (f.CanWriteType(type))
-                    return f.Format(value);
-            }
+            //var type = value.GetType();
+            //foreach (var f in ctx.OutputFormatters)
+            //{
+            //    if (f.CanWriteType(type))
+            //        return f.Format(value);
+            //}
             return value.ToString();
         }
 
@@ -591,7 +620,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         private static object Execute(this TemplateContext ctx, string name, ITag tag)
         {
-            return ctx.Resolver.Excute(tag, ctx); 
+            return ctx.Resolver.Excute(tag, ctx);
         }
     }
 }

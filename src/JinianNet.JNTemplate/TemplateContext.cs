@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
     /// Context for template execution.
     /// </summary>
     [Serializable]
-    public class TemplateContext : Context
+    public class TemplateContext : Context, ITemplateContext
 #if NF20 || NF40
         , ICloneable
 #endif
@@ -33,16 +33,19 @@ namespace JinianNet.JNTemplate
             this.AllErrors = new List<Exception>();
         }
 
-        /// <summary>
-        /// Enable or Disenable the cache.
-        /// </summary>
-        [Obsolete("please use the `EnableCache`")]
-        public bool EnableTemplateCache { get => EnableCache; set => EnableCache = value; }
 
         /// <summary>
-        /// Gets or sets the <see cref="IVariableScope"/> of the context.
+        /// Initializes a new instance of the <see cref="TemplateContext"/> class
         /// </summary>
-        public IVariableScope TempData { get; set; }
+        /// <param name="data">The <see cref="IVariableScope"/>.</param>  
+        /// <param name="context"></param> 
+        internal TemplateContext(IVariableScope data,
+            ITemplateContext context)
+            : base(context)
+        {
+            this.TempData = data;
+            this.AllErrors = new List<Exception>();
+        }
 
         /// <summary>
         /// Gets the <see cref="Exception"/> of the context.
@@ -95,8 +98,8 @@ namespace JinianNet.JNTemplate
             {
                 throw new ArgumentNullException("\"context\" cannot be null.");
             }
-            var scope = context.CreateVariableScope(context.TempData);
-            var ctx = new TemplateContext(scope, context.Environment);
+            var scope = context.CreateVariableScope();
+            var ctx = new TemplateContext(scope, context);
             ctx.Charset = context.Charset;
             ctx.CurrentPath = context.CurrentPath;
             ctx.ThrowExceptions = context.ThrowExceptions;

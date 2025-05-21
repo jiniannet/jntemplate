@@ -100,7 +100,7 @@ namespace JinianNet.JNTemplate
         public static void SetAnonymousObject(this ITemplate template, string key, object value)
         {
 
-            if (template.EnableCompile)
+            if (template.IsCompileMode)
             {
                 TemplateContextExtensions.SetAnonymousObject(template.Context, key, value);
             }

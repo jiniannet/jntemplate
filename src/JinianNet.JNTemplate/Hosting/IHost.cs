@@ -2,18 +2,15 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.CodeCompilation; 
-using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
-using System; 
-using System.Reflection;
+using System;  
 
 namespace JinianNet.JNTemplate.Hosting
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IHost
+    public interface IHost : IDisposable
     {
         /// <summary>
         /// 

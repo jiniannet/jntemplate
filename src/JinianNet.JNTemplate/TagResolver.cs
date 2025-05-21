@@ -48,32 +48,20 @@ namespace JinianNet.JNTemplate
         {
             get
             {
-                var key = firstKey;
-                foreach (var value in refs.Values)
-                    if (value.Index == index)
-                        return value.Visitor;
-                return null;
+                return GetVisitorEntry(index)?.Visitor;
             }
             set
             {
-                var old = this[index];
-                if (old == null)
-                    Register(index, value);
-                else
-                {
-                    throw new NotImplementedException();
-                }
 
+                SetVisitor(index, value);
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
         public Resolver()
         {
-            // Visitor
-            //Internal
-            //CompilerResults
             refs = new Dictionary<string, VisitorEntry>();
         }
         /// <summary>
@@ -105,7 +93,7 @@ namespace JinianNet.JNTemplate
                 return null;
             }
             ITag t;
-            var f = refs[firstKey];
+            var f = this[firstKey];
             while (f != null)
             {
                 ITagVisitor resolver = f.Visitor;
@@ -122,7 +110,7 @@ namespace JinianNet.JNTemplate
                     }
                     return t;
                 }
-                f = refs[f.Next];
+                f = this[f.Next];
             }
             return null;
         }
@@ -281,9 +269,10 @@ namespace JinianNet.JNTemplate
                 entry.Index = refs.Count;
             }
             entry.Visitor = visitor;
-
-            refs[visitor.Name] = entry;
-
+            lock (this)
+            {
+                refs[visitor.Name] = entry;
+            }
             return true;
         }
 
@@ -292,58 +281,61 @@ namespace JinianNet.JNTemplate
         /// </summary>
         /// <param name="index"></param>
         /// <param name="visitor">The guess method.</param>
-        public bool Register(int index, ITagVisitor visitor)
+
+        /// <inheritdoc />
+        public void Insert(int index, ITagVisitor visitor)
         {
-            if (refs.Count == 0)
-                return Register(visitor);
+            if (refs.Count == 0 || (index >= refs.Count))
+                Register(visitor);
 
             VisitorEntry entry;
             if (refs.TryGetValue(visitor.Name, out entry))
-                return false;
+                throw new Exception($"the key \"{visitor.Name}\"  exists.");
 
             entry = new VisitorEntry();
             entry.Index = index;
             entry.Visitor = visitor;
-            var start = firstKey;
-            var next = this[start];
-            while (next != null)
-            {
-                if (next.Index == index - 1)
-                {
-                    var nextKey = next.Next;
-                    next.Next = entry.Visitor.Name;
-                    next = this[nextKey];
-                    //next.Index++;
-                    continue;
-                }
-                else if (next.Index == index)
-                {
-                    entry.Next = next.Visitor.Name;
-                    next.Index++;
-                    refs[visitor.Name] = entry;
-                }
-                else if (next.Index > index)
-                {
-                    next.Index++;
-                }
-                lastKey = next.Visitor.Name;
-                next = this[next.Next];
 
-            }
+
             if (index == 0)
+            {
+                entry.Next = firstKey;
                 firstKey = visitor.Name;
-            return true;
+            }
+            else
+            {
+                var prev = GetVisitorEntry(index - 1);
+
+                if (prev == null)
+                    throw new InvalidOperationException();
+
+                entry.Next = prev.Next;
+                prev.Next = visitor.Name;
+            }
+
+            lock (this)
+            {
+                refs[visitor.Name] = entry;
+            }
+
+            string tmpKey = entry.Next;
+            int tmpIndex = index + 1;
+            VisitorEntry tmpEntry;
+
+            while (!string.IsNullOrEmpty(tmpKey) && (tmpEntry = this[tmpKey])!=null)
+            {
+                tmpKey = tmpEntry.Next;
+                tmpEntry.Index = tmpIndex;
+                tmpIndex++;
+            }
         }
 
-        private ITagVisitor FindEntry(string key)
-        {
-            var entry = this[key];
-            if (entry != null)
-            {
-                return entry.Visitor;
-            }
-            return null;
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected ITagVisitor FindEntry(string key) => this[key]?.Visitor;
 
         /// <inheritdoc />
         public int IndexOf(ITagVisitor item)
@@ -360,15 +352,11 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public void Insert(int index, ITagVisitor item)
-        {
-            Register(index, item);
-        }
-
-        /// <inheritdoc />
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            var entry = GetVisitorEntry(index);
+            if (entry != null)
+                Remove(entry);
         }
 
         /// <inheritdoc />
@@ -380,7 +368,10 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public void Clear()
         {
-            refs.Clear();
+            lock (this)
+            {
+                refs.Clear();
+            }
         }
 
         /// <inheritdoc />
@@ -392,24 +383,62 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public void CopyTo(ITagVisitor[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            lock (this)
+            {
+                foreach (var node in refs.Values)
+                {
+                    array[arrayIndex + node.Index] = node.Visitor;
+                }
+            }
         }
 
         /// <inheritdoc />
         public bool Remove(ITagVisitor item)
         {
-            throw new NotImplementedException();
+            var entry = this[item.Name];
+            if (entry != null)
+            {
+                return Remove(entry);
+            }
+            return false;
+        }
+
+
+        /// <inheritdoc />
+        private bool Remove(VisitorEntry entry)
+        {
+            if (entry != null)
+            {
+                if (entry.Index == 0)
+                {
+                    firstKey = entry.Next;
+                }
+                else
+                {
+                    var prev = GetVisitorEntry(entry.Index - 1);
+                    if (prev == null)
+                        throw new NullReferenceException();
+                    prev.Next = entry.Next;
+                }
+                lock (this)
+                {
+                    refs.Remove(entry.Visitor.Name);
+                }
+                ResetIndex();
+                return true;
+            }
+            return false;
         }
 
         /// <inheritdoc />
         public IEnumerator<ITagVisitor> GetEnumerator()
         {
             var key = firstKey;
-            while (!string.IsNullOrEmpty(key))
+            VisitorEntry entry;
+            while (!string.IsNullOrEmpty(key) && (entry = this[key])!=null)
             {
-                var value = refs[key];
-                key = value.Next;
-                yield return value.Visitor;
+                key = entry.Next;
+                yield return entry.Visitor;
             }
         }
 
@@ -418,5 +447,61 @@ namespace JinianNet.JNTemplate
         {
             return GetEnumerator();
         }
+
+        #region
+        private VisitorEntry GetVisitorEntry(int index)
+        {
+            lock (this)
+            {
+                foreach (var value in refs.Values)
+                    if (value.Index == index)
+                        return value;
+                return null;
+            }
+        }
+
+        private void ResetIndex()
+        {
+            var index = 0;
+            var key = firstKey;
+            VisitorEntry entry;
+            while (!string.IsNullOrEmpty(key) && (entry = this[key])!=null)
+            {
+                key = entry.Next;
+                entry.Index = index;
+                index++;
+            }
+        }
+
+        private void SetVisitor(int index, ITagVisitor visitor)
+        {
+            if (this[visitor.Name]!=null && this[visitor.Name].Index != index)
+                throw new Exception($"the key \"{visitor.Name}\"  exists.");
+
+            VisitorEntry old;
+            if (index < 0 || index >= this.Count || (old = GetVisitorEntry(index)) == null)
+                throw new ArgumentOutOfRangeException("index");
+
+            var entry = new VisitorEntry();
+            entry.Index = index;
+            entry.Visitor = visitor;
+            entry.Next = old.Next;
+
+            if (index == 0)
+                firstKey = visitor.Name;
+            else
+                GetVisitorEntry(index - 1).Next = visitor.Name;
+
+            lock (this)
+            {
+                refs.Remove(old.Visitor.Name);
+                refs[visitor.Name] = entry;
+            }
+
+            if(index == this.Count - 1)
+                lastKey = visitor.Name;
+
+        }
+        #endregion
     }
 }

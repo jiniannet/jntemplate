@@ -33,7 +33,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        bool EnableCompile { get; }
+        bool IsCompileMode { get; }
 
 
         /// <summary>

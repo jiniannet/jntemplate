@@ -189,7 +189,7 @@ namespace JinianNet.JNTemplate.Parsers
             var t = tag as VariableTag;
             if (t.Parent == null)
             {
-                return c.Data.GetType(t.Name);
+                return c.TempData.GetType(t.Name);
             }
             var parentType = c.GuessType(t.Parent);
             if (parentType == typeof(System.Data.DataRow))

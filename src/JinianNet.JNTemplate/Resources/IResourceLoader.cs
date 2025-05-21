@@ -22,7 +22,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="filename">The fully qualified path or file name of the file to load.</param>
         /// <param name="ctx">The <see cref="Context"/>.</param> 
         /// <returns>An instance of a resource.</returns>
-        ResourceInfo Load(Context ctx, string filename);
+        ResourceInfo Load(ITemplateContext ctx, string filename);
 
         /// <summary>
         /// Search for file full path.
@@ -30,14 +30,14 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="filename">The fully qualified path or file name of the file to load.</param>
         /// <param name="ctx">The <see cref="Context"/>.</param> 
         /// <returns>The file full path of the resource.</returns>
-        string Find(Context ctx, string filename);
+        string Find(ITemplateContext ctx, string filename);
 
-        /// <summary>
-        /// Returns the directory information for the specified path string.
-        /// </summary>
-        /// <param name="fullPath">The path of a file.</param>
-        /// <returns>Directory information for path, or null if path denotes a root directory or is null.</returns>
-        string GetDirectoryName(string fullPath);
+        // /// <summary>
+        // /// Returns the directory information for the specified path string.
+        // /// </summary>
+        // /// <param name="fullPath">The path of a file.</param>
+        // /// <returns>Directory information for path, or null if path denotes a root directory or is null.</returns>
+        // string GetDirectoryName(string fullPath);
 
 #if !NF40 && !NF45 && !NF35 && !NF20
 
@@ -47,7 +47,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="filename">The fully qualified path or file name of the file to load.</param>
         /// <param name="ctx">The <see cref="Context"/>.</param> 
         /// <returns>An instance of a resource.</returns>
-        Task<ResourceInfo> LoadAsync(Context ctx, string filename);
+        Task<ResourceInfo> LoadAsync(ITemplateContext ctx, string filename);
 #endif
     }
 }

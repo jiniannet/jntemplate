@@ -3,14 +3,8 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate;
-using JinianNet.JNTemplate.Caching;
 using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Parsers;
-using JinianNet.JNTemplate.Resources;
-using JinianNet.JNTemplate.Runtime;
 using System;
-using System.Collections.Generic;
 using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.Hosting
@@ -26,7 +20,7 @@ namespace JinianNet.JNTemplate.Hosting
         /// <param name="name">template name</param>
         /// <param name="environment"> </param>
         /// <returns></returns>
-        private static CompileContext GenerateContext(this IHostEnvironment environment, string name)
+        internal static CompileContext GenerateContext(this IHostEnvironment environment, string name)
         {
             return GenerateContext(environment, name, null);
         }
@@ -38,11 +32,11 @@ namespace JinianNet.JNTemplate.Hosting
         /// <param name="scope">The template data.</param>
         /// <param name="environment"></param>
         /// <returns></returns>
-        private static CompileContext GenerateContext(this IHostEnvironment environment, string name, IVariableScope scope)
+        internal static CompileContext GenerateContext(this IHostEnvironment environment, string name, IVariableScope scope)
         {
             var ctx = new CompileContext(environment);
             ctx.Name = name;
-            ctx.Data = scope ?? ctx.CreateVariableScope();
+            ctx.TempData = scope ?? environment.CreateVariableScope();
             return ctx;
 
         }
@@ -57,7 +51,8 @@ namespace JinianNet.JNTemplate.Hosting
         /// <returns></returns>
         public static ICompilerResult CompileFile(this IHostEnvironment environment, string name, string path, Action<CompileContext> action = null)
         {
-            using (var ctx = environment.GenerateContext(name))
+            var data = environment.CreateVariableScope();
+            using (var ctx = environment.GenerateContext(name, data))
             {
                 if (string.IsNullOrEmpty(path))
                 {
@@ -67,7 +62,7 @@ namespace JinianNet.JNTemplate.Hosting
                 {
                     action(ctx);
                 }
-                var res = environment.Loader.Load(ctx, path);
+                var res = environment.ResourceManager.Load(ctx, path);
                 if (res == null)
                 {
                     throw new TemplateException($"Path:\"{path}\", the file could not be found.");
@@ -78,7 +73,7 @@ namespace JinianNet.JNTemplate.Hosting
                 }
                 if (string.IsNullOrEmpty(ctx.CurrentPath))
                 {
-                    ctx.CurrentPath = environment.Loader.GetDirectoryName(res.FullPath);
+                    ctx.CurrentPath = System.IO.Path.GetDirectoryName(res.FullPath);
                 }
                 return ctx.Compile(res.Content);
             }
@@ -117,30 +112,6 @@ namespace JinianNet.JNTemplate.Hosting
                 vs.Parent = parent; 
             }
             return vs;
-        }
-
-        /// <summary>
-        /// Compile the text into a dynamic class.
-        /// </summary>
-        /// <param name="content">the context of the text</param>
-        /// <param name="name">Unique key of the template</param>
-        /// <param name="action">The parameter setting method.</param>
-        /// <param name="environment">The options of the engine.</param>
-        /// <returns></returns>
-        public static ICompilerResult Compile(this IHostEnvironment environment, string name, string content, Action<CompileContext> action = null)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                name = content.GetHashCode().ToString();
-            }
-            using (var ctx = environment.GenerateContext(name))
-            {
-                if (action != null)
-                {
-                    action(ctx);
-                }
-                return ctx.Compile(content);
-            }
         }
 
         /// <summary>

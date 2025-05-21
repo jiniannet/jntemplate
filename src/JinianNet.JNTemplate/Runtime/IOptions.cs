@@ -4,6 +4,7 @@
  ********************************************************************************/
 
 using JinianNet.JNTemplate.Configuration;
+using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,30 +14,12 @@ namespace JinianNet.JNTemplate.Runtime
     /// <summary>
     /// Represents an global options.
     /// </summary>
-    public interface IOptions
+    public interface IOptions : ILexerOptions
     {
         /// <summary>
         /// 
         /// </summary>
-        string ModelName { get; set; }
-        /// <summary>
-        /// Gets or sets whether disablee logogram .
-        /// </summary>
-        bool DisableeLogogram { get; set; }
-        /// <summary>
-        /// Gets or sets the tag prefix .
-        /// </summary> 
-        string TagPrefix { get; set; }
-
-        /// <summary>
-        /// Gets or sets the tag suffix.
-        /// </summary> 
-        string TagSuffix { get; set; }
-
-        /// <summary>
-        /// Gets or sets the tag flag.
-        /// </summary> 
-        char TagFlag { get; set; }
+        string ModelName { get; set; } 
 
         /// <summary>
         /// Gets or sets the <see cref="Encoding"/> of the engine.
@@ -46,19 +29,7 @@ namespace JinianNet.JNTemplate.Runtime
         /// <summary>
         /// Enable or disenable the compile mode.
         /// </summary>
-        [Obsolete("please use the `Mode`")]
-        bool EnableCompile { get; set; }
-
-        /// <summary>
-        /// Enable or disenable the compile mode.
-        /// </summary>
         EngineMode Mode { get; set; }
-
-        /// <summary>
-        /// Enable or disenable the cache.
-        /// </summary>
-        [Obsolete("please use the `EnableCache`")]
-        bool EnableTemplateCache { get; set; }
 
         /// <summary>
         /// Enable or disenable the cache.
@@ -89,5 +60,10 @@ namespace JinianNet.JNTemplate.Runtime
         /// </summary>
         /// <value></value>
         List<string> ResourceDirectories { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool DisableCodeOutput { get; set; }
     }
 }

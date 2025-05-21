@@ -120,7 +120,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetCacheMethods(this Type type, string name)
         {
-            var cacheKey = $"MS${type.GetHashCode()}.{name}";
+            var cacheKey = $"MS${Utility.ToHashCode(type)}.{name}";
             return (MethodInfo[])dict.GetOrAdd(cacheKey, (key) =>
             {
                 return GetMethodInfos(type, name);
@@ -482,7 +482,7 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             return null;
 #else
-            var key = $"PI${type.GetHashCode()}.{name}";
+            var key = $"PI${Utility.ToHashCode(type)}.{name}";
             var method = (Delegate)dict.GetOrAdd(key, (cacheKey) =>
             {
                 try
@@ -777,8 +777,8 @@ namespace JinianNet.JNTemplate.Dynamic
             return method.Invoke(container, args);
 #else
 
-            var keys = pi.Select(m => m.ParameterType.GetHashCode()).ToArray();
-            var name = $"D${type.GetHashCode()}.{method.Name}({string.Join(",", keys)})";
+            var keys = pi.Select(m => Utility.ToHashCode(m.ParameterType)).ToArray();
+            var name = $"D${Utility.ToHashCode(type)}.{method.Name}({string.Join(",", keys)})";
 
             var action = (Delegate)dict.GetOrAdd(name, (cacheKey) =>
             {

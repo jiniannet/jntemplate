@@ -14,10 +14,10 @@ namespace JinianNet.JNTemplate.Resources
     /// <summary>
     /// 
     /// </summary>
-    public class NullTextReader : TextReader,IReader
+    public class NullTextReader : TextReader, IResourceReader
     {
         /// <inheritdoc />
-        public string ReadToEnd(Context context)
+        public string ReadToEnd(ITemplateContext context)
         {
             return ReadToEnd();
         }
@@ -42,7 +42,7 @@ namespace JinianNet.JNTemplate.Resources
         /// 
         /// </summary>
         /// <returns></returns>
-        public Task<string> ReadToEndAsync(Context context)
+        public Task<string> ReadToEndAsync(ITemplateContext context)
         {
             return Task.FromResult(string.Empty);
         }

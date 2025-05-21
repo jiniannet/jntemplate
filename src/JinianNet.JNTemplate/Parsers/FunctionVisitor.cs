@@ -79,7 +79,7 @@ namespace JinianNet.JNTemplate.Parsers
             }
             else
             {
-                baseType = c.Data.GetType(t.Name);
+                baseType = c.TempData.GetType(t.Name);
                 if (baseType.BaseType.Name != "MulticastDelegate")
                 {
                     throw new ArgumentException("[FunctaionTag]:functaion must be delegate"); // Delegate’s actions must be addressed !
@@ -214,7 +214,7 @@ namespace JinianNet.JNTemplate.Parsers
             var t = tag as FunctionTag;
             if (t.Parent == null)
             {
-                var bodyType = c.Data.GetType(t.Name);
+                var bodyType = c.TempData.GetType(t.Name);
                 if (bodyType.BaseType.FullName != "System.MulticastDelegate")
                 {
                     throw new CompileException(tag, $"[FunctaionTag]: \"{bodyType.BaseType}\" is not supported.");

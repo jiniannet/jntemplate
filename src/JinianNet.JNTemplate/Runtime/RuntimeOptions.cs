@@ -2,12 +2,6 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.Caching;
-using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Configuration;
-using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Parsers;
-using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,7 +23,7 @@ namespace JinianNet.JNTemplate.Runtime
             this.TagPrefix = "${";
             this.TagSuffix = "}";
             this.ThrowExceptions = true;
-            //this.TypeDetectPattern = TypeDetect.Standard;
+            this.DisableCodeOutput = false;
             this.OutMode = OutMode.None;
             this.Mode = EngineMode.Compiled;
             this.DisableeLogogram = false;
@@ -54,24 +48,14 @@ namespace JinianNet.JNTemplate.Runtime
         public Encoding Encoding { set; get; }
 
         /// <inheritdoc />
-        [Obsolete("please use the `Mode`")]
-        public bool EnableCompile
-        {
-            get => Mode == EngineMode.Compiled;
-            set => Mode = value ? EngineMode.Compiled : EngineMode.Interpreted;
-        }
-
-        /// <inheritdoc />
-        [Obsolete("please use the `EnableCache`")]
-        public bool EnableTemplateCache { get => EnableCache; set => EnableCache = value; }
-
-        /// <inheritdoc />
         public bool EnableCache { get; set; }
 
         /// <inheritdoc />
         public bool ThrowExceptions { get; set; }
-        // /// <inheritdoc />
-        //public TypeDetect TypeDetectPattern { get; set; }
+
+        /// <inheritdoc />
+        public bool DisableCodeOutput { get; set; }
+
         /// <inheritdoc />
         public OutMode OutMode { get; set; }
         /// <inheritdoc />

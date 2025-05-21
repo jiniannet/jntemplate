@@ -16,7 +16,11 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Gets or sets the key(unique) of the template.
         /// </summary>
-        public string TemplateKey { get; set; }
+        public string TemplateKey
+        {
+            get => this.Context?.Name;
+            set => this.Context.Name = value;
+        }
 
         /// <summary>
         /// Gets or sets the context of the template.

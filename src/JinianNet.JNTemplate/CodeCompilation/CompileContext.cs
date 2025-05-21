@@ -3,6 +3,7 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Hosting;
+using JinianNet.JNTemplate.Resources;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -13,9 +14,21 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// <summary>
     /// The compilation context .
     /// </summary>
-    public class CompileContext : Context, IDisposable
+    public class CompileContext : Context, IDisposable, ITemplateContext
     {
         private int seed = 0;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param> 
+        public CompileContext(ITemplateContext context) :
+            base(context)
+        {
+            Methods = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CompileContext"/> class
         /// </summary>
@@ -26,21 +39,13 @@ namespace JinianNet.JNTemplate.CodeCompilation
             Methods = new Dictionary<string, MethodInfo>(StringComparer.OrdinalIgnoreCase);
         }
         /// <summary>
-        /// Unique key of the template
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
         ///  Gets or sets the <see cref="TypeBuilder"/> of the context.
         /// </summary>
         public TypeBuilder TypeBuilder { get; set; }
         /// <summary>
         /// Gets or sets the <see cref="ILGenerator"/> of the context.
         /// </summary>
-        public ILGenerator Generator { get; set; }
-        /// <summary>
-        /// Gets or sets the <see cref="IVariableScope"/> of the context.
-        /// </summary>
-        public IVariableScope Data { get; set; }
+        public ILGenerator Generator { get; set; } 
         /// <summary>
         /// Used to cache some compiled methods . 
         /// </summary>
@@ -52,7 +57,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="type">The type of the variable.</param>
         public void Set(string name, Type type)
         {
-            Data.Set(name, null, type);
+            TempData.Set(name, null, type);
         }
 
         /// <summary>
@@ -68,9 +73,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <inheritdoc />
         public void Dispose()
         {
-            Methods?.Clear();
+            Methods?.Clear(); 
             TypeBuilder = null;
-            Data = null;
+            TempData = null;
             Methods = null;
             Generator = null; 
         }

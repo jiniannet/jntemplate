@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Nodes;
 using System.Collections;
-using JinianNet.JNTemplate.Configuration;
+using JinianNet.JNTemplate.Runtime;
 
 namespace JinianNet.JNTemplate
 {
@@ -53,6 +53,17 @@ namespace JinianNet.JNTemplate
             this.suffix = tagSuffix;
             this.disableeLogogram = disableFlag;
             Reset();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TemplateLexer"/> class
+        /// </summary>
+        /// <param name="text">The template contents.</param>
+        /// <param name="options">the options  of the <see cref="ILexerOptions"/>.</param>
+        public TemplateLexer(string text, ILexerOptions options)
+            : this(text, options.TagPrefix, options.TagSuffix, options.TagFlag, options.DisableeLogogram)
+        {
+
         }
 
         /// <summary>
@@ -373,7 +384,7 @@ namespace JinianNet.JNTemplate
                 {
                     if (tk == TokenKind.Dot && this.kind == TokenKind.Number)
                     {
-
+                        continue;
                     }
                     else
                     {

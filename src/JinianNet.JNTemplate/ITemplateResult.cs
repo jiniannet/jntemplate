@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 
     /// </summary>
-    public interface IResult
+    public interface ITemplateResult
     {
         /// <summary>
         /// Performs the render for a template.

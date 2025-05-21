@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// 
     /// </summary>
-    public class InterpretResult : IResult
+    public class InterpretResult : ITemplateResult
     {
         /// <summary>
         /// 

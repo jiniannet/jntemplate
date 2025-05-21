@@ -20,9 +20,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Template : TemplateBase, ITemplate
     {
-
-        private IReader reader;
-        private IResult templateResult;
+        private IResourceReader reader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Template"/> class
@@ -30,14 +28,14 @@ namespace JinianNet.JNTemplate
         /// <param name="context">The <see cref="TemplateContext"/>.</param>
         /// <param name="reader">The template contents.</param>
         public Template(TemplateContext context,
-            IReader reader)
+            IResourceReader reader)
         {
             this.Context = context;
             this.reader = reader;
         }
 
         /// <inheritdoc />
-        public bool EnableCompile => this.Context.Mode == EngineMode.Compiled;
+        public bool IsCompileMode => Context.IsCompileMode;
 
         /// <inheritdoc />
         public virtual void Render(TextWriter writer, TemplateContext context)
@@ -58,24 +56,11 @@ namespace JinianNet.JNTemplate
             Render(writer, this.Context);
         }
 
-        private IResult GetResult(TemplateContext context)
+        private ITemplateResult GetResult(TemplateContext context)
         {
-            if (templateResult == null)
-            {
-                if (this.Context.Mode == EngineMode.Interpreted)
-                {
-                    templateResult = context.InterpretTemplate(this.TemplateKey, this.reader);
-                }
-                else
-                {
-                    templateResult = context.CompileTemplate(this.TemplateKey, this.reader);
-                }
-                if (templateResult == null)
-                {
-                    throw new TemplateException($"template error.");
-                }
-            }
-            return templateResult;
+            if (!this.Context.IsCompileMode)
+                return context.InterpretTemplate(this.TemplateKey, this.reader);
+            return context.CompileTemplate(this.TemplateKey, this.reader);
         }
 
 #if !NF40 && !NF45 && !NF35 && !NF20

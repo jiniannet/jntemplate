@@ -18,7 +18,7 @@ namespace JinianNet.JNTemplate.Resources
     public class FileLoader : IResourceLoader
     {
         /// <inheritdoc />
-        public ResourceInfo Load(Context ctx, string filename)
+        public virtual ResourceInfo Load(ITemplateContext ctx, string filename)
         {
 
             filename = Find(ctx, filename);
@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate.Resources
         }
 
         /// <inheritdoc />
-        public string Find(Context ctx, string filename)
+        public string Find(ITemplateContext ctx, string filename)
         {
             if (filename.IsAbsolutePath())
             {
@@ -43,43 +43,11 @@ namespace JinianNet.JNTemplate.Resources
             }
             string full;
             if (!string.IsNullOrEmpty(ctx.CurrentPath)
-                && !string.IsNullOrEmpty(full = FindPath(filename, ctx.CurrentPath)))
+                && !string.IsNullOrEmpty(full = FindPath(filename, new string[] { ctx.CurrentPath })))
             {
                 return full;
             }
             return FindPath(filename, ctx.GetResourceDirectories());
-        }
-
-
-        /// <inheritdoc />
-        public string GetDirectoryName(string fullPath)
-        {
-            return System.IO.Path.GetDirectoryName(fullPath);
-        }
-
-        /// <inheritdoc />
-        [Obsolete]
-        public ResourceInfo Load(string filename, Encoding encoding, params string[] directory)
-        {
-            var info = new ResourceInfo();
-            if (string.IsNullOrEmpty(info.FullPath = FindPath(filename, directory)))
-            {
-                return null;
-            }
-            info.Content = LoadResource(info.FullPath, encoding);
-            return info;
-        }
-
-
-        /// <inheritdoc />
-        [Obsolete]
-        public string FindFullPath(string filename, params string[] directory)
-        {
-            if (filename.IsAbsolutePath())
-            {
-                return filename;
-            }
-            return FindPath(filename, directory);
         }
 
         /// <summary>
@@ -88,7 +56,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="paths">The resource search directory.</param>
         /// <param name="filename">The file name.</param>
         /// <returns>The full path.</returns>
-        private string FindPath(string filename, params string[] paths)
+        private string FindPath(string filename, IEnumerable<string> paths)
         {
             //filename  
             string fullPath = null;
@@ -214,7 +182,7 @@ namespace JinianNet.JNTemplate.Resources
 #endif
         }
         /// <inheritdoc />
-        public async Task<ResourceInfo> LoadAsync(Context ctx, string filename)
+        public virtual async Task<ResourceInfo> LoadAsync(ITemplateContext ctx, string filename)
         {
             if (!filename.IsAbsolutePath())
             {

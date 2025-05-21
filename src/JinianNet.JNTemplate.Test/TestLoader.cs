@@ -11,17 +11,17 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public class TestLoader : IResourceLoader
     {
-        public string Find(Context ctx, string filename)
+        public string Find(ITemplateContext ctx, string filename)
         {
             return filename;
         }
-
+         
         public string GetDirectoryName(string fullPath)
         {
             return fullPath;
         }
 
-        public ResourceInfo Load(Context ctx, string filename)
+        public ResourceInfo Load(ITemplateContext ctx, string filename)
         {
             return new ResourceInfo
             {
@@ -29,8 +29,8 @@ namespace JinianNet.JNTemplate.Test
                 FullPath = filename
             };
         }
-
-        public async Task<ResourceInfo> LoadAsync(Context ctx, string filename)
+ 
+        public async Task<ResourceInfo> LoadAsync(ITemplateContext ctx, string filename)
         {
             return new ResourceInfo
             {
@@ -38,5 +38,6 @@ namespace JinianNet.JNTemplate.Test
                 FullPath = filename
             };
         }
+         
     }
 }

@@ -2,11 +2,6 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate;
-using JinianNet.JNTemplate.Caching;
-using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Dynamic;
-using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Runtime;
 using System.Collections.Generic;
@@ -37,10 +32,6 @@ namespace JinianNet.JNTemplate.Hosting
         string EnvironmentName { get; set; }
 
         /// <summary>
-        /// Gets or sets the compiler result collection.
-        /// </summary>
-        ResultCollection<IResult> Results { get; }
-        /// <summary>
         /// Gets or sets the tag parser of the engine.
         /// </summary>
         Resolver Resolver { get; }
@@ -49,17 +40,19 @@ namespace JinianNet.JNTemplate.Hosting
         /// Gets or sets the <see cref="IScopeProvider"/> of the engine.
         /// </summary>
         IScopeProvider ScopeProvider { set; get; }
-
-
+        /// <summary>
+        /// Gets or sets the <see cref="ITemplateWatcherProvider"/> of the engine.
+        /// </summary>
+        ITemplateWatcherProvider TemplateWatcherProvider { set; get; }
         /// <summary>
         /// Gets or sets the cache of the engine.
         /// </summary>
-        ICache Cache { set; get; }
+        ITemplateCache Cache { set; get; }
 
         /// <summary>
-        /// Gets or sets the <see cref="IResourceLoader"/> of the engine.
+        /// Gets or sets the <see cref="ResourceManager"/> of the engine.
         /// </summary>
-        IResourceLoader Loader { set; get; }
+        ResourceManager ResourceManager { set; get; }
 
         /// <summary>
         /// Gets or sets the environment variable of the engine.
@@ -70,5 +63,11 @@ namespace JinianNet.JNTemplate.Hosting
         /// Gets the <see cref="IOutputFormatter"/> of the engine.
         /// </summary>
         IList<IOutputFormatter> OutputFormatters { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+
+        IResourceLoader ResourceLoader { get; set; }
     }
 }

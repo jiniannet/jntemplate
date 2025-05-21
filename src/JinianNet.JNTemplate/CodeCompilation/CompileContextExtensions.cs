@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
+using System.Text; 
 
 namespace JinianNet.JNTemplate.CodeCompilation
 {
@@ -268,10 +268,10 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             var baseType = typeof(CompilerResult);
             //var fileName = "233.dll";
-            //var builder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}"), AssemblyBuilderAccess.RunAndSave);
-            //ctx.TypeBuilder = ObjectBuilder.DefineType(builder, baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}", "DynamicMocule", fileName);
+            //var builder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{baseType.Namespace}.Template{Utility.ToHashCode(ctx.Name)}"), AssemblyBuilderAccess.RunAndSave);
+            //ctx.TypeBuilder = ObjectBuilder.DefineType(builder, baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{Utility.ToHashCode(ctx.Name)}", "DynamicMocule", fileName);
 
-            ctx.TypeBuilder = ObjectBuilder.DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{ctx.Name.GetHashCode()}");
+            ctx.TypeBuilder = ObjectBuilder.DefineType(baseType.GetInterface(nameof(ICompilerResult)), baseType, $"{baseType.Namespace}.Template{Utility.ToHashCode(ctx.Name)}");
             var methods = new List<ITagCompileResult>();
 
             for (var i = 0; i < tags.Count; i++)
@@ -440,7 +440,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 throw exception;
             }
             var mb = context.CreateReutrnMethod(tagType.Name, typeof(string));
-            var il = mb.GetILGenerator(); 
+            var il = mb.GetILGenerator();
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Ldstr, exception.ToString());
             il.Emit(OpCodes.Newobj, typeof(CompileException).GetConstructor(new Type[] { typeof(string) }));
@@ -675,7 +675,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             if (tag is StringTag str)
             {
-                return $"{nameof(StringTag)}_{str.Value?.GetHashCode() ?? 0}";
+                return $"{nameof(StringTag)}_{Utility.ToHashCode(str.Value)}";
             }
             if (tag is ITypeTag type)
             {

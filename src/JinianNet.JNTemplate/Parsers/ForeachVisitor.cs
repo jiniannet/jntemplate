@@ -122,9 +122,9 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 throw new CompileException(tag, "[ForeachTag]:source error.");
             }
-            var old = c.Data;
-            var scope = c.CreateVariableScope(old);
-            c.Data = scope;
+            var old = c.TempData;
+            var scope = c.CreateVariableScope();
+            c.TempData = scope;
             c.Set(t.Name, childType[0]);
             c.Set("foreachIndex", typeof(int));
             var mb = c.CreateReutrnMethod<ForeachTag>(type);
@@ -242,7 +242,7 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Stloc_S, 8);
             il.Emit(OpCodes.Ldloc_S, 8);
             il.Emit(OpCodes.Ret);
-            c.Data = old;
+            c.TempData = old;
             return mb.GetBaseDefinition();
         }
 
@@ -274,9 +274,8 @@ namespace JinianNet.JNTemplate.Parsers
                 throw new CompileException(tag, "[ForeachTag]:source error.");
             }
 
-            var old = c.Data;
-            var scope = c.CreateVariableScope(old);
-            c.Data = scope;
+            var scope = c.CreateVariableScope();
+            c.TempData = scope;
             c.Set(t.Name, childType[0]);
             c.Set("foreachIndex", typeof(int));
 

@@ -5,7 +5,7 @@
 using System;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
-using System.Runtime.CompilerServices;
+using JinianNet.JNTemplate.Resources;
 
 namespace JinianNet.JNTemplate
 {
@@ -38,7 +38,6 @@ namespace JinianNet.JNTemplate
                 }
                 return engine;
             }
-            set { engine = value; }
         }
 
         /// <summary>
@@ -66,18 +65,18 @@ namespace JinianNet.JNTemplate
         /// Configuration engine which <see cref="Action{T}"/>.
         /// </summary>
         /// <param name="action">The <see cref="Action{T}"/>.</param>
-        public static void Configure(Action<Runtime.IOptions> action)
+        public static IEngine Configure(Action<Runtime.IOptions> action)
         {
-            Current.Configure(action);
+            return Current.Configure(action);
         }
 
         /// <summary>
         /// Configuration engine which <see cref="Runtime.IOptions"/>.
         /// </summary>
         /// <param name="option">The <see cref="Runtime.IOptions"/>.</param>
-        public static void Configure(IConfig option)
+        public static IEngine Configure(IConfig option)
         {
-            Current.Configure(option);
+            return Current.Configure(option);
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace JinianNet.JNTemplate
         /// <param name="path">The fully qualified path of the file to load.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        public static IResult CompileFile(string name, string path, Action<CompileContext> action = null)
+        public static ITemplateResult CompileFile(string name, string path, Action<CompileContext> action = null)
         {
             return Current.CompileFile(name, path, action);
         }
@@ -99,7 +98,7 @@ namespace JinianNet.JNTemplate
         /// <param name="content">The template contents.</param>
         /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
         /// <returns></returns>
-        public static IResult Compile(string name, string content, Action<CompileContext> action = null)
+        public static ITemplateResult Compile(string name, string content, Action<CompileContext> action = null)
         {
             return Current.Compile(name, content, action);
         }
@@ -217,7 +216,7 @@ namespace JinianNet.JNTemplate
         /// Enable compilation mode.
         /// </summary>
         /// <returns></returns>
-        public static void UseCompileEngine()
+        public static IEngine UseCompileEngine()
         {
             if (engine == null)
             {
@@ -227,13 +226,14 @@ namespace JinianNet.JNTemplate
             {
                 engine.UseCompileEngine();
             }
+            return engine;
         }
 
         /// <summary>
         /// Enable compilation mode.
         /// </summary>
         /// <returns></returns>
-        public static void UseInterpretationEngine()
+        public static IEngine UseInterpretationEngine()
         {
             if (engine == null)
             {
@@ -243,6 +243,82 @@ namespace JinianNet.JNTemplate
             {
                 engine.UseInterpretationEngine();
             }
+            return engine;
+        }
+
+        /// <summary>
+        /// Appends the specified directory name to the resource path list.
+        /// </summary>
+        /// <param name="path">The name of the directory to be appended to the resource path.</param>
+        public static IEngine AppendResourcePath(string path)
+        {
+            return Current.AppendResourcePath(path);
+        }
+
+        /// <summary>
+        /// Sets an <see cref="IResourceLoader"/> values from engine.
+        /// </summary>
+        /// <param name="loader">The <see cref="IResourceLoader"/> to add set.</param> 
+        public static IEngine UseLoader(IResourceLoader loader)
+        {
+            return Current.UseLoader(loader);
+        }
+
+        /// <summary>
+        /// enable template file Watcher.
+        /// </summary>
+        /// <returns></returns>
+        public static IEngine EnableFileWatcher()
+        {
+            return Current.EnableFileWatcher();
+        }
+
+        /// <summary>
+        /// disable template file Watcher.
+        /// </summary>
+        /// <returns></returns>
+        public static IEngine DisabledFileWatcher()
+        {
+            return Current.EnableFileWatcher();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        public static IEngine UseWatcherProvider(ITemplateWatcherProvider provider)
+        {
+            return Current.UseWatcherProvider(provider);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static IEngine Use(Action<Hosting.IHostEnvironment> action)
+        {
+            return Current.Use(action);
+        }
+
+        /// <summary>
+        /// Clear compiled object and cache.
+        /// </summary>
+        public static void Clean()
+        {
+            Current.Clean();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void Unload()
+        {
+            var temp = engine;
+            engine = null;
+            temp.Dispose();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         }
 
         /// <inheritdoc />
-        public bool EnableCompile => true;
+        public bool IsCompileMode => true;
 
         /// <inheritdoc />
         public void Dispose()
