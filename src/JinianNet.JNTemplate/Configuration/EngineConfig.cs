@@ -60,8 +60,6 @@ namespace JinianNet.JNTemplate.Configuration
         /// <inheritdoc />
         public bool ThrowExceptions { get; set; } = true;
 
-        // /// <inheritdoc />
-        //public TypeDetect TypeDetectPattern { get; set; } = TypeDetect.Standard;
         /// <inheritdoc />
         public OutMode OutMode { get; set; } = OutMode.None;
     }

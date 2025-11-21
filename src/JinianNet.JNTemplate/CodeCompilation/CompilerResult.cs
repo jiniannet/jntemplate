@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+
+
 #if !NF35 && !NF20
 using System.Threading.Tasks;
 #endif
@@ -51,7 +53,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <param name="line"></param>
         /// <param name="col"></param>
         /// <param name="source"></param>
-        public void ThrowException(TemplateContext ctx, Exception exception, int line, int col, string source)
+        public static void ThrowException(TemplateContext ctx, Exception exception, int line, int col, string source)
         {
             TemplateException templateException;
             if (exception is TemplateException tempException)
@@ -99,11 +101,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     continue;
                 }
                 await textWriter.WriteAsync(t?.ToString());
-            }
-            //return Task.WhenAll(tasks); i
-
-            //Render(textWriter, templateContext);
-            //return Task.CompletedTask;
+            } 
         }
 
         /// <summary>

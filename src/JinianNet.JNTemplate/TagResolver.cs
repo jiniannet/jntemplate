@@ -34,7 +34,8 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Resolver : IList<ITagVisitor>
     {
-        private Dictionary<string, VisitorEntry> refs;
+        private readonly Dictionary<string, VisitorEntry> refs;
+        private readonly object locker;
         private string firstKey;
         private string lastKey;
 
@@ -46,15 +47,8 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public ITagVisitor this[int index]
         {
-            get
-            {
-                return GetVisitorEntry(index)?.Visitor;
-            }
-            set
-            {
-
-                SetVisitor(index, value);
-            }
+            get => GetVisitorEntry(index)?.Visitor;
+            set => SetVisitor(index, value);
         }
 
         /// <summary>
@@ -63,6 +57,7 @@ namespace JinianNet.JNTemplate
         public Resolver()
         {
             refs = new Dictionary<string, VisitorEntry>();
+            locker = new object();
         }
         /// <summary>
         /// 
@@ -269,7 +264,7 @@ namespace JinianNet.JNTemplate
                 entry.Index = refs.Count;
             }
             entry.Visitor = visitor;
-            lock (this)
+            lock (locker)
             {
                 refs[visitor.Name] = entry;
             }
@@ -286,11 +281,14 @@ namespace JinianNet.JNTemplate
         public void Insert(int index, ITagVisitor visitor)
         {
             if (refs.Count == 0 || (index >= refs.Count))
+            {
                 Register(visitor);
+                return;
+            }
 
             VisitorEntry entry;
             if (refs.TryGetValue(visitor.Name, out entry))
-                throw new Exception($"the key \"{visitor.Name}\"  exists.");
+                throw new ArgumentException($"the key \"{visitor.Name}\"  exists.");
 
             entry = new VisitorEntry();
             entry.Index = index;
@@ -313,7 +311,7 @@ namespace JinianNet.JNTemplate
                 prev.Next = visitor.Name;
             }
 
-            lock (this)
+            lock (locker)
             {
                 refs[visitor.Name] = entry;
             }
@@ -322,7 +320,7 @@ namespace JinianNet.JNTemplate
             int tmpIndex = index + 1;
             VisitorEntry tmpEntry;
 
-            while (!string.IsNullOrEmpty(tmpKey) && (tmpEntry = this[tmpKey])!=null)
+            while (!string.IsNullOrEmpty(tmpKey) && (tmpEntry = this[tmpKey]) != null)
             {
                 tmpKey = tmpEntry.Next;
                 tmpEntry.Index = tmpIndex;
@@ -368,7 +366,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public void Clear()
         {
-            lock (this)
+            lock (locker)
             {
                 refs.Clear();
             }
@@ -383,7 +381,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public void CopyTo(ITagVisitor[] array, int arrayIndex)
         {
-            lock (this)
+            lock (locker)
             {
                 foreach (var node in refs.Values)
                 {
@@ -417,10 +415,10 @@ namespace JinianNet.JNTemplate
                 {
                     var prev = GetVisitorEntry(entry.Index - 1);
                     if (prev == null)
-                        throw new NullReferenceException();
+                        throw new ArgumentException("entry error.");
                     prev.Next = entry.Next;
                 }
-                lock (this)
+                lock (locker)
                 {
                     refs.Remove(entry.Visitor.Name);
                 }
@@ -435,7 +433,7 @@ namespace JinianNet.JNTemplate
         {
             var key = firstKey;
             VisitorEntry entry;
-            while (!string.IsNullOrEmpty(key) && (entry = this[key])!=null)
+            while (!string.IsNullOrEmpty(key) && (entry = this[key]) != null)
             {
                 key = entry.Next;
                 yield return entry.Visitor;
@@ -451,7 +449,7 @@ namespace JinianNet.JNTemplate
         #region
         private VisitorEntry GetVisitorEntry(int index)
         {
-            lock (this)
+            lock (locker)
             {
                 foreach (var value in refs.Values)
                     if (value.Index == index)
@@ -465,7 +463,7 @@ namespace JinianNet.JNTemplate
             var index = 0;
             var key = firstKey;
             VisitorEntry entry;
-            while (!string.IsNullOrEmpty(key) && (entry = this[key])!=null)
+            while (!string.IsNullOrEmpty(key) && (entry = this[key]) != null)
             {
                 key = entry.Next;
                 entry.Index = index;
@@ -475,8 +473,8 @@ namespace JinianNet.JNTemplate
 
         private void SetVisitor(int index, ITagVisitor visitor)
         {
-            if (this[visitor.Name]!=null && this[visitor.Name].Index != index)
-                throw new Exception($"the key \"{visitor.Name}\"  exists.");
+            if (this[visitor.Name] != null && this[visitor.Name].Index != index)
+                throw new ArgumentException($"the key \"{visitor.Name}\"  exists.");
 
             VisitorEntry old;
             if (index < 0 || index >= this.Count || (old = GetVisitorEntry(index)) == null)
@@ -492,13 +490,13 @@ namespace JinianNet.JNTemplate
             else
                 GetVisitorEntry(index - 1).Next = visitor.Name;
 
-            lock (this)
+            lock (locker)
             {
                 refs.Remove(old.Visitor.Name);
                 refs[visitor.Name] = entry;
             }
 
-            if(index == this.Count - 1)
+            if (index == this.Count - 1)
                 lastKey = visitor.Name;
 
         }

@@ -19,7 +19,7 @@ namespace JinianNet.JNTemplate.Parsers
     public class FunctionVisitor : TagVisitor<FunctionTag>, ITagVisitor
     {
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
             var getVariableValue = typeof(IVariableScope).GetMethodInfo("get_Item", new[] { typeof(string) });
@@ -29,7 +29,7 @@ namespace JinianNet.JNTemplate.Parsers
             Type[] paramType = new Type[t.Children.Count];
             for (int i = 0; i < t.Children.Count; i++)
             {
-                paramType[i] = c.GuessType(t.Children[i]);
+                paramType[i] = context.GuessType(t.Children[i]);
                 if (paramType[i].FullName == "System.Void")
                 {
                     throw new CompileException(tag, "[FunctaionTag]:parameter error");
@@ -40,7 +40,7 @@ namespace JinianNet.JNTemplate.Parsers
             FieldInfo field = null;
             if (t.Parent != null)
             {
-                baseType = c.GuessType(t.Parent);
+                baseType = context.GuessType(t.Parent);
                 method = baseType.GetMethodInfo(t.Name, paramType, false);
                 if (method == null)
                 {
@@ -79,7 +79,7 @@ namespace JinianNet.JNTemplate.Parsers
             }
             else
             {
-                baseType = c.TempData.GetType(t.Name);
+                baseType = context.TempData.GetType(t.Name);
                 if (baseType.BaseType.Name != "MulticastDelegate")
                 {
                     throw new ArgumentException("[FunctaionTag]:functaion must be delegate"); // Delegate’s actions must be addressed !
@@ -87,7 +87,7 @@ namespace JinianNet.JNTemplate.Parsers
                 method = baseType.GetMethod("Invoke");
             }
             var isVoid = method.ReturnType.FullName == "System.Void";
-            var mb = c.CreateReutrnMethod<FunctionTag>(method.ReturnType);
+            var mb = context.CreateReutrnMethod<FunctionTag>(method.ReturnType);
             var il = mb.GetILGenerator();
             il.DeclareLocal(baseType);
             for (int i = 0; i < paramType.Length; i++)
@@ -101,7 +101,7 @@ namespace JinianNet.JNTemplate.Parsers
                 && (field == null || !field.IsStatic))
                 {
                     il.Emit(OpCodes.Nop);
-                    var parentMethod = c.CompileTag(t.Parent);
+                    var parentMethod = context.CompileTag(t.Parent);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Call, parentMethod);
@@ -126,7 +126,7 @@ namespace JinianNet.JNTemplate.Parsers
             for (int i = 0; i < t.Children.Count; i++)
             {
 
-                il.CallTag(c, t.Children[i], (nil, hasReturn, needCall) =>
+                il.CallTag(context, t.Children[i], (nil, hasReturn, needCall) =>
                 {
                     if (!hasReturn)
                     {
@@ -197,8 +197,7 @@ namespace JinianNet.JNTemplate.Parsers
                 }
 
             }
-            il.Call(baseType, method);
-            //il.Emit(OpCodes.Callvirt, method);
+            il.Call(baseType, method); 
             if (!isVoid)
             {
                 var localVar = il.DeclareLocal(method.ReturnType);
@@ -209,12 +208,12 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             var t = tag as FunctionTag;
             if (t.Parent == null)
             {
-                var bodyType = c.TempData.GetType(t.Name);
+                var bodyType = context.TempData.GetType(t.Name);
                 if (bodyType.BaseType.FullName != "System.MulticastDelegate")
                 {
                     throw new CompileException(tag, $"[FunctaionTag]: \"{bodyType.BaseType}\" is not supported.");
@@ -223,11 +222,11 @@ namespace JinianNet.JNTemplate.Parsers
                 return invokeMethod.ReturnType;
 
             }
-            var parentType = c.GuessType(t.Parent);
+            var parentType = context.GuessType(t.Parent);
             Type[] types = new Type[t.Children.Count];
             for (int i = 0; i < types.Length; i++)
             {
-                types[i] = c.GuessType(t.Children[i]);
+                types[i] = context.GuessType(t.Children[i]);
             }
             var method = parentType.GetMethodInfo(t.Name, types);
             if (method != null)
@@ -311,10 +310,6 @@ namespace JinianNet.JNTemplate.Parsers
             }
             if (t.Parent == null || (t.Parent != null && string.IsNullOrEmpty(t.Name)))
             {
-                //if (parentValue is FuncHandler funcHandler)
-                //{
-                //    return funcHandler(args);
-                //}
                 if (parentValue is Delegate func)
                 {
                     var ps = func.Method.GetParameters();
@@ -333,9 +328,9 @@ namespace JinianNet.JNTemplate.Parsers
 
             result = parentValue.CallPropertyOrField(t.Name, type);
 
-            if (result != null && result is Delegate)
+            if (result is Delegate d)
             {
-                return (result as Delegate).DynamicInvoke(args);
+                return d.DynamicInvoke(args);
             }
 
             return null;

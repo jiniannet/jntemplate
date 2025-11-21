@@ -2,11 +2,11 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Exceptions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Collections;
-using JinianNet.JNTemplate.Exceptions;
 
 namespace JinianNet.JNTemplate.Nodes
 {
@@ -14,8 +14,9 @@ namespace JinianNet.JNTemplate.Nodes
     /// The collection of token.
     /// </summary>
     [Serializable]
-    public class TokenCollection : IList<Token>, IEquatable<TokenCollection>
+    public sealed class TokenCollection : IList<Token>, IEquatable<TokenCollection>, IEqualityComparer<TokenCollection>
     {
+        private string text;
         private List<Token> list;
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenCollection"/> class
@@ -23,6 +24,7 @@ namespace JinianNet.JNTemplate.Nodes
         public TokenCollection()
         {
             this.list = new List<Token>();
+            text = null;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenCollection"/> class
@@ -31,6 +33,7 @@ namespace JinianNet.JNTemplate.Nodes
         public TokenCollection(int capacity)
         {
             this.list = new List<Token>(capacity);
+            text = null;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenCollection"/> class
@@ -39,6 +42,7 @@ namespace JinianNet.JNTemplate.Nodes
         public TokenCollection(IEnumerable<Token> collection)
         {
             this.list = new List<Token>(collection);
+            text = null;
         }
         /// <summary> 
         /// Initializes a new instance of the <see cref="TokenCollection"/> class that contains elements copied from the specified collection.
@@ -53,6 +57,7 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 Add(collection[i]);
             }
+            text = null;
         }
         /// <summary>
         /// Returns the first element of a collection.
@@ -86,12 +91,15 @@ namespace JinianNet.JNTemplate.Nodes
         /// <inheritdoc />
         public override string ToString()
         {
+            if (text != null)
+                return text;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < this.Count; i++)
             {
                 sb.Append(this[i].ToString());
             }
-            return sb.ToString();
+            text = sb.ToString();
+            return text;
         }
 
         /// <inheritdoc />
@@ -107,12 +115,14 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 this.list.Insert(index, item);
             }
+            text=null;
         }
 
         /// <inheritdoc />
         public void RemoveAt(int index)
         {
             this.list.RemoveAt(index);
+            text=null;
         }
 
         /// <summary>
@@ -134,22 +144,6 @@ namespace JinianNet.JNTemplate.Nodes
                 }
                 return tc;
             }
-        }
-
-        private bool IsInKinds(TokenKind kind, params TokenKind[] kinds)
-        {
-            if (kinds == null || kinds.Length == 0)
-            {
-                return false;
-            }
-            for (int i = 0; i < kinds.Length; i++)
-            {
-                if (kind == kinds[i])
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private int GetValidIndex(int index)
@@ -174,6 +168,7 @@ namespace JinianNet.JNTemplate.Nodes
                 {
                     this.list[GetValidIndex(index)] = value;
                 }
+                text=null;
             }
         }
 
@@ -184,12 +179,14 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 this.list.Add(item);
             }
+            text=null;
         }
 
         /// <inheritdoc />
         public void Clear()
         {
             this.list.Clear();
+            text=null;
         }
 
         /// <inheritdoc />
@@ -235,6 +232,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <inheritdoc />
         public bool Remove(Token item)
         {
+            text=null;
             return this.list.Remove(item);
         }
 
@@ -279,18 +277,35 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 return false;
             }
-            if (obj is TokenCollection)
+            if (obj is TokenCollection tc)
             {
-                return this.Equals((TokenCollection)obj);
+                return this.Equals(tc);
             }
             return false;
         }
 
         /// <inheritdoc />
-        public override int GetHashCode()
+        public bool Equals(TokenCollection x, TokenCollection y)
         {
-            return base.GetHashCode();
+            if (x == null)
+                return y == null;
+            if (y == null)
+                return false;
+            return x.Equals(y);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns> 
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+        /// <inheritdoc />
+        public int GetHashCode(TokenCollection obj)
+        {
+            return obj.GetHashCode();
+        }
     }
 }

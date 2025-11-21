@@ -11,9 +11,9 @@ namespace JinianNet.JNTemplate.Nodes
     /// <summary>
     /// 
     /// </summary>
-    public class TagCollection : IList<ITag>, IEnumerable<ITag>, IEnumerable
+    public class TagCollection : IList<ITag>
     {
-        private List<ITag> list;
+        private readonly List<ITag> list;
         /// <summary>
         /// 
         /// </summary>
@@ -34,21 +34,6 @@ namespace JinianNet.JNTemplate.Nodes
             {
                 if (Count > 0)
                 {
-                    //if (list[list.Count - 1] is TextTag t)
-                    //{
-                    //    var text = t.OriginalText.TrimEnd(' ');
-                    //    if (text.Length > 0 && text[text.Length - 1] == '\n')
-                    //        t.Text = text;
-                    //}
-                    //else
-                    //{
-                    //    if(item is TextTag c)
-                    //    {
-                    //        var text = c.OriginalText.TrimStart(' ');
-                    //        if ((text.Length > 0 && text[0] == '\n') || (text.Length > 1 && text[0] == '\r' && text[1] == '\n'))
-                    //            c.Text = text;
-                    //    }
-                    //}
                     item.Previous = list[list.Count - 1].Out;
                     list[list.Count - 1].Next = item.Out;
                 }

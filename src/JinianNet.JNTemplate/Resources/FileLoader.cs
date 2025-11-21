@@ -3,8 +3,8 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 #if !NF35 && !NF20
 using System.Threading.Tasks;
@@ -42,10 +42,11 @@ namespace JinianNet.JNTemplate.Resources
                 return filename;
             }
             string full;
-            if (!string.IsNullOrEmpty(ctx.CurrentPath)
-                && !string.IsNullOrEmpty(full = FindPath(filename, new string[] { ctx.CurrentPath })))
+            if (!string.IsNullOrEmpty(ctx.CurrentPath))
             {
-                return full;
+                full = FindPath(filename, new string[] { ctx.CurrentPath });
+                if (!string.IsNullOrEmpty(full))
+                    return full;
             }
             return FindPath(filename, ctx.GetResourceDirectories());
         }
@@ -56,7 +57,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="paths">The resource search directory.</param>
         /// <param name="filename">The file name.</param>
         /// <returns>The full path.</returns>
-        private string FindPath(string filename, IEnumerable<string> paths)
+        private static string FindPath(string filename, IEnumerable<string> paths)
         {
             //filename  
             string fullPath = null;
@@ -97,7 +98,7 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="fullPath">The fully qualified path or file name to load.</param>
         /// <param name="encoding">The <see cref="Encoding"/>.</param> 
         /// <returns>An string.</returns>
-        private string LoadResource(string fullPath, Encoding encoding)
+        private static string LoadResource(string fullPath, Encoding encoding)
         {
             if (encoding == null)
             {
@@ -112,7 +113,7 @@ namespace JinianNet.JNTemplate.Resources
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        private string NormalizePath(string filename)
+        private static string NormalizePath(string filename)
         {
             if (string.IsNullOrEmpty(filename) || filename.IndexOfAny(System.IO.Path.GetInvalidPathChars()) != -1)
             {
@@ -121,7 +122,8 @@ namespace JinianNet.JNTemplate.Resources
 
             List<string> values = new List<string>(filename.Split('/'));
 
-            for (int i = 0; i < values.Count; i++)
+            int i = 0;
+            while (i < values.Count)
             {
                 if (values[i] == "." || string.IsNullOrEmpty(values[i]))
                 {
@@ -139,6 +141,7 @@ namespace JinianNet.JNTemplate.Resources
                     values.RemoveAt(i);
                     i--;
                 }
+                i++;
             }
 
             values.Insert(0, string.Empty);
@@ -148,19 +151,6 @@ namespace JinianNet.JNTemplate.Resources
 
 #if !NF40 && !NF45 && !NF35 && !NF20
 
-        /// <inheritdoc />
-        [Obsolete]
-        public async Task<ResourceInfo> LoadAsync(string filename, Encoding encoding, params string[] directory)
-        {
-            ResourceInfo info = new ResourceInfo();
-            if (string.IsNullOrWhiteSpace(info.FullPath = FindPath(filename, directory)))
-            {
-                return null;
-            }
-            info.Content = await LoadResourceAsync(info.FullPath, encoding);
-            return info;
-        }
-
 
         /// <summary>
         /// Load the resource
@@ -168,14 +158,14 @@ namespace JinianNet.JNTemplate.Resources
         /// <param name="fullPath">The fully qualified path or file name to load.</param>
         /// <param name="encoding">The <see cref="Encoding"/>.</param> 
         /// <returns>An string.</returns>
-        private Task<string> LoadResourceAsync(string fullPath, Encoding encoding)
+        private static Task<string> LoadResourceAsync(string fullPath, Encoding encoding)
         {
             if (encoding == null)
             {
                 encoding = Encoding.UTF8;
             }
 #if NFW || NETSTANDARD2_0
-            var text =  System.IO.File.ReadAllText(fullPath, encoding);
+            var text = System.IO.File.ReadAllText(fullPath, encoding);
             return Task.FromResult<string>(text);
 #else
             return System.IO.File.ReadAllTextAsync(fullPath, encoding);

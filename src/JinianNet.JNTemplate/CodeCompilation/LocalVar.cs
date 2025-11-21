@@ -14,8 +14,8 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// </summary>
     public class LocalVar
     {
-        private ILGenerator il;
-        private Dictionary<string, int> dict;
+        private readonly ILGenerator il;
+        private readonly Dictionary<string, int> dict;
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalVar"/> class
         /// </summary>

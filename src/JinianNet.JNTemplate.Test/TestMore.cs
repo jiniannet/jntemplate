@@ -1,10 +1,14 @@
 ﻿using JinianNet.JNTemplate;
 using JinianNet.JNTemplate.CodeCompilation;
+using JinianNet.JNTemplate.Nodes;
+using JinianNet.JNTemplate.Parsers;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Test.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,55 +19,49 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public partial class TagsTests : TagsTestBase
     {
+        class TestTagVisitor : TagVisitor<TestTag>,ITagVisitor
+        { 
+            public MethodInfo Compile(ITag tag, CompileContext context)
+            {
+                var t = tag as TestTag;
+                var mb = context.CreateReutrnMethod<TestTag>(typeof(string));
+                var il = mb.GetILGenerator();
+                il.Emit(OpCodes.Ldstr, "say " + t.Document);
+                il.Emit(OpCodes.Ret);
+                return mb.GetBaseDefinition();
+            }
+
+            public object Excute(ITag tag, TemplateContext context)
+            {
+                return $"say {(tag as TestTag).Document}";
+            }
+
+            public Type GuessType(ITag tag, CompileContext context)
+            {
+                return typeof(string);
+            }
+
+            public ITag Parse(TemplateParser parser, TokenCollection tc)
+            {
+                if (tc.Count == 2 && tc.First.Text == ":")
+                {
+                    return new TestTag
+                    {
+                        Document = tc[1].Text
+                    };
+                }
+                return null;
+            }
+        }
         /// <summary>
         /// 测试自定义标签
         /// </summary>
         [Fact]
         public void YestUserTag()
         {
+
             //这是一个简单的自定义标签
-            if (Engine.Mode == EngineMode.Compiled)
-            {
-                Engine.Register<TestTag>((p, tc) =>
-                {
-                    if (tc.Count == 2 && tc.First.Text == ":")
-                    {
-                        return new TestTag
-                        {
-                            Document = tc[1].Text
-                        };
-                    }
-                    return null;
-                },
-                    (tag, c) =>
-                    {
-                        var t = tag as TestTag;
-                        var mb = c.CreateReutrnMethod<TestTag>(typeof(string));
-                        var il = mb.GetILGenerator();
-                        il.Emit(OpCodes.Ldstr, "say " + t.Document);
-                        il.Emit(OpCodes.Ret);
-                        return mb.GetBaseDefinition();
-                    },
-                    (tag, c) => typeof(string));
-            }
-            else
-            {
-                //Engine.Current.RegisterParseFunc((p, tc) =>
-                //{
-                //    if (tc.Count == 2 && tc.First.Text == ":")
-                //    {
-                //        return new TestTag
-                //        {
-                //            Document = tc[1].Text
-                //        };
-                //    }
-                //    return null;
-                //});
-                //Engine.Current.RegisterExecuteFunc<TestTag>((tag, c) =>
-                //{
-                //    return $"say {(tag as TestTag).Document}";
-                //});
-            }
+            Engine.Register(new TestTagVisitor());
 
             var templateContent = "${:hello}";
             var template = Engine.CreateTemplate(templateContent);
@@ -98,9 +96,9 @@ ${if(goodsList.Count>0)}
 	${foreach(goodsModel in goodsList)}
 		${if(i==0)}
 		<div class=""goods1 almostGoodsBox"">
-			<a href='${goodsModel.id}'>
-				<img src=""${goodsModel.img_url}"" alt="""">
-				<p class=""goodsName goodsText"">${goodsModel.title}</p>
+			<a href='${goodsModel.Id}'>
+				<img src=""${goodsModel.ImgUrl}"" alt="""">
+				<p class=""goodsName goodsText"">${goodsModel.Title}</p>
 				$if(goodsModel.fields[""act_txt""]!=null)
 				<p class=""goodsDescrib goodsText"">${goodsModel.fields[""act_txt""]}</p>
 				${end}
@@ -109,9 +107,9 @@ ${if(goodsList.Count>0)}
 		</div>
 		${else}
 			<div class=""goods almostGoodsBox"">
-			    <a href='${goodsModel.id}'>
-					<img src=""${goodsModel.img_url}"" alt="""">
-					<p class=""goodsName goodsText"">${goodsModel.title}</p>
+			    <a href='${goodsModel.Id}'>
+					<img src=""${goodsModel.ImgUrl}"" alt="""">
+					<p class=""goodsName goodsText"">${goodsModel.Title}</p>
 					$if(goodsModel.fields[""act_txt""]!=null)
 					<p class=""goodsDescrib goodsText"">${goodsModel.fields[""act_txt""]}</p>
 					${end}
@@ -128,9 +126,9 @@ ${end}";
                 var list = new List<Goods>();
                 list.Add(new Goods()
                 {
-                    id = 1,
-                    img_url = "pic.png",
-                    title = "商品名称一",
+                    Id = 1,
+                    ImgUrl = "pic.png",
+                    Title = "商品名称一",
                     Fields = new Dictionary<string, object>() {
                          { "sell_price","200" },
                          { "act_txt","衣" },
@@ -138,9 +136,9 @@ ${end}";
                 });
                 list.Add(new Goods()
                 {
-                    id = 2,
-                    img_url = "pic.png",
-                    title = "商品名称二",
+                    Id = 2,
+                    ImgUrl = "pic.png",
+                    Title = "商品名称二",
                     Fields = new Dictionary<string, object>() {
                          { "sell_price","120" },
                          { "act_txt","外" },
@@ -148,9 +146,9 @@ ${end}";
                 });
                 list.Add(new Goods()
                 {
-                    id = 3,
-                    img_url = "pic.png",
-                    title = "商品名称三",
+                    Id = 3,
+                    ImgUrl = "pic.png",
+                    Title = "商品名称三",
                     Fields = new Dictionary<string, object>() {
                          { "sell_price","15.80" },
                          { "act_txt","中" },

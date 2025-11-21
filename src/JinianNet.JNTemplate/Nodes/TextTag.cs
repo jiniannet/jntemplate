@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Nodes
     [Serializable]
     public class TextTag : SpecialTag
     {
-        private string _text;
+        private string text;
         /// <summary>
         ///  Gets the text of the tag.
         /// </summary>
@@ -20,19 +20,19 @@ namespace JinianNet.JNTemplate.Nodes
         {
             get
             {
-                if (_text != null)
+                if (text != null)
                 {
-                    return _text;
+                    return text;
                 }
                 if (this.FirstToken != null)
                 {
-                    return _text = OriginalText;
+                    return text = OriginalText;
                 }
-                return _text = "";
+                return text = "";
             }
             set
             {
-                _text = value;
+                text = value;
             }
         }
 

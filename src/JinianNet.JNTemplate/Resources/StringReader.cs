@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate.Resources
     /// </summary>
     public class StringReader : /*System.IO.StringReader,*/ IResourceReader
     {
-        private string content;
+        private readonly string content;
         /// <summary>
         /// 
         /// </summary>
@@ -41,6 +41,15 @@ namespace JinianNet.JNTemplate.Resources
         public override int GetHashCode()
         {
             return content?.GetHashCode() ?? 0;
+        }
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj is StringReader r) 
+                return this.content == r.content; 
+            return false;
         }
     }
 }

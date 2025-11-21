@@ -41,22 +41,19 @@ namespace JinianNet.JNTemplate.Parsers
                     for (int i = 2; i < tc.Count - 1; i++)
                     {
                         end = i;
-                        if (tc[i].TokenKind == TokenKind.Punctuation && tc[i].Text == ";")
+                        if (tc[i].TokenKind == TokenKind.Punctuation && tc[i].Text == ";" && pos == 0)
                         {
-                            if (pos == 0)
+                            var coll = tc[start, end];
+                            if (coll.Count > 0)
                             {
-                                var coll = tc[start, end];
-                                if (coll.Count > 0)
-                                {
-                                    ts.Add(parser.Read(coll));
-                                }
-                                else
-                                {
-                                    ts.Add(null);
-                                }
-                                start = i + 1;
-                                continue;
+                                ts.Add(parser.Read(coll));
                             }
+                            else
+                            {
+                                ts.Add(null);
+                            }
+                            start = i + 1;
+                            continue;
                         }
 
                         if (tc[i].TokenKind == TokenKind.LeftParentheses)
@@ -112,16 +109,15 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
 
             var stringBuilderType = typeof(StringBuilder);
             var t = tag as ForTag;
-            var type = c.GuessType(t);
+            var type = context.GuessType(t);
             var templateContextType = typeof(TemplateContext);
-            var mb = c.CreateReutrnMethod<ForTag>(type);
-            var il = mb.GetILGenerator();
-            //Label labelEnd = il.DefineLabel();
+            var mb = context.CreateReutrnMethod<ForTag>(type);
+            var il = mb.GetILGenerator(); 
             Label labelNext = il.DefineLabel();
             Label labelStart = il.DefineLabel();
             il.DeclareLocal(stringBuilderType);
@@ -138,7 +134,7 @@ namespace JinianNet.JNTemplate.Parsers
 
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldloc_1);
-            var m = c.CompileTag(t.Initial);
+            var m = context.CompileTag(t.Initial);
             il.Emit(OpCodes.Call, m);
             if (m.ReturnType.FullName != "System.Void")
             {
@@ -152,7 +148,7 @@ namespace JinianNet.JNTemplate.Parsers
             il.MarkLabel(labelStart);
             for (var i = 0; i < t.Children.Count; i++)
             {
-                il.CallTag(c, t.Children[i], (nil, hasReturn, needCall) =>
+                il.CallTag(context, t.Children[i], (nil, hasReturn, needCall) =>
                 {
                     if (hasReturn)
                     {
@@ -169,21 +165,20 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         return;
                     }
-                    nil.StringAppend(c, returnType);
+                    nil.StringAppend(context, returnType);
                     nil.Emit(OpCodes.Pop);
                 });
             }
 
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldloc_1);
-            m = c.CompileTag(t.Do);
+            m = context.CompileTag(t.Do);
             il.Emit(OpCodes.Call, m);
 
             if (m.ReturnType.FullName != "System.Void")
             {
                 il.DeclareLocal(m.ReturnType);
-                il.Emit(OpCodes.Stloc, index);
-                index++;
+                il.Emit(OpCodes.Stloc, index); 
             }
 
 
@@ -192,7 +187,7 @@ namespace JinianNet.JNTemplate.Parsers
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldloc_1);
 
-            m = c.CompileTag(t.Condition);
+            m = context.CompileTag(t.Condition);
             il.Emit(OpCodes.Call, m);
 
             if (m.ReturnType.Name != "Boolean")
@@ -229,7 +224,7 @@ namespace JinianNet.JNTemplate.Parsers
 
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }
@@ -264,7 +259,6 @@ namespace JinianNet.JNTemplate.Parsers
 
                     if (t.Do != null)
                     {
-                        //执行计算，不需要输出，比如i++
                         context.Execute(t.Do);
                     }
                     run = Utility.ToBoolean(context.Execute(t.Condition));
@@ -272,5 +266,5 @@ namespace JinianNet.JNTemplate.Parsers
                 return writer.ToString();
             }
         }
-    } 
+    }
 }

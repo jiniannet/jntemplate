@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net20;net35;net40;net46;net48;net5.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net20;net35;net40;net46;net48;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
 		<AssemblyName>JinianNet.JNTemplate</AssemblyName>
 		<RootNamespace>JinianNet.JNTemplate</RootNamespace>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>2.4.3</Version>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild> 
+		<VersionPatch>$([System.DateTime]::UtcNow.Subtract($([System.DateTime]::new(2025,5,21))).TotalDays.ToString("0"))</VersionPatch>
+		<Version>2.4.4</Version>
 		<Authors>JinianNet.com</Authors>
 		<Company>JinianNet.com</Company>
 		<Product>JNTemplate</Product>
@@ -20,16 +21,17 @@
 		<PackageTags>templating engine template 模板引擎</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage />
-		<SignAssembly>False</SignAssembly>
+		<SignAssembly>True</SignAssembly>
 		<PreBuildEvent></PreBuildEvent>
 		<PostBuildEvent></PostBuildEvent>
 		<AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
 		<PackageLicenseFile>License.txt</PackageLicenseFile>
-		<FileVersion>2.4.3.0</FileVersion>
-		<AssemblyVersion>2.4.3.0</AssemblyVersion>
+		<FileVersion>$(Version).$(VersionPatch)</FileVersion>
+		<AssemblyVersion>$(Version).$(VersionPatch)</AssemblyVersion>
 		<DelaySign>false</DelaySign>
 		<PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
 		<Title>jntemplate</Title>
+		<ImplicitUsings>disable</ImplicitUsings>
 	</PropertyGroup>
 
 

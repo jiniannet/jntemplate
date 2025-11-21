@@ -20,7 +20,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class Template : TemplateBase, ITemplate
     {
-        private IResourceReader reader;
+        private readonly IResourceReader reader;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Template"/> class

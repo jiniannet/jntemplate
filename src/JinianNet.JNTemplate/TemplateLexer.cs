@@ -14,10 +14,10 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// The lexer of template.
     /// </summary>
-    public class TemplateLexer : Executor<Token[]>, IEnumerable<Token>, IEnumerator<Token>
+    public class TemplateLexer : IEnumerable<Token>, IEnumerator<Token>
     {
         private FlagMode flagMode;
-        private string document;
+        private readonly string document;
         private int column;
         private int line;
         private TokenKind kind;
@@ -25,12 +25,11 @@ namespace JinianNet.JNTemplate
         private int startLine;
         private CharScanner scanner;
         private List<Token> collection;
-        private Token token;
         private Stack<string> pos;
-        private string prefix;
-        private char flag;
-        private string suffix;
-        private bool disableeLogogram;
+        private readonly string prefix;
+        private readonly char flag;
+        private readonly string suffix;
+        private readonly bool disableeLogogram;
 
 
         /// <summary>
@@ -83,11 +82,8 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public Token Current
-        {
-            get { return token; }
-            set { token = value; }
-        }
+        public Token Current { get; set; }
+
         /// <inheritdoc />
         object IEnumerator.Current
         {
@@ -245,7 +241,7 @@ namespace JinianNet.JNTemplate
             {
                 i++;
             }
-            return --i;
+            return i-1;
         }
 
         /// <inheritdoc />
@@ -290,10 +286,6 @@ namespace JinianNet.JNTemplate
                             if (this.scanner.Read(-1) != '\\'
                                 || GetPrevCharCount('\\') % 2 == 0)
                             {
-                                //if (this.kind == TokenKind.StringStart)
-                                //{
-                                //    token = GetToken(TokenKind.String);
-                                //}
                                 token = GetToken(TokenKind.StringEnd);
                                 this.pos.Pop();
                             }
@@ -349,47 +341,19 @@ namespace JinianNet.JNTemplate
                         continue;
                     }
                 }
-                TokenKind tk;
-                if (this.scanner.Read() == '+' || this.scanner.Read() == '-')
-                {
-                    if (char.IsNumber(this.scanner.Read(1)) &&
-                        (this.kind != TokenKind.Number
-                        && this.kind != TokenKind.RightBracket
-                        && this.kind != TokenKind.RightParentheses
-                        && this.kind != TokenKind.RightBrace
-                        && this.kind != TokenKind.String
-                        && this.kind != TokenKind.Tag
-                        && this.kind != TokenKind.TextData))
-                    {
-                        tk = TokenKind.Number;
-                    }
-                    else
-                    {
-                        tk = TokenKind.Arithmetic;
-                    }
-                }
-                else
-                {
-                    tk = GetTokenKind(this.scanner.Read());
-                }
+                TokenKind tk = GetTokenKind();
+
                 //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
                 if (
-                    ((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
+                    (((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
                     && (tk != TokenKind.Number || this.kind != TokenKind.TextData)
                     //&& (this.kind == TokenKind.Number && tk != TokenKind.Dot)
                     )
                     || (this.kind == tk && (tk == TokenKind.LeftBracket || tk == TokenKind.LeftParentheses || tk == TokenKind.LeftBrace || tk == TokenKind.RightBracket || tk == TokenKind.RightParentheses || tk == TokenKind.RightBrace))
-                    )
+                    ) && (tk != TokenKind.Dot || this.kind != TokenKind.Number))
                 //|| (this.kind != TokenKind.Number && tk == TokenKind.Dot)
                 {
-                    if (tk == TokenKind.Dot && this.kind == TokenKind.Number)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        token = GetToken(tk);
-                    }
+                    token = GetToken(tk);
                 }
 
             }
@@ -426,6 +390,36 @@ namespace JinianNet.JNTemplate
             }
             this.flagMode = FlagMode.None;
             return token;
+        }
+
+        private TokenKind GetTokenKind()
+        {
+            var c = this.scanner.Read();
+            switch (c)
+            {
+                case '+':
+                case '-':
+                    if (char.IsNumber(this.scanner.Read(1)) &&
+                        (this.kind != TokenKind.Number
+                        && this.kind != TokenKind.RightBracket
+                        && this.kind != TokenKind.RightParentheses
+                        && this.kind != TokenKind.RightBrace
+                        && this.kind != TokenKind.String
+                        && this.kind != TokenKind.Tag
+                        && this.kind != TokenKind.TextData))
+                        return TokenKind.Number;
+                    return TokenKind.Arithmetic;
+                case '|':
+                    if (this.kind == TokenKind.Logic || this.scanner.Read(1) == c)
+                        return TokenKind.Logic;
+                    return TokenKind.BitwiseOr;
+                case '&':
+                    if (this.kind == TokenKind.Logic || this.scanner.Read(1) == c)
+                        return TokenKind.Logic;
+                    return TokenKind.BitwiseAnd;
+                default:
+                    return GetTokenKind(this.scanner.Read());
+            }
         }
 
         private TokenKind GetTokenKind(char c)
@@ -514,7 +508,7 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
-        public override Token[] Execute()
+        public virtual Token[] Execute()
         {
             if (collection.Count == 0)
             {

@@ -21,20 +21,12 @@ namespace JinianNet.JNTemplate.Hosting
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="options"></param>
-        /// <param name="parser"></param>
-        /// <param name="compileBuilder"></param>
-        /// <param name="typeGuesser"></param>
-        /// <param name="executorBuilder"></param>
+        /// <param name="options"></param> 
         /// <param name="scopeProvider"></param>
         /// <param name="cache"></param>
         /// <param name="resourceLoader"></param>
         /// <param name="watcherProvider"></param>
-        public DefaultHostEnvironment(IOptions options = null
-            , TagParser parser = null
-            , CompileBuilder compileBuilder = null
-            , TypeGuesser typeGuesser = null
-            , ExecutorBuilder executorBuilder = null
+        public DefaultHostEnvironment(IOptions options = null  
             , IScopeProvider scopeProvider = null
             , ITemplateCache cache = null
             , IResourceLoader resourceLoader = null

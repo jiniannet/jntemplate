@@ -6,9 +6,9 @@ namespace JinianNet.JNTemplate.Test.ViewModel
 {
     public class Goods
     {
-        public int id { get; set; } 
-        public string img_url { get; set; }
-        public string title { get; set; }
+        public int Id { get; set; } 
+        public string ImgUrl { get; set; }
+        public string Title { get; set; }
         public Dictionary<string, object> Fields { get; set; }
     }
 }

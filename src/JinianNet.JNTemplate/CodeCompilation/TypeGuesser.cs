@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// <summary>
     /// Type Guess
     /// </summary>
-    public class TypeGuesser
+    public static class TypeGuesser
     { 
         /// <summary>
         /// Gets the child <see cref="Type"/> with the specified <see cref="Type"/>.

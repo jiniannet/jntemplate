@@ -3,10 +3,11 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.Hosting;
-using JinianNet.JNTemplate.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
+
+
 
 #if !NF40 && !NF45 && !NF35 && !NF20
 using System.Threading.Tasks;
@@ -20,9 +21,9 @@ namespace JinianNet.JNTemplate.Resources
     public class ResourceManager : IDisposable
     {
         private ITemplateWatcher watcher;
-        private Dictionary<string, List<string>> resources;
+        private readonly Dictionary<string, List<string>> resources;
         private bool enableWatcher;
-        private IHostEnvironment env;
+        private readonly IHostEnvironment env;
 
         #region
         /// <summary>
@@ -170,9 +171,14 @@ namespace JinianNet.JNTemplate.Resources
         }
 #endif
 
-
-        ///  <inheritdoc/>
+        /// <inheritdoc/>  
         public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        /// <inheritdoc/>  
+        protected virtual void Dispose(bool disposing)
         {
             DisabledTemplateWatcher();
             resources.Clear();

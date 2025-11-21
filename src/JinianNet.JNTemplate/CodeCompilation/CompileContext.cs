@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// <summary>
     /// The compilation context .
     /// </summary>
-    public class CompileContext : Context, IDisposable, ITemplateContext
+    public sealed class CompileContext : Context, IDisposable
     {
         private int seed = 0;
 

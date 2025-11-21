@@ -8,11 +8,12 @@ using System.Collections.Generic;
 using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Hosting;
-using JinianNet.JNTemplate.Resources; 
+using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Runtime;
 using JinianNet.JNTemplate.Parsers;
+
 
 
 #if !NF35 && !NF20
@@ -25,8 +26,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public sealed class TemplatingEngine : IEngine
     {
-        #region Registrar
-        //private static Lazy< IRegistrar[]> LazyRegistrars = new Lazy<IRegistrar[]>(()=> LoadDefaultRegistrar(),true);
+        #region Registrar 
         private static ITagVisitor[] LoadDefaultVisitor()
         {
             return new ITagVisitor[] {
@@ -67,6 +67,7 @@ namespace JinianNet.JNTemplate
         #endregion
 
         #region
+        private readonly object locker;
         /// <inheritdoc />
         public IHostEnvironment HostEnvironment { get; }
         /// <inheritdoc />
@@ -79,6 +80,7 @@ namespace JinianNet.JNTemplate
         /// <param name="environment"></param>
         public TemplatingEngine(IHostEnvironment environment = null)
         {
+            locker = new object();
             HostEnvironment = environment
                 ?? new DefaultHostEnvironment();
             Initialize();
@@ -105,7 +107,6 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Options.TagFlag = option.TagFlag;
             HostEnvironment.Options.Encoding = option.Encoding;
             HostEnvironment.Options.ThrowExceptions = option.ThrowExceptions;
-            //HostEnvironment.Options.TypeDetectPattern = option.TypeDetectPattern;
             HostEnvironment.Options.OutMode = option.OutMode;
             if (option.ResourceDirectories?.Count > 0)
             {
@@ -127,23 +128,12 @@ namespace JinianNet.JNTemplate
             }
             var mode = option.EnableCompile ? EngineMode.Compiled : EngineMode.Interpreted;
 
-            //if (HostEnvironment.Options.TypeDetectPattern == TypeDetect.None && mode == EngineMode.Compiled)
-            //{
-            //    HostEnvironment.Options.TypeDetectPattern = TypeDetect.Standard;
-            //}
-
             if (mode != HostEnvironment.Options.Mode)
             {
                 HostEnvironment.Options.Mode = mode;
                 Initialize();
             }
             return this;
-        }
-
-        /// <inheritdoc />
-        public ITemplateResult CompileFile(string name, string path, Action<CompileContext> action = null)
-        {
-            return HostEnvironment.Cache[name] = HostEnvironment.CompileFile(name, path, action);
         }
 
 
@@ -169,6 +159,12 @@ namespace JinianNet.JNTemplate
             }
         }
 
+
+        /// <inheritdoc />
+        public ITemplateResult CompileFile(string name, string path, Action<CompileContext> action = null)
+        {
+            return HostEnvironment.Cache[name] = HostEnvironment.CompileFile(name, path, action);
+        }
         /// <inheritdoc />
         public void CompileFile(System.IO.FileInfo[] fs, Action<CompileContext> action = null)
         {
@@ -185,32 +181,13 @@ namespace JinianNet.JNTemplate
             return HostEnvironment.CreateContext();
         }
 
-
-        /// <inheritdoc />
-        public string Parse<T>(string text, T data)
-        {
-            if (text == null)
-                throw new ArgumentNullException(nameof(text));
-            var name = Utility.ContentToTemplateName(text);
-            return Parse<T>(name, new StringReader(text), data);
-        }
-
         /// <inheritdoc /> 
         public string Parse(string text, Action<TemplateContext> action)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
             var name = Utility.ContentToTemplateName(text);
-            return Parse(name, new StringReader(text), action);
-        }
-
-
-        /// <inheritdoc /> 
-        public string Parse<T>(System.IO.FileInfo file, T data)
-        {
-            if (file == null)
-                throw new ArgumentNullException(nameof(file));
-            return Parse<T>(file.FullName, new ResourceReader(file.FullName), data);
+            return Parse(name, new Resources.StringReader(text), action);
         }
 
         /// <inheritdoc /> 
@@ -218,13 +195,40 @@ namespace JinianNet.JNTemplate
         {
             if (file == null)
                 throw new ArgumentNullException(nameof(file));
-            return Parse(file.FullName, new ResourceReader(file.FullName), action);
+            return Parse(file.FullName, new Resources.ResourceReader(file.FullName), action);
+        }
+        /// <inheritdoc />
+        public string Parse(string name, Resources.IResourceReader reader, Action<TemplateContext> action)
+        {
+            var ctx = CreateContext();
+            action?.Invoke(ctx);
+            ctx.Name = name;
+            if (Mode == EngineMode.Compiled)
+            {
+                return CompileParse(name, ctx, reader);
+            }
+            return InterpretParse(name, ctx, reader);
+        }
+        /// <inheritdoc />
+        public string Parse<T>(string text, T data)
+        {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+            var name = Utility.ContentToTemplateName(text);
+            return Parse<T>(name, new Resources.StringReader(text), data);
+        }
+        /// <inheritdoc /> 
+        public string Parse<T>(System.IO.FileInfo file, T data)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+            return Parse<T>(file.FullName, new Resources.ResourceReader(file.FullName), data);
         }
 
         /// <inheritdoc />
-        private string Parse<T>(string name, IResourceReader reader, T data)
+        private string Parse<T>(string name, Resources.IResourceReader reader, T data)
         {
-            if (data == null)
+            if (object.Equals(data, default(T)))
             {
                 return Parse(name, reader, (Action<TemplateContext>)null);
             }
@@ -246,7 +250,7 @@ namespace JinianNet.JNTemplate
             }
             return Parse(name, reader, ctx => ctx.Set(key, data, typeof(T)));
         }
-        private string ParseAnonymous(string name, IResourceReader reader, Type type, object data)
+        private string ParseAnonymous(string name, Resources.IResourceReader reader, Type type, object data)
         {
             var ps = type.GetProperties();
             var fs = type.GetFields();
@@ -259,7 +263,7 @@ namespace JinianNet.JNTemplate
                     ctx.Set(p.Name, p.GetValue(data, null), p.PropertyType);
             });
         }
-        private string ParseDictionary(string name, IResourceReader reader, System.Collections.IDictionary dict)
+        private string ParseDictionary(string name, Resources.IResourceReader reader, System.Collections.IDictionary dict)
         {
             var type = dict.GetType();
             Type defaultType;
@@ -286,30 +290,7 @@ namespace JinianNet.JNTemplate
             });
         }
 
-        /// <inheritdoc />
-        public string Parse(string name, IResourceReader reader, Action<TemplateContext> action)
-        {
-            var ctx = CreateContext();
-            action?.Invoke(ctx);
-            ctx.Name = name;
-            if (Mode == EngineMode.Compiled)
-            {
-                return CompileParse(name, ctx, reader);
-            }
-            return InterpretParse(name, ctx, reader);
-        }
-
-        private string CompileParse(string name, TemplateContext ctx, IResourceReader reader)
-        {
-            var result = ctx.CompileTemplate(name, reader);
-            using (var write = new System.IO.StringWriter())
-            {
-                result.Render(write, ctx);
-                return write.ToString();
-            }
-        }
-
-        private string InterpretParse(string name, TemplateContext ctx, IResourceReader reader)
+        private static string InterpretParse(string name, TemplateContext ctx, Resources.IResourceReader reader)
         {
             var result = ctx.InterpretTemplate(name, reader);
             using (var write = new System.IO.StringWriter())
@@ -318,7 +299,15 @@ namespace JinianNet.JNTemplate
                 return write.ToString();
             }
         }
-
+        private static string CompileParse(string name, TemplateContext ctx, Resources.IResourceReader reader)
+        {
+            var result = ctx.CompileTemplate(name, reader);
+            using (var write = new System.IO.StringWriter())
+            {
+                result.Render(write, ctx);
+                return write.ToString();
+            }
+        }
 
         /// <inheritdoc />
         public ITemplate CreateTemplate(string text)
@@ -334,9 +323,9 @@ namespace JinianNet.JNTemplate
                 name = Utility.ContentToTemplateName(text);
             }
 
-            var reader = new StringReader(text);
+            var reader = new Resources.StringReader(text);
             var template = new Template(CreateContext(), reader);
-            template.TemplateKey = name; 
+            template.TemplateKey = name;
             template.Context.CurrentPath = HostEnvironment.RootPath;
             return template;
         }
@@ -350,7 +339,7 @@ namespace JinianNet.JNTemplate
         /// <inheritdoc />
         public ITemplate LoadTemplate(string name, string path)
         {
-            var ctx = CreateContext(); 
+            var ctx = CreateContext();
             var templatePath = ctx.FindFullPath(path);
             if (string.IsNullOrEmpty(templatePath))
             {
@@ -360,9 +349,9 @@ namespace JinianNet.JNTemplate
             {
                 name = templatePath;
             }
-            var reader = new ResourceReader(templatePath);
+            var reader = new Resources.ResourceReader(templatePath);
             var template = new Template(ctx, reader);
-            template.TemplateKey = name; 
+            template.TemplateKey = name;
             if (template.Context != null && string.IsNullOrEmpty(template.Context.CurrentPath))
             {
                 template.Context.CurrentPath = System.IO.Path.GetDirectoryName(templatePath);
@@ -386,7 +375,7 @@ namespace JinianNet.JNTemplate
         {
             if (key == null)
             {
-                throw new ArgumentNullException($"\"{nameof(key)}\" cannot be null.");
+                throw new ArgumentNullException(nameof(key));
             }
             string value;
 
@@ -402,7 +391,7 @@ namespace JinianNet.JNTemplate
         {
             if (key == null)
             {
-                throw new ArgumentNullException($"\"{nameof(key)}\" cannot be null.");
+                throw new ArgumentNullException(nameof(key));
             }
             if (value == null)
             {
@@ -413,58 +402,6 @@ namespace JinianNet.JNTemplate
                 HostEnvironment.EnvironmentVariable[key] = value;
             }
         }
-
-        /// <inheritdoc />
-        public IEngine UseLoader(IResourceLoader loader)
-        {
-            if (loader == null)
-            {
-                throw new ArgumentNullException(nameof(loader));
-            }
-            HostEnvironment.ResourceLoader = loader;
-            return this;
-        }
-
-        /// <inheritdoc />
-        public IEngine UseScopeProvider(IScopeProvider provider)
-        {
-            if (provider == null)
-            {
-                throw new ArgumentNullException(nameof(provider));
-            }
-            HostEnvironment.ScopeProvider = provider;
-            var data = provider.CreateScope();
-            var original = HostEnvironment.Options.Data;
-            foreach (KeyValuePair<string, object> kv in original)
-            {
-                data.Set(kv.Key, kv.Value, original.GetType(kv.Key));
-            }
-
-            return this;
-        }
-
-        /// <inheritdoc />
-        public IEngine UseCache(ITemplateCache cache)
-        {
-            if (cache == null)
-            {
-                throw new ArgumentNullException(nameof(cache));
-            }
-            HostEnvironment.Cache = cache;
-            return this;
-        }
-
-        /// <inheritdoc />
-        public IEngine UseOptions(IOptions options)
-        {
-            if (HostEnvironment.Options != options)
-            {
-                HostEnvironment.Options = options;
-                Initialize();
-            }
-            return this;
-        }
-
 
         /// <inheritdoc />
         public IEngine EnableFileWatcher()
@@ -509,6 +446,17 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
+        public IEngine UseLoader(IResourceLoader loader)
+        {
+            if (loader == null)
+            {
+                throw new ArgumentNullException(nameof(loader));
+            }
+            HostEnvironment.ResourceLoader = loader;
+            return this;
+        }
+
+        /// <inheritdoc />
         public IEngine UseScopeProvider<TProvider>() where TProvider
             : IScopeProvider, new()
         {
@@ -516,50 +464,65 @@ namespace JinianNet.JNTemplate
         }
 
         /// <inheritdoc />
+        public IEngine UseScopeProvider(IScopeProvider provider)
+        {
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+            HostEnvironment.ScopeProvider = provider;
+            var data = provider.CreateScope();
+            var original = HostEnvironment.Options.Data;
+            foreach (KeyValuePair<string, object> kv in original)
+            {
+                data.Set(kv.Key, kv.Value, original.GetType(kv.Key));
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public IEngine UseCache<TCache>() where TCache
             : ITemplateCache, new()
         {
-            return UseCache(new TemplateCache());
+            return UseCache(new TCache());
         }
 
+        /// <inheritdoc />
+        public IEngine UseCache(ITemplateCache cache)
+        {
+            if (cache == null)
+            {
+                throw new ArgumentNullException(nameof(cache));
+            }
+            HostEnvironment.Cache = cache;
+            return this;
+        }
         /// <inheritdoc />
         public IEngine UseOptions<TOptions>() where TOptions
             : IOptions, new()
         {
             return UseOptions(new TOptions());
         }
-        #endregion
 
-
-
-
-
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="value"></param>
-        private void CheckAndDispose<T>(T value)
+        /// <inheritdoc />
+        public IEngine UseOptions(IOptions options)
         {
-            if (value is IDisposable disposable)
-                Dispose(disposable);
+            if (HostEnvironment.Options != options)
+            {
+                HostEnvironment.Options = options;
+                Initialize();
+            }
+            return this;
         }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="disposable"></param>
-        private void Dispose(IDisposable disposable)
-        {
-            disposable?.Dispose();
-        }
+        #endregion 
 
         private void Initialize()
         {
-            lock (this)
+            lock (locker)
             {
                 Reset();
-                var list = LoadDefaultVisitor();// LazyRegistrars.Value;
+                var list = LoadDefaultVisitor();
                 for (var i = 0; i < list.Length; i++)
                 {
                     HostEnvironment.Resolver.Register(list[i]);
@@ -601,28 +564,6 @@ namespace JinianNet.JNTemplate
         public void Clean()
         {
             HostEnvironment.Cache?.Clear();
-            //HostEnvironment.Cache?.Clear();
-        }
-
-
-        /// <inheritdoc />
-        [Obsolete]
-        public void Register<T>(Func<TemplateParser, TokenCollection, ITag> parseMethod,
-            Func<ITag, CompileContext, MethodInfo> compileMethod,
-            Func<ITag, CompileContext, Type> guessMethod,
-            int index = 0) where T : ITag
-        {
-            var visitor = new DynamicVisitor(typeof(T), parseMethod, compileMethod, guessMethod);
-            HostEnvironment.Resolver.Insert(index, visitor);
-        }
-
-        /// <inheritdoc />
-        [Obsolete]
-        public void RegisterExecuteFunc<T>(Func<ITag, TemplateContext, object> func)
-           where T : ITag
-        {
-            var visitor = new DynamicVisitor(typeof(T), func);
-            HostEnvironment.Resolver.Register(visitor);
         }
 
         /// <inheritdoc />
@@ -640,11 +581,17 @@ namespace JinianNet.JNTemplate
             HostEnvironment.Resolver.Insert(0, visitor);
         }
 
-
-        /// <inheritdoc/>
+        /// <inheritdoc/>  
         public void Dispose()
         {
-            Clean();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        /// <inheritdoc/>  
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+                Clean();
             HostEnvironment.ResourceManager.Dispose();
         }
 
@@ -653,7 +600,7 @@ namespace JinianNet.JNTemplate
         /// </summary>
         ~TemplatingEngine()
         {
-            this.Dispose();
+            this.Dispose(false);
         }
         #endregion
     }

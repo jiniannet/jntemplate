@@ -21,12 +21,12 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             return null;
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return null;
         }

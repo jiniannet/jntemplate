@@ -35,8 +35,7 @@ namespace JinianNet.JNTemplate.Parsers
                     t.Condition = parser.ReadSimple(coll);
                     if (t.Condition == null)
                         return null;
-                    t.FirstToken = coll.First;
-                    //t.LastToken = coll.Last;
+                    t.FirstToken = coll.First; 
                     tag.AddChild(t);
 
                     while (parser.MoveNext())
@@ -70,11 +69,11 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as IfTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<IfTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<IfTag>(type);
             var il = mb.GetILGenerator();
             var labelEnd = il.DefineLabel();
             var labelSuccess = il.DefineLabel();
@@ -99,7 +98,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                 if (!(t.Children[i] is ElseTag))
                 {
-                    var m = c.CompileTag(ifTag.Condition);
+                    var m = context.CompileTag(ifTag.Condition);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Call, m);
@@ -126,7 +125,7 @@ namespace JinianNet.JNTemplate.Parsers
                     il.Emit(OpCodes.Brfalse, lables[i]);
                 }
 
-                var execute = c.CompileTag(ifTag);
+                var execute = context.CompileTag(ifTag);
                 il.Emit(OpCodes.Ldarg_0);
                 il.Emit(OpCodes.Ldarg_1);
                 il.Emit(OpCodes.Call, execute);
@@ -243,30 +242,8 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
-            //var t = tag as IfTag;
-            //Type type = null;
-            //for (var i = 0; i < t.Children.Count; i++)
-            //{
-            //    if (t.Children[i] is EndTag)
-            //    {
-            //        continue;
-            //    }
-            //    var cType = c.GuessType(t.Children[i]);
-            //    if (type == null)
-            //    {
-            //        type = cType;
-            //    }
-            //    else
-            //    {
-            //        if (cType == null || type.FullName != cType.FullName)
-            //        {
-            //            return typeof(string);
-            //        }
-            //    }
-            //}
-            //return type;
             return typeof(string);
         }
         /// <inheritdoc />

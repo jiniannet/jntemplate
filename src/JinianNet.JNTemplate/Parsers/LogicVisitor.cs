@@ -53,7 +53,6 @@ namespace JinianNet.JNTemplate.Parsers
 
                 if (tags.Count > 1)
                 {
-                    var list = new List<List<ITag>>();
                     ITag t = new LogicTag();
                     var arr = Analysis(tags, new List<Operator>(new Operator[] { Operator.And, Operator.Or }));
                     if (arr.Length == 1)
@@ -71,11 +70,11 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as LogicTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<LogicTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<LogicTag>(type);
             var il = mb.GetILGenerator();
             Label labelEnd = il.DefineLabel();
             il.DeclareLocal(type);
@@ -98,7 +97,7 @@ namespace JinianNet.JNTemplate.Parsers
                 else
                 {
                     array[i] = t.Children[i];
-                    types.Add(c.GuessType(t.Children[i]));
+                    types.Add(context.GuessType(t.Children[i]));
                     message.Add(types[types.Count - 1].Name);
                 }
             }
@@ -118,7 +117,7 @@ namespace JinianNet.JNTemplate.Parsers
                         continue;
                     }
 
-                    var m = c.CompileTag(t.Children[i]);
+                    var m = context.CompileTag(t.Children[i]);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Call, m);
@@ -138,8 +137,7 @@ namespace JinianNet.JNTemplate.Parsers
                             }
                         }
                         il.Emit(OpCodes.Call, cm);
-                    }
-                    //il.Emit(OpCodes.Stloc_0);
+                    } 
                     if (pre == Operator.None)
                     {
                         pre = (t.Children[i + 1] as OperatorTag).Value;
@@ -178,7 +176,7 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 if (t.Children.Count == 1)
                 {
-                    var m = c.CompileTag(t.Children[0]);
+                    var m = context.CompileTag(t.Children[0]);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Call, m);
@@ -196,7 +194,7 @@ namespace JinianNet.JNTemplate.Parsers
                         var childTag = obj as ITag;
                         if (childTag != null)
                         {
-                            var m = c.CompileTag(childTag);
+                            var m = context.CompileTag(childTag);
                             il.Emit(OpCodes.Ldarg_0);
                             il.Emit(OpCodes.Ldarg_1);
                             il.Emit(OpCodes.Call, m);
@@ -281,7 +279,6 @@ namespace JinianNet.JNTemplate.Parsers
                                     else
                                     {
                                         il.EmitEquals(bestType);
-                                        //il.Emit(OpCodes.Call, DynamicHelpers.GetMethodInfo(bestType, "Equals", new Type[] { bestType }));
                                     }
                                     break;
                                 case Operator.NotEqual:
@@ -292,7 +289,6 @@ namespace JinianNet.JNTemplate.Parsers
                                     else
                                     {
                                         il.EmitEquals(bestType);
-                                        //il.Emit(OpCodes.Call, DynamicHelpers.GetMethodInfo(bestType, "Equals", new Type[] { bestType }));
                                     }
                                     il.Emit(OpCodes.Ldc_I4_0);
                                     il.Emit(OpCodes.Ceq);
@@ -316,7 +312,7 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(bool);
         }
@@ -366,9 +362,9 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         result = list[0];
                     }
-                    if (result is bool)
+                    if (result is bool b)
                     {
-                        isTrue = (bool)result;
+                        isTrue = b;
                     }
                     else
                     {
@@ -426,8 +422,7 @@ namespace JinianNet.JNTemplate.Parsers
                             isLogical = true;
                         }
                         temp.Add(tags[i]);
-                    }
-                    //result.Add(new Tem);
+                    } 
                 }
                 else
                 {

@@ -40,24 +40,24 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as LayoutTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<LayoutTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<LayoutTag>(type);
             var il = mb.GetILGenerator();
             var strTag = t.Path as StringTag;
             if (strTag == null)
             {
                 throw new CompileException(tag, $"[LayoutTag] : path must be a string.");
             }
-            var res = c.Load(strTag.Value);
+            var res = context.Load(strTag.Value);
             if (res == null)
             {
                 throw new CompileException(tag, $"[LayoutTag] : \"{strTag.Value}\" cannot be found.");
             }
 
-            var tags = c.Lexer(res.Content);
+            var tags = context.Lexer(res.Content);
 
             for (int i = 0; i < tags.Count; i++)
             {
@@ -70,13 +70,13 @@ namespace JinianNet.JNTemplate.Parsers
                 }
             }
 
-            c.BlockCompile(il, tags);
+            context.BlockCompile(il, tags);
 
             il.Emit(OpCodes.Ret);
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }

@@ -30,19 +30,19 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as BodyTag;
             var type = typeof(string);
-            var mb = c.CreateReutrnMethod<BodyTag>(type);
+            var mb = context.CreateReutrnMethod<BodyTag>(type);
             var il = mb.GetILGenerator();
-            c.BlockCompile(il, t.Children);
+            context.BlockCompile(il, t.Children);
             il.Emit(OpCodes.Ret);
             return mb.GetBaseDefinition();
         }
 
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }

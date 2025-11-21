@@ -9,7 +9,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     ///The operator convert class.
     /// </summary>
-    public class OperatorConvert
+    public static class OperatorConvert
     {
         /// <summary>
         /// Converts the pperator to its equivalent string representation.

@@ -3,6 +3,9 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+using System.Collections;
+using System.Collections.Generic;
+
 
 #if !NF35 && !NF20
 using System.Threading.Tasks;
@@ -12,7 +15,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Contains utilities that the jntemplate uses.
     /// </summary>
-    public class Utility
+    public static class Utility
     {
         /// <summary>
         /// Converts the specified string representation of a logical value to its Boolean  equivalent.
@@ -63,11 +66,7 @@ namespace JinianNet.JNTemplate
         /// <returns>false if value is 0;otherwise, true.</returns>
         public static bool ToBoolean(double input)
         {
-            if (input == 0)
-            {
-                return false;
-            }
-            return true;
+            return !input.Equals(0);
         }
 
         /// <summary>
@@ -118,11 +117,7 @@ namespace JinianNet.JNTemplate
         /// <returns>false if value is 0;otherwise, true.</returns>
         public static bool ToBoolean(float input)
         {
-            if (input == 0)
-            {
-                return false;
-            }
-            return true;
+            return !input.Equals(0);
         }
         /// <summary>
         /// Converts the <see cref="object"/> to its <see cref="bool"/> equivalent.
@@ -233,6 +228,40 @@ namespace JinianNet.JNTemplate
             return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dict"></param>
+        /// <returns></returns>
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(Dictionary<object, object> dict)
+        {
+            var tDict = new Dictionary<TKey, TValue>();
+
+            foreach (var kv in dict)
+            {
+                var key = Change<TKey>(kv.Key);
+                var value = Change<TValue>(kv.Value);
+                tDict[key] = value;
+            }
+            return tDict;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T Change<T>(object value)
+        {
+            if (value is T tValue)
+                return tValue;
+            var type = typeof(T);
+            if (type ==typeof(string))
+                return (T)((object)value.ToString());
+            return (T)value;
+        }
 
         /// <summary>
         /// Generates default values based on the specified type
@@ -272,7 +301,7 @@ namespace JinianNet.JNTemplate
         /// <typeparam name="T"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-        public static string ExcuteTaskAsync<T>(Task<T> task)
+        public static string ExcuteReturnTaskAsync<T>(Task<T> task)
         {
             task.Wait();
             return task.Result?.ToString();
@@ -284,7 +313,7 @@ namespace JinianNet.JNTemplate
         /// <typeparam name="T"></typeparam>
         /// <param name="task"></param>
         /// <returns></returns>
-        public static async Task<string> ExcuteTaskAsync<T>(Task<T> task)
+        public static async Task<string> ExcuteReturnTaskAsync<T>(Task<T> task)
         {
             var result = await task;
             return result?.ToString();
@@ -299,6 +328,16 @@ namespace JinianNet.JNTemplate
         {
             await task;
             return string.Empty;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Task<string> ExcuteStringAsync(string value)
+        {
+            return Task.FromResult<string>(value);
         }
 
 

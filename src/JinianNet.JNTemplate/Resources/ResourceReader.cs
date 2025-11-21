@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Resources
     /// </summary>
     public class ResourceReader : IResourceReader
     {
-        private string resourcePath;
+        private readonly string resourcePath;
         private string content;
         private bool isComplete;
 
@@ -75,6 +75,19 @@ namespace JinianNet.JNTemplate.Resources
         public override int GetHashCode()
         {
             return resourcePath?.GetHashCode() ?? 0;
+        }
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj is ResourceReader r)
+            {
+                if (!this.isComplete  || !r.isComplete)
+                    return this.resourcePath == r.resourcePath;
+                return this.content == r.content;
+            }
+            return false;
         }
     }
 }

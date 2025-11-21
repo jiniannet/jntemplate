@@ -225,20 +225,7 @@ namespace JinianNet.JNTemplate
         /// <summary>
         /// Clear compiled object and cache.
         /// </summary>
-        void Clean();
-
-        /// <summary>
-        /// Register an new tag.
-        /// </summary>
-        /// <typeparam name="T">Type of the new tag. </typeparam>
-        /// <param name="parseMethod">parser of the new tag.</param>
-        /// <param name="compileMethod">compile method of the new tag.</param>
-        /// <param name="guessMethod">guess method of the new tag.</param>
-        /// <param name="index">The zero-based index.</param>
-        void Register<T>(Func<TemplateParser, TokenCollection, ITag> parseMethod,
-           Func<ITag, CompileContext, MethodInfo> compileMethod,
-           Func<ITag, CompileContext, Type> guessMethod,
-           int index = 0) where T : ITag;
+        void Clean(); 
 
     }
 }

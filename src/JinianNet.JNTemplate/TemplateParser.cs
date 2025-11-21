@@ -13,13 +13,13 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// Provides methods for parsing template strings.
     /// </summary>
-    public class TemplateParser : Executor<TagCollection>, IEnumerator<ITag>
+    public class TemplateParser : IEnumerator<ITag>
     {
         private ITag tag;
-        private Token[] tokens;
+        private readonly Token[] tokens;
         private int index;
         private TagCollection tags;
-        private Resolver resolver;
+        private readonly Resolver resolver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateParser"/> class
@@ -31,7 +31,7 @@ namespace JinianNet.JNTemplate
         {
             if (ts == null)
             {
-                throw new ArgumentNullException("\"ts\" cannot be null.");
+                throw new ArgumentNullException(nameof(ts));
             }
             this.resolver = r;
             this.tokens = ts;
@@ -99,12 +99,7 @@ namespace JinianNet.JNTemplate
                     tc.Remove(tc.Last);
                 }
 
-                this.index++;
-
-                //if (tc.Count == 1 && tc[0] != null && tc[0].TokenKind == TokenKind.Comment)
-                //{
-                //    return new TextTag();
-                //}
+                this.index++; 
 
                 try
                 {
@@ -172,27 +167,25 @@ namespace JinianNet.JNTemplate
             {
                 throw new ParseException("Invalid TokenCollection!");
             }
-            var tag = resolver.Parsing(this, tc.TrimParentheses());//func
-            if (func != null && !func(tag))
+            var t = resolver.Parsing(this, tc.TrimParentheses());//func
+            if (func != null && !func(t))
                 return null;
-            return tag;
-        }
+            return t;
+        } 
         private bool IsTagEnd()
         {
             return IsTagEnd(GetToken());
+        }
+        private static bool IsTagEnd(Token t)
+        {
+            return t == null || t.TokenKind == TokenKind.TagEnd || t.TokenKind == TokenKind.EOF;
         }
 
         private bool IsTagStart()
         {
             return IsTagStart(GetToken());
         }
-
-        private bool IsTagEnd(Token t)
-        {
-            return t == null || t.TokenKind == TokenKind.TagEnd || t.TokenKind == TokenKind.EOF;
-        }
-
-        private bool IsTagStart(Token t)
+        private static bool IsTagStart(Token t)
         {
             return t != null && t.TokenKind == TokenKind.TagStart;
         }
@@ -206,11 +199,6 @@ namespace JinianNet.JNTemplate
             return this.tokens[this.index];
         }
 
-        //private Token GetToken(int i)
-        //{
-        //    return tokens[this.index + 1];
-        //}
-
 
         /// <inheritdoc />
         object System.Collections.IEnumerator.Current
@@ -218,14 +206,20 @@ namespace JinianNet.JNTemplate
             get { return Current; }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc /> 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        /// <inheritdoc/>  
+        protected virtual void Dispose(bool disposing)
+        { 
 
         }
 
         /// <inheritdoc />
-        public override TagCollection Execute()
+        public virtual TagCollection Execute()
         {
             if (tags == null)
             {

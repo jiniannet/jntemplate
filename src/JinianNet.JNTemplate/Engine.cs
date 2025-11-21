@@ -12,9 +12,10 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// The template engine
     /// </summary>
-    public sealed class Engine
+    public static class Engine
     {
-        private static volatile object state = new object();
+
+        private static readonly object State = new object();
         private static IEngine engine;
         private static string engineVersion;
 
@@ -27,7 +28,7 @@ namespace JinianNet.JNTemplate
             {
                 if (engine == null)
                 {
-                    lock (state)
+                    lock (State)
                     {
                         if (engine == null)
                         {
@@ -80,18 +81,6 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Compile a template with a given file
-        /// </summary>
-        /// <param name="name">Unique key of the template</param>
-        /// <param name="path">The fully qualified path of the file to load.</param>
-        /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
-        /// <returns></returns>
-        public static ITemplateResult CompileFile(string name, string path, Action<CompileContext> action = null)
-        {
-            return Current.CompileFile(name, path, action);
-        }
-
-        /// <summary>
         /// Compile a template with a given contents
         /// </summary>
         /// <param name="name">Unique key of the template</param>
@@ -103,6 +92,18 @@ namespace JinianNet.JNTemplate
             return Current.Compile(name, content, action);
         }
 
+
+        /// <summary>
+        /// Compile a template with a given file
+        /// </summary>
+        /// <param name="name">Unique key of the template</param>
+        /// <param name="path">The fully qualified path of the file to load.</param>
+        /// <param name="action">The <see cref="Action{CompileContext}"/>.</param>
+        /// <returns></returns>
+        public static ITemplateResult CompileFile(string name, string path, Action<CompileContext> action = null)
+        {
+            return Current.CompileFile(name, path, action);
+        }
         /// <summary>
         /// Compile a template with a given files
         /// </summary> 
@@ -196,20 +197,14 @@ namespace JinianNet.JNTemplate
             return Current.Parse<T>(file, data);
         }
 
+
         /// <summary>
-        /// Register an new tag.
+        /// Register an new excute method.
         /// </summary>
-        /// <typeparam name="T">Type of the new tag. </typeparam>
-        /// <param name="parseMethod">parser of the new tag.</param>
-        /// <param name="compileMethod">compile method of the new tag.</param>
-        /// <param name="guessMethod">guess method of the new tag.</param>
-        /// <param name="index">The zero-based index.</param>
-        public static void Register<T>(Func<TemplateParser, Nodes.TokenCollection, Nodes.ITag> parseMethod,
-           Func<Nodes.ITag, CompileContext, System.Reflection.MethodInfo> compileMethod,
-           Func<Nodes.ITag, CompileContext, Type> guessMethod,
-           int index = 0) where T : Nodes.ITag
+        /// <param name="visitor"></param>
+        public static void Register(Parsers.ITagVisitor visitor)
         {
-            Current.Register<T>(parseMethod, compileMethod, guessMethod);
+            Current.Register(visitor);
         }
 
         /// <summary>

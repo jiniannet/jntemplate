@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate.Dynamic
     /// <summary>
     /// 
     /// </summary>
-    public class ObjectBuilder
+    public static class ObjectBuilder
     {
         static ConcurrentDictionary<string, Type> dict = new ConcurrentDictionary<string, Type>();
 
@@ -347,8 +347,7 @@ namespace JinianNet.JNTemplate.Dynamic
             var retlocal = il.DeclareLocal(typeof(object));
             il.Emit(OpCodes.Ldloc, 0);
             il.Emit(OpCodes.Stloc, retlocal.LocalIndex);
-            il.Emit(OpCodes.Ldloc, retlocal.LocalIndex);
-            //il.Emit(OpCodes.Ldloc, 0);
+            il.Emit(OpCodes.Ldloc, retlocal.LocalIndex); 
             il.Emit(OpCodes.Ret);
             return dynamicMethod.CreateDelegate(typeof(Func<IDictionary<string, object>, object>)) as Func<IDictionary<string, object>, object>;
         }

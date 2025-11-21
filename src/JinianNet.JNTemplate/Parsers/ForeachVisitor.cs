@@ -57,10 +57,10 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as ForeachTag;
-            var sourceType = c.GuessType(t.Source);
+            var sourceType = context.GuessType(t.Source);
             var isAsync = false;
 #if !NF35 && !NF20
             if (sourceType.IsGenericType
@@ -72,13 +72,13 @@ namespace JinianNet.JNTemplate.Parsers
 #endif
             if (sourceType.IsArray)
             {
-                return ArrayForeachCompile(c, t, sourceType, isAsync);
+                return ArrayForeachCompile(context, t, sourceType, isAsync);
             }
-            return EnumerableForeachCompile(c, t, sourceType, isAsync);
+            return EnumerableForeachCompile(context, t, sourceType, isAsync);
 
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }
@@ -95,7 +95,6 @@ namespace JinianNet.JNTemplate.Parsers
             bool isAsync)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-            var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
 
             var stringBuilderType = typeof(StringBuilder);
             var t = tag;
@@ -105,7 +104,7 @@ namespace JinianNet.JNTemplate.Parsers
 
             var childType = TypeGuesser.InferChildType(sourceType);
 
-            var enumerableType = sourceType.GetIEnumerableGenericType();// typeof(System.Collections.IEnumerable);
+            var enumerableType = sourceType.GetIEnumerableGenericType();
             Type enumeratorType;
             bool mustTo = false;
             if (enumerableType == null)
@@ -148,10 +147,6 @@ namespace JinianNet.JNTemplate.Parsers
                 if (t.Children[i] is SetTag setTag)
                 {
                     c.Set(setTag.Name, c.GuessType(setTag.Value));
-                }
-                if (types[i].FullName == "System.Void" || t.Children[i] is TextTag)
-                {
-                    continue;
                 }
             }
             il.Emit(OpCodes.Nop);
@@ -261,7 +256,6 @@ namespace JinianNet.JNTemplate.Parsers
             bool isAsync)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-            var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
 
             var stringBuilderType = typeof(StringBuilder);
             var t = tag;
@@ -389,57 +383,54 @@ namespace JinianNet.JNTemplate.Parsers
         /// <inheritdoc />
         public object Excute(ITag tag, TemplateContext context)
         {
-
+            var t = tag as ForeachTag;
+            if (t.Source != null)
             {
-                var t = tag as ForeachTag;
-                if (t.Source != null)
+                using (var writer = new StringWriter())
                 {
-                    using (var writer = new StringWriter())
-                    {
-                        object value = context.Execute(t.Source);
+                    object value = context.Execute(t.Source);
 #if !NF35 && !NF20
-                        if (value is Task task)
+                    if (value is Task)
+                    {
+                        var type = value.GetType();
+                        if (!type.IsGenericType)
                         {
-                            var type = value.GetType();
-                            if (!type.IsGenericType)
-                            {
-                                throw new CompileException(tag, "[ForeachTag]:source error.");
-                            }
-                            value = typeof(Utility).CallGenericMethod(null, "ExcuteTask", type.GetGenericArguments(), value);
+                            throw new CompileException(tag, "[ForeachTag]:source error.");
                         }
+                        value = typeof(Utility).CallGenericMethod(null, "ExcuteTask", type.GetGenericArguments(), value);
+                    }
 #endif
-                        var enumerable = value.ToIEnumerable();
-                        TemplateContext ctx;
-                        if (enumerable != null)
+                    var enumerable = value.ToIEnumerable();
+                    TemplateContext ctx;
+                    if (enumerable != null)
+                    {
+                        var ienum = enumerable.GetEnumerator();
+                        ctx = TemplateContext.CreateContext(context);
+                        int i = 0;
+                        while (ienum.MoveNext())
                         {
-                            var ienum = enumerable.GetEnumerator();
-                            ctx = TemplateContext.CreateContext(context);
-                            int i = 0;
-                            while (ienum.MoveNext())
+                            i++;
+                            ctx.TempData.Set(t.Name, ienum.Current, null);
+                            //为了兼容以前的用户 foreachIndex 保留
+                            ctx.TempData.Set("foreachIndex", i, null);
+                            for (int n = 0; n < t.Children.Count; n++)
                             {
-                                i++;
-                                ctx.TempData.Set(t.Name, ienum.Current, null);
-                                //为了兼容以前的用户 foreachIndex 保留
-                                ctx.TempData.Set("foreachIndex", i, null);
-                                for (int n = 0; n < t.Children.Count; n++)
+                                object result = ctx.Execute(t.Children[n]);
+                                if (i == 0 && t.Children.Count == 1)
                                 {
-                                    object result = ctx.Execute(t.Children[n]);
-                                    if (i == 0 && t.Children.Count == 1)
-                                    {
-                                        return result;
-                                    }
-                                    if (result != null)
-                                    {
-                                        writer.Write(result.ToString());
-                                    }
+                                    return result;
+                                }
+                                if (result != null)
+                                {
+                                    writer.Write(result.ToString());
                                 }
                             }
                         }
-                        return writer.ToString();
                     }
+                    return writer.ToString();
                 }
-                return null;
-            };
+            }
+            return null;
         }
     }
 }

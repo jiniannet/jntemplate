@@ -19,33 +19,30 @@ namespace JinianNet.JNTemplate.Parsers
         /// <inheritdoc />
         public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Utility.IsEqual(tc.First.Text, Const.KEY_INCLUDE))
-            {
-                if (tc.Count > 2
+            if (Utility.IsEqual(tc.First.Text, Const.KEY_INCLUDE)
+                && tc.Count > 2
                     && (tc[1].TokenKind == TokenKind.LeftParentheses)
                     && tc.Last.TokenKind == TokenKind.RightParentheses)
-                {
-                    IncludeTag tag = new IncludeTag();
-                    tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
-                    if (tag.Path == null)
-                        return null;
-                    return tag;
-                }
-            }
-
+            {
+                IncludeTag tag = new IncludeTag();
+                tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
+                if (tag.Path == null)
+                    return null;
+                return tag;
+            } 
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as IncludeTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<IncludeTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<IncludeTag>(type);
             var il = mb.GetILGenerator();
             var strTag = t.Path as StringTag;
             if (strTag != null)
             {
-                var res = c.Load(strTag.Value);
+                var res = context.Load(strTag.Value);
                 if (res != null)
                 {
                     il.Emit(OpCodes.Ldstr, res.Content);
@@ -58,8 +55,7 @@ namespace JinianNet.JNTemplate.Parsers
             else
             {
                 var strType = typeof(string);
-                var resType = typeof(Resources.ResourceInfo);
-                var ctxType = typeof(TemplateContext);
+                var resType = typeof(Resources.ResourceInfo); 
                 var labelEnd = il.DefineLabel();
                 var labelSuccess = il.DefineLabel();
                 il.DeclareLocal(strType);
@@ -68,7 +64,7 @@ namespace JinianNet.JNTemplate.Parsers
                 il.DeclareLocal(typeof(bool));
                 il.DeclareLocal(type);
 
-                var m = c.CompileTag(t.Path);
+                var m = context.CompileTag(t.Path);
 
                 il.Emit(OpCodes.Ldarg_0);
                 il.Emit(OpCodes.Ldarg_1);
@@ -116,7 +112,7 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }

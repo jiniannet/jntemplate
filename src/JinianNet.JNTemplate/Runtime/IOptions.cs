@@ -39,12 +39,7 @@ namespace JinianNet.JNTemplate.Runtime
         /// <summary>
         /// Gets or sets whether throw exceptions.
         /// </summary>
-        bool ThrowExceptions { get; set; }
-
-        // /// <summary>
-        // /// Gets or sets the detect patterns.
-        // /// </summary>
-        // TypeDetect TypeDetectPattern { get; set; }
+        bool ThrowExceptions { get; set; } 
 
         /// <summary>
         /// Gets or sets the output mode.

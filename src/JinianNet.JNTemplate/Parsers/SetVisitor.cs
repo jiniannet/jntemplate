@@ -49,11 +49,6 @@ namespace JinianNet.JNTemplate.Parsers
                 });
                 c.AddChild(new OperatorTag(new Token(TokenKind.Arithmetic, tc.Last.Text[0].ToString())));
 
-                //c.AddChild(new TextTag()
-                //{
-                //    FirstToken = new Token(TokenKind.Operator, tc.Last.Text[0].ToString())
-                //});
-
                 c.AddChild(new NumberTag()
                 {
                     Value = 1,
@@ -79,26 +74,24 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
-            //var getVariableValue = typeof(VariableScope).GetMethod("get_Item", new[] { typeof(string) });
             var t = tag as SetTag;
             var type = typeof(void);
-            var retunType = c.GuessType(t.Value);
-            c.Set(t.Name, retunType);
-            var mb = c.CreateReutrnMethod<SetTag>(type);
+            var retunType = context.GuessType(t.Value);
+            context.Set(t.Name, retunType);
+            var mb = context.CreateReutrnMethod<SetTag>(type);
             var il = mb.GetILGenerator();
             var labelEnd = il.DefineLabel();
             il.DeclareLocal(retunType);
             il.DeclareLocal(typeof(bool));
 
-            var method = c.CompileTag(t.Value);
+            var method = context.CompileTag(t.Value);
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Call, method);
             il.Emit(OpCodes.Stloc, 0);
-            //il.Emit(OpCodes.Ldloc_0);
 
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Callvirt, getVariableScope);
@@ -125,7 +118,7 @@ namespace JinianNet.JNTemplate.Parsers
 
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(void);
         }
@@ -134,12 +127,9 @@ namespace JinianNet.JNTemplate.Parsers
         {
             var t = tag as SetTag;
             object value = context.Execute(t.Value);
-            if (value != null)
+            if (value != null && !context.TempData.Update(t.Name, value))
             {
-                if (!context.TempData.Update(t.Name, value))
-                {
-                    context.TempData.Set(t.Name, value, null);
-                }
+                context.TempData.Set(t.Name, value, null); 
             }
             return null;
         }

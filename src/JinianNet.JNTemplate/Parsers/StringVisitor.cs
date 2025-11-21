@@ -31,18 +31,18 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as StringTag;
             var type = typeof(string);
-            var mb = c.CreateReutrnMethod<StringTag>(type);
+            var mb = context.CreateReutrnMethod<StringTag>(type);
             var il = mb.GetILGenerator();
             il.CallTypeTag(t);
             il.Emit(OpCodes.Ret);
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }

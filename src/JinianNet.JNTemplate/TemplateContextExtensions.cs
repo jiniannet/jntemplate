@@ -3,19 +3,13 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.Threading;
-using JinianNet.JNTemplate.Hosting;
 using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Resources;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Exceptions;
-using JinianNet.JNTemplate.Runtime;
 using System.Collections.Generic;
-
-using System.Text;
-using System.Collections;
-
+using System.Threading;
 
 
 #if !NF35 && !NF20
@@ -36,14 +30,6 @@ namespace JinianNet.JNTemplate
         /// <returns>An array of the full names (including paths) of directories in the <see cref="Context"/>.</returns>
         public static IEnumerable<string> GetResourceDirectories(this ITemplateContext ctx)
         {
-            //if (string.IsNullOrEmpty(ctx.CurrentPath) || ctx.Options.ResourceDirectories.Contains(ctx.CurrentPath))
-            //{
-            //    return ctx.Options.ResourceDirectories.ToArray();
-            //}
-            //string[] paths = new string[ctx.Options.ResourceDirectories.Count + 1];
-            //paths[0] = ctx.CurrentPath;
-            //ctx.Options.ResourceDirectories.CopyTo(paths, 1);
-            //return paths; 
             if (ctx.ResourceDirectories?.Count == 0)
                 return new string[] { System.IO.Directory.GetCurrentDirectory() };
             return ctx.ResourceDirectories;
@@ -91,7 +77,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static IVariableScope CreateVariableScope(this ITemplateContext ctx)
         {
-            var vs =  ctx?.ScopeProvider?.CreateScope();
+            var vs = ctx?.ScopeProvider?.CreateScope();
             vs.Parent = ctx.TempData;
             return vs;
         }
@@ -114,7 +100,7 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static ITemplateResult InterpretTemplate(this ITemplateContext ctx, string text)
         {
-            return InterpretTemplate(ctx, Utility.ContentToTemplateName(text), new StringReader(text));
+            return InterpretTemplate(ctx, Utility.ContentToTemplateName(text), new Resources.StringReader(text));
         }
 
         /// <summary>
@@ -134,7 +120,7 @@ namespace JinianNet.JNTemplate
 
 
             ITemplateResult result;
-            if (context.EnableCache && (result = context.Cache[name])!=null)
+            if (context.EnableCache && (result = context.Cache[name]) != null)
                 return result;
 
             result = Interpre(reader, context);
@@ -250,7 +236,7 @@ namespace JinianNet.JNTemplate
             }
 
             ITemplateResult result;
-            if (context.EnableCache && (result = context.Cache[name])!=null)
+            if (context.EnableCache && (result = context.Cache[name]) != null)
                 return result;
 
             result = Compile(name, reader, context);
@@ -297,15 +283,16 @@ namespace JinianNet.JNTemplate
 
         /// <summary>
         /// Create a compilation context.
-        /// </summary>
-        /// <param name="name">Unique key of the template</param>
+        /// </summary> 
         /// <param name="scope">The template data.</param>
         /// <param name="context"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
         private static CompileContext GenerateContext(this ITemplateContext context, string name, IVariableScope scope)
         {
             var ctx = new CompileContext(context);
             ctx.TempData = scope ?? context.CreateVariableScope();
+            ctx.Name = name;
             return ctx;
 
         }
@@ -320,7 +307,7 @@ namespace JinianNet.JNTemplate
         {
             if (writer == null)
             {
-                throw new ArgumentNullException("\"writer\" cannot be null.");
+                throw new ArgumentNullException(nameof(writer));
             }
             if (collection == null || collection.Count <= 0)
                 return;
@@ -394,7 +381,7 @@ namespace JinianNet.JNTemplate
         {
             if (writer == null)
             {
-                throw new ArgumentNullException("\"writer\" cannot be null.");
+                throw new ArgumentNullException(nameof(writer));
             }
             if (collection == null || collection.Count <= 0)
                 return;
@@ -410,7 +397,7 @@ namespace JinianNet.JNTemplate
                             var type = tagResult.GetType();
                             if (type.IsGenericType)
                             {
-                                var taskResult = (Task<string>)typeof(Utility).CallGenericMethod(null, "ExcuteTaskAsync", type.GetGenericArguments(), tagResult);
+                                var taskResult = (Task<string>)typeof(Utility).CallGenericMethod(null, "ExcuteReturnTaskAsync", type.GetGenericArguments(), tagResult);
                                 var taskValue = await taskResult;
                                 await writer.WriteAsync(taskValue);
                             }
@@ -584,11 +571,6 @@ namespace JinianNet.JNTemplate
         /// <returns></returns>
         public static bool MustFormat(this TemplateContext ctx, Type type)
         {
-            //foreach (var f in ctx.OutputFormatters)
-            //{
-            //    if (f.CanWriteType(type))
-            //        return true;
-            //}
             return false;
         }
 
@@ -602,25 +584,7 @@ namespace JinianNet.JNTemplate
         {
             if (value == null)
                 return null;
-            //var type = value.GetType();
-            //foreach (var f in ctx.OutputFormatters)
-            //{
-            //    if (f.CanWriteType(type))
-            //        return f.Format(value);
-            //}
             return value.ToString();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="tag"></param>
-        /// <param name="ctx"></param>
-        /// <returns></returns>
-        private static object Execute(this TemplateContext ctx, string name, ITag tag)
-        {
-            return ctx.Resolver.Excute(tag, ctx);
         }
     }
 }

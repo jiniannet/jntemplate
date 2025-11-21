@@ -13,13 +13,16 @@ namespace System.Collections.Concurrent
     /// <typeparam name="TValue"></typeparam>
     public class ConcurrentDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {
+
+        private readonly object locker;
         /// <summary>
         /// 
         /// </summary>
         public ConcurrentDictionary() : base()
         {
-
+            locker = new object();
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -38,7 +41,7 @@ namespace System.Collections.Concurrent
         /// <returns></returns>
         public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
         {
-            lock (this)
+            lock (locker)
             {
                 TValue value;
                 if (this.TryGetValue(key, out value))
@@ -57,7 +60,7 @@ namespace System.Collections.Concurrent
         /// <returns></returns>
         public bool TryRemove(TKey key, out TValue value)
         {
-            lock (this)
+            lock (locker)
             {
                 if (this.TryGetValue(key, out value))
                 {
@@ -77,7 +80,7 @@ namespace System.Collections.Concurrent
         /// <returns></returns>
         public TValue AddOrUpdate(TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
         {
-            lock (this)
+            lock (locker)
             {
                 TValue old;
                 if (this.TryGetValue(key, out old))

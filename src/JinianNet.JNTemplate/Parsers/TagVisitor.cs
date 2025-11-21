@@ -15,11 +15,11 @@ namespace JinianNet.JNTemplate.Parsers
     /// <typeparam name="T"></typeparam>
     public abstract class TagVisitor<T> where T : ITag
     {
-        private string name;
+        private readonly string name;
         /// <summary>
         /// 
         /// </summary>
-        public TagVisitor()
+        protected TagVisitor()
         {
             name = typeof(T).Name;
         }

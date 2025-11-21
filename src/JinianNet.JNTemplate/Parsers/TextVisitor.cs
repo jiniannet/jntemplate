@@ -26,13 +26,13 @@ namespace JinianNet.JNTemplate.Parsers
         public string Name => nameof(TextTag);
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as TextTag;
             if (!string.IsNullOrEmpty(t.Text))
             {
                 var type = typeof(string);
-                var mb = c.CreateReutrnMethod<TextTag>(type);
+                var mb = context.CreateReutrnMethod<TextTag>(type);
                 var il = mb.GetILGenerator();
                 il.Emit(OpCodes.Ldstr, t.Text);
                 il.Emit(OpCodes.Ret);
@@ -41,7 +41,7 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }

@@ -27,10 +27,10 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var type = typeof(object);
-            var mb = c.CreateReutrnMethod<NullTag>(type);
+            var mb = context.CreateReutrnMethod<NullTag>(type);
             var il = mb.GetILGenerator();
             il.Emit(OpCodes.Ldnull);
             il.Emit(OpCodes.Ret);
@@ -38,7 +38,7 @@ namespace JinianNet.JNTemplate.Parsers
 
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(object);
         }

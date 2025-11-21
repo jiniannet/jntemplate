@@ -21,73 +21,71 @@ namespace JinianNet.JNTemplate.Parsers
         /// <inheritdoc />
         public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
+            if (tc != null
+                           && parser != null
+                           && tc.Count >= 3
+                           && tc[0].TokenKind == TokenKind.LeftBracket
+                           && tc.Last.TokenKind == TokenKind.RightBracket)
             {
-                if (tc != null
-                               && parser != null
-                               && tc.Count >= 3
-                               && tc[0].TokenKind == TokenKind.LeftBracket
-                               && tc.Last.TokenKind == TokenKind.RightBracket)
+                int y = tc.Count - 1;
+                int x = -1;
+                int pos = 0;
+
+                for (int i = y; i >= 0; i--)
                 {
-                    int y = tc.Count - 1;
-                    int x = -1;
-                    int pos = 0;
-
-                    for (int i = y; i >= 0; i--)
-                    {
-                        if (tc[i].TokenKind == TokenKind.Dot && pos == 0)
-                        {
-                            return null;
-                        }
-                        if (tc[i].TokenKind == TokenKind.RightBracket)
-                        {
-                            pos++;
-                            continue;
-                        }
-                        if (tc[i].TokenKind == TokenKind.LeftBracket)
-                        {
-                            pos--;
-                            if (pos == 0 && x == -1)
-                            {
-                                x = i;
-                            }
-                        }
-                    }
-
-                    if (x == -1)
+                    if (tc[i].TokenKind == TokenKind.Dot && pos == 0)
                     {
                         return null;
                     }
-                    var tag = new IndexValueTag();
-                    tag.Index = parser.ReadSimple(tc[x + 1, y]);
-                    if (tag.Index == null)
-                        return null;
-                    return tag;
+                    if (tc[i].TokenKind == TokenKind.RightBracket)
+                    {
+                        pos++;
+                        continue;
+                    }
+                    if (tc[i].TokenKind == TokenKind.LeftBracket)
+                    {
+                        pos--;
+                        if (pos == 0 && x == -1)
+                        {
+                            x = i;
+                        }
+                    }
                 }
 
-                return null;
-            };
+                if (x == -1)
+                {
+                    return null;
+                }
+                var tag = new IndexValueTag();
+                tag.Index = parser.ReadSimple(tc[x + 1, y]);
+                if (tag.Index == null)
+                    return null;
+                return tag;
+            }
+
+            return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as IndexValueTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<IndexValueTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<IndexValueTag>(type);
             var il = mb.GetILGenerator();
             if (t.Parent == null)
             {
                 throw new CompileException(tag, $"[IndexValutTag] : tag error on {t.ToSource()}.");
             }
-            var parentType = c.GuessType(t.Parent);
+            var parentType = context.GuessType(t.Parent);
             bool toArray = false;
             if (parentType.FullName == "System.String")
             {
                 toArray = true;
                 parentType = typeof(char[]);
             }
-            var indexType = c.GuessType(t.Index);
-            Label labelEnd = il.DefineLabel();
-            Label labelInit = il.DefineLabel();
+            var indexType = context.GuessType(t.Index);
+            il.DefineLabel();
+            il.DefineLabel();
             il.DeclareLocal(parentType);
             il.DeclareLocal(indexType);
             il.DeclareLocal(type);
@@ -95,7 +93,7 @@ namespace JinianNet.JNTemplate.Parsers
 
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, c.CompileTag(t.Parent));
+            il.Emit(OpCodes.Call, context.CompileTag(t.Parent));
             if (toArray)
             {
                 il.DeclareLocal(typeof(string));
@@ -108,7 +106,7 @@ namespace JinianNet.JNTemplate.Parsers
 
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, c.CompileTag(t.Index));
+            il.Emit(OpCodes.Call, context.CompileTag(t.Index));
             il.Emit(OpCodes.Stloc_1);
 
 
@@ -122,8 +120,8 @@ namespace JinianNet.JNTemplate.Parsers
             else
             {
                 var getItem = parentType.GetMethodInfo("get_Item", new Type[] { indexType });
-                ParameterInfo[] ps;
-                if (getItem == null || (ps = getItem.GetParameters()).Length != 1)
+                ParameterInfo[] ps = getItem?.GetParameters();
+                if (ps == null || ps.Length != 1)
                 {
                     throw new CompileException(tag, $"[IndexValutTag] : Cannot not compile.");
                 }
@@ -140,19 +138,19 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             var t = tag as IndexValueTag;
             if (t.Parent == null)
             {
                 throw new CompileException(tag, "[IndexValueTag] : Parent cannot be null");
             }
-            var parentType = c.GuessType(t.Parent);
+            var parentType = context.GuessType(t.Parent);
             if (parentType.FullName == "System.String")
             {
                 return typeof(char);
             }
-            var indexType = c.GuessType(t.Index);
+            var indexType = context.GuessType(t.Index);
             if (parentType.IsArray)
             {
                 var method = parentType.GetMethodInfo("get", new Type[] { indexType });

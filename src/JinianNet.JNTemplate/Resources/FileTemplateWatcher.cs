@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO; 
+using System.IO;
 
 namespace JinianNet.JNTemplate.Resources
 {
@@ -14,14 +14,15 @@ namespace JinianNet.JNTemplate.Resources
     /// </summary>
 
     [DefaultEvent("Changed")]
-    public class FileTemplateWatcher : IDisposable,ITemplateWatcher
+    public class FileTemplateWatcher : ITemplateWatcher
     {
         /// <summary>
         /// Occurs when a file or directory in the specified path  is changed.
         /// </summary>
         public event EventHandler<FileSystemEventArgs> Changed;
-        private List<FileSystemWatcher> pool;
-        private List<string> resources;
+        private readonly List<FileSystemWatcher> pool;
+        private readonly List<string> resources;
+        private readonly object locker;
 
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace JinianNet.JNTemplate.Resources
         {
             resources = new List<string>();
             pool = new List<FileSystemWatcher>();
+            locker = new object();
         }
 
         /// <summary>
@@ -48,18 +50,17 @@ namespace JinianNet.JNTemplate.Resources
             if (parent == null)
                 return false;
 
-            lock (this)
+            lock (locker)
             {
                 if (!Add(path))
                     return true;
 
-                var watcher = GetOrAddWatcher(ctx, parent);
+                var watcher = GetOrAddWatcher(parent);
 
-                if (watcher ==null)
+                if (watcher == null)
                     return false;
 
                 return true;
-                //return Watch(watcher, ctx, path);
             }
 
         }
@@ -70,23 +71,22 @@ namespace JinianNet.JNTemplate.Resources
                 return false;
             resources.Add(path);
             return true;
-        } 
+        }
 
         private void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             if (resources.Contains(e.FullPath))
             {
-                //var args = new TemplateEventArgs(e.FullPath, item.Keys.ToArray());
                 Changed?.Invoke(sender, e);
             }
-        } 
+        }
 
-        private FileSystemWatcher GetOrAddWatcher(ITemplateContext ctx, string parent)
+        private FileSystemWatcher GetOrAddWatcher(string parent)
         {
             var watcher = FindWatcher(parent) ?? ChangeWatcher(parent);
 
 
-            if (watcher!=null)
+            if (watcher != null)
                 return watcher;
 
 
@@ -120,7 +120,7 @@ namespace JinianNet.JNTemplate.Resources
                 if (path.StartsWith(watcher.Path))
                     return watcher;
                 var parent = Path.GetDirectoryName(watcher.Path);
-                while (parent!=null)
+                while (parent != null)
                 {
                     if (path.StartsWith(parent))
                     {
@@ -133,14 +133,20 @@ namespace JinianNet.JNTemplate.Resources
             return null;
         }
 
-        /// <inheritdoc/> 
+        /// <inheritdoc/>  
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        /// <inheritdoc/>  
+        protected virtual void Dispose(bool disposing)
+        {
             resources.Clear();
-            Changed = null; 
+            Changed = null;
             foreach (var watcher in pool)
                 watcher.Dispose();
-            pool.Clear(); 
+            pool.Clear();
         }
     }
 }

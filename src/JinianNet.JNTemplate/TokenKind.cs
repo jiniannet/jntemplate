@@ -111,6 +111,14 @@ namespace JinianNet.JNTemplate
         /// </summary>
         Colon,
         /// <summary>
+        /// <![CDATA[|]]> 
+        /// </summary>
+        BitwiseOr,
+        /// <summary>
+        /// <![CDATA[&]]> 
+        /// </summary>
+        BitwiseAnd,
+        /// <summary> 
         /// Comment ($* comment *$)
         /// </summary>
         Comment,

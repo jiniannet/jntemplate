@@ -15,7 +15,7 @@ namespace JinianNet.JNTemplate
         private const char EOF = '\0';
         private int index;
         private int start;
-        private char[] document;
+        private readonly char[] document;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CharScanner"/> class
@@ -99,6 +99,14 @@ namespace JinianNet.JNTemplate
             return this.document[this.index + i];
         }
         /// <summary>
+        /// Indicates whether is end.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsEnd()
+        {
+            return this.index >= this.document.Length;
+        }
+        /// <summary>
         /// Indicates whether finds a match in a specified input chars.
         /// </summary>
         /// <param name="list">The chars to search for a match.</param> 
@@ -106,14 +114,6 @@ namespace JinianNet.JNTemplate
         public bool IsMatch(char[] list)
         {
             return IsMatch(list, 0);
-        }
-        /// <summary>
-        /// Indicates whether is end.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsEnd()
-        {
-            return this.index >= this.document.Length;
         }
         /// <summary>
         /// Indicates whether finds a match in a specified input chars.
@@ -150,16 +150,6 @@ namespace JinianNet.JNTemplate
         }
 
         /// <summary>
-        /// Retrieves a substring from this instance.
-        /// </summary>
-        /// <returns>A string.</returns>
-        public string GetString()
-        {
-            string value = GetString(this.start, this.index);
-            this.start = this.index;
-            return value;
-        }
-        /// <summary>
         /// Retrieves a substring from this instance. 
         /// </summary>
         /// <param name="x">The zero-based starting character position of a substring in this instance.</param>
@@ -168,60 +158,62 @@ namespace JinianNet.JNTemplate
         public string GetEscapeString(int x, int y)
         {
             List<char> cs = new List<char>();
-            for (int i = x; i < y; i++)
+            int i = x;
+            while (i < y)
             {
-                if (this.document[i] == '\\')
+                var c = this.document[i];
+                i++;
+                if (c != '\\')
                 {
-                    switch (this.document[i + 1])
-                    {
-                        case '0':
-                            cs.Add('\0');
-                            i++;
-                            break;
-                        case '"':
-                            cs.Add('\"');
-                            i++;
-                            break;
-                        case '\\':
-                            cs.Add('\\');
-                            i++;
-                            break;
-                        case 'a':
-                            cs.Add('\a');
-                            i++;
-                            break;
-                        case 'b':
-                            cs.Add('\b');
-                            i++;
-                            break;
-                        case 'f':
-                            cs.Add('\f');
-                            i++;
-                            break;
-                        case 'n':
-                            cs.Add('\n');
-                            i++;
-                            break;
-                        case 'r':
-                            cs.Add('\r');
-                            i++;
-                            break;
-                        case 't':
-                            cs.Add('\t');
-                            i++;
-                            break;
-                        case 'v':
-                            cs.Add('\v');
-                            i++;
-                            break;
-                        default:
-                            cs.Add(this.document[i]);
-                            break;
-                    }
+                    cs.Add(c);
+                    continue;
                 }
-                else
+
+                switch (this.document[i])
                 {
-                    cs.Add(this.document[i]);
+                    case '0':
+                        cs.Add('\0');
+                        i++;
+                        break;
+                    case '"':
+                        cs.Add('\"');
+                        i++;
+                        break;
+                    case '\\':
+                        cs.Add('\\');
+                        i++;
+                        break;
+                    case 'a':
+                        cs.Add('\a');
+                        i++;
+                        break;
+                    case 'b':
+                        cs.Add('\b');
+                        i++;
+                        break;
+                    case 'f':
+                        cs.Add('\f');
+                        i++;
+                        break;
+                    case 'n':
+                        cs.Add('\n');
+                        i++;
+                        break;
+                    case 'r':
+                        cs.Add('\r');
+                        i++;
+                        break;
+                    case 't':
+                        cs.Add('\t');
+                        i++;
+                        break;
+                    case 'v':
+                        cs.Add('\v');
+                        i++;
+                        break;
+                    default:
+                        cs.Add(c);
+                        break;
                 }
             }
             if (cs.Count == 0)
@@ -229,6 +221,17 @@ namespace JinianNet.JNTemplate
                 return null;
             }
             return new string(cs.ToArray());
+        }
+
+        /// <summary>
+        /// Retrieves a substring from this instance.
+        /// </summary>
+        /// <returns>A string.</returns>
+        public string GetString()
+        {
+            string value = GetString(this.start, this.index);
+            this.start = this.index;
+            return value;
         }
         /// <summary>
         /// Retrieves a substring from this instance. The substring starts at a specified character position and continues to the end of the string.

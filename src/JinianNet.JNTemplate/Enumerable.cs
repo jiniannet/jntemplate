@@ -2,11 +2,6 @@
 #if NF20
 using System.Collections.Generic;
 
-namespace System.Linq.Expressions
-{
-
-}
-
 namespace System.Linq
 {
     /// <summary>
@@ -55,8 +50,17 @@ namespace System.Linq
         {
             if (source != null)
             {
-                foreach (TSource t in source)
-                    return t;
+                var enumerator = source.GetEnumerator();
+                try
+                {
+
+                    if (enumerator.MoveNext())
+                        return enumerator.Current; 
+                }
+                finally
+                {
+                    enumerator.Dispose(); 
+                }
             }
             return default(TSource);
         }

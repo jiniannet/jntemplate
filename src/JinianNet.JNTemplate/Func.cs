@@ -6,7 +6,7 @@ namespace System
     /// </summary>
     /// <typeparam name="TOut"></typeparam>
     /// <returns></returns>
-    public delegate TOut Func<TOut>();
+    public delegate TOut Func<out TOut>();
     /// <summary>
     /// 
     /// </summary>
@@ -14,7 +14,7 @@ namespace System
     /// <typeparam name="TOut"></typeparam>
     /// <param name="input"></param>
     /// <returns></returns>
-    public delegate TOut Func<TInput, TOut>(TInput input);
+    public delegate TOut Func<in TInput, out TOut>(TInput input);
     /// <summary>
     /// 
     /// </summary>
@@ -24,7 +24,7 @@ namespace System
     /// <param name="t1"></param>
     /// <param name="t2"></param>
     /// <returns></returns>
-    public delegate TOut Func<T1, T2, TOut>(T1 t1, T2 t2);
+    public delegate TOut Func<in T1, in T2, out TOut>(T1 t1, T2 t2);
     /// <summary>
     /// 
     /// </summary>
@@ -36,6 +36,6 @@ namespace System
     /// <param name="t2"></param>
     /// <param name="t3"></param>
     /// <returns></returns>
-    public delegate TOut Func<T1, T2, T3, TOut>(T1 t1, T2 t2,T3 t3);
+    public delegate TOut Func<in T1, in T2, in T3, out TOut>(T1 t1, T2 t2,T3 t3);
 }
 #endif

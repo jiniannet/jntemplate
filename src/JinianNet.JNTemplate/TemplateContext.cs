@@ -14,7 +14,7 @@ namespace JinianNet.JNTemplate
     /// Context for template execution.
     /// </summary>
     [Serializable]
-    public class TemplateContext : Context, ITemplateContext
+    public class TemplateContext : Context
 #if NF20 || NF40
         , ICloneable
 #endif
@@ -96,7 +96,7 @@ namespace JinianNet.JNTemplate
         {
             if (context == null)
             {
-                throw new ArgumentNullException("\"context\" cannot be null.");
+                throw new ArgumentNullException(nameof(context));
             }
             var scope = context.CreateVariableScope();
             var ctx = new TemplateContext(scope, context);

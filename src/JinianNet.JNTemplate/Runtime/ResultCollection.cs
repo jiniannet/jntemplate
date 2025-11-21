@@ -12,7 +12,7 @@ namespace JinianNet.JNTemplate.Runtime
     /// </summary>
     public class ResultCollection<T>
     {
-        private ConcurrentDictionary<string, T> dict;
+        private readonly ConcurrentDictionary<string, T> dict;
         /// <summary>
         /// Initializes a new instance of the <see cref="ResultCollection{T}"/> class
         /// </summary>
@@ -58,7 +58,7 @@ namespace JinianNet.JNTemplate.Runtime
         /// <returns>true if the element is successfully removed; otherwise, false. </returns>
         public bool Remove(string name)
         {
-            return dict.TryRemove(name, out T output);
+            return dict.TryRemove(name, out T _);
         }
 
         /// <summary>

@@ -31,11 +31,11 @@ namespace JinianNet.JNTemplate.Parsers
 
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as BooleanTag;
             var type = t.Value.GetType();
-            var mb = c.CreateReutrnMethod<BooleanTag>(type);
+            var mb = context.CreateReutrnMethod<BooleanTag>(type);
             var il = mb.GetILGenerator();
             il.DeclareLocal(type);
             il.CallTypeTag(t);
@@ -45,7 +45,7 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(bool);
 

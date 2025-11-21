@@ -93,10 +93,7 @@ namespace JinianNet.JNTemplate.Nodes
         /// <returns></returns>
         public static TokenCollection[] Split(this TokenCollection coll, int start, int end, params TokenKind[] kinds)
         {
-            //var kinds = new TokenKind[] { TokenKind.Arithmetic, TokenKind.Colon, TokenKind.Comma, TokenKind.Dot, TokenKind.Logic, TokenKind.Punctuation };
             List<TokenCollection> tcs = new List<TokenCollection>();
-            //start =  GetValidIndex(start);
-            //end = GetValidIndex(end);
             if (end > coll.Count)
             {
                 end = coll.Count;

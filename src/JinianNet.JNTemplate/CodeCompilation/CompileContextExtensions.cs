@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text; 
+using System.Text;
 
 namespace JinianNet.JNTemplate.CodeCompilation
 {
@@ -216,28 +216,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
         /// <returns></returns>
         internal static Type GuessIfType(this CompileContext ctx, ElseifTag tag)
         {
-            //var types = new List<Type>();
-            //var hasVoid = false;
-            //for (var i = 0; i < tag.Children.Count; i++)
-            //{
-            //    var type = ctx.GuessType(tag.Children[i]);
-            //    if (type.FullName == "System.Void")
-            //    {
-            //        hasVoid = true;
-            //    }
-            //    else
-            //    {
-            //        types.Add(type);
-            //    }
-            //}
-            //if (types.Count == 1)
-            //{
-            //    return types[0];
-            //}
-            //if (types.Count == 0 && hasVoid)
-            //{
-            //    return typeof(void);
-            //}
             return typeof(string);
         }
         #endregion
@@ -325,12 +303,47 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 return null;
             }
-            //builder.Save(fileName);
             var instance = type.CreateInstance<ICompilerResult>();
+            //builder.Save(fileName);
             return instance;
 
         }
 
+
+        /// <summary>
+        /// Compiles the specified tag into a method.
+        /// </summary>
+        /// <param name="name">The name of the tag.</param>
+        /// <param name="tag">The <see cref="ITag"/>.</param>
+        /// <param name="context">The <see cref="CompileContext"/>.</param>
+        /// <returns></returns>
+        public static MethodInfo Compile(this CompileContext context, string name, ITag tag)
+        {
+            string tagKey = GetTagKey(tag);
+            if (tagKey != null
+                && context.Methods.TryGetValue(tagKey, out MethodInfo mi))
+            {
+                return mi;
+            }
+            var method = context.Resolver.Compile(tag, context);
+            if (tagKey != null)
+            {
+                context.Methods[tagKey] = method;
+            }
+            return method;
+        }
+
+
+        /// <summary>
+        /// Compiles the specified tag into a method.
+        /// </summary>
+        /// <param name="tag">The <see cref="ITag"/>.</param>
+        /// <param name="ctx">The <see cref="CompileContext"/>.</param>
+        /// <returns></returns>
+        public static MethodInfo Compile(this CompileContext ctx, ITag tag)
+        {
+            return Compile(ctx, tag.GetType().Name, tag);
+        }
         private static void CompileRender(CompileContext ctx, Type baseType, List<ITagCompileResult> ms)
         {
             var targetMethod = baseType.GetMethodInfo("RenderResult", new Type[] { typeof(TextWriter), typeof(TemplateContext) });
@@ -373,49 +386,14 @@ namespace JinianNet.JNTemplate.CodeCompilation
             }
         }
 
-        /// <summary>
-        /// Compiles the specified tag into a method.
-        /// </summary>
-        /// <param name="name">The name of the tag.</param>
-        /// <param name="tag">The <see cref="ITag"/>.</param>
-        /// <param name="context">The <see cref="CompileContext"/>.</param>
-        /// <returns></returns>
-        public static MethodInfo Compile(this CompileContext context, string name, ITag tag)
-        {
-            string tagKey = GetTagKey(tag);
-            if (tagKey != null
-                && context.Methods.TryGetValue(tagKey, out MethodInfo mi))
-            {
-                return mi;
-            }
-            var method = context.Resolver.Compile(tag, context);
-            if (tagKey != null)
-            {
-                context.Methods[tagKey] = method;
-            }
-            return method;
-        }
-
-
-        /// <summary>
-        /// Compiles the specified tag into a method.
-        /// </summary>
-        /// <param name="tag">The <see cref="ITag"/>.</param>
-        /// <param name="ctx">The <see cref="CompileContext"/>.</param>
-        /// <returns></returns>
-        public static MethodInfo Compile(this CompileContext ctx, ITag tag)
-        {
-            return Compile(ctx, tag.GetType().Name, tag);
-        }
-
         private static MethodInfo TagToMenthod(this CompileContext context, ITag tag, Type tagType)
         {
             MethodInfo method = null;
             try
             {
-                if (tag is ReferenceTag)
+                if (tag is ReferenceTag r)
                 {
-                    method = Compile(context, (tag as ReferenceTag).Child);
+                    method = Compile(context, r.Child);
                 }
                 else
                 {
@@ -458,8 +436,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             var il = ctx.Generator = methodGenerator;
 
-            //il.DeclareLocal(typeof(List<System.Threading.Tasks.Task<string>>));
-            //il.Emit(OpCodes.Newobj, typeof(List<System.Threading.Tasks.Task<string>>).GetConstructor(new Type[0]));
             il.DeclareLocal(typeof(List<object>));
             il.Emit(OpCodes.Newobj, typeof(List<object>).GetConstructor(new Type[0]));
             il.Emit(OpCodes.Stloc_0);
@@ -478,7 +454,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
                     continue;
                 }
 
-                CompileTask(ctx, ms[i].Tag, ms[i].Type, ms[i].Result as MethodInfo);
+                CompileTask(ctx, ms[i].Result as MethodInfo);
 
             }
 
@@ -493,16 +469,13 @@ namespace JinianNet.JNTemplate.CodeCompilation
             {
                 il.Emit(OpCodes.Ldloc_0);
                 il.Emit(OpCodes.Ldstr, text);
-                //il.Emit(OpCodes.Call, typeof(System.Threading.Tasks.Task).GetGenericMethod(new Type[] { typeof(string) }, "FromResult", new Type[] { typeof(string) }));
-                //il.Emit(OpCodes.Callvirt, typeof(List<System.Threading.Tasks.Task<string>>).GetMethod("Add", new Type[] { typeof(System.Threading.Tasks.Task<string>) }));
                 il.Emit(OpCodes.Callvirt, typeof(List<object>).GetMethod("Add", new Type[] { typeof(object) }));
             }
         }
 
-        private static void CompileTask(this CompileContext context, ITag tag, Type tagType, MethodInfo method)
+        private static void CompileTask(this CompileContext context, MethodInfo method)
         {
             var taskType = typeof(System.Threading.Tasks.Task);
-            //MethodInfo addMethod = typeof(List<System.Threading.Tasks.Task<string>>).GetMethod("Add", new Type[] { typeof(System.Threading.Tasks.Task<string>) });
 
             MethodInfo addMethod = typeof(List<object>).GetMethod("Add", new Type[] { typeof(object) });
             var hasReturn = method.ReturnType != typeof(void);
@@ -520,8 +493,10 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             if (method.ReturnType.IsMatchType(taskType))
             {
-                var callMethod = typeof(Utility).GetMethod("ExcuteTaskAsync", new Type[] { method.ReturnType });
-                context.Generator.Emit(OpCodes.Call, callMethod);
+                if (!method.ReturnType.IsGenericType)
+                    context.Generator.Emit(OpCodes.Call, typeof(Utility).GetMethod("ExcuteTaskAsync"));
+                else if (method.ReturnType.GenericTypeArguments[0]!=typeof(string))
+                    context.Generator.Emit(OpCodes.Call, typeof(Utility).GetMethod("ExcuteReturnTaskAsync").MakeGenericMethod(method.ReturnType.GenericTypeArguments));
             }
             else
             {
@@ -535,8 +510,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 {
                     context.Generator.Call(method.ReturnType, typeof(object).GetMethod("ToString", Type.EmptyTypes));
                 }
-                //var callMethod = typeof(System.Threading.Tasks.Task).GetGenericMethod(new Type[] { typeof(string) }, "FromResult", new Type[] { typeof(string) });
-                //context.Generator.Emit(OpCodes.Call, callMethod);
             }
 
             context.Generator.Emit(OpCodes.Callvirt, addMethod);
@@ -558,8 +531,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
             var mb = context.CreateRenderMethod(tagType.Name);
             var il = mb.GetILGenerator();
-            var exBlock = il.BeginExceptionBlock();
-            //var lableThrow = il.DefineLabel();
+            il.BeginExceptionBlock();
             var labelPass = il.DefineLabel();
 #if !NF35 && !NF20
             if (type.IsMatchType(taskType))
@@ -642,7 +614,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
                 }
             }
             var exceptionVar = il.DeclareLocal(typeof(System.Exception));
-            //il.DeclareLocal(typeof(bool));
 
             il.BeginCatchBlock(typeof(System.Exception));
             il.Emit(OpCodes.Stloc, exceptionVar.LocalIndex);

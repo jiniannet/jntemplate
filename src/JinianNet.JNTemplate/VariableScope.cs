@@ -13,7 +13,7 @@ namespace JinianNet.JNTemplate
     /// </summary>
     public class VariableScope : IVariableScope
     {
-        private IDictionary<string, VariableElement> dic;
+        private readonly IDictionary<string, VariableElement> dic;
 
         /// <inheritdoc />
         public IVariableScope Parent { get; set; }
@@ -70,20 +70,7 @@ namespace JinianNet.JNTemplate
                 }
                 return null;
             }
-        }
-
-
-        private Type GetValueType(object value)
-        {
-            if (value != null)
-            {
-                return value.GetType();
-            }
-            else
-            {
-                return typeof(object);
-            }
-        }
+        } 
 
         /// <inheritdoc />
         public bool Update<T>(string key, T value)

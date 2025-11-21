@@ -15,10 +15,10 @@ namespace JinianNet.JNTemplate.Parsers
     public class DynamicVisitor : ITagVisitor
     {
 
-        Func<TemplateParser, TokenCollection, ITag> parseMethod;
-        Func<ITag, CompileContext, MethodInfo> compileMethod;
-        Func<ITag, CompileContext, Type> guessMethod; 
-        Func<ITag, TemplateContext, object> excuteMethod;
+        private readonly Func<TemplateParser, TokenCollection, ITag> parseMethod;
+        private readonly Func<ITag, CompileContext, MethodInfo> compileMethod;
+        private readonly Func<ITag, CompileContext, Type> guessMethod;
+        private readonly Func<ITag, TemplateContext, object> excuteMethod;
 
         /// <summary>
         /// 

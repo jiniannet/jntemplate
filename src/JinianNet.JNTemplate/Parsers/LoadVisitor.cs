@@ -22,50 +22,48 @@ namespace JinianNet.JNTemplate.Parsers
         /// <inheritdoc />
         public ITag Parse(TemplateParser parser, TokenCollection tc)
         {
-            if (Utility.IsEqual(tc.First.Text, Const.KEY_LOAD))
+            if (Utility.IsEqual(tc.First.Text, Const.KEY_LOAD)
+                && tc.Count > 2
+                && (tc[1].TokenKind == TokenKind.LeftParentheses)
+                && tc.Last.TokenKind == TokenKind.RightParentheses)
             {
-                if (tc.Count > 2
-                    && (tc[1].TokenKind == TokenKind.LeftParentheses)
-                    && tc.Last.TokenKind == TokenKind.RightParentheses)
-                {
-                    var tag = new LoadTag();
-                    tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
-                    if (tag.Path == null)
-                        return null;
-                    return tag;
-                }
+                var tag = new LoadTag();
+                tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
+                if (tag.Path == null)
+                    return null;
+                return tag;
             }
 
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as LoadTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<LoadTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<LoadTag>(type);
             var il = mb.GetILGenerator();
             var strTag = t.Path as StringTag;
             if (strTag != null)
             {
-                var res = c.Load(strTag.Value);
+                var res = context.Load(strTag.Value);
                 if (res == null)
                 {
                     throw new CompileException(tag, $"[LoadTag] : \"{strTag.Value}\" cannot be found.");
                 }
 
-                var tags = c.Lexer(res.Content);
+                var tags = context.Lexer(res.Content);
 
-                c.BlockCompile(il, tags);
+                context.BlockCompile(il, tags);
             }
             else
             {
                 var labelEnd = il.DefineLabel();
                 var labelSuccess = il.DefineLabel();
-                var labelTry = il.DefineLabel();
-                var labelFinally = il.DefineLabel();
+                il.DefineLabel();
+                il.DefineLabel();
 
-                var m = c.CompileTag(t.Path);
+                var m = context.CompileTag(t.Path);
                 il.DeclareLocal(typeof(string));
                 il.DeclareLocal(typeof(bool));
                 il.DeclareLocal(typeof(string));
@@ -117,7 +115,6 @@ namespace JinianNet.JNTemplate.Parsers
 
                 il.MarkLabel(labelEnd);
                 il.Emit(OpCodes.Ldstr, $"[LoadTag] : \"{t.Path.ToSource()}\" cannot be found.");
-                //il.Emit(OpCodes.Ldnull);
                 il.Emit(OpCodes.Stloc, 2);
 
                 il.MarkLabel(labelSuccess);
@@ -127,7 +124,7 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(string);
         }

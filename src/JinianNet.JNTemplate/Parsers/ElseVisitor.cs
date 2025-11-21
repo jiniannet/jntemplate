@@ -28,14 +28,14 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
-            return c.IfCompile((ElseTag)tag);
+            return context.IfCompile((ElseTag)tag);
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
-            return c.GuessIfType((ElseTag)tag);
+            return context.GuessIfType((ElseTag)tag);
         }
         /// <inheritdoc />
         public object Excute(ITag tag, TemplateContext context)

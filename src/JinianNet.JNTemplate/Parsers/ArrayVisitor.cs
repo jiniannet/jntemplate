@@ -34,7 +34,7 @@ namespace JinianNet.JNTemplate.Parsers
                     }
     
                     var itemTag = parser.ReadSimple(tcs[i]);
-                    if (itemTag != null && itemTag is ITypeTag t)
+                    if (itemTag is ITypeTag t)
                     {
                         list.Add(t.Value);
                         continue;
@@ -50,12 +50,12 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
 
             var t = tag as ArrayTag;
             var type = t.Value.GetType();
-            var mb = c.CreateReutrnMethod<ArrayTag>(type);
+            var mb = context.CreateReutrnMethod<ArrayTag>(type);
             var il = mb.GetILGenerator();
             il.DeclareLocal(type);
             il.DeclareLocal(type);
@@ -116,7 +116,7 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(object[]);
         }

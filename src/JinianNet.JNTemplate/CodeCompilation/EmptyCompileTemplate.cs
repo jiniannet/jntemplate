@@ -13,9 +13,9 @@ namespace JinianNet.JNTemplate.CodeCompilation
     /// <summary>
     /// Returns a blank template.
     /// </summary>
-    public class EmptyCompileTemplate : TemplateBase, ICompileTemplate, ITemplate
+    public sealed class EmptyCompileTemplate : TemplateBase, ICompileTemplate, ITemplate
     {
-        private string message;
+        private readonly string message;
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableElement"/> class
         /// </summary>
@@ -36,12 +36,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
 
         /// <inheritdoc />
         public bool IsCompileMode => true;
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-
-        }
 
         /// <inheritdoc />
         public void Render(TextWriter writer, TemplateContext context)

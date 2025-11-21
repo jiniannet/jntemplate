@@ -31,13 +31,13 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var getVariableScope = typeof(TemplateContext).GetPropertyGetMethod("TempData");
             var getVariableValue = typeof(IVariableScope).GetMethod("get_Item", new[] { typeof(string) });
             var t = tag as VariableTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<VariableTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<VariableTag>(type);
             var il = mb.GetILGenerator();
             Label labelEnd = il.DefineLabel();
             Label labelInit = il.DefineLabel();
@@ -70,14 +70,13 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         il.Emit(OpCodes.Castclass, type);
                     }
-                }
-                //il.ObjectTo(type);
+                } 
                 il.Emit(OpCodes.Stloc_1);
                 il.Emit(OpCodes.Br, labelEnd);
             }
             else
             {
-                var parentType = c.GuessType(t.Parent);
+                var parentType = context.GuessType(t.Parent);
 
                 var property = parentType.GetPropertyInfo(t.Name);
                 if (property == null)
@@ -90,7 +89,7 @@ namespace JinianNet.JNTemplate.Parsers
                         {
                             throw new CompileException(tag, $"[VariableTag] : {parentType.Name} Cannot find property {t.Name}");
                         }
-                        var method = c.CompileTag(t.Parent);
+                        var method = context.CompileTag(t.Parent);
                         il.DeclareLocal(parentType);
                         il.Emit(OpCodes.Ldarg_0);
                         il.Emit(OpCodes.Ldarg_1);
@@ -104,7 +103,7 @@ namespace JinianNet.JNTemplate.Parsers
                     {
                         if (!field.IsStatic)
                         {
-                            var method = c.CompileTag(t.Parent);
+                            var method = context.CompileTag(t.Parent);
                             il.DeclareLocal(parentType);
                             il.Emit(OpCodes.Ldarg_0);
                             il.Emit(OpCodes.Ldarg_1);
@@ -130,7 +129,7 @@ namespace JinianNet.JNTemplate.Parsers
 #endif
                     if (!getMethod.IsStatic)
                     {
-                        var method = c.CompileTag(t.Parent);
+                        var method = context.CompileTag(t.Parent);
                         il.DeclareLocal(parentType);
                         il.Emit(OpCodes.Ldarg_0);
                         il.Emit(OpCodes.Ldarg_1);
@@ -184,14 +183,14 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             var t = tag as VariableTag;
             if (t.Parent == null)
             {
-                return c.TempData.GetType(t.Name);
+                return context.TempData.GetType(t.Name);
             }
-            var parentType = c.GuessType(t.Parent);
+            var parentType = context.GuessType(t.Parent);
             if (parentType == typeof(System.Data.DataRow))
                 return typeof(object);
             var p = parentType.GetPropertyInfo(t.Name);

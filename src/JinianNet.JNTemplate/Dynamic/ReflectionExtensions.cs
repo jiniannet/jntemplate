@@ -10,9 +10,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
-using System.Linq.Expressions;
 using System.Linq;
 using JinianNet.JNTemplate.Exceptions;
+#if !NF20
+using System.Linq.Expressions;
+#endif
 
 namespace JinianNet.JNTemplate.Dynamic
 {
@@ -135,16 +137,21 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <returns></returns>
         public static MethodInfo[] GetMethodInfos(this Type type, string name)
         {
+#if NET20
+            var list = new List<MethodInfo>();
             var ms = GetMethodInfos(type);
-            var result = new List<MethodInfo>();
-            foreach (MethodInfo m in ms)
+            foreach (var m in ms)
             {
                 if (m.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(m);
-                }
+                    list.Add(m);
             }
-            return result.ToArray();
+            return ms;
+#else
+
+            return GetMethodInfos(type)
+                .Where(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+#endif
         }
 
         private static MethodInfo[] GetMethodInfos(this Type type)
@@ -306,8 +313,6 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             switch (target.FullName)
             {
-                //case "System.String"://
-                //    return true;
                 case "System.Double":
                     if (original.FullName == "System.Int16"
                         || original.FullName == "System.Int32"
@@ -687,11 +692,6 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return Call(t, method, container, new object[] { propIndex });
             }
-            //var info = GetPropertyGetMethod(t, "Item");
-            //if (info != null)
-            //{
-            //    return Call(t, info, container, new object[] { propIndex }); 
-            //}
             return null;
         }
 
@@ -832,7 +832,11 @@ namespace JinianNet.JNTemplate.Dynamic
         {
             if (dataSource == null)
             {
+#if NET20
                 return null;
+#else
+                return Enumerable.Empty<object>();
+#endif
             }
             if (dataSource is System.Data.DataTable dt)
             {
@@ -845,31 +849,43 @@ namespace JinianNet.JNTemplate.Dynamic
                 {
                     return list;
                 }
-                if ((list != null) && (list is ITypedList))
+                if (list is ITypedList tl)
                 {
-                    PropertyDescriptorCollection itemProperties = ((ITypedList)list).GetItemProperties(new PropertyDescriptor[0]);
+                    PropertyDescriptorCollection itemProperties = tl.GetItemProperties(new PropertyDescriptor[0]);
                     if ((itemProperties == null) || (itemProperties.Count == 0))
                     {
-                        return null;
+#if NET20
+                return null;
+#else
+                        return Enumerable.Empty<object>();
+#endif
                     }
                     PropertyDescriptor descriptor = itemProperties[0];
                     if (descriptor != null)
                     {
                         object component = list[0];
                         object value = descriptor.GetValue(component);
-                        if ((value != null) && (value is IEnumerable toEnumerable))
+                        if (value is IEnumerable toEnumerable)
                         {
                             return toEnumerable;
                         }
                     }
-                    return null;
+#if NET20
+                return null;
+#else
+                    return Enumerable.Empty<object>();
+#endif
                 }
             }
             if (dataSource is IEnumerable enumerable)
             {
                 return enumerable;
             }
-            return null;
+#if NET20
+                return null;
+#else
+            return Enumerable.Empty<object>();
+#endif
 
         }
         #endregion

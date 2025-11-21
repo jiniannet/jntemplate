@@ -88,12 +88,9 @@ namespace JinianNet.JNTemplate.Hosting
         public static IVariableScope CreateVariableScope(this IHostEnvironment environment)
         {
             var vs = environment?.ScopeProvider?.CreateScope();
-            if (vs != null)
+            if (vs != null && environment.Options.Data != null && environment.Options.Data.Count > 0)
             {
-                if (environment.Options.Data != null && environment.Options.Data.Count > 0)
-                {
-                    vs.Parent = environment.Options.Data;
-                } 
+                vs.Parent = environment.Options.Data; 
             }
             return vs;
         }
@@ -109,7 +106,7 @@ namespace JinianNet.JNTemplate.Hosting
             var vs = environment?.ScopeProvider?.CreateScope();
             if (vs != null)
             {
-                vs.Parent = parent; 
+                vs.Parent = parent;
             }
             return vs;
         }

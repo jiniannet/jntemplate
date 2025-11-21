@@ -69,12 +69,12 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var stringBuilderType = typeof(StringBuilder);
             var t = tag as ArithmeticTag;
-            var type = c.GuessType(t);
-            var mb = c.CreateReutrnMethod<ArithmeticTag>(type);
+            var type = context.GuessType(t);
+            var mb = context.CreateReutrnMethod<ArithmeticTag>(type);
             var il = mb.GetILGenerator();
             Label labelEnd = il.DefineLabel();
             il.DeclareLocal(type);
@@ -97,7 +97,7 @@ namespace JinianNet.JNTemplate.Parsers
                 else
                 {
                     array[i] = t.Children[i];
-                    types.Add(c.GuessType(t.Children[i]));
+                    types.Add(context.GuessType(t.Children[i]));
                     message.Add(types[types.Count - 1].Name);
                 }
             }
@@ -116,9 +116,9 @@ namespace JinianNet.JNTemplate.Parsers
                     il.Emit(OpCodes.Ldloc_1);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
-                    var m = c.CompileTag(t.Children[i]);
+                    var m = context.CompileTag(t.Children[i]);
                     il.Emit(OpCodes.Call, m);
-                    il.StringAppend(c, m.ReturnType);
+                    il.StringAppend(context, m.ReturnType);
                     il.Emit(OpCodes.Pop);
                 }
 
@@ -137,7 +137,7 @@ namespace JinianNet.JNTemplate.Parsers
                     var childTag = obj as ITag;
                     if (childTag != null)
                     {
-                        var m = c.CompileTag(childTag);
+                        var m = context.CompileTag(childTag);
                         il.Emit(OpCodes.Ldarg_0);
                         il.Emit(OpCodes.Ldarg_1);
                         il.Emit(OpCodes.Call, m);
@@ -233,11 +233,7 @@ namespace JinianNet.JNTemplate.Parsers
                                 il.Emit(OpCodes.Ceq);
                                 break;
                             default:
-                                throw new CompileException(tag, $"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
-                                //throw new CompileException($"The operator \"{obj}\" is not supported on type  \"{bestType.FullName}\" .");
-                                //case Operator.Or:
-                                //    il.Emit(OpCodes.Blt);
-                                //    break;
+                                throw new CompileException(tag, $"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported ."); 
                         }
                     }
                 }
@@ -250,17 +246,16 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             var t = tag as ArithmeticTag;
-            var types = new List<Type>();
-            var opts = new List<Operator>();
+            var types = new List<Type>(); 
             for (var i = 0; i < t.Children.Count; i++)
             {
                 var opt = t.Children[i] as OperatorTag;
                 if (opt == null)
                 {
-                    types.Add(c.GuessType(t.Children[i]));
+                    types.Add(context.GuessType(t.Children[i]));
                 }
             }
             if (types.Count == 1)

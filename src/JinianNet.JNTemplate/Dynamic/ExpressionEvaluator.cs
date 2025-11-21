@@ -16,7 +16,7 @@ namespace JinianNet.JNTemplate.Dynamic
     public class ExpressionEvaluator
     {
         #region Weights Array
-        private static readonly string[] numberWeights = new string[] {
+        private static readonly string[] NumberWeights = new string[] {
                 "System.Int16",
                  "System.Int32",
                  "System.Int64",
@@ -24,7 +24,7 @@ namespace JinianNet.JNTemplate.Dynamic
                  "System.Double",
                  "System.Decimal"};
 
-        private static readonly string[] uintWeights = new string[] {
+        private static readonly string[] UintWeights = new string[] {
                 "System.UInt16",
                  "System.UInt32",
                  "System.UInt64"};
@@ -219,17 +219,7 @@ namespace JinianNet.JNTemplate.Dynamic
 
             for (int i = 0; i < value.Length; i++)
             {
-                string fullName;
-                if (value[i] != null)
-                {
-                    fullName = value[i].GetType().FullName;
-                }
-                else
-                {
-                    fullName = "System.Object";
-                    value[i] = null;
-                }
-                if (fullName != "JinianNet.JNTemplate.Operator")
+                if (!(value[i] is Operator _))
                 {
                     post.Push(value[i]);
                     continue;
@@ -249,8 +239,8 @@ namespace JinianNet.JNTemplate.Dynamic
                     case "RightParentheses":
                         while (stack.Count > 0)
                         {
-                            object op;
-                            if ((op = stack.Pop()).ToString() == "(")
+                            object op = stack.Pop();
+                            if (op?.ToString() == "(")
                             {
                                 break;
                             }
@@ -296,41 +286,11 @@ namespace JinianNet.JNTemplate.Dynamic
                         }
                         else
                         {
-                            //object eX = stack.Peek();
-                            //object eY = value[i];
-                            //if (GetPriority(eY.ToString()) > GetPriority(eX.ToString()))
-                            //{
-                            //    stack.Push(eY);
-                            //}
-                            //else
-                            //{
-
-                            //    if (eX.ToString() != "(")
-                            //    {
-                            //        post.Push(stack.Pop());
-                            //    }
-                            //    stack.Push(eY);
-                            //}
-
                             object eX = stack.Peek();
                             object eY = value[i];
                             int pY = GetPriority(eY.ToString());
                             int pX = GetPriority(eX.ToString());
-                            /*
-                            if (eX.ToString() == "(" && eY.ToString() != ")")
-                            {
-                                stack.Push(eY);
-                            }
-                            else if (eY.ToString() == ")")
-                            {
-                                while (eX.ToString() != "(")
-                                {
-                                    post.Push(stack.Pop());
-                                }
-                                stack.Pop();
-                            }
-                            else */
-                            
+
                             if (pY > pX)
                             {
                                 stack.Push(eY);
@@ -386,136 +346,8 @@ namespace JinianNet.JNTemplate.Dynamic
             }
             return value.GetType();
         }
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The result of expression.</param>
-        /// <returns></returns>
-        public static object Calculate(object x, object y, string value)
-        {
-            if (value == "||")
-            {
-                return CalculateOr(x, y, value);
-            }
 
-            if (value == "&&")
-            {
-                return CalculateAnd(x, y, value);
-            }
-
-            Type tX = GetType(x);
-            Type tY = GetType(y); ;
-
-            if (IsNumber(tX.FullName) && IsNumber(tY.FullName))
-            {
-                Type t;
-                if (tX == tY)
-                {
-                    t = tX;
-                }
-                else
-                {
-                    int i, j;
-                    if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
-                    {
-                        i = Array.IndexOf<string>(uintWeights, tX.FullName);
-                        j = Array.IndexOf<string>(uintWeights, tY.FullName);
-                    }
-                    else
-                    {
-                        if (tX.Name[0] == 'U')
-                        {
-                            tX = Type.GetType($"System.{tX.Name.Remove(0, 1)}");
-                        }
-
-                        if (tY.Name[0] == 'U')
-                        {
-                            tY = Type.GetType($"System.{tY.Name.Remove(0, 1)}");
-                        }
-
-                        i = Array.IndexOf<string>(numberWeights, tX.FullName);
-                        j = Array.IndexOf<string>(numberWeights, tY.FullName);
-                    }
-                    if (i > j)
-                    {
-                        t = tX;
-                    }
-                    else
-                    {
-                        t = tY;
-                    }
-                }
-                switch (t.FullName)
-                {
-                    case "System.Double":
-                        return Calculate(Convert.ToDouble(x.ToString()), Convert.ToDouble(y.ToString()), value);
-                    case "System.Int16":
-                        return Calculate(Convert.ToInt16(x.ToString()), Convert.ToInt16(y.ToString()), value);
-                    case "System.Int32":
-                        return Calculate(Convert.ToInt32(x.ToString()), Convert.ToInt32(y.ToString()), value);
-                    case "System.Int64":
-                        return Calculate(Convert.ToInt64(x.ToString()), Convert.ToInt64(y.ToString()), value);
-                    /*
-                    case "System.UInt16":
-                        return Calculate(Convert.ToUInt16(x.ToString()), Convert.ToUInt16(y.ToString()), value);
-                    case "System.UInt32":
-                        return Calculate(Convert.ToUInt32(x.ToString()), Convert.ToUInt32(y.ToString()), value);
-                    case "System.UInt64":
-                        return Calculate(Convert.ToUInt64(x.ToString()), Convert.ToUInt64(y.ToString()), value);
-                    */
-                    case "System.Single":
-                        return Calculate(Convert.ToSingle(x.ToString()), Convert.ToSingle(y.ToString()), value);
-                    case "System.Decimal":
-                        return Calculate(Convert.ToDecimal(x.ToString()), Convert.ToDecimal(y.ToString()), value);
-                    default:
-                        return null;
-                }
-            }
-
-            if (tX.FullName == "System.Boolean" && tY.FullName == "System.Boolean")
-                return Calculate((bool)x, (bool)y, value);
-            if (tX.FullName == "System.String" && tY.FullName == "System.String")
-                return Calculate(x.ToString(), y.ToString(), value);
-            if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
-                return Calculate((DateTime)x, (DateTime)y, value);
-
-            switch (value)
-            {
-                case "==":
-                    return Equals(x, y, tX, tY);
-                case "!=":
-                    return !Equals(x, y, tX, tY);
-                case "+":
-                    return $"{x.ToString()}{y.ToString()}";
-                case ">=":
-                case ">":
-                case "<=":
-                case "<":
-                    if (x != null && y != null)
-                    {
-                        string strX, strY;
-                        Single fx, fy;
-                        if (!string.IsNullOrEmpty(strX = x.ToString())
-                            && !string.IsNullOrEmpty(strY = y.ToString())
-                            && Single.TryParse(strX, out fx)
-                            && Single.TryParse(strY, out fy))
-                        {
-                            return Calculate(fx, fy, value);
-                        }
-                    }
-                    if (value.Length > 1)
-                    {
-                        return Equals(x, y, tX, tY);
-                    }
-                    return false;
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"object\" and \"object\"");
-            }
-        }
-
-        private static object CalculateAnd(object x, object y, string value)
+        private static object CalculateAnd(object x, object y)
         {
             if (!CalculateBoolean(x))
             {
@@ -528,7 +360,7 @@ namespace JinianNet.JNTemplate.Dynamic
             return true;
         }
 
-        private static object CalculateOr(object x, object y, string value)
+        private static object CalculateOr(object x, object y)
         {
             if (CalculateBoolean(x))
             {
@@ -559,11 +391,11 @@ namespace JinianNet.JNTemplate.Dynamic
                 case "System.Int64":
                     return value.ToString() != "0";
                 case "System.Decimal":
-                    return (Decimal)value != 0;
+                    return (decimal)value != 0;
                 case "System.Double":
-                    return (Double)value != 0;
+                    return !0.Equals((double)value);
                 case "System.Single":
-                    return (Single)value != 0;
+                    return !0.Equals((float)value);
                 default:
                     return value != null;
             }
@@ -575,17 +407,137 @@ namespace JinianNet.JNTemplate.Dynamic
             {
                 return x == null && y == null;
             }
-            if (tX.FullName == tX.FullName)
+            if (tX.FullName == tY.FullName)
             {
                 if (tX.IsEnum)
                 {
-                    return Equals(x,y);
+                    return Equals(x, y);
                 }
                 return x == y;
             }
             return false;
         }
+        /// <summary>
+        /// Calculates the value of objects
+        /// </summary>
+        /// <param name="x">The first value. </param>
+        /// <param name="y">The second value.</param>
+        /// <param name="value">The result of expression.</param>
+        /// <returns></returns>
+        public static object Calculate(object x, object y, string value)
+        {
+            if (value == "||")
+            {
+                return CalculateOr(x, y);
+            }
 
+            if (value == "&&")
+            {
+                return CalculateAnd(x, y);
+            }
+
+            Type tX = GetType(x);
+            Type tY = GetType(y);
+
+            if (IsNumber(tX.FullName) && IsNumber(tY.FullName))
+            {
+                Type t;
+                if (tX == tY)
+                {
+                    t = tX;
+                }
+                else
+                {
+                    int i, j;
+                    if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
+                    {
+                        i = Array.IndexOf<string>(UintWeights, tX.FullName);
+                        j = Array.IndexOf<string>(UintWeights, tY.FullName);
+                    }
+                    else
+                    {
+                        if (tX.Name[0] == 'U')
+                        {
+                            tX = Type.GetType($"System.{tX.Name.Remove(0, 1)}");
+                        }
+
+                        if (tY.Name[0] == 'U')
+                        {
+                            tY = Type.GetType($"System.{tY.Name.Remove(0, 1)}");
+                        }
+
+                        i = Array.IndexOf<string>(NumberWeights, tX.FullName);
+                        j = Array.IndexOf<string>(NumberWeights, tY.FullName);
+                    }
+                    if (i > j)
+                    {
+                        t = tX;
+                    }
+                    else
+                    {
+                        t = tY;
+                    }
+                }
+                switch (t.FullName)
+                {
+                    case "System.Double":
+                        return Calculate(Convert.ToDouble(x.ToString()), Convert.ToDouble(y.ToString()), value);
+                    case "System.Int16":
+                        return Calculate(Convert.ToInt16(x.ToString()), Convert.ToInt16(y.ToString()), value);
+                    case "System.Int32":
+                        return Calculate(Convert.ToInt32(x.ToString()), Convert.ToInt32(y.ToString()), value);
+                    case "System.Int64":
+                        return Calculate(Convert.ToInt64(x.ToString()), Convert.ToInt64(y.ToString()), value);
+                    case "System.Single":
+                        return Calculate(Convert.ToSingle(x.ToString()), Convert.ToSingle(y.ToString()), value);
+                    case "System.Decimal":
+                        return Calculate(Convert.ToDecimal(x.ToString()), Convert.ToDecimal(y.ToString()), value);
+                    default:
+                        return null;
+                }
+            }
+
+            if (tX.FullName == "System.Boolean" && tY.FullName == "System.Boolean")
+                return Calculate((bool)x, (bool)y, value);
+            if (tX.FullName == "System.String" && tY.FullName == "System.String")
+                return Calculate(x.ToString(), y.ToString(), value);
+            if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
+                return Calculate((DateTime)x, (DateTime)y, value);
+
+            switch (value)
+            {
+                case "==":
+                    return Equals(x, y, tX, tY);
+                case "!=":
+                    return !Equals(x, y, tX, tY);
+                case "+":
+                    return $"{x.ToString()}{y.ToString()}";
+                case ">=":
+                case ">":
+                case "<=":
+                case "<":
+                    if (x != null && y != null)
+                    {
+                        string strX = x.ToString();
+                        string strY = y.ToString();
+                        float fx, fy;
+                        if (!string.IsNullOrEmpty(strX)
+                            && !string.IsNullOrEmpty(strY)
+                            && float.TryParse(strX, out fx)
+                            && float.TryParse(strY, out fy))
+                        {
+                            return Calculate(fx, fy, value);
+                        }
+                    }
+                    if (value.Length > 1)
+                    {
+                        return Equals(x, y, tX, tY);
+                    }
+                    return false;
+                default:
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"object\" and \"object\"");
+            }
+        }
         /// <summary>
         /// Evaluating reverse polish notation
         /// </summary>
@@ -603,7 +555,7 @@ namespace JinianNet.JNTemplate.Dynamic
             while (post.Count > 0)
             {
                 object obj = post.Pop();
-                if (obj != null && obj is Operator o)
+                if (obj is Operator o)
                 {
                     object y = stack.Pop();
                     object x = stack.Pop();
@@ -668,7 +620,7 @@ namespace JinianNet.JNTemplate.Dynamic
                     throw new TemplateException($"Operator \"{value}\" can not be applied operand \"bool\" and \"bool\"");
             }
         }
-        
+
         /// <summary>
         /// Calculates the value of objects
         /// </summary>
@@ -749,9 +701,9 @@ namespace JinianNet.JNTemplate.Dynamic
                 case ">":
                     return x > y;
                 case "==":
-                    return x == y;
+                    return x.Equals(y);
                 case "!=":
-                    return x != y;
+                    return !x.Equals(y);
                 default:
                     throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Double\" and \"Double\"");
             }
@@ -764,7 +716,7 @@ namespace JinianNet.JNTemplate.Dynamic
         /// <param name="y">The second value.</param>
         /// <param name="value">The operator.</param> 
         /// <returns>The result of expression.</returns>
-        public static object Calculate(Single x, Single y, string value)
+        public static object Calculate(float x, float y, string value)
         {
             switch (value)
             {
@@ -787,9 +739,9 @@ namespace JinianNet.JNTemplate.Dynamic
                 case ">":
                     return x > y;
                 case "==":
-                    return x == y;
+                    return x.Equals(y);
                 case "!=":
-                    return x != y;
+                    return !x.Equals(y);
                 default:
                     throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Single\" and \"Single\"");
             }
@@ -960,126 +912,7 @@ namespace JinianNet.JNTemplate.Dynamic
                 default:
                     throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Int16\" and \"Int16\"");
             }
-        }
-        #region 
-        /*
-        
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(UInt32 x, UInt32 y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt32\" and \"UInt32\""));
-            }
-        }
-        
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(UInt64 x, UInt64 y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt64\" and \"UInt64\""));
-            }
-        }
-        
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(UInt16 x, UInt16 y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                default:
-                    throw new TemplateException(string.Concat("Operator \"", value, "\" can not be applied operand \"UInt16\" and \"UInt16\""));
-            }
-        }
-
-        */
-        #endregion
+        } 
         #endregion
 
     }

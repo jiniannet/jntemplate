@@ -10,7 +10,7 @@ namespace JinianNet.JNTemplate
     /// <summary>
     /// System fields.
     /// </summary>
-    public class Const
+    public static class Const
     {
         /// <summary>
         /// Version

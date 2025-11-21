@@ -149,8 +149,6 @@ namespace JinianNet.JNTemplate.CodeCompilation
                         default:
                             throw new NotSupportedException($"[NumberTag] : [{tag.Value}] is not supported");
                     }
-                case "OperatorTag":
-                case "StringTag":
                 default:
                     il.Emit(OpCodes.Ldstr, tag.Value?.ToString() ?? string.Empty);
                     return typeof(string);
@@ -245,34 +243,7 @@ namespace JinianNet.JNTemplate.CodeCompilation
         {
             var equals = type.GetMethodInfo("op_Equality", new Type[] { type });
             if (equals == null)
-                equals = type.GetMethodInfo("Equals", new Type[] { type });
-            //var ps = equals.GetParameters();
-            //if (ps.Length == 1
-            //    && ps[0].ParameterType != type)
-            //{
-            //    if (ps[0].ParameterType.IsValueType)
-            //    {
-            //        if (type.IsValueType)
-            //        {
-            //            il.Emit(OpCodes.Isinst, ps[0].ParameterType);
-            //        }
-            //        else
-            //        {
-            //            il.Emit(OpCodes.Unbox_Any, ps[0].ParameterType);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (type.IsValueType)
-            //        {
-            //            il.Emit(OpCodes.Box, ps[0].ParameterType);
-            //        }
-            //        else
-            //        {
-            //            il.Emit(OpCodes.Castclass, ps[0].ParameterType);
-            //        }
-            //    }
-            //}
+                equals = type.GetMethodInfo("Equals", new Type[] { type }); 
             il.Emit(OpCodes.Call, equals);
         }
         /// <summary>

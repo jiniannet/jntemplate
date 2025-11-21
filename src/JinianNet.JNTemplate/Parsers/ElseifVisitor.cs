@@ -25,7 +25,6 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 var tag = new ElseifTag();
 
-                var coll = new TokenCollection();
                 tag.Condition = parser.Read(tc[2, -1]);
                 if (!tag.Condition.IsSimple)
                     return null;
@@ -36,18 +35,18 @@ namespace JinianNet.JNTemplate.Parsers
         }
 
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
 
-            return c.IfCompile((ElseifTag)tag);
+            return context.IfCompile((ElseifTag)tag);
 
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
 
 
-            return c.GuessIfType((ElseifTag)tag);
+            return context.GuessIfType((ElseifTag)tag);
 
         }
         /// <inheritdoc />

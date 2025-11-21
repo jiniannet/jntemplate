@@ -49,11 +49,11 @@ namespace JinianNet.JNTemplate.Parsers
             return null;
         }
         /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext c)
+        public MethodInfo Compile(ITag tag, CompileContext context)
         {
             var t = tag as JsonTag;
             var type = typeof(Dictionary<object, object>);
-            var mb = c.CreateReutrnMethod<JsonTag>(type);
+            var mb = context.CreateReutrnMethod<JsonTag>(type);
             var il = mb.GetILGenerator();
             il.DeclareLocal(type);
             il.DeclareLocal(type);
@@ -65,7 +65,7 @@ namespace JinianNet.JNTemplate.Parsers
             {
                 if (kv.Value == null)
                     throw new CompileException($"The Value cannot be null:{tag.ToSource()}");
-                var keyMethod = c.CompileTag(kv.Key); 
+                var keyMethod = context.CompileTag(kv.Key); 
                 var localVar1 = il.DeclareLocal(keyMethod.ReturnType);
                 il.Emit(OpCodes.Ldarg_0);
                 il.Emit(OpCodes.Ldarg_1);
@@ -74,7 +74,7 @@ namespace JinianNet.JNTemplate.Parsers
 
                 if (kv.Value != null)
                 {
-                    var valueMethod = c.CompileTag(kv.Value);
+                    var valueMethod = context.CompileTag(kv.Value);
                     var localVar2 = il.DeclareLocal(valueMethod.ReturnType);
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldarg_1);
@@ -95,8 +95,7 @@ namespace JinianNet.JNTemplate.Parsers
                     il.LoadVariable(keyMethod.ReturnType, localVar1.LocalIndex);
                     il.Emit(OpCodes.Ldnull);
                 }
-                il.Emit(OpCodes.Callvirt, type.GetMethod("set_Item"));
-                //il.Emit(OpCodes.Ldloc, localVar.LocalIndex);
+                il.Emit(OpCodes.Callvirt, type.GetMethod("set_Item")); 
             }
             il.Emit(OpCodes.Ldloc_0);
             il.Emit(OpCodes.Stloc_1);
@@ -105,7 +104,7 @@ namespace JinianNet.JNTemplate.Parsers
             return mb.GetBaseDefinition();
         }
         /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext c)
+        public Type GuessType(ITag tag, CompileContext context)
         {
             return typeof(Dictionary<object, object>);
         }
