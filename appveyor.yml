@@ -12,7 +12,7 @@ before_build:
     dotnet --version 
     dotnet restore
 build:
-  project: JinianNet.JNTemplate.sln
+  project: JinianNet.JNTemplate.slnx
   verbosity: minimal
 after_build:
 - sh: dotnet build
