@@ -11,147 +11,148 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="LoadTag"/> registrar
+/// </summary>
+
+public class LoadVisitor : TagVisitor<LoadTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="LoadTag"/> registrar
-    /// </summary>
-
-    public class LoadVisitor : TagVisitor<LoadTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (Utility.IsEqual(tc.First.Text, Const.KEY_LOAD)
+            && tc.Count > 2
+            && (tc[1].TokenKind == TokenKind.LeftParentheses)
+            && tc.Last.TokenKind == TokenKind.RightParentheses)
         {
-            if (Utility.IsEqual(tc.First.Text, Const.KEY_LOAD)
-                && tc.Count > 2
-                && (tc[1].TokenKind == TokenKind.LeftParentheses)
-                && tc.Last.TokenKind == TokenKind.RightParentheses)
-            {
-                var tag = new LoadTag();
-                tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
-                if (tag.Path == null)
-                    return null;
-                return tag;
-            }
-
-            return null;
+            var tag = new LoadTag();
+            tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
+            if (tag.Path == null)
+                return null;
+            return tag;
         }
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
+
+        return null;
+    }
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as LoadTag;
+        if (t == null || t.Path == null) throw new ArgumentNullException(nameof(tag));
+        var type = context.GuessType(t);
+        var mb = context.CreateReturnMethod<LoadTag>(type);
+        var il = mb.GetILGenerator();
+        var strTag = t.Path as StringTag;
+        if (strTag != null)
         {
-            var t = tag as LoadTag;
-            var type = context.GuessType(t);
-            var mb = context.CreateReutrnMethod<LoadTag>(type);
-            var il = mb.GetILGenerator();
-            var strTag = t.Path as StringTag;
-            if (strTag != null)
+            var res = context.Load(strTag.Value);
+            if (res == null || res.Content == null)
             {
-                var res = context.Load(strTag.Value);
-                if (res == null)
-                {
-                    throw new CompileException(tag, $"[LoadTag] : \"{strTag.Value}\" cannot be found.");
-                }
-
-                var tags = context.Lexer(res.Content);
-
-                context.BlockCompile(il, tags);
+                throw new CompileException(tag, $"[LoadTag] : \"{strTag.Value}\" cannot be found.");
             }
-            else
+
+            var tags = context.Lexer(res.Content);
+
+            context.BlockCompile(il, tags);
+        }
+        else
+        {
+            var labelEnd = il.DefineLabel();
+            var labelSuccess = il.DefineLabel();
+            il.DefineLabel();
+            il.DefineLabel();
+
+            var m = context.CompileRequiredMethod(t.Path);
+            il.DeclareLocal(typeof(string));
+            il.DeclareLocal(typeof(bool));
+            il.DeclareLocal(typeof(string));
+
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Call, m);
+            if (m.ReturnType.ToTypeCode() != TypeCode.String)
             {
-                var labelEnd = il.DefineLabel();
-                var labelSuccess = il.DefineLabel();
-                il.DefineLabel();
-                il.DefineLabel();
-
-                var m = context.CompileTag(t.Path);
-                il.DeclareLocal(typeof(string));
-                il.DeclareLocal(typeof(bool));
-                il.DeclareLocal(typeof(string));
-
-                il.Emit(OpCodes.Ldarg_0);
-                il.Emit(OpCodes.Ldarg_1);
-                il.Emit(OpCodes.Call, m);
-                if (m.ReturnType.FullName != "System.String")
+                il.DeclareLocal(m.ReturnType);
+                il.Emit(OpCodes.Stloc, 3);
+                if (m.ReturnType.IsValueType)
                 {
-                    il.DeclareLocal(m.ReturnType);
-                    il.Emit(OpCodes.Stloc, 3);
-                    if (m.ReturnType.IsValueType)
-                    {
-                        il.Emit(OpCodes.Ldloca, 3);
-                    }
-                    else
-                    {
-                        il.Emit(OpCodes.Ldloc, 3);
-                        il.DeclareLocal(typeof(bool));
-                        il.Emit(OpCodes.Ldnull);
-                        il.Emit(OpCodes.Cgt_Un);
-                        il.Emit(OpCodes.Stloc, 4);
-                        il.Emit(OpCodes.Ldloc, 4);
-                        il.Emit(OpCodes.Brfalse, labelEnd);
-
-                        il.Emit(OpCodes.Ldloc, 3);
-                    }
-                    il.Call(m.ReturnType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
-                    il.Emit(OpCodes.Stloc, 0);
-                    il.Emit(OpCodes.Ldloc, 0);
+                    il.Emit(OpCodes.Ldloca, 3);
                 }
                 else
                 {
-                    il.Emit(OpCodes.Stloc, 0);
-                    il.Emit(OpCodes.Ldloc, 0);
+                    il.Emit(OpCodes.Ldloc, 3);
+                    il.DeclareLocal(typeof(bool));
+                    il.Emit(OpCodes.Ldnull);
+                    il.Emit(OpCodes.Cgt_Un);
+                    il.Emit(OpCodes.Stloc, 4);
+                    il.Emit(OpCodes.Ldloc, 4);
+                    il.Emit(OpCodes.Brfalse, labelEnd);
+
+                    il.Emit(OpCodes.Ldloc, 3);
                 }
-                il.Emit(OpCodes.Ldnull);
-                il.Emit(OpCodes.Cgt_Un);
-                il.Emit(OpCodes.Stloc, 1);
-                il.Emit(OpCodes.Ldloc, 1);
-                il.Emit(OpCodes.Brfalse, labelEnd);
-
-                il.Emit(OpCodes.Ldarg_1);
-                il.Emit(OpCodes.Ldloc_0);
-                il.Emit(OpCodes.Call, typeof(TemplateContextExtensions).GetMethodInfo("CompileAndRenderFile", new Type[] { typeof(TemplateContext), typeof(string) }));
-                il.Emit(OpCodes.Stloc, 2);
-
-                il.Emit(OpCodes.Br, labelSuccess);
-
-                il.MarkLabel(labelEnd);
-                il.Emit(OpCodes.Ldstr, $"[LoadTag] : \"{t.Path.ToSource()}\" cannot be found.");
-                il.Emit(OpCodes.Stloc, 2);
-
-                il.MarkLabel(labelSuccess);
-                il.Emit(OpCodes.Ldloc, 2);
+                il.Call(m.ReturnType, typeof(object).GetRequiredMethod("ToString", Type.EmptyTypes));
+                il.Emit(OpCodes.Stloc, 0);
+                il.Emit(OpCodes.Ldloc, 0);
             }
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
+            else
+            {
+                il.Emit(OpCodes.Stloc, 0);
+                il.Emit(OpCodes.Ldloc, 0);
+            }
+            il.Emit(OpCodes.Ldnull);
+            il.Emit(OpCodes.Cgt_Un);
+            il.Emit(OpCodes.Stloc, 1);
+            il.Emit(OpCodes.Ldloc, 1);
+            il.Emit(OpCodes.Brfalse, labelEnd);
+
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Ldloc_0);
+            il.Emit(OpCodes.Call, typeof(TemplateContextExtensions).GetRequiredMethod("CompileAndRenderFile", [typeof(TemplateContext), typeof(string)]));
+            il.Emit(OpCodes.Stloc, 2);
+
+            il.Emit(OpCodes.Br, labelSuccess);
+
+            il.MarkLabel(labelEnd);
+            il.Emit(OpCodes.Ldstr, $"[LoadTag] : \"{t.Path.ToSource()}\" cannot be found.");
+            il.Emit(OpCodes.Stloc, 2);
+
+            il.MarkLabel(labelSuccess);
+            il.Emit(OpCodes.Ldloc, 2);
         }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(string);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as LoadTag;
+        if (t == null || t.Path == null) return null;
+        var path = context.Execute(t.Path)?.ToString();
+        if (path == null)
         {
-            return typeof(string);
+            return null;
         }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
+        var res = context.FindFullPath(path);
+        if (string.IsNullOrEmpty(res))
         {
-            var t = tag as LoadTag;
-            object path = context.Execute(t.Path);
-            if (path == null)
-            {
-                return null;
-            }
-            var res = context.FindFullPath(path.ToString());
-            if (string.IsNullOrEmpty(res))
-            {
-                return null;
-            }
+            return null;
+        }
 
-            var reader = new Resources.ResourceReader(res);
+        var reader = new Resources.ResourceReader(res!);
 
-            var result = context.InterpretTemplate(res, reader);
+        var result = context.InterpretTemplate(res!, reader);
 
-            using (System.IO.StringWriter writer = new StringWriter())
-            {
-                result.Render(writer, context);
-                return writer.ToString();
-            }
+        using (System.IO.StringWriter writer = new StringWriter())
+        {
+            result.Render(writer, context);
+            return writer.ToString();
         }
     }
 }

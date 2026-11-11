@@ -3,26 +3,24 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
-using System.IO;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// SetTag
+/// </summary>
+[Serializable]
+public class SetTag : ComplexTag
 {
     /// <summary>
-    /// SetTag
+    ///  Gets the name of the tag.
     /// </summary>
-    [Serializable]
-    public class SetTag : ComplexTag
-    {
-        /// <summary>
-        ///  Gets the name of the tag.
-        /// </summary>
-        public string Name { get; set; }
+    public string? Name { get; set; }
 
-        /// <summary>
-        ///  Gets the value of the tag.
-        /// </summary>
-        public ITag Value { get; set; } 
-        /// <inheritdoc />
-        public override bool Out => false;
-    }
+    /// <summary>
+    ///  Gets the value of the tag.
+    /// </summary>
+    public ITag? Value { get; set; } 
+    /// <inheritdoc />
+    public override bool Out => false;
 }

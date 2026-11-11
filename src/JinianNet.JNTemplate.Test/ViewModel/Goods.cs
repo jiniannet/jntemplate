@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JinianNet.JNTemplate.Test.ViewModel
+﻿namespace JinianNet.JNTemplate.Test.ViewModel
 {
     public class Goods
     {

@@ -4,14 +4,13 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
-{
-    /// <summary>
-    /// BlockTag
-    /// </summary>
-    [Serializable]
-    public class BlockTag : ComplexTag
-    {
+namespace JinianNet.JNTemplate.Nodes;
 
-    }
+/// <summary>
+/// BlockTag
+/// </summary>
+[Serializable]
+public class BlockTag : ComplexTag
+{
+
 }

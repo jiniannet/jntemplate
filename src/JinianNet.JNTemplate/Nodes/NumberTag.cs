@@ -5,14 +5,13 @@
 
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
-{
-    /// <summary>
-    /// NumberTag
-    /// </summary>
-    [Serializable]
-    public class NumberTag : TypeTag<System.ValueType>
-    {
+namespace JinianNet.JNTemplate.Nodes;
 
-    }
+/// <summary>
+/// NumberTag
+/// </summary>
+[Serializable]
+public class NumberTag : TypeTag<System.ValueType>
+{
+
 }

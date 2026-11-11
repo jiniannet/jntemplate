@@ -1,8 +1,5 @@
 ﻿using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Parsers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace JinianNet.JNTemplate.Test
 {

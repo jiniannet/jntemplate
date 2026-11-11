@@ -4,7 +4,6 @@
  ********************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -13,288 +12,356 @@ using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Exceptions;
 using JinianNet.JNTemplate.Nodes;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="ArithmeticTag"/> registrar
+/// </summary>
+public class ArithmeticVisitor : TagVisitor<ArithmeticTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="ArithmeticTag"/> registrar
-    /// </summary>
-    public class ArithmeticVisitor : TagVisitor<ArithmeticTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count > 2)
         {
-            if (tc.Count > 2)
+            var tcs = tc.Split(TokenKind.Arithmetic);
+            if (tcs.Length <= 1)
             {
-                var tcs = tc.Split(TokenKind.Arithmetic);
-                if (tcs.Length <= 1)
-                {
-                    return null;
-                }
-
-                var tags = new List<ITag>();
-                for (int i = 0; i < tcs.Length; i++)
-                {
-                    if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Arithmetic)
-                    {
-                        tags.Add(new OperatorTag(tcs[i][0]));
-                    }
-                    else
-                    {
-                        var t = parser.ReadSimple(tcs[i]);
-                        if (t == null)
-                            return null;
-                        tags.Add(t);
-                    }
-                }
-
-                if (tags.Count == 1)
-                {
-                    return tags[0];
-                }
-
-                if (tags.Count > 1)
-                {
-                    ITag t = new ArithmeticTag();
-                    for (int i = 0; i < tags.Count; i++)
-                    {
-                        t.AddChild(tags[i]);
-                    }
-                    tags.Clear();
-                    return t;
-                }
-
+                return null;
             }
 
-            return null;
-        }
-
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-            var stringBuilderType = typeof(StringBuilder);
-            var t = tag as ArithmeticTag;
-            var type = context.GuessType(t);
-            var mb = context.CreateReutrnMethod<ArithmeticTag>(type);
-            var il = mb.GetILGenerator();
-            Label labelEnd = il.DefineLabel();
-            il.DeclareLocal(type);
-            var array = new object[t.Children.Count];
-            var types = new List<Type>();
-            var opts = new List<Operator>();
-            var message = new List<string>();
-            for (int i = 0; i < t.Children.Count; i++)
+            var tags = new List<ITag>();
+            for (int i = 0; i < tcs.Length; i++)
             {
-                var opt = t.Children[i] as OperatorTag;
-                if (opt != null)
+                if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Arithmetic)
                 {
-                    if (!opts.Contains(opt.Value))
-                    {
-                        opts.Add(opt.Value);
-                    }
-                    array[i] = opt.Value;
-                    message.Add(OperatorConvert.ToString(opt.Value));
+                    tags.Add(new OperatorTag(tcs[i][0]));
                 }
                 else
                 {
-                    array[i] = t.Children[i];
-                    types.Add(context.GuessType(t.Children[i]));
-                    message.Add(types[types.Count - 1].Name);
+                    var t = parser.ReadSimple(tcs[i]);
+                    if (t == null)
+                        return null;
+                    tags.Add(t);
                 }
             }
-            if (types.Contains(typeof(string)) && opts.Count == 1 && opts[0] == Operator.Add)
-            {
-                il.DeclareLocal(stringBuilderType);
-                il.Emit(OpCodes.Newobj, stringBuilderType.GetConstructor(Type.EmptyTypes));
-                il.Emit(OpCodes.Stloc_1);
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    var opt = t.Children[i] as OperatorTag;
-                    if (opt != null)
-                    {
-                        continue;
-                    }
-                    il.Emit(OpCodes.Ldloc_1);
-                    il.Emit(OpCodes.Ldarg_0);
-                    il.Emit(OpCodes.Ldarg_1);
-                    var m = context.CompileTag(t.Children[i]);
-                    il.Emit(OpCodes.Call, m);
-                    il.StringAppend(context, m.ReturnType);
-                    il.Emit(OpCodes.Pop);
-                }
 
-                il.Emit(OpCodes.Ldloc_1);
-                il.Call(stringBuilderType, typeof(object).GetMethodInfo("ToString", Type.EmptyTypes));
-                il.Emit(OpCodes.Stloc_0);
+            if (tags.Count == 1)
+            {
+                return tags[0];
+            }
+
+            if (tags.Count > 1)
+            {
+                ITag t = new ArithmeticTag();
+                for (int i = 0; i < tags.Count; i++)
+                {
+                    t.AddChild(tags[i]);
+                }
+                tags.Clear();
+                return t;
+            }
+
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as ArithmeticTag;
+        if (t == null) throw new ArgumentException(nameof(tag));
+        var stringBuilderType = typeof(StringBuilder);
+        var type = context.GuessType(t);
+        var mb = context.CreateReturnMethod<ArithmeticTag>(type);
+        var il = mb.GetILGenerator();
+        Label labelEnd = il.DefineLabel();
+        il.DeclareLocal(type);
+        var array = new object[t.Children.Count];
+        var types = new List<Type>();
+        var opts = new List<Operator>();
+        var message = new List<string>();
+        for (int i = 0; i < t.Children.Count; i++)
+        {
+            var opt = t.Children[i] as OperatorTag;
+            if (opt != null)
+            {
+                if (!opts.Contains(opt.Value))
+                {
+                    opts.Add(opt.Value);
+                }
+                array[i] = opt.Value;
+                message.Add(OperatorConvert.ToString(opt.Value));
             }
             else
             {
-                var bestType = TypeGuesser.FindBestType(types.ToArray());
-                var stack = ExpressionEvaluator.ProcessExpression(array);
-                var arr = stack.ToArray();
-                for (var i = arr.Length - 1; i >= 0; i--)
-                {
-                    var obj = arr[i];
-                    var childTag = obj as ITag;
-                    if (childTag != null)
-                    {
-                        var m = context.CompileTag(childTag);
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldarg_1);
-                        il.Emit(OpCodes.Call, m);
-                        if (m.ReturnType.FullName != bestType.FullName)
-                        {
-                            switch (bestType.FullName)
-                            {
-                                case "System.Decimal":
-                                    Type cType = m.ReturnType;
-                                    switch (cType.FullName)
-                                    {
-                                        case "System.Int16":
-                                        case "System.UInt16":
-                                        case "System.Byte":
-                                            il.Emit(OpCodes.Conv_I4);
-                                            break;
-                                    }
-                                    il.Emit(OpCodes.Call, typeof(decimal).GetConstructor(new Type[] { cType }));
-                                    break;
-                                case "System.Double":
-                                    il.Emit(OpCodes.Conv_R8);
-                                    break;
-                                case "System.Single":
-                                    il.Emit(OpCodes.Conv_R4);
-                                    break;
-                                case "System.Int64":
-                                    il.Emit(OpCodes.Conv_I8);
-                                    break;
-                                case "System.UInt64":
-                                    il.Emit(OpCodes.Conv_U8);
-                                    break;
-                                case "System.Int32":
-                                    il.Emit(OpCodes.Conv_I4);
-                                    break;
-                                case "System.UInt32":
-                                    il.Emit(OpCodes.Conv_U4);
-                                    break;
-                                case "System.Int16":
-                                    il.Emit(OpCodes.Conv_I2);
-                                    break;
-                                case "System.UInt16":
-                                    il.Emit(OpCodes.Conv_U2);
-                                    break;
-                                case "System.Byte":
-                                    il.Emit(OpCodes.Conv_U1);
-                                    break;
-                                default:
-                                    throw new CompileException(tag, $"[ExpressionTag] : The type \"{bestType.FullName}\" is not supported .");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        switch ((Operator)obj)
-                        {
-                            case Operator.Add:
-                                il.Emit(OpCodes.Add);
-                                break;
-                            case Operator.Subtract:
-                                il.Emit(OpCodes.Sub);
-                                break;
-                            case Operator.Multiply:
-                                il.Emit(OpCodes.Mul);
-                                break;
-                            case Operator.Divided:
-                                il.Emit(OpCodes.Div);
-                                break;
-                            case Operator.Remainder:
-                                il.Emit(OpCodes.Rem);
-                                break;
-                            case Operator.GreaterThan:
-                                il.Emit(OpCodes.Cgt);
-                                break;
-                            case Operator.GreaterThanOrEqual:
-                                il.Emit(OpCodes.Clt_Un);
-                                il.Emit(OpCodes.Ldc_I4_0);
-                                il.Emit(OpCodes.Ceq);
-                                break;
-                            case Operator.LessThan:
-                                il.Emit(OpCodes.Clt);
-                                break;
-                            case Operator.LessThanOrEqual:
-                                il.Emit(OpCodes.Cgt_Un);
-                                il.Emit(OpCodes.Ldc_I4_0);
-                                il.Emit(OpCodes.Ceq);
-                                break;
-                            case Operator.Equal:
-                                il.Emit(OpCodes.Ceq);
-                                break;
-                            case Operator.NotEqual:
-                                il.Emit(OpCodes.Ceq);
-                                il.Emit(OpCodes.Ldc_I4_0);
-                                il.Emit(OpCodes.Ceq);
-                                break;
-                            default:
-                                throw new CompileException(tag, $"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported ."); 
-                        }
-                    }
-                }
-                il.Emit(OpCodes.Stloc_0);
+                array[i] = t.Children[i];
+                types.Add(context.GuessType(t.Children[i]));
+                message.Add(types[types.Count - 1].Name);
             }
-            il.MarkLabel(labelEnd);
-            il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
         }
-
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
+        if (types.Contains(typeof(string)) && opts.Count == 1 && opts[0] == Operator.Add)
         {
-            var t = tag as ArithmeticTag;
-            var types = new List<Type>(); 
-            for (var i = 0; i < t.Children.Count; i++)
-            {
-                var opt = t.Children[i] as OperatorTag;
-                if (opt == null)
-                {
-                    types.Add(context.GuessType(t.Children[i]));
-                }
-            }
-            if (types.Count == 1)
-            {
-                return types[0];
-            }
-            if (types.Contains(typeof(string)))
-            {
-                return typeof(string);
-            }
-            if (types.Count > 0)
-            {
-                return TypeGuesser.FindBestType(types.ToArray());
-            }
-
-            return typeof(int);
-
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as ArithmeticTag;
-            var parameters = new List<object>();
-
+            il.DeclareLocal(stringBuilderType);
+            il.Emit(OpCodes.Newobj, stringBuilderType.GetRequiredConstructor());
+            il.Emit(OpCodes.Stloc_1);
             for (int i = 0; i < t.Children.Count; i++)
             {
                 var opt = t.Children[i] as OperatorTag;
                 if (opt != null)
                 {
-                    parameters.Add(opt.Value);
+                    continue;
+                }
+                il.Emit(OpCodes.Ldloc_1);
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Ldarg_1);
+                var m = context.CompileRequiredMethod(t.Children[i]);
+                il.Emit(OpCodes.Call, m);
+                il.StringAppend(context, m.ReturnType);
+                il.Emit(OpCodes.Pop);
+            }
+
+            il.Emit(OpCodes.Ldloc_1);
+            il.Call(stringBuilderType, typeof(object).GetRequiredMethod("ToString", Type.EmptyTypes));
+            il.Emit(OpCodes.Stloc_0);
+        }
+        else
+        {
+            var bestType = TypeGuesser.FindBestType([.. types]);
+            var stack = ExpressionEvaluator.ProcessExpression(array);
+            var arr = stack.ToArray();
+            for (var i = arr.Length - 1; i >= 0; i--)
+            {
+                var obj = arr[i];
+                var childTag = obj as ITag;
+                if (childTag != null)
+                {
+                    var m = context.CompileRequiredMethod(childTag);
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldarg_1);
+                    il.Emit(OpCodes.Call, m);
+                    if (m.ReturnType.FullName != bestType.FullName)
+                    {
+                        var rCode = m.ReturnType.ToTypeCode();
+                        var bCode = bestType.ToTypeCode();
+                        switch (bCode)
+                        {
+                            case TypeCode.Decimal:
+                                {
+                                    var ctorType = m.ReturnType;
+                                    switch (rCode)
+                                    {
+                                        case TypeCode.Int16:
+                                        case TypeCode.UInt16:
+                                        case TypeCode.SByte:
+                                        case TypeCode.Byte:
+                                            il.Emit(OpCodes.Conv_I4);
+                                            ctorType = typeof(int);
+                                            break;
+                                    }
+                                    il.Emit(OpCodes.Newobj, typeof(decimal).GetRequiredConstructor([ctorType]));
+                                    break;
+                                }
+                            case TypeCode.Double:
+                                il.Emit(OpCodes.Conv_R8);
+                                break;
+                            case TypeCode.Single:
+                                il.Emit(OpCodes.Conv_R4);
+                                break;
+                            case TypeCode.Int64:
+                                il.Emit(OpCodes.Conv_I8);
+                                break;
+                            case TypeCode.UInt64:
+                                il.Emit(OpCodes.Conv_U8);
+                                break;
+                            case TypeCode.Int32:
+                                il.Emit(OpCodes.Conv_I4);
+                                break;
+                            case TypeCode.UInt32:
+                                il.Emit(OpCodes.Conv_U4);
+                                break;
+                            case TypeCode.Int16:
+                                il.Emit(OpCodes.Conv_I2);
+                                break;
+                            case TypeCode.UInt16:
+                                il.Emit(OpCodes.Conv_U2);
+                                break;
+                            case TypeCode.Byte:
+                                il.Emit(OpCodes.Conv_U1);
+                                break;
+                            default:
+                                throw new CompileException(tag, $"[ExpressionTag] : The type \"{bestType.FullName}\" is not supported .");
+                        }
+                    }
                 }
                 else
                 {
-                    parameters.Add(context.Execute(t.Children[i]));
+                    var opt = (Operator)(obj ?? throw new NullReferenceException());
+                    if (bestType == typeof(decimal))
+                    {
+                        EmitDecimalOperator(il, opt, tag, message);
+                        continue;
+                    }
+                    switch (opt)
+                    {
+                        case Operator.Add:
+                            il.Emit(OpCodes.Add);
+                            break;
+                        case Operator.Subtract:
+                            il.Emit(OpCodes.Sub);
+                            break;
+                        case Operator.Multiply:
+                            il.Emit(OpCodes.Mul);
+                            break;
+                        case Operator.Divided:
+                            il.Emit(OpCodes.Div);
+                            break;
+                        case Operator.Remainder:
+                            il.Emit(OpCodes.Rem);
+                            break;
+                        case Operator.GreaterThan:
+                            il.Emit(OpCodes.Cgt);
+                            break;
+                        case Operator.GreaterThanOrEqual:
+                            il.Emit(OpCodes.Clt_Un);
+                            il.Emit(OpCodes.Ldc_I4_0);
+                            il.Emit(OpCodes.Ceq);
+                            break;
+                        case Operator.LessThan:
+                            il.Emit(OpCodes.Clt);
+                            break;
+                        case Operator.LessThanOrEqual:
+                            il.Emit(OpCodes.Cgt_Un);
+                            il.Emit(OpCodes.Ldc_I4_0);
+                            il.Emit(OpCodes.Ceq);
+                            break;
+                        case Operator.Equal:
+                            il.Emit(OpCodes.Ceq);
+                            break;
+                        case Operator.NotEqual:
+                            il.Emit(OpCodes.Ceq);
+                            il.Emit(OpCodes.Ldc_I4_0);
+                            il.Emit(OpCodes.Ceq);
+                            break;
+                        default:
+                            throw new CompileException(tag, $"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
+                    }
                 }
             }
-
-            var stack = ExpressionEvaluator.ProcessExpression(parameters.ToArray());
-            return ExpressionEvaluator.Calculate(stack);
+            il.Emit(OpCodes.Stloc_0);
         }
+        il.MarkLabel(labelEnd);
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static void EmitDecimalOperator(ILGenerator il, Operator opt, ITag tag, List<string> message)
+    {
+        var name = opt switch
+        {
+            Operator.Add => "op_Addition",
+            Operator.Subtract => "op_Subtraction",
+            Operator.Multiply => "op_Multiply",
+            Operator.Divided => "op_Division",
+            Operator.Remainder => "op_Modulus",
+            Operator.GreaterThan => "op_GreaterThan",
+            Operator.GreaterThanOrEqual => "op_GreaterThanOrEqual",
+            Operator.LessThan => "op_LessThan",
+            Operator.LessThanOrEqual => "op_LessThanOrEqual",
+            Operator.Equal => "op_Equality",
+            Operator.NotEqual => "op_Inequality",
+            _ => null
+        };
+        if (name == null)
+        {
+            throw new CompileException(tag, $"[ExpressionTag] : The expression \"{string.Concat(message)}\" is not supported .");
+        }
+        il.Emit(OpCodes.Call, typeof(decimal).GetRequiredMethod(name, [typeof(decimal), typeof(decimal)]));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static bool IsCompareOperator(Operator opt)
+    {
+        switch (opt)
+        {
+            case Operator.GreaterThan:
+            case Operator.GreaterThanOrEqual:
+            case Operator.LessThan:
+            case Operator.LessThanOrEqual:
+            case Operator.Equal:
+            case Operator.NotEqual:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        var t = tag as ArithmeticTag;
+        if (t == null) throw new ArgumentException(nameof(tag));
+        var types = new List<Type>();
+        for (var i = 0; i < t.Children.Count; i++)
+        {
+            var opt = t.Children[i] as OperatorTag;
+            if (opt == null)
+            {
+                types.Add(context.GuessType(t.Children[i]));
+            }
+            else if (IsCompareOperator(opt.Value))
+            {
+                return typeof(bool);
+            }
+        }
+        if (types.Count == 1)
+        {
+            return types[0];
+        }
+        if (types.Contains(typeof(string)))
+        {
+            return typeof(string);
+        }
+        if (types.Count > 0)
+        {
+            return TypeGuesser.FindBestType([.. types]);
+        }
+
+        return typeof(int);
+
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as ArithmeticTag;
+        if (t == null)
+            return null;
+        var parameters = new List<object>();
+        object? val;
+        for (int i = 0; i < t.Children.Count; i++)
+        {
+            var opt = t.Children[i] as OperatorTag;
+            if (opt != null)
+            {
+                parameters.Add(opt.Value);
+            }
+            else
+            {
+                val = context.Execute(t.Children[i]);
+                if (val == null)
+                    return null;
+                parameters.Add(val);
+            }
+        }
+
+        var stack = ExpressionEvaluator.ProcessExpression([.. parameters]);
+        return ExpressionEvaluator.Calculate(stack);
     }
 }

@@ -3,31 +3,33 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using System;
+namespace JinianNet.JNTemplate.Runtime;
 
-namespace JinianNet.JNTemplate.Runtime
+/// <summary>
+/// 
+/// </summary>
+public interface ILexerOptions
 {
     /// <summary>
-    /// 
+    /// Gets or sets whether disablee logogram .
     /// </summary>
-    public interface ILexerOptions
-    {
-        /// <summary>
-        /// Gets or sets whether disablee logogram .
-        /// </summary>
-        bool DisableeLogogram { get; set; }
-        /// <summary>
-        /// Gets or sets the tag prefix .
-        /// </summary> 
-        string TagPrefix { get; set; }
+    bool DisableLogogram { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tag suffix.
-        /// </summary> 
-        string TagSuffix { get; set; }
+    /// <inheritdoc />
+    [Obsolete("use DisableLogogram instead")]
+    bool DisableeLogogram { get; set; }
+    /// <summary>
+    /// Gets or sets the tag prefix .
+    /// </summary> 
+    string TagPrefix { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tag flag.
-        /// </summary> 
-        char TagFlag { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the tag suffix.
+    /// </summary> 
+    string TagSuffix { get; set; }
+
+    /// <summary>
+    /// Gets or sets the tag flag.
+    /// </summary> 
+    char TagFlag { get; set; }
 }

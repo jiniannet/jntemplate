@@ -6,29 +6,28 @@
 using System;
 using JinianNet.JNTemplate.Nodes;
 
-namespace JinianNet.JNTemplate.CodeCompilation
+namespace JinianNet.JNTemplate.CodeCompilation;
+
+/// <summary>
+/// 
+/// </summary>
+public interface ITagCompileResult
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface ITagCompileResult
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        object Result { get; }
-        /// <summary>
-        /// 
-        /// </summary>
-        bool IsMethod { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        ITag Tag { get; set; }
+    object Result { get; }
+    /// <summary>
+    /// 
+    /// </summary>
+    bool IsMethod { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    ITag Tag { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        Type Type { get; set; }
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    Type Type { get; set; }
 }

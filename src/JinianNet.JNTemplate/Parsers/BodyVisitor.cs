@@ -3,67 +3,66 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
-{
-    /// <summary>
-    /// The <see cref="BodyTag"/> registrar
-    /// </summary>
-    public class BodyVisitor : TagVisitor<BodyTag>, ITagVisitor
-    {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
-        {
-            if (tc.Count == 1
-                    && Utility.IsEqual(tc.First.Text, Const.KEY_BODY))
-            {
-                return new BodyTag();
-            }
+namespace JinianNet.JNTemplate.Parsers;
 
+/// <summary>
+/// The <see cref="BodyTag"/> registrar
+/// </summary>
+public class BodyVisitor : TagVisitor<BodyTag>, ITagVisitor
+{
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
+    {
+        if (tc.Count == 1
+                && Utility.IsEqual(tc.First.Text, Const.KEY_BODY))
+        {
+            return new BodyTag();
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as BodyTag;
+        if (t == null) throw new ArgumentNullException(nameof(tag));
+        var type = typeof(string);
+        var mb = context.CreateReturnMethod<BodyTag>(type);
+        var il = mb.GetILGenerator();
+        context.BlockCompile(il, t.Children);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(string);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as BodyTag;
+        if (t == null) return null;
+        if (t.Children.Count == 0)
+        {
             return null;
         }
-
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
+        if (t.Children.Count == 1)
         {
-            var t = tag as BodyTag;
-            var type = typeof(string);
-            var mb = context.CreateReutrnMethod<BodyTag>(type);
-            var il = mb.GetILGenerator();
-            context.BlockCompile(il, t.Children);
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
+            return context.Execute(t.Children[0]);
         }
-
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < t.Children.Count; i++)
         {
-            return typeof(string);
+            sb.Append(context.Execute(t.Children[i]));
         }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as BodyTag;
-            if (t.Children.Count == 0)
-            {
-                return null;
-            }
-            if (t.Children.Count == 1)
-            {
-                return context.Execute(t.Children[0]);
-            }
-            var sb = new System.Text.StringBuilder();
-            for (int i = 0; i < t.Children.Count; i++)
-            {
-                sb.Append(context.Execute(t.Children[i]));
-            }
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 }

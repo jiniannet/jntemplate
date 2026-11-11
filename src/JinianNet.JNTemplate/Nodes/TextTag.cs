@@ -4,48 +4,47 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// TextTag
+/// </summary>
+[Serializable]
+public class TextTag : SpecialTag
 {
+    private string? text;
     /// <summary>
-    /// TextTag
+    ///  Gets the text of the tag.
     /// </summary>
-    [Serializable]
-    public class TextTag : SpecialTag
+    public string Text
     {
-        private string text;
-        /// <summary>
-        ///  Gets the text of the tag.
-        /// </summary>
-        public string Text
+        get
         {
-            get
+            if (text != null)
             {
-                if (text != null)
-                {
-                    return text;
-                }
-                if (this.FirstToken != null)
-                {
-                    return text = OriginalText;
-                }
-                return text = "";
+                return text;
             }
-            set
+            if (this.FirstToken != null)
             {
-                text = value;
+                return text = OriginalText;
             }
+            return text ?? string.Empty;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string OriginalText => this.FirstToken.ToString();
-
-        /// <inheritdoc />
-        public override string ToString()
+        set
         {
-            return this.Text;
+            text = value;
         }
-
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string OriginalText => this.FirstToken?.ToString() ?? string.Empty;
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return this.Text;
+    }
+
 }

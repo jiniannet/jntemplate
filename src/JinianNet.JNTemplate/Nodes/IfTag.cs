@@ -4,15 +4,14 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// IfTag
+/// </summary>
+[Serializable]
+public class IfTag : ComplexTag
 {
-    /// <summary>
-    /// IfTag
-    /// </summary>
-    [Serializable]
-    public class IfTag : ComplexTag
-    {
-        /// <inheritdoc />
-        public override bool Out => false;
-    }
+    /// <inheritdoc />
+    public override bool Out => false;
 }

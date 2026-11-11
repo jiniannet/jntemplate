@@ -4,13 +4,12 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// ElseTag
+/// </summary>
+[Serializable]
+public class ElseTag : ElseifTag
 {
-    /// <summary>
-    /// ElseTag
-    /// </summary>
-    [Serializable]
-    public class ElseTag : ElseifTag
-    {
-    }
 }

@@ -1,8 +1,5 @@
-﻿using JinianNet.JNTemplate;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
+﻿using JinianNet.JNTemplate.Test.Model;
+using System.Text;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -18,10 +15,9 @@ namespace JinianNet.JNTemplate.Test
         public void TestFor()
         {
             var templateContent = "$for(i=1;i<4;i=i+1)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render(); 
+            TestCreateRunDoubleEngine(templateContent,
+                "123");
 
-            Assert.Equal("123", render);
         }
 
         /// <summary>
@@ -31,10 +27,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestForPlusPlus()
         {
             var templateContent = "$for(i=0;i<3;i++)${i}$end";//"$for(i=1;i<4;i=i+1)${i}$end"
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render(); 
-
-            Assert.Equal("012", render);
+            TestCreateRunDoubleEngine(templateContent,
+                       "012");
         }
 
         /// <summary>
@@ -44,10 +38,9 @@ namespace JinianNet.JNTemplate.Test
         public void TestForeach()
         {
             var templateContent = "$foreach(i in list)$i$end";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
-            var render = template.Render(); 
-            Assert.Equal("70206", render);
+            TestCreateRunDoubleEngine(templateContent,
+              "70206",
+              template => template.Set("list", new int[] { 7, 0, 2, 0, 6 }));
         }
 
         /// <summary>
@@ -57,10 +50,10 @@ namespace JinianNet.JNTemplate.Test
         public void TestForIn()
         {
             var templateContent = "$for(i in list)$i$end";
-            var template = Engine.CreateTemplate("TestForIn", templateContent);
-            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
-            var render = template.Render(); 
-            Assert.Equal("70206", render);
+
+            TestCreateRunDoubleEngine(templateContent,
+              "70206",
+              template => template.Set("list", new int[] { 7, 0, 2, 0, 6 }));
         }
 
         /// <summary>
@@ -71,17 +64,16 @@ namespace JinianNet.JNTemplate.Test
         {
             var list = (IEnumerable<int>)new List<int>(new int[] { 1, 2, 3, 4, 5, 6, 7 });
             var templateContent = "$for(i in list)$i$end";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("list", list);
-            var render = template.Render(); 
-            Assert.Equal("1234567", render);
+            TestCreateRunDoubleEngine(templateContent,
+              "1234567",
+              template => template.Set("list", list));
         }
 
         /// <summary>
         /// 测试DataTable
         /// </summary>
         [Fact]
-        public void TestDataTable()
+        public void TestForInDataTable()
         {
             var dt = new System.Data.DataTable();
             dt.Columns.Add("id", typeof(int));
@@ -91,17 +83,17 @@ namespace JinianNet.JNTemplate.Test
             dt.Rows.Add(0);
             dt.Rows.Add(6);
             var templateContent = "$for(row in list)${row[\"id\"]}$end";
-            var template = Engine.CreateTemplate("TestDataTable", templateContent);
-            template.Set("list", dt);
-            var render = template.Render(); 
-            Assert.Equal("70206", render);
+
+            TestCreateRunDoubleEngine(templateContent,
+              "70206",
+              template => template.Set("list", dt));
         }
 
         /// <summary>
         /// 测试DataTable
         /// </summary>
         [Fact]
-        public void TestDataTableRows()
+        public void TestForInDataTableRows()
         {
             var dt = new System.Data.DataTable();
             dt.Columns.Add("id", typeof(int));
@@ -111,10 +103,10 @@ namespace JinianNet.JNTemplate.Test
             dt.Rows.Add(0);
             dt.Rows.Add(6);
             var templateContent = "$for(row in dt.Rows)${row[\"id\"]}$end";
-            var template = Engine.CreateTemplate("TestDataTableRows", templateContent);
-            template.Set("dt", dt);
-            var render = template.Render();
-            Assert.Equal("70206", render);
+
+            TestCreateRunDoubleEngine(templateContent,
+              "70206",
+              template => template.Set("dt", dt));
         }
 
         /// <summary>
@@ -125,14 +117,65 @@ namespace JinianNet.JNTemplate.Test
         {
             var templateContent = @"<ul>$for(i=1;i<4;i++)<li>$i</li>${end}</ul>";
             var render = "";
+            var engine = CreateEngine(true);
             for (int j = 0; j < 3; j++)
             {
-                var template = Engine.CreateTemplate(templateContent);
-                render += template.Render(); 
+                var template = engine.CreateTemplate(templateContent);
+                render += template.Render();
             }
 
             Assert.Equal("<ul><li>1</li><li>2</li><li>3</li></ul><ul><li>1</li><li>2</li><li>3</li></ul><ul><li>1</li><li>2</li><li>3</li></ul>", render);
 
         }
+
+
+
+
+        /// <summary>
+        /// 综合测试
+        /// </summary>
+        [Fact]
+        public void TestForeachAndForeach()
+        {
+            var templateContent = @"
+$foreach(model in list)
+    <div>list:${model.Id}</div>
+    <ul>
+    $if(model.Id == 2)
+        $foreach(m in getList(model.id))
+            <li>$m</li>
+        $end
+    $end
+    </ul>
+$end
+";
+            var text = "<div>list:1</div><ul></ul><div>list:2</div><ul><li>a2</li><li>b2</li><li>c2</li></ul><div>list:3</div><ul></ul>";
+            Action<ITemplate> action = template =>
+            {
+                template.Set("list", new Entity[] {
+                    new Entity{
+                        Id=1
+                    },
+                    new Entity {
+                        Id=2
+                    },
+                    new  Entity{
+                        Id=3
+                    }
+                });
+                template.Set<Func<int, string[]>>("getList", (id) =>
+                {
+                    return new string[] { $"a{id}", $"b{id}", $"c{id}" };
+                });
+            };
+
+
+
+            TestCreateRunDoubleEngine(templateContent,
+                null,
+                action,
+                render => Assert.Equal(text, render.Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "")));
+        }
+
     }
 }

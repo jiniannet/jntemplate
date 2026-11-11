@@ -3,31 +3,30 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// Tag flag.
+/// </summary>
+public enum FlagMode
 {
     /// <summary>
-    /// Tag flag.
+    /// default
     /// </summary>
-    public enum FlagMode
-    {
-        /// <summary>
-        /// default
-        /// </summary>
-        None = 0,
+    None = 0,
 
-        /// <summary>
-        /// Logogram Tag: $text
-        /// </summary>
-        Logogram,
+    /// <summary>
+    /// Logogram Tag: $text
+    /// </summary>
+    Logogram,
 
-        /// <summary>
-        /// Full Tag:${text}
-        /// </summary>
-        Full,
+    /// <summary>
+    /// Full Tag:${text}
+    /// </summary>
+    Full,
 
-        /// <summary>
-        /// Comment tag:$* text *$
-        /// </summary>
-        Comment
-    }
+    /// <summary>
+    /// Comment tag:$* text *$
+    /// </summary>
+    Comment
 }

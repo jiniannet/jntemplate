@@ -9,122 +9,121 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="ArrayTag"/> registrar
+/// </summary>
+public class ArrayVisitor : TagVisitor<ArrayTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="ArrayTag"/> registrar
-    /// </summary>
-    public class ArrayVisitor : TagVisitor<ArrayTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count > 2
+            && (tc[0].TokenKind == TokenKind.LeftBrace)
+            && tc.Last.TokenKind == TokenKind.RightBrace
+            && !tc.Any(TokenKind.Colon))
         {
-            if (tc.Count > 2
-                && (tc[0].TokenKind == TokenKind.LeftBrace)
-                && tc.Last.TokenKind == TokenKind.RightBrace
-                && !tc.Any(TokenKind.Colon))
+            var list = new List<object>();
+            var tcs = tc.Split(1, tc.Count - 1, TokenKind.Comma);
+            for (int i = 0; i < tcs.Length; i++)
             {
-                var list = new List<object>();
-                var tcs = tc.Split(1, tc.Count - 1, TokenKind.Comma);
-                for (int i = 0; i < tcs.Length; i++)
-                {
-                    if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Comma)
-                    {
-                        continue;
-                    }
-    
-                    var itemTag = parser.ReadSimple(tcs[i]);
-                    if (itemTag is ITypeTag t)
-                    {
-                        list.Add(t.Value);
-                        continue;
-                    }
-                    return null;
-                }
-                var tag = new ArrayTag();
-                tag.Value = list.ToArray();
-                return tag;
-            }
-
-            return null;
-        }
-
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-
-            var t = tag as ArrayTag;
-            var type = t.Value.GetType();
-            var mb = context.CreateReutrnMethod<ArrayTag>(type);
-            var il = mb.GetILGenerator();
-            il.DeclareLocal(type);
-            il.DeclareLocal(type);
-            il.Emit(OpCodes.Ldc_I4, t.Value.Length);
-            il.Emit(OpCodes.Newarr, typeof(object));
-            il.Emit(OpCodes.Stloc_0);
-
-            for (var i = 0; i < t.Value.Length; i++)
-            {
-                if (t.Value[i] == null)
+                if (tcs[i].Count == 1 && tcs[i][0].TokenKind == TokenKind.Comma)
                 {
                     continue;
                 }
-                il.Emit(OpCodes.Ldloc_0);
-                il.Emit(OpCodes.Ldc_I4, i);
-                var itemType = t.Value[i].GetType();
-                switch (itemType.Name)
+
+                var itemTag = parser.ReadSimple(tcs[i]);
+                if (itemTag is ITypeTag t)
                 {
-                    case "Int32":
-                        il.Emit(OpCodes.Ldc_I4, (int)t.Value[i]);
-                        il.Emit(OpCodes.Box, itemType);
-                        break;
-                    case "Int64":
-                        il.Emit(OpCodes.Ldc_I8, (long)t.Value[i]);
-                        il.Emit(OpCodes.Box, itemType);
-                        break;
-                    case "Single":
-                        il.Emit(OpCodes.Ldc_R4, (float)t.Value[i]);
-                        il.Emit(OpCodes.Box, itemType);
-                        break;
-                    case "Double":
-                        il.Emit(OpCodes.Ldc_R8, (double)t.Value[i]);
-                        il.Emit(OpCodes.Box, itemType);
-                        break;
-                    case "Int16":
-                        il.Emit(OpCodes.Ldc_I4, (short)t.Value[i]);
-                        il.Emit(OpCodes.Box, itemType);
-                        break;
-                    case "Boolean":
-                        il.Emit(OpCodes.Ldc_I4, (bool)t.Value[i] ? 1 : 0);
-                        il.Emit(OpCodes.Box, itemType);
-                        break;
-                    case "String":
-                        il.Emit(OpCodes.Ldstr, t.Value[i].ToString());
-                        break;
-                    default:
-                        throw new NotSupportedException($"[ArrayTag] : [{t.Value[i]}] is not supported");
+                    list.AddNotNullObject(t.Value);
+                    continue;
                 }
-                il.Emit(OpCodes.Stelem_Ref);
+                return null;
             }
+            var tag = new ArrayTag();
+            tag.Value = [.. list];
+            return tag;
+        }
 
+        return null;
+    }
+
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as ArrayTag;
+        if (t?.Value == null) throw new ArgumentException(nameof(tag));
+        var type = t.Value.GetType();
+        var mb = context.CreateReturnMethod<ArrayTag>(type);
+        var il = mb.GetILGenerator();
+        il.DeclareLocal(type);
+        il.DeclareLocal(type);
+        il.Emit(OpCodes.Ldc_I4, t.Value.Length);
+        il.Emit(OpCodes.Newarr, typeof(object));
+        il.Emit(OpCodes.Stloc_0);
+
+        for (var i = 0; i < t.Value.Length; i++)
+        {
+            if (t.Value[i] == null)
+            {
+                continue;
+            }
             il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Stloc_1);
-            il.Emit(OpCodes.Ldloc_1);
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
-
+            il.Emit(OpCodes.Ldc_I4, i);
+            var itemType = t.Value[i].GetType();
+            switch (itemType.Name)
+            {
+                case "Int32":
+                    il.Emit(OpCodes.Ldc_I4, (int)t.Value[i]);
+                    il.Emit(OpCodes.Box, itemType);
+                    break;
+                case "Int64":
+                    il.Emit(OpCodes.Ldc_I8, (long)t.Value[i]);
+                    il.Emit(OpCodes.Box, itemType);
+                    break;
+                case "Single":
+                    il.Emit(OpCodes.Ldc_R4, (float)t.Value[i]);
+                    il.Emit(OpCodes.Box, itemType);
+                    break;
+                case "Double":
+                    il.Emit(OpCodes.Ldc_R8, (double)t.Value[i]);
+                    il.Emit(OpCodes.Box, itemType);
+                    break;
+                case "Int16":
+                    il.Emit(OpCodes.Ldc_I4, (short)t.Value[i]);
+                    il.Emit(OpCodes.Box, itemType);
+                    break;
+                case "Boolean":
+                    il.Emit(OpCodes.Ldc_I4, (bool)t.Value[i] ? 1 : 0);
+                    il.Emit(OpCodes.Box, itemType);
+                    break;
+                case "String":
+                    il.Emit(OpCodes.Ldstr, t.Value[i].ToString() ?? string.Empty);
+                    break;
+                default:
+                    throw new NotSupportedException($"[ArrayTag] : [{t.Value[i]}] is not supported");
+            }
+            il.Emit(OpCodes.Stelem_Ref);
         }
 
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-            return typeof(object[]);
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as ArrayTag;
-            return t.Value;
-        }
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Stloc_1);
+        il.Emit(OpCodes.Ldloc_1);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+
+    }
+
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(object[]);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as ArrayTag;
+        return t?.Value;
     }
 }

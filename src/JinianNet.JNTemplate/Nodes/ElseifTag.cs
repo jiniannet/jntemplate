@@ -4,20 +4,19 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
-{
-    /// <summary>
-    /// ElseifTag
-    /// </summary>
-    [Serializable]
-    public class ElseifTag : ComplexTag
-    {
-        /// <inheritdoc />
-        public override bool Out => false;
+namespace JinianNet.JNTemplate.Nodes;
 
-        /// <summary>
-        /// Gets or sets the condition of the tag.
-        /// </summary>
-        public virtual ITag Condition { get; set; }
-    }
+/// <summary>
+/// ElseifTag
+/// </summary>
+[Serializable]
+public class ElseifTag : ComplexTag
+{
+    /// <inheritdoc />
+    public override bool Out => false;
+
+    /// <summary>
+    /// Gets or sets the condition of the tag.
+    /// </summary>
+    public virtual ITag? Condition { get; set; }
 }

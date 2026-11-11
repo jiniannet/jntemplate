@@ -7,114 +7,113 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Dynamic;
 using JinianNet.JNTemplate.Nodes;
 using JinianNet.JNTemplate.Exceptions;
-using System.Collections.Generic;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="LayoutTag"/> registrar
+/// </summary>
+public class LayoutVisitor : TagVisitor<LayoutTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="LayoutTag"/> registrar
-    /// </summary>
-    public class LayoutVisitor : TagVisitor<LayoutTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count > 2
+            && Utility.IsEqual(tc.First.Text, Const.KEY_LAYOUT)
+            && (tc[1].TokenKind == TokenKind.LeftParentheses)
+            && tc.Last.TokenKind == TokenKind.RightParentheses)
         {
-            if (tc.Count > 2
-                && Utility.IsEqual(tc.First.Text, Const.KEY_LAYOUT)
-                && (tc[1].TokenKind == TokenKind.LeftParentheses)
-                && tc.Last.TokenKind == TokenKind.RightParentheses)
+            var tag = new LayoutTag();
+            tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
+            if (tag.Path == null)
+                return null;
+            while (parser.MoveNext())
             {
-                var tag = new LayoutTag();
-                tag.Path = parser.ReadSimple(new TokenCollection(tc, 2, tc.Count - 2));
-                if (tag.Path == null)
-                    return null;
-                while (parser.MoveNext())
-                {
-                    tag.Children.Add(parser.Current);
-                }
-                return tag;
+                tag.Children.Add(parser.Current);
             }
+            return tag;
+        }
+        return null;
+    }
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as LayoutTag;
+        if (t == null) throw new ArgumentNullException(nameof(tag));
+        var type = context.GuessType(t);
+        var mb = context.CreateReturnMethod<LayoutTag>(type);
+        var il = mb.GetILGenerator();
+        var strTag = t.Path as StringTag;
+        if (strTag == null)
+        {
+            throw new CompileException(tag, $"[LayoutTag] : path must be a string.");
+        }
+        var res = context.Load(strTag.Value);
+        if (res == null || res.Content == null)
+        {
+            throw new CompileException(tag, $"[LayoutTag] : \"{strTag.Value}\" cannot be found.");
+        }
+
+        var tags = context.Lexer(res.Content);
+
+        for (int i = 0; i < tags.Count; i++)
+        {
+            if (tags[i] is BodyTag body)
+            {
+                for (int j = 0; j < t.Children.Count; j++)
+                {
+                    body.AddChild(t.Children[j]);
+                }
+            }
+        }
+
+        context.BlockCompile(il, tags);
+
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+    /// <inheritdoc />
+    public Type GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(string);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as LayoutTag;
+        if (t == null || t.Path == null) return null;
+        var path = context.Execute(t.Path)?.ToString();
+        if (path == null)
+        {
             return null;
         }
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
+        var res = context.FindFullPath(path);
+        if (string.IsNullOrEmpty(res))
         {
-            var t = tag as LayoutTag;
-            var type = context.GuessType(t);
-            var mb = context.CreateReutrnMethod<LayoutTag>(type);
-            var il = mb.GetILGenerator();
-            var strTag = t.Path as StringTag;
-            if (strTag == null)
-            {
-                throw new CompileException(tag, $"[LayoutTag] : path must be a string.");
-            }
-            var res = context.Load(strTag.Value);
-            if (res == null)
-            {
-                throw new CompileException(tag, $"[LayoutTag] : \"{strTag.Value}\" cannot be found.");
-            }
-
-            var tags = context.Lexer(res.Content);
-
-            for (int i = 0; i < tags.Count; i++)
-            {
-                if (tags[i] is BodyTag body)
-                {
-                    for (int j = 0; j < t.Children.Count; j++)
-                    {
-                        body.AddChild(t.Children[j]);
-                    }
-                }
-            }
-
-            context.BlockCompile(il, tags);
-
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
+            return null;
         }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-            return typeof(string);
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as LayoutTag;
-            object path = context.Execute(t.Path);
-            if (path == null)
-            {
-                return null;
-            }
-            var res = context.FindFullPath(path.ToString());
-            if (string.IsNullOrEmpty(res))
-            {
-                return null;
-            }
-            var reader = new Resources.ResourceReader(res);
+        var reader = new Resources.ResourceReader(res!);
 
-            var result = (InterpretResult)context.InterpretTemplate(res, reader);
-            var tags = new TagCollection();
-            for (int i = 0; i < result.Tags.Count; i++)
+        var result = (InterpretResult)context.InterpretTemplate(res!, reader);
+        var tags = new TagCollection();
+        for (int i = 0; i < result.Tags.Count; i++)
+        {
+            if (result.Tags[i] is BodyTag _)
             {
-                if (result.Tags[i] is BodyTag _)
+                for (int j = 0; j < t.Children.Count; j++)
                 {
-                    for (int j = 0; j < t.Children.Count; j++)
-                    {
-                        tags.Add(t.Children[j]);
-                    }
-                    continue;
+                    tags.Add(t.Children[j]);
                 }
-                tags.Add(result.Tags[i]);
+                continue;
             }
-            using (System.IO.StringWriter writer = new StringWriter())
-            {
-                context.Render(writer, tags);
-                return writer.ToString();
-            }
+            tags.Add(result.Tags[i]);
+        }
+        using (System.IO.StringWriter writer = new StringWriter())
+        {
+            context.Render(writer, tags);
+            return writer.ToString();
         }
     }
 }

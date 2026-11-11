@@ -4,17 +4,16 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// LoadTag
+/// </summary>
+[Serializable]
+public class LoadTag : BlockTag
 {
     /// <summary>
-    /// LoadTag
+    /// The path of a tag.
     /// </summary>
-    [Serializable]
-    public class LoadTag : BlockTag
-    {
-        /// <summary>
-        /// The path of a tag.
-        /// </summary>
-        public ITag Path { get; set; }
-    }
+    public ITag? Path { get; set; }
 }

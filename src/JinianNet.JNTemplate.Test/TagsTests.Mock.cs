@@ -1,10 +1,6 @@
-﻿using JinianNet.JNTemplate;
+﻿using JinianNet.JNTemplate.Configuration;
 using JinianNet.JNTemplate.Test.Model;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -13,25 +9,6 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public partial class TagsTests : TagsTestBase
     {
-
-        /// <summary>
-        /// 模拟生成一个真实页面
-        /// </summary>
-        [Fact]
-        public void TestMockPage1()
-        {
-            var e = Configuration.EngineConfig.CreateDefault();
-            e.ThrowExceptions = false;
-            var engine = BuildEngine();
-            engine.Configure(e);
-            var template = engine.CreateTemplate("<li>1</li><li>$model.id</li><li>3</li>");
-            template.Set("model",new object());
-            var result = "<li>1</li><li></li><li>3</li>";
-            var html = template.Render();
-            Assert.Equal(result, html);
-        }
-
-
         /// <summary>
         /// 模拟生成一个真实页面
         /// </summary>
@@ -39,14 +16,18 @@ namespace JinianNet.JNTemplate.Test
         public void TestMockPage()
         {
             var path = string.Join(Path.DirectorySeparatorChar, new string[] { Environment.CurrentDirectory, "templets", "default", "questionlist.html" });
-            var template = Engine.LoadTemplate("TestMockPage", path);
-            template.Context.OutMode = OutMode.Auto;
-            FillData(template);
-            var result = template.Render();
-            //将生成的文件放到result目录下可以查看实际生成效果
-            //File.WriteAllText(string.Join(Path.DirectorySeparatorChar, new string[] { Environment.CurrentDirectory, "templets", "default", $"result_{Guid.NewGuid()}.html" }), result);
-            Assert.Equal(result.Replace("\r", "").Replace("\t", "").Replace("\n", "").Replace(" ", ""), RESULT);
-        } 
+
+
+            TestLoadRunDoubleEngine(path,
+                null,
+                template =>
+                {
+                    template.Context.OutMode = OutMode.Auto;
+                    FillData(template);
+                },
+                result => Assert.Equal(RESULT, result.Replace("\r", "").Replace("\t", "").Replace("\n", "").Replace(" ", "")));
+            //File.WriteAllText(string.Join(Path.DirectorySeparatorChar, new string[] { Environment.CurrentDirectory, "templets", "default", $"result_{Guid.NewGuid()}.html" }), result); 
+        }
 
         private void FillData(ITemplate t)
         {
@@ -67,9 +48,9 @@ namespace JinianNet.JNTemplate.Test
             {
                 site.Url += "/" + site.SiteDirectory;
             }
-            site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme); 
+            site.ThemeUrl = string.Concat(site.Url, "/", site.ThemeDirectory, "/", site.Theme);
             t.Set("Site", site);
-            t.Set("func", new TemplateMethod()); 
+            t.Set("func", new TemplateMethod());
         }
 
 

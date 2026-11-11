@@ -7,37 +7,36 @@ using JinianNet.JNTemplate.Nodes;
 using System; 
 using System.Reflection; 
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// 
+/// </summary>
+public interface ITagVisitor : ITagParser
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface ITagVisitor : ITagParser
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        string Name { get; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        MethodInfo Compile(ITag tag, CompileContext context);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        Type GuessType(ITag tag, CompileContext context);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        object Excute(ITag tag, TemplateContext context);
-    }
+    string Name { get; }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    MethodInfo? Compile(ITag tag, CompileContext context);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    Type? GuessType(ITag tag, CompileContext context);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    object? Execute(ITag tag, TemplateContext context);
 }

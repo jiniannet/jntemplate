@@ -4,16 +4,15 @@
  ********************************************************************************/
 using System; 
 
-namespace JinianNet.JNTemplate.Resources
+namespace JinianNet.JNTemplate.Resources;
+
+/// <summary>
+/// 
+/// </summary>
+public class ResourceChangedEventArgs : EventArgs
 {
     /// <summary>
-    /// 
+    /// the path of the resources
     /// </summary>
-    public class ResourceChangedEventArgs : EventArgs
-    {
-        /// <summary>
-        /// the path of the resources
-        /// </summary>
-        public string FullPath { get; set; }
-    }
+    public string? FullPath { get; set; }
 }

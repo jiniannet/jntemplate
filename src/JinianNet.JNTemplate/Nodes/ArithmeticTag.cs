@@ -4,14 +4,13 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
-{
-    /// <summary>
-    /// ArithmeticTag
-    /// </summary>
-    [Serializable]
-    public class ArithmeticTag : BasisTag
-    {
+namespace JinianNet.JNTemplate.Nodes;
 
-    }
+/// <summary>
+/// ArithmeticTag
+/// </summary>
+[Serializable]
+public class ArithmeticTag : BasisTag
+{
+
 }

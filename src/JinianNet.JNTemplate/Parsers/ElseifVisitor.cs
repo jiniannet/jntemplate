@@ -6,73 +6,72 @@ using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using System.Reflection;
 using System;
-using JinianNet.JNTemplate.Dynamic;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="ElseifTag"/> registrar
+/// </summary>
+public class ElseifVisitor : TagVisitor<ElseifTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="ElseifTag"/> registrar
-    /// </summary>
-    public class ElseifVisitor : TagVisitor<ElseifTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count > 3
+            && (Utility.IsEqual(tc.First.Text, Const.KEY_ELSEIF) || Utility.IsEqual(tc.First.Text, Const.KEY_ELIF))
+            && tc[1].TokenKind == TokenKind.LeftParentheses
+            && tc.Last.TokenKind == TokenKind.RightParentheses)
         {
-            if (tc.Count > 3
-                && (Utility.IsEqual(tc.First.Text, Const.KEY_ELSEIF) || Utility.IsEqual(tc.First.Text, Const.KEY_ELIF))
-                && tc[1].TokenKind == TokenKind.LeftParentheses
-                && tc.Last.TokenKind == TokenKind.RightParentheses)
+            var tag = new ElseifTag();
+
+            tag.Condition = parser.Read(tc[2, -1]);
+            if (tag.Condition == null || !tag.Condition.IsSimple)
+                return null;
+            return tag;
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+
+        return context.IfCompile((ElseifTag)tag);
+
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+
+
+        return context.GuessIfType((ElseifTag)tag);
+
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as ElseifTag;
+        if (t == null || t.Condition == null) return null;
+        var condition = context.Execute(t.Condition);
+        if (Utility.ToBoolean(condition))
+        {
+            if (t.Children.Count == 0)
             {
-                var tag = new ElseifTag();
-
-                tag.Condition = parser.Read(tc[2, -1]);
-                if (!tag.Condition.IsSimple)
-                    return null;
-                return tag;
+                return null;
             }
-
-            return null;
-        }
-
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-
-            return context.IfCompile((ElseifTag)tag);
-
-        }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-
-
-            return context.GuessIfType((ElseifTag)tag);
-
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        { 
-            var t = tag as ElseifTag;
-            var condition = context.Execute(t.Condition);
-            if (Utility.ToBoolean(condition))
+            if (t.Children.Count == 1)
             {
-                if (t.Children.Count == 0)
-                {
-                    return null;
-                }
-                if (t.Children.Count == 1)
-                {
-                    return context.Execute(t.Children[0]);
-                }
-                var sb = new System.Text.StringBuilder();
-                for (int i = 0; i < t.Children.Count; i++)
-                {
-                    sb.Append(context.Execute(t.Children[i]));
-                }
-                return sb.ToString();
+                return context.Execute(t.Children[0]);
             }
-            return null;
-
+            var sb = new System.Text.StringBuilder();
+            for (int i = 0; i < t.Children.Count; i++)
+            {
+                sb.Append(context.Execute(t.Children[i]));
+            }
+            return sb.ToString();
         }
+        return null;
+
     }
 }

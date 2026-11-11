@@ -9,28 +9,27 @@ using System.Threading.Tasks;
 #endif
 
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// 
+/// </summary>
+public interface ITemplateResult
 {
     /// <summary>
-    /// 
+    /// Performs the render for a template.
     /// </summary>
-    public interface ITemplateResult
-    {
-        /// <summary>
-        /// Performs the render for a template.
-        /// </summary>
-        /// <param name="writer">The <see cref="TextWriter"/>.</param>
-        /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        void Render(TextWriter writer, TemplateContext context);
+    /// <param name="writer">The <see cref="TextWriter"/>.</param>
+    /// <param name="context">The <see cref="TemplateContext"/>.</param>
+    void Render(TextWriter writer, TemplateContext context);
 
 #if !NF40 && !NF45 && !NF35 && !NF20
-        /// <summary>
-        /// Performs the render for a template.
-        /// </summary>
-        /// <param name="writer">The <see cref="TextWriter"/>.</param>
-        /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
-        Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Performs the render for a template.
+    /// </summary>
+    /// <param name="writer">The <see cref="TextWriter"/>.</param>
+    /// <param name="context">The <see cref="TemplateContext"/>.</param>
+    /// <param name="cancellationToken">See the <see cref="CancellationToken"/>.</param>
+    Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default);
 #endif
-    }
 }

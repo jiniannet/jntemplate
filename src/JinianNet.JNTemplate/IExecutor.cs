@@ -5,23 +5,22 @@
 #if !NF35 && !NF20
 using System.Threading.Tasks;
 #endif
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// Represents an executor.
+/// </summary>
+public interface IExecutor
 {
     /// <summary>
-    /// Represents an executor.
+    /// Execute the object.
     /// </summary>
-    public interface IExecutor
-    {
-        /// <summary>
-        /// Execute the object.
-        /// </summary>
-        /// <returns></returns>
-        object Execute();
+    /// <returns></returns>
+    object Execute();
 #if !NF40 && !NF45 &&!NF35 && !NF20
-        /// <summary>
-        /// Asynchronously execute the object.
-        /// </summary>
-        Task<object> ExecuteAsync();
+    /// <summary>
+    /// Asynchronously execute the object.
+    /// </summary>
+    Task<object> ExecuteAsync();
 #endif
-    }
 }

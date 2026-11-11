@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-namespace JinianNet.JNTemplate.Test.ViewModel
+﻿namespace JinianNet.JNTemplate.Test.ViewModel
 {
 	/// <summary>
 	/// Category:实体类(属性说明自动提取数据库字段的描述信息)

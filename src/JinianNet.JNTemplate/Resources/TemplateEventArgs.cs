@@ -4,35 +4,34 @@
  ********************************************************************************/
 using System; 
 
-namespace JinianNet.JNTemplate.Resources
+namespace JinianNet.JNTemplate.Resources;
+
+/// <summary>
+/// 
+/// </summary>
+public class TemplateEventArgs : EventArgs
 {
+
     /// <summary>
-    /// 
+    /// Initializes a new instance of the TemplateEventArgs class.
     /// </summary>
-    public class TemplateEventArgs : EventArgs
+    /// <param name="fullPath"></param>
+    /// <param name="keys"></param>
+    public TemplateEventArgs(string fullPath, string[] keys)
     {
-
-        /// <summary>
-        /// Initializes a new instance of the TemplateEventArgs class.
-        /// </summary>
-        /// <param name="fullPath"></param>
-        /// <param name="keys"></param>
-        public TemplateEventArgs(string fullPath, string[] keys)
-        {
-            this.FullPath = fullPath;
-            this.Keys = keys;
-        }
-
-
-        /// <summary>
-        /// Gets the fully qualified path of the affected file or directory.
-        /// </summary> 
-        public string FullPath { get; }
-
-
-        /// <summary>
-        /// The name of the affected file or directory.
-        /// </summary>
-        public string[] Keys { get; }
+        this.FullPath = fullPath;
+        this.Keys = keys;
     }
+
+
+    /// <summary>
+    /// Gets the fully qualified path of the affected file or directory.
+    /// </summary> 
+    public string FullPath { get; }
+
+
+    /// <summary>
+    /// The name of the affected file or directory.
+    /// </summary>
+    public string[] Keys { get; }
 }

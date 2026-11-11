@@ -8,77 +8,77 @@ using System.Reflection.Emit;
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="NumberTag"/> registrar
+/// </summary>
+public class NumberVisitor : TagVisitor<NumberTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="NumberTag"/> registrar
-    /// </summary>
-    public class NumberVisitor : TagVisitor<NumberTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count == 1
+            && tc.First.TokenKind == TokenKind.Number)
         {
-            if (tc.Count == 1
-                && tc.First.TokenKind == TokenKind.Number)
+            var tag = new NumberTag();
+            if (tc.First.Text.IndexOf('.') == -1)
             {
-                var tag = new NumberTag();
-                if (tc.First.Text.IndexOf('.') == -1)
+                if (tc.First.Text.Length < 9)
                 {
-                    if (tc.First.Text.Length < 9)
+                    tag.Value = int.Parse(tc.First.Text);
+                }
+                else if (tc.First.Text.Length == 9)
+                {
+                    var value = long.Parse(tc.First.Text);
+                    if (value <= int.MaxValue)
                     {
                         tag.Value = int.Parse(tc.First.Text);
                     }
-                    else if (tc.First.Text.Length == 9)
-                    {
-                        var value = long.Parse(tc.First.Text);
-                        if (value <= int.MaxValue)
-                        {
-                            tag.Value = int.Parse(tc.First.Text);
-                        }
-                        else
-                        {
-                            tag.Value = value;
-                        }
-                    }
                     else
                     {
-                        tag.Value = long.Parse(tc.First.Text);
+                        tag.Value = value;
                     }
                 }
                 else
                 {
-                    tag.Value = Double.Parse(tc.First.Text);
+                    tag.Value = long.Parse(tc.First.Text);
                 }
-
-                return tag;
+            }
+            else
+            {
+                tag.Value = Double.Parse(tc.First.Text);
             }
 
-            return null;
+            return tag;
         }
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-            var t = tag as NumberTag;
-            var type = t.Value.GetType();
-            var mb = context.CreateReutrnMethod<NumberTag>(type);
-            var il = mb.GetILGenerator();
-            il.DeclareLocal(type);
-            il.CallTypeTag(t);
-            il.Emit(OpCodes.Stloc_0);
-            il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
-        }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-            return ((NumberTag)tag).Value.GetType();
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        { 
-            var t = tag as NumberTag;
-            return t.Value;
-        }
+
+        return null;
+    }
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as NumberTag;
+        if (t == null || t.Value == null) throw new ArgumentNullException(nameof(tag));
+        var type = t.Value.GetType();
+        var mb = context.CreateReturnMethod<NumberTag>(type);
+        var il = mb.GetILGenerator();
+        il.DeclareLocal(type);
+        il.CallTypeTag(t);
+        il.Emit(OpCodes.Stloc_0);
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return ((NumberTag)tag).Value.GetType();
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as NumberTag;
+        return t?.Value;
     }
 }

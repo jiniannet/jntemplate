@@ -2,918 +2,811 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
+using JinianNet.JNTemplate.Exceptions;
 using System;
 using System.Collections.Generic;
-using JinianNet.JNTemplate.Exceptions;
-using System.Collections.ObjectModel;
 
-namespace JinianNet.JNTemplate.Dynamic
+namespace JinianNet.JNTemplate.Dynamic;
+
+
+/// <summary>
+/// Expression calculation
+/// </summary>
+public class ExpressionEvaluator
 {
+    #region Weights Array
+    private static readonly TypeCode[] NumberWeights = new TypeCode[] {
+            TypeCode.Int16,
+             TypeCode.Int32,
+             TypeCode.Int64,
+             TypeCode.Single,
+             TypeCode.Double,
+             TypeCode.Decimal};
+
+    private static readonly TypeCode[] UintWeights = new TypeCode[] {
+            TypeCode.UInt16,
+             TypeCode.UInt32,
+             TypeCode.UInt64};
+    #endregion
+
+    #region LetterType
+    /// <summary>
+    /// LetterType
+    /// </summary>
+    public enum LetterType
+    {
+        /// <summary>
+        /// None
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// Operator
+        /// </summary>
+        Operator = 1,
+        /// <summary>
+        /// (
+        /// </summary>
+        LeftParentheses = 2,
+        /// <summary>
+        /// ]
+        /// </summary>
+        RightParentheses = 3,
+        /// <summary>
+        /// number
+        /// </summary>
+        Number = 4,
+        /// <summary>
+        /// other
+        /// </summary>
+        Other = 5
+    }
+    #endregion
+
+    #region common function
+    private static bool IsOperator(string value)
+    {
+        switch (value)
+        {
+            case "||":
+            case "|":
+            case "&":
+            case "&&":
+            case ">":
+            case ">=":
+            case "<":
+            case "<=":
+            case "==":
+            case "!=":
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+            case "(":
+            case ")":
+            case "%":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static int GetPriority(string? c)
+    {
+        switch (c)
+        {
+            case "||":
+            case "|":
+            case "&":
+            case "&&":
+            case "Or":
+            case "LogicalOr":
+            case "LogicAnd":
+            case "And":
+                return 5;
+            case ">":
+            case ">=":
+            case "<":
+            case "<=":
+            case "==":
+            case "!=":
+
+            case "GreaterThan":
+            case "GreaterThanOrEqual":
+            case "LessThan":
+            case "LessThanOrEqual":
+            case "Equal":
+            case "NotEqual":
+                return 6;
+            case "+":
+            case "-":
+
+            case "Add":
+            case "Subtract":
+                return 7;
+            case "%":
+            case "*":
+            case "Remainder":
+            case "Multiply":
+            case "/":
+            case "Divided":
+                return 8;
+            default:
+                return 9;
+        }
+    }
+
+    private static bool IsNumber(TypeCode? type)
+    {
+        switch (type)
+        {
+            case TypeCode.Double:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+            case TypeCode.UInt16:
+            case TypeCode.UInt32:
+            case TypeCode.UInt64:
+            case TypeCode.Single:
+            case TypeCode.Decimal:
+            case TypeCode.SByte:
+            case TypeCode.Byte:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
+
+    #region ProcessExpression
+    /// <summary>
+    /// process expression.
+    /// </summary>
+    /// <param name="value">The expression.</param>
+    /// <returns></returns>
+    public static Stack<object?> ProcessExpression(string value)
+    {
+        value = value.Replace("  ", string.Empty);
+        List<object> result = new List<object>();
+        int j = 0;
+        int i;
+        string num;
+
+        for (i = 0; i < value.Length; i++)
+        {
+            switch (value[i])
+            {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '(':
+                case ')':
+                case '%':
+                    if (j < i)
+                    {
+                        num = value.Substring(j, i - j);
+                        if (num.IndexOf('.') == -1)
+                        {
+                            result.Add(int.Parse(value.Substring(j, i - j)));
+                        }
+                        else
+                        {
+                            result.Add(Double.Parse(value.Substring(j, i - j)));
+                        }
+                        j = i;
+                    }
+                    result.Add(OperatorConvert.Parse(value[i].ToString()));
+                    j++;
+                    break;
+            }
+        }
+        if (j < i)
+        {
+            result.Add(Double.Parse(value.Substring(j, i - j)));
+        }
+        return ProcessExpression([.. result]);
+
+    }
 
     /// <summary>
-    /// Expression calculation
+    /// process expression.
     /// </summary>
-    public class ExpressionEvaluator
+    /// <param name="value">The expression.</param>
+    /// <returns></returns>
+    public static Stack<object?> ProcessExpression(object?[] value)
     {
-        #region Weights Array
-        private static readonly string[] NumberWeights = new string[] {
-                "System.Int16",
-                 "System.Int32",
-                 "System.Int64",
-                 "System.Single",
-                 "System.Double",
-                 "System.Decimal"};
+        var post = new Stack<object?>();
+        var stack = new Stack<object?>();
 
-        private static readonly string[] UintWeights = new string[] {
-                "System.UInt16",
-                 "System.UInt32",
-                 "System.UInt64"};
-        #endregion
-
-        #region LetterType
-        /// <summary>
-        /// LetterType
-        /// </summary>
-        public enum LetterType
+        for (int i = 0; i < value.Length; i++)
         {
-            /// <summary>
-            /// None
-            /// </summary>
-            None = 0,
-            /// <summary>
-            /// Operator
-            /// </summary>
-            Operator = 1,
-            /// <summary>
-            /// (
-            /// </summary>
-            LeftParentheses = 2,
-            /// <summary>
-            /// ]
-            /// </summary>
-            RightParentheses = 3,
-            /// <summary>
-            /// number
-            /// </summary>
-            Number = 4,
-            /// <summary>
-            /// other
-            /// </summary>
-            Other = 5
-        }
-        #endregion
-
-        #region common function
-        private static bool IsOperator(string value)
-        {
-            switch (value)
+            if (!(value[i] is Operator _))
             {
-                case "||":
-                case "|":
-                case "&":
-                case "&&":
-                case ">":
-                case ">=":
-                case "<":
-                case "<=":
-                case "==":
-                case "!=":
+                post.Push(value[i]);
+                continue;
+            }
+            switch (value[i]?.ToString())
+            {
+                //case ")":
+                //case "RightParentheses":
+                //case "(":
+                //case "LeftParentheses":
+
+                case "(":
+                case "LeftParentheses":
+                    stack.Push("(");
+                    break;
+                case ")":
+                case "RightParentheses":
+                    while (stack.Count > 0)
+                    {
+                        var op = stack.Pop();
+                        if (op?.ToString() == "(")
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            post.Push(op);
+                        }
+                    }
+                    break;
                 case "+":
                 case "-":
                 case "*":
-                case "/":
-                case "(":
-                case ")":
                 case "%":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static int GetPriority(string c)
-        {
-            switch (c)
-            {
+                case "/":
                 case "||":
                 case "|":
-                case "&":
                 case "&&":
-                case "Or":
-                case "LogicalOr":
-                case "LogicAnd":
-                case "And":
-                    return 5;
+                case "&":
                 case ">":
                 case ">=":
                 case "<":
                 case "<=":
                 case "==":
                 case "!=":
-
+                case "Add":
+                case "Subtract":
+                case "Multiply":
+                case "Remainder":
+                case "Divided":
+                case "LogicalOr":
+                case "Or":
+                case "LogicAnd":
+                case "And":
                 case "GreaterThan":
                 case "GreaterThanOrEqual":
                 case "LessThan":
                 case "LessThanOrEqual":
                 case "Equal":
                 case "NotEqual":
-                    return 6;
-                case "+":
-                case "-":
+                    if (stack.Count == 0)
+                    {
+                        stack.Push(value[i]);
+                    }
+                    else
+                    {
+                        var eX = stack.Peek();
+                        var eY = value[i];
+                        int pY = GetPriority(eY?.ToString());
+                        int pX = GetPriority(eX?.ToString());
 
-                case "Add":
-                case "Subtract":
-                    return 7;
-                case "%":
-                case "*":
-                case "Remainder":
-                case "Multiply":
-                case "/":
-                case "Divided":
-                    return 8;
-                default:
-                    return 9;
-            }
-        }
-
-        private static bool IsNumber(string fullName)
-        {
-            switch (fullName)
-            {
-                case "System.Double":
-                case "System.Int16":
-                case "System.Int32":
-                case "System.Int64":
-                case "System.UInt16":
-                case "System.UInt32":
-                case "System.UInt64":
-                case "System.Single":
-                case "System.Decimal":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        #endregion
-
-        #region ProcessExpression
-        /// <summary>
-        /// process expression.
-        /// </summary>
-        /// <param name="value">The expression.</param>
-        /// <returns></returns>
-        public static Stack<object> ProcessExpression(string value)
-        {
-            value = value.Replace("  ", string.Empty);
-            List<object> result = new List<object>();
-            int j = 0;
-            int i;
-            string num;
-
-            for (i = 0; i < value.Length; i++)
-            {
-                switch (value[i])
-                {
-                    case '+':
-                    case '-':
-                    case '*':
-                    case '/':
-                    case '(':
-                    case ')':
-                    case '%':
-                        if (j < i)
+                        if (pY > pX)
                         {
-                            num = value.Substring(j, i - j);
-                            if (num.IndexOf('.') == -1)
-                            {
-                                result.Add(int.Parse(value.Substring(j, i - j)));
-                            }
-                            else
-                            {
-                                result.Add(Double.Parse(value.Substring(j, i - j)));
-                            }
-                            j = i;
+                            stack.Push(eY);
                         }
-                        result.Add(OperatorConvert.Parse(value[i].ToString()));
-                        j++;
-                        break;
-                }
-            }
-            if (j < i)
-            {
-                result.Add(Double.Parse(value.Substring(j, i - j)));
-            }
-            return ProcessExpression(result.ToArray());
-
-        }
-
-        /// <summary>
-        /// process expression.
-        /// </summary>
-        /// <param name="value">The expression.</param>
-        /// <returns></returns>
-        public static Stack<object> ProcessExpression(object[] value)
-        {
-            Stack<object> post = new Stack<object>();
-            Stack<object> stack = new Stack<object>();
-
-            for (int i = 0; i < value.Length; i++)
-            {
-                if (!(value[i] is Operator _))
-                {
-                    post.Push(value[i]);
-                    continue;
-                }
-                switch (value[i].ToString())
-                {
-                    //case ")":
-                    //case "RightParentheses":
-                    //case "(":
-                    //case "LeftParentheses":
-
-                    case "(":
-                    case "LeftParentheses":
-                        stack.Push("(");
-                        break;
-                    case ")":
-                    case "RightParentheses":
-                        while (stack.Count > 0)
+                        else if (pY == pX)
                         {
-                            object op = stack.Pop();
-                            if (op?.ToString() == "(")
-                            {
-                                break;
-                            }
-                            else
-                            {
-                                post.Push(op);
-                            }
+                            post.Push(stack.Pop());
+                            stack.Push(eY);
                         }
-                        break;
-                    case "+":
-                    case "-":
-                    case "*":
-                    case "%":
-                    case "/":
-                    case "||":
-                    case "|":
-                    case "&&":
-                    case "&":
-                    case ">":
-                    case ">=":
-                    case "<":
-                    case "<=":
-                    case "==":
-                    case "!=":
-                    case "Add":
-                    case "Subtract":
-                    case "Multiply":
-                    case "Remainder":
-                    case "Divided":
-                    case "LogicalOr":
-                    case "Or":
-                    case "LogicAnd":
-                    case "And":
-                    case "GreaterThan":
-                    case "GreaterThanOrEqual":
-                    case "LessThan":
-                    case "LessThanOrEqual":
-                    case "Equal":
-                    case "NotEqual":
-                        if (stack.Count == 0)
+                        else if (pY < pX)
                         {
-                            stack.Push(value[i]);
-                        }
-                        else
-                        {
-                            object eX = stack.Peek();
-                            object eY = value[i];
-                            int pY = GetPriority(eY.ToString());
-                            int pX = GetPriority(eX.ToString());
 
-                            if (pY > pX)
+                            if (eX?.ToString() != "(")
                             {
-                                stack.Push(eY);
-                            }
-                            else if (pY == pX)
-                            {
-                                post.Push(stack.Pop());
-                                stack.Push(eY);
-                            }
-                            else if (pY < pX)
-                            {
-
-                                if (eX.ToString() != "(")
+                                while (stack.Count > 0)
                                 {
-                                    while (stack.Count > 0)
-                                    {
-                                        post.Push(stack.Pop());
-                                    }
+                                    post.Push(stack.Pop());
                                 }
-                                stack.Push(eY);
                             }
+                            stack.Push(eY);
                         }
-                        break;
-                    default:
-                        post.Push(value[i]);
-                        break;
-                }
+                    }
+                    break;
+                default:
+                    post.Push(value[i]);
+                    break;
             }
-
-            while (stack.Count > 0)
-            {
-                post.Push(stack.Pop());
-            }
-
-            return post;
         }
 
-
-
-        #endregion
-
-        #region Calculate
-        /// <summary>
-        /// Gets the type of the specified object.
-        /// </summary>
-        /// <param name="value">The object.</param>
-        /// <returns>A type.</returns>
-        private static Type GetType(object value)
+        while (stack.Count > 0)
         {
-            if (value == null)
-            {
-                return typeof(object);
-            }
-            return value.GetType();
+            post.Push(stack.Pop());
         }
 
-        private static object CalculateAnd(object x, object y)
+        return post;
+    }
+
+
+
+    #endregion
+
+    #region Calculate
+    /// <summary>
+    /// Gets the type of the specified object.
+    /// </summary>
+    /// <param name="value">The object.</param>
+    /// <returns>A type.</returns>
+    private static Type GetType(object value)
+    {
+        if (value == null)
         {
-            if (!CalculateBoolean(x))
-            {
-                return false;
-            }
-            if (!CalculateBoolean(y))
-            {
-                return false;
-            }
+            return typeof(object);
+        }
+        return value.GetType();
+    }
+
+    private static object CalculateAnd(object? x, object? y)
+    {
+        if (!CalculateBoolean(x))
+        {
+            return false;
+        }
+        if (!CalculateBoolean(y))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private static object CalculateOr(object? x, object? y)
+    {
+        if (CalculateBoolean(x))
+        {
             return true;
         }
-
-        private static object CalculateOr(object x, object y)
+        if (CalculateBoolean(y))
         {
-            if (CalculateBoolean(x))
-            {
-                return true;
-            }
-            if (CalculateBoolean(y))
-            {
-                return true;
-            }
+            return true;
+        }
+        return false;
+    }
+
+    internal static bool CalculateBoolean(object? value)
+    {
+        if (value == null)
             return false;
+        switch (value.GetType().ToTypeCode())
+        {
+            case TypeCode.Boolean:
+                return (bool)value;
+            case TypeCode.String:
+                return !string.IsNullOrEmpty(value.ToString());
+            case TypeCode.UInt16:
+            case TypeCode.UInt32:
+            case TypeCode.UInt64:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+                return value.ToString() != "0";
+            case TypeCode.Decimal:
+                return (decimal)value != 0;
+            case TypeCode.Double:
+                return !0.Equals((double)value);
+            case TypeCode.Single:
+                return !0.Equals((float)value);
+            default:
+                return value != null;
+        }
+    }
+
+    private static bool Equals(object? x, object? y, Type tX, Type tY)
+    {
+        if (x == null || y == null)
+        {
+            return x == null && y == null;
+        }
+        if (tX.FullName == tY.FullName)
+        {
+            if (tX.IsEnum)
+            {
+                return Equals(x, y);
+            }
+            return x == y;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The result of expression.</param>
+    /// <returns></returns>
+    public static object? Calculate(object? x, object? y, string value)
+    {
+        if (value == "||")
+        {
+            return CalculateOr(x, y);
         }
 
-        internal static bool CalculateBoolean(object value)
+        if (value == "&&")
         {
-            if (value == null)
-                return false;
-            switch (value.GetType().FullName)
-            {
-                case "System.Boolean":
-                    return (bool)value;
-                case "System.String":
-                    return !string.IsNullOrEmpty(value.ToString());
-                case "System.UInt16":
-                case "System.UInt32":
-                case "System.UInt64":
-                case "System.Int16":
-                case "System.Int32":
-                case "System.Int64":
-                    return value.ToString() != "0";
-                case "System.Decimal":
-                    return (decimal)value != 0;
-                case "System.Double":
-                    return !0.Equals((double)value);
-                case "System.Single":
-                    return !0.Equals((float)value);
-                default:
-                    return value != null;
-            }
+            return CalculateAnd(x, y);
         }
 
-        private static bool Equals(object x, object y, Type tX, Type tY)
+        Type tX, tY;
+        if (x == null || y == null)
         {
-            if (x == null || y == null)
+            if (x != null)
+                tX = tY = GetType(x);
+            else if (y != null)
+                tX = tY = GetType(y);
+            else
+                tX = tY = typeof(object);
+        }
+        else
+        {
+            tX = GetType(x);
+            tY = GetType(y);
+        }
+
+        var xCode = tX.ToTypeCode();
+        var yCode = tY.ToTypeCode();
+
+        if (IsNumber(xCode) && IsNumber(yCode))
+        {
+            TypeCode t;
+            if (xCode == yCode)
             {
-                return x == null && y == null;
+                t = xCode;
             }
-            if (tX.FullName == tY.FullName)
+            else
             {
-                if (tX.IsEnum)
+                int i, j;
+                if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
                 {
-                    return Equals(x, y);
-                }
-                return x == y;
-            }
-            return false;
-        }
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The result of expression.</param>
-        /// <returns></returns>
-        public static object Calculate(object x, object y, string value)
-        {
-            if (value == "||")
-            {
-                return CalculateOr(x, y);
-            }
-
-            if (value == "&&")
-            {
-                return CalculateAnd(x, y);
-            }
-
-            Type tX = GetType(x);
-            Type tY = GetType(y);
-
-            if (IsNumber(tX.FullName) && IsNumber(tY.FullName))
-            {
-                Type t;
-                if (tX == tY)
-                {
-                    t = tX;
+                    i = Array.IndexOf<TypeCode>(UintWeights, xCode);
+                    j = Array.IndexOf<TypeCode>(UintWeights, yCode);
+                    t = i > j ? xCode : yCode;
                 }
                 else
                 {
-                    int i, j;
-                    if (tX.Name[0] == 'U' && tY.Name[0] == 'U')
+                    if (tX.Name[0] == 'U')
                     {
-                        i = Array.IndexOf<string>(UintWeights, tX.FullName);
-                        j = Array.IndexOf<string>(UintWeights, tY.FullName);
+                        xCode = tX.ToTypeCode();
+                        t = ChoiceBestType(xCode, yCode);
+                    }
+                    else if (tY.Name[0] == 'U')
+                    {
+                        yCode = tY.ToTypeCode();
+                        t = ChoiceBestType(xCode, yCode);
                     }
                     else
                     {
-                        if (tX.Name[0] == 'U')
-                        {
-                            tX = Type.GetType($"System.{tX.Name.Remove(0, 1)}");
-                        }
-
-                        if (tY.Name[0] == 'U')
-                        {
-                            tY = Type.GetType($"System.{tY.Name.Remove(0, 1)}");
-                        }
-
-                        i = Array.IndexOf<string>(NumberWeights, tX.FullName);
-                        j = Array.IndexOf<string>(NumberWeights, tY.FullName);
+                        i = Array.IndexOf<TypeCode>(NumberWeights, xCode);
+                        j = Array.IndexOf<TypeCode>(NumberWeights, yCode);
+                        t = i > j ? xCode : yCode;
                     }
-                    if (i > j)
-                    {
-                        t = tX;
-                    }
-                    else
-                    {
-                        t = tY;
-                    }
-                }
-                switch (t.FullName)
-                {
-                    case "System.Double":
-                        return Calculate(Convert.ToDouble(x.ToString()), Convert.ToDouble(y.ToString()), value);
-                    case "System.Int16":
-                        return Calculate(Convert.ToInt16(x.ToString()), Convert.ToInt16(y.ToString()), value);
-                    case "System.Int32":
-                        return Calculate(Convert.ToInt32(x.ToString()), Convert.ToInt32(y.ToString()), value);
-                    case "System.Int64":
-                        return Calculate(Convert.ToInt64(x.ToString()), Convert.ToInt64(y.ToString()), value);
-                    case "System.Single":
-                        return Calculate(Convert.ToSingle(x.ToString()), Convert.ToSingle(y.ToString()), value);
-                    case "System.Decimal":
-                        return Calculate(Convert.ToDecimal(x.ToString()), Convert.ToDecimal(y.ToString()), value);
-                    default:
-                        return null;
                 }
             }
-
-            if (tX.FullName == "System.Boolean" && tY.FullName == "System.Boolean")
-                return Calculate((bool)x, (bool)y, value);
-            if (tX.FullName == "System.String" && tY.FullName == "System.String")
-                return Calculate(x.ToString(), y.ToString(), value);
-            if (tX.FullName == "System.DateTime" && tY.FullName == "System.DateTime")
-                return Calculate((DateTime)x, (DateTime)y, value);
-
-            switch (value)
+            if (t == TypeCode.Byte || t == TypeCode.SByte)
             {
-                case "==":
+                t = TypeCode.Int32;
+            }
+            switch (t)
+            {
+                case TypeCode.Double:
+                    return CalculateBinaryNumber(x.ToRequiredDouble(0), y.ToRequiredDouble(0), value);
+                case TypeCode.Int16:
+                    return CalculateBinaryNumber(x.ToRequiredShort(0), y.ToRequiredShort(0), value);
+                case TypeCode.Int32:
+                    return CalculateBinaryNumber(x.ToRequiredInt(0), y.ToRequiredInt(0), value);
+                case TypeCode.Int64:
+                    return CalculateBinaryNumber(x.ToRequiredLong(0), y.ToRequiredLong(0), value);
+                case TypeCode.UInt32:
+                    return CalculateBinaryNumber(x.ToRequiredUInt(0), y.ToRequiredUInt(0), value);
+                case TypeCode.UInt16:
+                    return CalculateBinaryNumber(x.ToRequiredUShort(0), y.ToRequiredUShort(0), value);
+                case TypeCode.UInt64:
+                    return CalculateBinaryNumber(x.ToRequiredULong(0), y.ToRequiredULong(0), value);
+                case TypeCode.Single:
+                    return CalculateBinaryNumber(x.ToRequiredFloat(0), y.ToRequiredFloat(0), value);
+                case TypeCode.Decimal:
+                    return CalculateNumber(x.ToRequiredDecimal(0), y.ToRequiredDecimal(0), value);
+                default:
+                    return null;
+            }
+        }
+
+        if (xCode == TypeCode.Boolean && yCode == TypeCode.Boolean)
+            return Calculate(x.ToRequiredBoolean(false), y.ToRequiredBoolean(false), value);
+        if (xCode == TypeCode.String && yCode == TypeCode.String)
+            return Calculate(x?.ToString()!, y?.ToString()!, value);
+        if (xCode == TypeCode.DateTime && yCode == TypeCode.DateTime)
+            return Calculate((DateTime?)x ?? DateTime.MinValue, (DateTime?)y ?? DateTime.MinValue, value);
+
+        switch (value)
+        {
+            case "==":
+                return Equals(x, y, tX, tY);
+            case "!=":
+                return !Equals(x, y, tX, tY);
+            case "+":
+                return $"{x?.ToString()}{y?.ToString()}";
+            case ">=":
+            case ">":
+            case "<=":
+            case "<":
+                if (x != null && y != null)
+                {
+                    string? strX = x.ToString();
+                    string? strY = y.ToString();
+                    float fx, fy;
+                    if (!string.IsNullOrEmpty(strX)
+                        && !string.IsNullOrEmpty(strY)
+                        && float.TryParse(strX, out fx)
+                        && float.TryParse(strY, out fy))
+                    {
+                        return Calculate(fx, fy, value);
+                    }
+                }
+                if (value.Length > 1)
+                {
                     return Equals(x, y, tX, tY);
-                case "!=":
-                    return !Equals(x, y, tX, tY);
-                case "+":
-                    return $"{x.ToString()}{y.ToString()}";
-                case ">=":
-                case ">":
-                case "<=":
-                case "<":
-                    if (x != null && y != null)
-                    {
-                        string strX = x.ToString();
-                        string strY = y.ToString();
-                        float fx, fy;
-                        if (!string.IsNullOrEmpty(strX)
-                            && !string.IsNullOrEmpty(strY)
-                            && float.TryParse(strX, out fx)
-                            && float.TryParse(strY, out fy))
-                        {
-                            return Calculate(fx, fy, value);
-                        }
-                    }
-                    if (value.Length > 1)
-                    {
-                        return Equals(x, y, tX, tY);
-                    }
-                    return false;
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"object\" and \"object\"");
-            }
-        }
-        /// <summary>
-        /// Evaluating reverse polish notation
-        /// </summary>
-        /// <param name="value">The reverse polish notation.</param>
-        /// <returns></returns>
-        public static object Calculate(Stack<object> value)
-        {
-            Stack<object> post = new Stack<object>();
-            while (value.Count > 0)
-            {
-                post.Push(value.Pop());
-            }
-            Stack<object> stack = new Stack<object>();
-
-            while (post.Count > 0)
-            {
-                object obj = post.Pop();
-                if (obj is Operator o)
-                {
-                    object y = stack.Pop();
-                    object x = stack.Pop();
-                    stack.Push(Calculate(x, y, OperatorConvert.ToString(o)));
                 }
-                else
+                return false;
+            default:
+                throw new TemplateException($"Operator \"{value}\" can not be applied operand \"object\" and \"object\"");
+        }
+    }
+    /// <summary>
+    /// Evaluating reverse polish notation
+    /// </summary>
+    /// <param name="value">The reverse polish notation.</param>
+    /// <returns></returns>
+    public static object? Calculate(Stack<object?> value)
+    {
+        var post = new Stack<object?>();
+        while (value.Count > 0)
+        {
+            post.Push(value.Pop());
+        }
+        var stack = new Stack<object?>();
+
+        while (post.Count > 0)
+        {
+            var obj = post.Pop();
+            if (obj is Operator o)
+            {
+                var y = stack.Pop();
+                var x = stack.Pop();
+                stack.Push(Calculate(x, y, OperatorConvert.ToString(o)) ?? throw new NotSupportedException());
+            }
+            else
+            {
+                stack.Push(obj);
+            }
+        }
+
+        return stack.Pop();
+    }
+
+    /// <summary>
+    /// Computational mathematical expression.
+    /// </summary>
+    /// <param name="value">The expression.</param>
+    /// <returns></returns>
+    public static object? Calculate(object?[] value)
+    {
+        var stack = ProcessExpression(value);
+
+        return Calculate(stack);
+    }
+
+    /// <summary>
+    /// Computational mathematical expression.
+    /// </summary>
+    /// <param name="value">The expression.</param>
+    /// <returns></returns>
+    public static object? Calculate(string value)
+    {
+        var stack = ProcessExpression(value);
+
+        return Calculate(stack);
+    }
+
+    #endregion
+
+    #region  Calculate
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object Calculate(bool x, bool y, string value)
+    {
+        switch (value)
+        {
+            case "==":
+                return x == y;
+            case "!=":
+                return x != y;
+            case "||":
+                return x || y;
+            case "&&":
+                return x && y;
+            default:
+                throw new TemplateException($"Operator \"{value}\" can not be applied operand \"bool\" and \"bool\"");
+        }
+    }
+
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object Calculate(string x, string y, string value)
+    {
+        switch (value)
+        {
+            case "==":
+                return x.Equals(y, StringComparison.OrdinalIgnoreCase);
+            case "!=":
+                return !x.Equals(y, StringComparison.OrdinalIgnoreCase);
+            case "+":
+                return $"{x}{y}";
+            default:
+                throw new TemplateException($"Operator \"{value}\" can not be applied operand \"string\" and \"string\"");
+        }
+    }
+
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object Calculate(DateTime x, DateTime y, string value)
+    {
+        switch (value)
+        {
+            case "==":
+                return x == y;
+            case "!=":
+                return x != y;
+            case ">":
+                return x > y;
+            case ">=":
+                return x >= y;
+            case "<":
+                return x < y;
+            case "<=":
+                return x <= y;
+            default:
+                throw new TemplateException($"Operator \"{value}\" can not be applied operand \"DateTime\" and \"DateTime\"");
+        }
+    }
+#if NFW || NT5 || NT6 || NC || NS
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object CalculateNumber<T>(T x, T y, string value) where T : struct
+        => NumericOps<T>.Calculate(x, y, value);
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object CalculateBinaryNumber<T>(T x, T y, string value) where T : struct
+                    => NumericOps<T>.CalculateBinary(x, y, value);
+#else
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object CalculateNumber<T>(T x, T y, string value) where T : struct, System.Numerics.INumber<T>
+    {
+        switch (value)
+        {
+            case "+":
+                return x + y;
+            case "-":
+                return x - y;
+            case "*":
+                return x * y;
+            case "/":
+                return x / y;
+            case "%":
+                return x % y;
+            case ">=":
+                return x >= y;
+            case "<=":
+                return x <= y;
+            case "<":
+                return x < y;
+            case ">":
+                return x > y;
+            case "==":
+                return x == y;
+            case "!=":
+                return x != y;
+            default:
                 {
-                    stack.Push(obj);
+                    var name = typeof(T).Name;
+                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"{name}\" and \"{name}\"");
                 }
-            }
-
-            return stack.Pop();
         }
+    }
 
-        /// <summary>
-        /// Computational mathematical expression.
-        /// </summary>
-        /// <param name="value">The expression.</param>
-        /// <returns></returns>
-        public static object Calculate(object[] value)
+    /// <summary>
+    /// Calculates the value of objects
+    /// </summary>
+    /// <param name="x">The first value. </param>
+    /// <param name="y">The second value.</param>
+    /// <param name="value">The operator.</param> 
+    /// <returns>The result of expression.</returns>
+    public static object CalculateBinaryNumber<T>(T x, T y, string value) where T : struct, System.Numerics.IBinaryNumber<T>
+    {
+        switch (value)
         {
-            Stack<object> stack = ProcessExpression(value);
-
-            return Calculate(stack);
+            case "|":
+                return x | y;
+            case "&":
+                return x & y;
+            default:
+                return CalculateNumber<T>(x, y, value);
         }
+    }
+#endif
 
-        /// <summary>
-        /// Computational mathematical expression.
-        /// </summary>
-        /// <param name="value">The expression.</param>
-        /// <returns></returns>
-        public static object Calculate(string value)
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="xCode"></param>
+    /// <param name="yCode"></param>
+    /// <returns></returns>
+    private static TypeCode ChoiceBestType(TypeCode xCode, TypeCode yCode)
+    {
+        switch (xCode)
         {
-            Stack<object> stack = ProcessExpression(value);
-
-            return Calculate(stack);
+            case TypeCode.UInt16:
+                xCode = TypeCode.Int32;
+                break;
+            case TypeCode.UInt32:
+                xCode = TypeCode.Int64;
+                break;
+            case TypeCode.UInt64:
+                xCode = TypeCode.Int64;
+                break;
+            default:
+                if (yCode == TypeCode.UInt16 || yCode == TypeCode.UInt32 || yCode == TypeCode.UInt64)
+                    return ChoiceBestType(yCode, xCode);
+                throw new NotSupportedException();
         }
-
-        #endregion
-
-        #region  Calculate
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(bool x, bool y, string value)
-        {
-            switch (value)
-            {
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                case "||":
-                    return x || y;
-                case "&&":
-                    return x && y;
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"bool\" and \"bool\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(string x, string y, string value)
-        {
-            switch (value)
-            {
-                case "==":
-                    return x.Equals(y, StringComparison.OrdinalIgnoreCase);
-                case "!=":
-                    return !x.Equals(y, StringComparison.OrdinalIgnoreCase);
-                case "+":
-                    return $"{x}{y}";
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"string\" and \"string\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(DateTime x, DateTime y, string value)
-        {
-            switch (value)
-            {
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                case ">":
-                    return x > y;
-                case ">=":
-                    return x >= y;
-                case "<":
-                    return x < y;
-                case "<=":
-                    return x <= y;
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"DateTime\" and \"DateTime\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(Double x, Double y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x.Equals(y);
-                case "!=":
-                    return !x.Equals(y);
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Double\" and \"Double\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(float x, float y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x.Equals(y);
-                case "!=":
-                    return !x.Equals(y);
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Single\" and \"Single\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(Decimal x, Decimal y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Decimal\" and \"Decimal\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(int x, int y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                case "|":
-                    return x | y;
-                case "&":
-                    return x & y;
-
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"int\" and \"int\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(Int64 x, Int64 y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                case "|":
-                    return x | y;
-                case "&":
-                    return x & y;
-
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Int64\" and \"Int64\"");
-            }
-        }
-
-        /// <summary>
-        /// Calculates the value of objects
-        /// </summary>
-        /// <param name="x">The first value. </param>
-        /// <param name="y">The second value.</param>
-        /// <param name="value">The operator.</param> 
-        /// <returns>The result of expression.</returns>
-        public static object Calculate(Int16 x, Int16 y, string value)
-        {
-            switch (value)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                case "%":
-                    return x % y;
-                case ">=":
-                    return x >= y;
-                case "<=":
-                    return x <= y;
-                case "<":
-                    return x < y;
-                case ">":
-                    return x > y;
-                case "==":
-                    return x == y;
-                case "!=":
-                    return x != y;
-                case "|":
-                    return x | y;
-                case "&":
-                    return x & y;
-
-                default:
-                    throw new TemplateException($"Operator \"{value}\" can not be applied operand \"Int16\" and \"Int16\"");
-            }
-        } 
-        #endregion
+        var i = Array.IndexOf<TypeCode>(NumberWeights, xCode);
+        var j = Array.IndexOf<TypeCode>(NumberWeights, yCode);
+        return i > j ? xCode : yCode;
 
     }
+    #endregion
+
 }

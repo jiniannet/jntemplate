@@ -30,7 +30,7 @@ namespace System.Collections.Concurrent
         public ConcurrentDictionary(IEqualityComparer<TKey> comparer)
             : base(comparer)
         {
-
+            locker = new object();
         }
 
         /// <summary>

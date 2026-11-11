@@ -4,17 +4,16 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// FunctionTag
+/// </summary>
+[Serializable]
+public class FunctionTag : ChildrenTag
 {
     /// <summary>
-    /// FunctaionTag
+    /// The method name of the tag.
     /// </summary>
-    [Serializable]
-    public class FunctionTag : ChildrenTag
-    {
-        /// <summary>
-        /// The method name of the tag.
-        /// </summary>
-        public string Name { get; set; }
-    }
+    public string? Name { get; set; }
 }

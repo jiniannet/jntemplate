@@ -6,46 +6,46 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace JinianNet.JNTemplate.Configuration
+namespace JinianNet.JNTemplate.Configuration;
+
+/// <summary>
+/// Extension methods.
+/// </summary>
+public static class ConfigExtensions
 {
+
     /// <summary>
-    /// Extension methods.
+    /// Creates a <see cref="Dictionary{TKey, TValue}"/> from an <see cref="IConfig"/>.
     /// </summary>
-    public static class ConfigExtensions
+    /// <param name="config">config</param>
+    /// <returns></returns>
+    public static Dictionary<string, string> ToDictionary(this IConfig config)
     {
-
-        /// <summary>
-        /// Creates a <see cref="Dictionary{TKey, TValue}"/> from an <see cref="IConfig"/>.
-        /// </summary>
-        /// <param name="config">config</param>
-        /// <returns></returns>
-        public static Dictionary<string, string> ToDictionary(this IConfig config)
+        var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        Type type = config.GetType();
+        PropertyInfo[] properties = type.GetProperties();
+        foreach (PropertyInfo p in properties)
         {
-            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            Type type = config.GetType();
-            PropertyInfo[] properties = type.GetProperties();
-            foreach (PropertyInfo p in properties)
+            if (!p.PropertyType.IsPrimitive
+                 && p.PropertyType.ToTypeCode() != TypeCode.String
+                 && !p.PropertyType.IsEnum)
             {
-                if (!p.PropertyType.IsPrimitive
-                     && p.PropertyType.FullName != "System.String")
-                {
-                    continue;
-                }
+                continue;
+            }
 #if NF20 || NF40 || NF35
-                object value = p.GetValue(config, null);
+            object? value = p.GetValue(config, null);
 #else
-                object value = p.GetValue(config);
+            object? value = p.GetValue(config);
 #endif
-                if (value == null)
-                {
-                    continue;
-                }
-
-                dict[p.Name] = value.ToString();
+            if (value == null)
+            {
+                continue;
             }
 
-            return dict;
+            dict[p.Name] = value.ToString() ?? string.Empty;
         }
 
+        return dict;
     }
+
 }

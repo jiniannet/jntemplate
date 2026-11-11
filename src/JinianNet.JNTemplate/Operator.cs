@@ -3,84 +3,83 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// Operator
+/// </summary>
+public enum Operator
 {
     /// <summary>
-    /// Operator
+    /// <![CDATA[none]]>
     /// </summary>
-    public enum Operator
-    {
-        /// <summary>
-        /// <![CDATA[none]]>
-        /// </summary>
-        None,
-        /// <summary>
-        /// <![CDATA[+]]>
-        /// </summary>
-        Add,
-        /// <summary>
-        /// <![CDATA[-]]>
-        /// </summary>
-        Subtract,
-        /// <summary>
-        /// <![CDATA[*]]>
-        /// </summary>
-        Multiply,
-        /// <summary>
-        /// <![CDATA[%]]>
-        /// </summary>
-        Remainder,
-        /// <summary>
-        /// <![CDATA[/]]>
-        /// </summary>
-        Divided,
-        /// <summary>
-        /// <![CDATA[|]]>
-        /// </summary>
-        LogicalOr,
-        /// <summary>
-        /// <![CDATA[||]]>
-        /// </summary>
-        Or,
-        /// <summary>
-        /// <![CDATA[&]]>
-        /// </summary>
-        LogicAnd,
-        /// <summary>
-        /// <![CDATA[&&]]>
-        /// </summary>
-        And,
-        /// <summary>
-        /// <![CDATA[>]]>
-        /// </summary>
-        GreaterThan,
-        /// <summary>
-        /// <![CDATA[>=]]>
-        /// </summary>
-        GreaterThanOrEqual,
-        /// <summary>
-        /// <![CDATA[<]]>
-        /// </summary>
-        LessThan,
-        /// <summary>
-        /// <![CDATA[<=]]>
-        /// </summary>
-        LessThanOrEqual,
-        /// <summary>
-        /// <![CDATA[==]]>
-        /// </summary>
-        Equal,
-        /// <summary>
-        /// <![CDATA[!=]]>
-        /// </summary>
-        NotEqual,
-        /// <summary>
-        /// <![CDATA[(]]>
-        /// </summary>
-        LeftParentheses,
-        /// <summary>
-        /// <![CDATA[)]]>
-        /// </summary>
-        RightParentheses
-    }
+    None,
+    /// <summary>
+    /// <![CDATA[+]]>
+    /// </summary>
+    Add,
+    /// <summary>
+    /// <![CDATA[-]]>
+    /// </summary>
+    Subtract,
+    /// <summary>
+    /// <![CDATA[*]]>
+    /// </summary>
+    Multiply,
+    /// <summary>
+    /// <![CDATA[%]]>
+    /// </summary>
+    Remainder,
+    /// <summary>
+    /// <![CDATA[/]]>
+    /// </summary>
+    Divided,
+    /// <summary>
+    /// <![CDATA[|]]>
+    /// </summary>
+    LogicalOr,
+    /// <summary>
+    /// <![CDATA[||]]>
+    /// </summary>
+    Or,
+    /// <summary>
+    /// <![CDATA[&]]>
+    /// </summary>
+    LogicAnd,
+    /// <summary>
+    /// <![CDATA[&&]]>
+    /// </summary>
+    And,
+    /// <summary>
+    /// <![CDATA[>]]>
+    /// </summary>
+    GreaterThan,
+    /// <summary>
+    /// <![CDATA[>=]]>
+    /// </summary>
+    GreaterThanOrEqual,
+    /// <summary>
+    /// <![CDATA[<]]>
+    /// </summary>
+    LessThan,
+    /// <summary>
+    /// <![CDATA[<=]]>
+    /// </summary>
+    LessThanOrEqual,
+    /// <summary>
+    /// <![CDATA[==]]>
+    /// </summary>
+    Equal,
+    /// <summary>
+    /// <![CDATA[!=]]>
+    /// </summary>
+    NotEqual,
+    /// <summary>
+    /// <![CDATA[(]]>
+    /// </summary>
+    LeftParentheses,
+    /// <summary>
+    /// <![CDATA[)]]>
+    /// </summary>
+    RightParentheses
 }

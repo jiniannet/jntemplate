@@ -8,49 +8,49 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
-{
-    /// <summary>
-    /// The <see cref="StringTag"/> registrar
-    /// </summary>
-    public class StringVisitor : TagVisitor<StringTag>, ITagVisitor
-    {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
-        {
-            if ((tc.Count == 3 || tc.Count == 2)
-                            && tc.First.TokenKind == TokenKind.StringStart
-                            && tc.Last.TokenKind == TokenKind.StringEnd
-                            )
-            {
-                var tag = new StringTag();
-                tag.Value = tc.Count == 3 ? tc[1].Text : string.Empty;
-                return tag;
-            }
-            return null;
-        }
+namespace JinianNet.JNTemplate.Parsers;
 
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
+/// <summary>
+/// The <see cref="StringTag"/> registrar
+/// </summary>
+public class StringVisitor : TagVisitor<StringTag>, ITagVisitor
+{
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
+    {
+        if ((tc.Count == 3 || tc.Count == 2)
+                        && tc.First.TokenKind == TokenKind.StringStart
+                        && tc.Last.TokenKind == TokenKind.StringEnd
+                        )
         {
-            var t = tag as StringTag;
-            var type = typeof(string);
-            var mb = context.CreateReutrnMethod<StringTag>(type);
-            var il = mb.GetILGenerator();
-            il.CallTypeTag(t);
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
+            var tag = new StringTag();
+            tag.Value = tc.Count == 3 ? tc[1].Text : string.Empty;
+            return tag;
         }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-            return typeof(string);
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as StringTag;
-            return t.Value;
-        }
+        return null;
+    }
+
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as StringTag;
+        if (t == null) throw new ArgumentNullException(nameof(tag));
+        var type = typeof(string);
+        var mb = context.CreateReturnMethod<StringTag>(type);
+        var il = mb.GetILGenerator();
+        il.CallTypeTag(t);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(string);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as StringTag;
+        return t?.Value;
     }
 }

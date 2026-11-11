@@ -1,9 +1,6 @@
-﻿using Xunit;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+﻿using JinianNet.JNTemplate.Test.Model;
 using JinianNet.JNTemplate.Test.ViewModel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -13,55 +10,12 @@ namespace JinianNet.JNTemplate.Test
     /// </summary>
     public partial class TagsTests : TagsTestBase
     {
-        public static int Value { get; set; } = 8888;
-
-
-        /// <summary>
-        /// 综合测试
-        /// </summary>
-        [Fact]
-        public void TestAll()
-        {
-            var templateContent = @"
-$foreach(model in list)
-    <div>list:${model.Id}</div>
-    <ul>
-    $if(model.Id == 2)
-        $foreach(m in getList(model.id))
-            <li>$m</li>
-        $end
-    $end
-    </ul>
-$end
-";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("list", new Entity[] {
-                new Entity{
-                    Id=1
-                },
-                new Entity {
-                    Id=2
-                },
-                new  Entity{
-                    Id=3
-                }
-            });
-            template.Set<Func<int, string[]>>("getList", (id) =>
-            {
-                return new string[] { $"a{id}", $"b{id}", $"c{id}" };
-            });
-            var html = template.Render();
-            var render = html.Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-            Assert.Equal("<div>list:1</div><ul></ul><div>list:2</div><ul><li>a2</li><li>b2</li><li>c2</li></ul><div>list:3</div><ul></ul>", render);
-        }
-
-
-
+        public static int Value = 70206;
         /// <summary>
         /// 测试属性
         /// </summary>
         [Fact]
-        public void TestOther()
+        public void TestForeachAndFunc()
         {
             var templateContent = @"$foreach(row in list)
                         <li><a href=""$func.GetHelpUrl(row)"">$row.Title</a></li>
@@ -81,13 +35,16 @@ $end
         public void TestProperty()
         {
             var templateContent = "$Site.Url";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("Site", new Entity
-            {
-                Url = "jiniannet.com"
-            });
-            var render = template.Render();
-            Assert.Equal("jiniannet.com", render);
+            var text = "jiniannet.com";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set("Site", new Entity
+                   {
+                       Url = "jiniannet.com"
+                   });
+               });
         }
 
         /// <summary>
@@ -97,15 +54,18 @@ $end
         public void TestEnumProperty()
         {
             var templateContent = "$model.Type";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("model", new DemoEntity
-            {
-                Id=100, 
-                Title = "jiniannet.com",
-                Type = DemoType.Yes
-            });
-            var render = template.Render();
-            Assert.Equal("Yes", render);
+            var text = "Yes";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set("model", new DemoEntity
+                   {
+                       Id = 100,
+                       Title = "jiniannet.com",
+                       Type = DemoType.Yes
+                   });
+               });
         }
 
         /// <summary>
@@ -115,10 +75,13 @@ $end
         public void TestStaticProperty()
         {
             var templateContent = "${TagsTests.Value}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.SetStaticType("TagsTests", typeof(TagsTests));
-            var render = template.Render();
-            Assert.Equal("8888", render);
+            var text = TagsTests.Value.ToString();
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.SetStaticType("TagsTests", typeof(TagsTests));
+               });
         }
 
 
@@ -130,10 +93,13 @@ $end
         public void TestEnum()
         {
             var templateContent = "$Plat";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("Plat", PlatformID.Win32NT);
-            var render = template.Render();
-            Assert.Equal("Win32NT", render);
+            var text = "Win32NT";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set("Plat", PlatformID.Win32NT);
+               });
         }
 
         /// <summary>
@@ -143,11 +109,13 @@ $end
         public void TestSet()
         {
             var templateContent = "$set(aGroupName = \"Begin\"+value)$aGroupName";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("value", 30);
-            var render = template.Render();
-
-            Assert.Equal("Begin30", render);
+            var text = "Begin30";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set("value", 30);
+               });
         }
 
 
@@ -158,11 +126,14 @@ $end
         [Fact]
         public void TestReference()
         {
-            var templateContent = "$date.Year.ToString().Length";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("date", DateTime.Now);
-            var render = template.Render();
-            Assert.Equal("4", render);
+            var templateContent = "$date.Year.ToString()";
+            var text = DateTime.Now.Year.ToString();
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set("date", DateTime.Now);
+               });
         }
 
         /// <summary>
@@ -172,10 +143,9 @@ $end
         public void TestComent()
         {
             var templateContent = "你好,$*使用简写符加星号可对代码注释*$欢迎使用";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("name", "jntemplate");
-            var render = template.Render();
-            Assert.Equal("你好,欢迎使用", render);
+            var text = "你好,欢迎使用";
+            TestCreateRunDoubleEngine(templateContent,
+               text);
         }
 
         /// <summary>
@@ -185,10 +155,13 @@ $end
         public void TestForSetOnBody()
         {
             var templateContent = @"$foreach(l in LinksList(true))$set(i=0)$set(i=i+1)${i}$end";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set<Func<bool, string[]>>("LinksList", (x) => new string[] { "1", "2", "3", "4" });
-            var render = template.Render();
-            Assert.Equal("1111", render);
+            var text = "1111";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set<Func<bool, string[]>>("LinksList", (x) => new string[] { "1", "2", "3", "4" });
+               });
         }
 
         /// <summary>
@@ -198,39 +171,42 @@ $end
         public void TestForSet()
         {
             var templateContent = @"$set(i=0)$foreach(l in LinksList(true))$set(i=i+1)${i}$end${i}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set<Func<bool, string[]>>("LinksList", (x) => new string[] { "1", "2", "3", "4" });
-            var render = template.Render();
-            Assert.Equal("12344", render);
+            var text = "12344";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template =>
+               {
+                   template.Set<Func<bool, string[]>>("LinksList", (x) => new string[] { "1", "2", "3", "4" });
+               });
         }
 
- 
+
         /// <summary>
         /// 测试DataTable
         /// </summary>
         [Fact]
-        public void TestTable1()
+        public void TestDataTableIntIndex()
         {
             var dt = new System.Data.DataTable();
             dt.Columns.Add("name", typeof(string));
             var dr = dt.NewRow();
-            dr["name"]="Han Meimei";
+            dr["name"] = "Han Meimei";
 
             dt.Rows.Add(dr);
 
 
             var templateContent = "$dt.Rows.get_Item(0).get_Item(\"name\")";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("dt",dt);
-            var render = template.Render();
-            Assert.Equal("Han Meimei", render.Trim());
+            var text = "Han Meimei";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template => template.Set("dt", dt));
         }
 
         /// <summary>
         /// 测试DataTable
         /// </summary>
         [Fact]
-        public void TestTable2()
+        public void TestDataTableStringIndex()
         {
             var dt = new System.Data.DataTable();
             dt.Columns.Add("name", typeof(string));
@@ -240,22 +216,18 @@ $end
             dt.Rows.Add(dr);
 
 
-            var templateContent = @"
-$foreach(dr in dt.Rows) 
-    $dr.get_Item(""name"")
-$end 
-";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("dt", dt);
-            var render = template.Render();
-            Assert.Equal("Han Meimei", render.Trim());
+            var templateContent = @"${foreach(dr in dt.Rows)}${dr.get_Item(""name"")}${end}";
+            var text = "Han Meimei";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template => template.Set("dt", dt));
         }
 
         /// <summary>
         /// 测试DataTable
         /// </summary>
         [Fact]
-        public void TestTable3()
+        public void TestDataTableItemArray()
         {
             var dt = new System.Data.DataTable();
             dt.Columns.Add("name", typeof(string));
@@ -263,49 +235,12 @@ $end
             dr["name"] = "Han Meimei";
 
             dt.Rows.Add(dr);
-            var templateContent = @" 
-$foreach(dr in dt.Rows) 
-    $foreach(data in dr.ItemArray)
-        值:$data
-    $end 
-$end
-";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("dt", dt);
-            var render = template.Render();
-            Assert.Equal("值:Han Meimei", render.Trim()); 
+            var templateContent = @"${foreach(dr in dt.Rows)}${foreach(data in dr.ItemArray)}值:${data}${end}${end}";
+            var text = "值:Han Meimei";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template => template.Set("dt", dt));
         }
- 
-
-
-#if !NETCOREAPP
-        ///// <summary>
-        ///// 测试方法的params参数  .NET core中不支持,从.V1.3.2以上版本不再支持
-        ///// </summary>
-        //[Fact]
-        //public void TestFunctionParams()
-        //{
-        //    var templateContent = "$fun.TestParams(\"字符串\",1,true)";
-        //    var template = Engine.CreateTemplate(templateContent);
-        //    template.Set("fun"]=( new TemplateMethod());
-        //    var render = template.Render();
-        //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
-        //}
-
-        ///// <summary>
-        ///// 测试方法的params参数2 .NET core中不支持,从.V1.3.2以上版本不再支持
-        ///// </summary>
-        //[Fact]
-        //public void TestFunctionParams2()
-        //{
-        //    var templateContent = "$fun.TestParams2(\"您输入的参数是有：\",\"字符串\",1,true)";
-        //    var template = Engine.CreateTemplate(templateContent);
-        //    template.Set("fun"]=( new TemplateMethod());
-        //    var render = template.Render();
-        //    Assert.Equal("您输入的参数是有：字符串 1 True ", render);
-        //}
-
-#endif
 
         /// <summary>
         /// 测试变量
@@ -314,11 +249,10 @@ $end
         public void TestVariable()
         {
             var templateContent = "($a)人";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("a", "1");
-            var render = template.Render();
-
-            Assert.Equal("(1)人", render);
+            var text = "(1)人";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template => template.Set("a", "1"));
         }
 
         /// <summary>
@@ -328,9 +262,10 @@ $end
         public void TestString()
         {
             var templateContent = "$set(str=\"3845254\\\\\\\"3366845\\\\\")$str";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("3845254\\\"3366845\\", render);
+
+            var text = "3845254\\\"3366845\\";
+            TestCreateRunDoubleEngine(templateContent,
+               text);
 
         }
 
@@ -341,9 +276,9 @@ $end
         public void TestEncodeString()
         {
             var templateContent = "var ${\"$\"}a =34;";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("var $a =34;", render);
+            var text = "var $a =34;";
+            TestCreateRunDoubleEngine(templateContent,
+               text);
         }
 
 
@@ -370,10 +305,13 @@ $end
             {
                 throw new System.Exception($"{fileName} 不存在");
             }
+
+
             var template = Engine.LoadTemplate(fileName);
-            template.Set("name", "jntemplate");
-            var render = template.Render();
-            Assert.Equal("你好，jntemplate", render);
+            var text = "你好，jntemplate";
+            TestLoadRunDoubleEngine(fileName,
+               text,
+               template => template.Set("name", "jntemplate"));
         }
 
 
@@ -381,12 +319,12 @@ $end
         /// 测试数字标签
         /// </summary>
         [Fact]
-        public void TestInt()
+        public void TestIntOutput()
         {
             var templateContent = "${12}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("12", render);
+            var text = "12";
+            TestCreateRunDoubleEngine(templateContent,
+               text);
 
         }
 
@@ -397,10 +335,11 @@ $end
         public void TestListOfTOutput()
         {
             var templateContent = "$data";
-            var template = Engine.CreateTemplate("TestListOfTOutput",templateContent);
-            template.Set("data", new List<object>());
-            var render = template.Render();
-            Assert.StartsWith("System.Collections.Generic.List`1", render);
+            var text = "System.Collections.Generic.List`1";
+            TestCreateRunDoubleEngine(templateContent,
+                null,
+                template => template.Set("data", new List<object>()),
+                result => Assert.StartsWith(text, result));
         }
 
         /// <summary>
@@ -410,19 +349,15 @@ $end
         public void TestAnonymousObject()
         {
             var templateContent = "${model.Id}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.SetAnonymousObject("model", new
-            {
-                Name = "user",
-                Id = 48
-            });
-            var render = template.Render();
-            Assert.Equal("48", render);
-
+            var text = "48";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template => template.SetAnonymousObject("model", new
+               {
+                   Name = "user",
+                   Id = 48
+               }));
         }
-
-
-
 
 
         /// <summary>
@@ -432,10 +367,8 @@ $end
         public void TestArrayTag()
         {
             var templateContent = @"${set(arr={1,2,3,4})}len:$arr.Length type:$arr";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("len:4 type:System.Object[]", render);
+            TestCreateRunDoubleEngine(templateContent,
+               "len:4 type:System.Object[]");
         }
 
 
@@ -447,10 +380,8 @@ $end
         public void TestMixArrayTag()
         {
             var templateContent = @"$set(arr={1,2,""jntemplate"",4,true})$arr[2].ToString()";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("jntemplate", render);
+            TestCreateRunDoubleEngine(templateContent,
+               "jntemplate");
         }
 
 
@@ -465,10 +396,8 @@ $set(arr={7,0,2,0,6})
 $for(i in arr)
 $i
 $end";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("70206", render.Replace("\r","").Replace("\n","").TrimEnd());
+            TestCreateRunDoubleEngine(templateContent, null, null,
+              render => Assert.Equal("70206", render.Replace("\r", "").Replace("\n", "").TrimEnd()));
         }
 
 
@@ -479,23 +408,107 @@ $end";
         public void TestNewline()
         {
             var templateContent = @"replace(/\n/g,<br>);";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal(templateContent, render);
+            TestCreateRunDoubleEngine(templateContent,
+               templateContent);
         }
 
-        ///// <summary>
-        ///// 测试标签大小写
-        ///// </summary>
-        //[Fact]
-        //public void TestIgnoreCase()
-        //{
-        //    var templateContent  = "$date.Year";
-        //    var template = Engine.CreateTemplate(templateContent);
-        //    template.Set("date"]=(DateTime.Now);
-        //    var render = template.Render();
-        //    Assert.Equal(DateTime.Now.Year.ToString(), render);
-        //}
+
+
+        [Fact]
+        public void TestForAndSetOr()
+        {
+            var templateContent = @"
+$set(goodsList=GetGoodList())
+${if(goodsList.Count>0)}
+	${set(i=0)}
+	${foreach(goodsModel in goodsList)}
+		${if(i==0)}
+		<div class=""goods1 almostGoodsBox"">
+			<a href='${goodsModel.Id}'>
+				<img src=""${goodsModel.ImgUrl}"" alt="""">
+				<p class=""goodsName goodsText"">${goodsModel.Title}</p>
+				$if(goodsModel.fields[""act_txt""]!=null)
+				<p class=""goodsDescrib goodsText"">${goodsModel.fields[""act_txt""]}</p>
+				${end}
+				<p class=""price goodsText"">￥${goodsModel.fields[""sell_price""]}</p>
+			</a>
+		</div>
+		${else}
+			<div class=""goods almostGoodsBox"">
+			    <a href='${goodsModel.Id}'>
+					<img src=""${goodsModel.ImgUrl}"" alt="""">
+					<p class=""goodsName goodsText"">${goodsModel.Title}</p>
+					$if(goodsModel.fields[""act_txt""]!=null)
+					<p class=""goodsDescrib goodsText"">${goodsModel.fields[""act_txt""]}</p>
+					${end}
+					<p class=""price goodsText"">￥${goodsModel.fields[""sell_price""]}</p>
+				</a>
+			</div>
+		${end}
+		${i++}
+	${end}
+${end}";
+
+            var result = @"<divclass=""goods1almostGoodsBox""><ahref='1'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称一</p><pclass=""goodsDescribgoodsText"">衣</p><pclass=""pricegoodsText"">￥200</p></a></div><divclass=""goodsalmostGoodsBox""><ahref='2'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称二</p><pclass=""goodsDescribgoodsText"">外</p><pclass=""pricegoodsText"">￥120</p></a></div><divclass=""goodsalmostGoodsBox""><ahref='3'><imgsrc=""pic.png""alt=""""><pclass=""goodsNamegoodsText"">商品名称三</p><pclass=""goodsDescribgoodsText"">中</p><pclass=""pricegoodsText"">￥15.80</p></a></div>";
+            TestCreateRunDoubleEngine(templateContent,
+                null,
+                template => template.Set<Func<List<Goods>>>("GetGoodList", () =>
+                {
+                    var list = new List<Goods>();
+                    list.Add(new Goods()
+                    {
+                        Id = 1,
+                        ImgUrl = "pic.png",
+                        Title = "商品名称一",
+                        Fields = new Dictionary<string, object>() {
+                         { "sell_price","200" },
+                         { "act_txt","衣" },
+                     }
+                    });
+                    list.Add(new Goods()
+                    {
+                        Id = 2,
+                        ImgUrl = "pic.png",
+                        Title = "商品名称二",
+                        Fields = new Dictionary<string, object>() {
+                         { "sell_price","120" },
+                         { "act_txt","外" },
+                     }
+                    });
+                    list.Add(new Goods()
+                    {
+                        Id = 3,
+                        ImgUrl = "pic.png",
+                        Title = "商品名称三",
+                        Fields = new Dictionary<string, object>() {
+                         { "sell_price","15.80" },
+                         { "act_txt","中" },
+                     }
+                    });
+                    return list;
+                }),
+                render => Assert.Equal(result, render.Replace("\r", "").Replace("\t", "").Replace("\n", "").Replace(" ", "")));
+        }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Fact]
+        public void TestNotThrowExceptions()
+        {
+            var templateContent = "<li>1</li><li>$model.id</li><li>3</li>";
+            var text = "<li>1</li><li></li><li>3</li>";
+
+            var config = Configuration.EngineConfig.CreateDefault();
+            config.ThrowExceptions = false;
+
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                engine => engine.Configure(config),
+                template => template.Set("model", new object()));
+        }
     }
 }

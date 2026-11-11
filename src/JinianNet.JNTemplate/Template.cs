@@ -2,9 +2,6 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using JinianNet.JNTemplate.CodeCompilation;
-using JinianNet.JNTemplate.Exceptions;
-using JinianNet.JNTemplate.Hosting;
 using JinianNet.JNTemplate.Resources;
 using System;
 using System.IO;
@@ -13,77 +10,77 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// An template object.
+/// </summary>
+public class Template : TemplateBase, ITemplate
 {
+    private readonly IResourceReader reader;
+
     /// <summary>
-    /// An template object.
+    /// Initializes a new instance of the <see cref="Template"/> class
     /// </summary>
-    public class Template : TemplateBase, ITemplate
+    /// <param name="context">The <see cref="TemplateContext"/>.</param>
+    /// <param name="reader">The template contents.</param>
+    public Template(TemplateContext context,
+        IResourceReader reader) : base(context)
     {
-        private readonly IResourceReader reader;
+        this.reader = reader;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Template"/> class
-        /// </summary>
-        /// <param name="context">The <see cref="TemplateContext"/>.</param>
-        /// <param name="reader">The template contents.</param>
-        public Template(TemplateContext context,
-            IResourceReader reader)
+    /// <inheritdoc />
+    public bool IsCompileMode => Context.IsCompileMode;
+
+    /// <inheritdoc />
+    public virtual void Render(TextWriter writer, TemplateContext context)
+    {
+        try
         {
-            this.Context = context;
-            this.reader = reader;
+            GetResult(context)?.Render(writer, context);
         }
-
-        /// <inheritdoc />
-        public bool IsCompileMode => Context.IsCompileMode;
-
-        /// <inheritdoc />
-        public virtual void Render(TextWriter writer, TemplateContext context)
+        catch (System.Exception e)
         {
-            try
-            {
-                GetResult(context)?.Render(writer, context);
-            }
-            catch (System.Exception e)
-            {
-                context.AddError(e);
-            }
+            context.AddError(e);
         }
+    }
 
-        /// <inheritdoc />
-        public void Render(TextWriter writer)
-        {
-            Render(writer, this.Context);
-        }
+    /// <inheritdoc />
+    public void Render(TextWriter writer)
+    {
+        Render(writer, this.Context);
+    }
 
-        private ITemplateResult GetResult(TemplateContext context)
-        {
-            if (!this.Context.IsCompileMode)
-                return context.InterpretTemplate(this.TemplateKey, this.reader);
-            return context.CompileTemplate(this.TemplateKey, this.reader);
-        }
+    private ITemplateResult GetResult(TemplateContext context)
+    {
+        if (this.TemplateKey == null)
+            this.TemplateKey = Guid.NewGuid().ToString("N");
+        if (!this.Context.IsCompileMode)
+            return context.InterpretTemplate(this.TemplateKey, this.reader);
+        return context.CompileTemplate(this.TemplateKey, this.reader);
+    }
 
 #if !NF40 && !NF45 && !NF35 && !NF20
-        /// <inheritdoc />
-        public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            try
-            {
-                return GetResult(context)?.RenderAsync(writer, context, cancellationToken);
-            }
-            catch (System.Exception e)
-            {
-                context.AddError(e);
-                return Task.FromException(e);
-            }
+            return GetResult(context)?.RenderAsync(writer, context, cancellationToken)!;
         }
-
-        /// <inheritdoc />
-        public Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default)
+        catch (System.Exception e)
         {
-            return RenderAsync(writer, this.Context);
+            context.AddError(e);
+            return Task.FromException(e);
         }
-#endif
     }
+
+    /// <inheritdoc />
+    public Task RenderAsync(TextWriter writer, CancellationToken cancellationToken = default)
+    {
+        return RenderAsync(writer, this.Context, cancellationToken);
+    }
+#endif
 }

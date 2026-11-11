@@ -4,13 +4,12 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// LayoutTag
+/// </summary>
+[Serializable]
+public class LayoutTag : LoadTag
 {
-    /// <summary>
-    /// LayoutTag
-    /// </summary>
-    [Serializable]
-    public class LayoutTag : LoadTag
-    {
-    }
 }

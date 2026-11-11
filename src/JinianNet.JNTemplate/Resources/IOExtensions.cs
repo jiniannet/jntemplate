@@ -2,69 +2,67 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
 using System.IO;
 
-namespace JinianNet.JNTemplate.Resources
+namespace JinianNet.JNTemplate.Resources;
+
+/// <summary>
+/// 
+/// </summary>
+public static class IOExtensions
 {
     /// <summary>
-    /// 
+    /// Returns a value that indicates whether the specified file path is fixed to a  specific drive or UNC path.
     /// </summary>
-    public static class IOExtensions
+    /// <param name="path">A file path.</param>
+    /// <returns>true if the path is fixed to a specific drive or UNC path; false if the path  is relative to the current drive or working directory.</returns>
+    public static bool IsAbsolutePath(this string path)
     {
-        /// <summary>
-        /// Returns a value that indicates whether the specified file path is fixed to a  specific drive or UNC path.
-        /// </summary>
-        /// <param name="path">A file path.</param>
-        /// <returns>true if the path is fixed to a specific drive or UNC path; false if the path  is relative to the current drive or working directory.</returns>
-        public static bool IsAbsolutePath(this string path)
-        {
 #if NFW || NETSTANDARD2_0
-            return IsWindowsAbsolutePath(path) || IsUnixAbsolutePath(path);
+        return IsWindowsAbsolutePath(path) || IsUnixAbsolutePath(path);
 #else
-            return Path.IsPathFullyQualified(path);
+        return Path.IsPathFullyQualified(path);
 #endif
-        }
+    }
 
 
-        /// <summary>
-        /// Whether the windows path.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static bool IsWindowsAbsolutePath(string path)
+    /// <summary>
+    /// Whether the windows path.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private static bool IsWindowsAbsolutePath(string path)
+    {
+        if (path == null || path.Length < 2)
         {
-            if (path == null || path.Length < 2)
-            {
-                return false;
-            }
-            if ((path[0] == Path.DirectorySeparatorChar || path[0] == '/') && path[1] == path[0]) //ex. \\mypc\wwwroot\index.html
-            {
-                return true;
-            }
-            return (path.Length >= 3)
-                && IsValidDriveChar(path[0])
-                && (path[1] == Path.VolumeSeparatorChar)
-                && (path[2] == Path.DirectorySeparatorChar || path[2] == '/'); //ex. d:\wwwroot\index.html
-
+            return false;
         }
-
-        /// <summary>
-        /// Returns true if the given character is a valid drive letter
-        /// </summary>
-        private static bool IsValidDriveChar(char value)
+        if ((path[0] == Path.DirectorySeparatorChar || path[0] == '/') && path[1] == path[0]) //ex. \\mypc\wwwroot\index.html
         {
-            return ((value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z'));
+            return true;
         }
+        return (path.Length >= 3)
+            && IsValidDriveChar(path[0])
+            && (path[1] == Path.VolumeSeparatorChar)
+            && (path[2] == Path.DirectorySeparatorChar || path[2] == '/'); //ex. d:\wwwroot\index.html
 
-        /// <summary>
-        /// Whether the unix path.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static bool IsUnixAbsolutePath(string path)
-        {
-            return path != null && path.Length > 0 && path[0] == Path.DirectorySeparatorChar; //ex. \home\wwwroot\index.html
-        }
+    }
+
+    /// <summary>
+    /// Returns true if the given character is a valid drive letter
+    /// </summary>
+    private static bool IsValidDriveChar(char value)
+    {
+        return ((value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z'));
+    }
+
+    /// <summary>
+    /// Whether the unix path.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private static bool IsUnixAbsolutePath(string path)
+    {
+        return path != null && path.Length > 0 && path[0] == Path.DirectorySeparatorChar; //ex. \home\wwwroot\index.html
     }
 }

@@ -1,13 +1,15 @@
-version: 2.4.4.{build}
+version: 2.5.0.{build}
 image:
-- Visual Studio 2022
-- Ubuntu2204
+- Visual Studio 2026
+- Ubuntu2404
 configuration: Release
 platform: Any CPU
 before_build:
+- ps: .\build\fix-target-framework.ps1
 - sh: >-
-    dotnet --version
-
+    chmod +x ./build/fix-target-framework.sh
+    bash ./build/fix-target-framework.sh
+    dotnet --version 
     dotnet restore
 build:
   project: JinianNet.JNTemplate.sln

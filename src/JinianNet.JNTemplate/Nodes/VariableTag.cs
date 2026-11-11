@@ -4,17 +4,16 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// variable
+/// </summary>
+[Serializable]
+public class VariableTag : ChildrenTag
 {
     /// <summary>
-    /// variable
+    /// The name of tag.
     /// </summary>
-    [Serializable]
-    public class VariableTag : ChildrenTag
-    {
-        /// <summary>
-        /// The name of tag.
-        /// </summary>
-        public string Name { get; set; }
-    }
+    public string? Name { get; set; }
 }

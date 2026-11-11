@@ -3,528 +3,532 @@
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
 #define ALLOWCOMMENT
-using System;
 using System.Collections.Generic;
 using JinianNet.JNTemplate.Nodes;
 using System.Collections;
 using JinianNet.JNTemplate.Runtime;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// The lexer of template.
+/// </summary>
+public class TemplateLexer : IEnumerable<Token>, IEnumerator<Token>
 {
+    private FlagMode flagMode;
+    private readonly string document;
+    private int column;
+    private int line;
+    private TokenKind kind;
+    private int startColumn;
+    private int startLine;
+    private CharScanner scanner;
+    private List<Token> collection;
+    private Stack<string> pos;
+    private readonly string prefix;
+    private readonly char flag;
+    private readonly string suffix;
+    private readonly bool disableLogogram;
+    private Token? currentToken;
+
+
     /// <summary>
-    /// The lexer of template.
+    /// Initializes a new instance of the <see cref="TemplateLexer"/> class
     /// </summary>
-    public class TemplateLexer : IEnumerable<Token>, IEnumerator<Token>
+    /// <param name="text">The template contents.</param>
+    /// <param name="tagPrefix">the tag prefix .</param>
+    /// <param name="tagSuffix">the tag suffix.</param>
+    /// <param name="tagflag">the tag flag.</param>
+    /// <param name="disableFlag">whether disablee logogram</param>
+    public TemplateLexer(string text,
+        string tagPrefix,
+        string tagSuffix,
+        char tagflag,
+        bool disableFlag)
     {
-        private FlagMode flagMode;
-        private readonly string document;
-        private int column;
-        private int line;
-        private TokenKind kind;
-        private int startColumn;
-        private int startLine;
-        private CharScanner scanner;
-        private List<Token> collection;
-        private Stack<string> pos;
-        private readonly string prefix;
-        private readonly char flag;
-        private readonly string suffix;
-        private readonly bool disableeLogogram;
+        this.document = text;
+        this.prefix = tagPrefix;
+        this.flag = tagflag;
+        this.suffix = tagSuffix;
+        this.disableLogogram = disableFlag;
+        this.scanner = new CharScanner(this.document);
+        this.collection = new List<Token>();
+        this.pos = new Stack<string>();
+        Reset();
+    }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TemplateLexer"/> class
+    /// </summary>
+    /// <param name="text">The template contents.</param>
+    /// <param name="options">the options  of the <see cref="ILexerOptions"/>.</param>
+    public TemplateLexer(string text, ILexerOptions options)
+        : this(text, options.TagPrefix, options.TagSuffix, options.TagFlag, options.DisableLogogram)
+    {
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TemplateLexer"/> class
-        /// </summary>
-        /// <param name="text">The template contents.</param>
-        /// <param name="tagPrefix">the tag prefix .</param>
-        /// <param name="tagSuffix">the tag suffix.</param>
-        /// <param name="tagflag">the tag flag.</param>
-        /// <param name="disableFlag">whether disablee logogram</param>
-        public TemplateLexer(string text,
-            string tagPrefix,
-            string tagSuffix,
-            char tagflag,
-            bool disableFlag)
+    }
+
+    /// <summary>
+    /// Reset the <see cref="TemplateLexer"/>.
+    /// </summary>
+    public void Reset()
+    {
+        this.flagMode = FlagMode.None;
+        this.line = 1;
+        this.column = 1;
+        this.kind = TokenKind.Text;
+        this.startColumn = 1;
+        this.startLine = 1;
+        this.scanner = new CharScanner(this.document);
+        this.collection = new List<Token>();
+        this.pos = new Stack<string>();
+    }
+
+    /// <inheritdoc />
+    public Token Current => currentToken ?? throw new System.InvalidOperationException();
+
+    /// <inheritdoc />
+    object IEnumerator.Current
+    {
+        get
         {
-            this.document = text;
-            this.prefix = tagPrefix;
-            this.flag = tagflag;
-            this.suffix = tagSuffix;
-            this.disableeLogogram = disableFlag;
-            Reset();
+            return this.Current;
+        }
+    }
+
+    private Token? GetToken(TokenKind tokenKind)
+    {
+
+        string? text;
+        if (tokenKind == TokenKind.StringEnd)
+        {
+            text = this.scanner.GetEscapeString();
+        }
+        else
+        {
+            text = this.scanner.GetString();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TemplateLexer"/> class
-        /// </summary>
-        /// <param name="text">The template contents.</param>
-        /// <param name="options">the options  of the <see cref="ILexerOptions"/>.</param>
-        public TemplateLexer(string text, ILexerOptions options)
-            : this(text, options.TagPrefix, options.TagSuffix, options.TagFlag, options.DisableeLogogram)
+        Token token = new Token(this.kind, text ?? "");
+        this.kind = tokenKind;
+        if ((token.TokenKind == TokenKind.Text || token.TokenKind == TokenKind.EOF) && text == null)
         {
-
+            return null;
         }
+        token.BeginLine = this.startLine;
+        token.BeginColumn = this.startColumn;
+        token.EndColumn = this.column;
+        token.EndLine = this.line;
+        this.startColumn = this.column;
+        this.startLine = this.line;
+        return token;
+    }
 
-        /// <summary>
-        /// Reset the <see cref="TemplateLexer"/>.
-        /// </summary>
-        public void Reset()
+    private bool Move()
+    {
+        return Move(1);
+    }
+    private bool Move(int i)
+    {
+        if (this.scanner.Next(i))
         {
-            this.flagMode = FlagMode.None;
-            this.line = 1;
-            this.column = 1;
-            this.kind = TokenKind.Text;
-            this.startColumn = 1;
-            this.startLine = 1;
-            this.scanner = new CharScanner(this.document);
-            this.collection = new List<Token>();
-            this.pos = new Stack<string>();
-        }
-
-        /// <inheritdoc />
-        public Token Current { get; set; }
-
-        /// <inheritdoc />
-        object IEnumerator.Current
-        {
-            get
+            if (this.scanner.Read() == '\n')
             {
-                return this.Current;
-            }
-        }
-
-        private Token GetToken(TokenKind tokenKind)
-        {
-
-            string text;
-            if (tokenKind == TokenKind.StringEnd)
-            {
-                text = this.scanner.GetEscapeString();
+                this.line++;
+                this.column = 1;
             }
             else
             {
-                text = this.scanner.GetString();
+                this.column += i;
             }
-
-            Token token = new Token(this.kind, text ?? "");
-            this.kind = tokenKind;
-            if ((token.TokenKind == TokenKind.Text || token.TokenKind == TokenKind.EOF) && text == null)
-            {
-                return null;
-            }
-            token.BeginLine = this.startLine;
-            token.BeginColumn = this.startColumn;
-            token.EndColumn = this.column;
-            token.BeginLine = this.line;
-            this.startColumn = this.column;
-            this.startLine = this.line;
-            return token;
+            return true;
         }
 
-        private bool Move()
-        {
-            return Move(1);
-        }
-        private bool Move(int i)
-        {
-            if (this.scanner.Next(i))
-            {
-                if (this.scanner.Read() == '\n')
-                {
-                    this.line++;
-                    this.column = 1;
-                }
-                else
-                {
-                    this.column += i;
-                }
-                return true;
-            }
+        return false;
+    }
 
+    private bool IsTagStart()
+    {
+        if (this.scanner.IsEnd() || this.flagMode != FlagMode.None)
+        {
             return false;
         }
-
-        private bool IsTagStart()
+        bool find = true;
+        for (int i = 0; i < this.prefix.Length; i++)
         {
-            if (this.scanner.IsEnd() || this.flagMode != FlagMode.None)
+            if (this.prefix[i] != this.scanner.Read(i))
+            {
+                find = false;
+                break;
+            }
+        }
+        if (find)
+        {
+            this.flagMode = FlagMode.Full;
+            return true;
+        }
+        if (this.scanner.Read() == this.flag)
+        {
+#if ALLOWCOMMENT
+            if (this.scanner.Read(1) == '*')
+            {
+                this.flagMode = FlagMode.Comment;
+                return true;
+            }
+#endif
+
+            if (disableLogogram)
             {
                 return false;
             }
-            bool find = true;
-            for (int i = 0; i < this.prefix.Length; i++)
+
+            if (char.IsLetter(this.scanner.Read(1)))
             {
-                if (this.prefix[i] != this.scanner.Read(i))
-                {
-                    find = false;
-                    break;
-                }
-            }
-            if (find)
-            {
-                this.flagMode = FlagMode.Full;
+                this.flagMode = FlagMode.Logogram;
                 return true;
             }
-            if (this.scanner.Read() == this.flag)
+        }
+        return false;
+    }
+
+    private bool IsTagEnd()
+    {
+        if (this.flagMode != FlagMode.None && this.pos.Count == 0)
+        {
+            if (this.scanner.IsEnd())
             {
-#if ALLOWCOMMENT
-                if (this.scanner.Read(1) == '*')
+                return true;
+            }
+            if (this.scanner.Read() != '.' && this.kind != TokenKind.TagStart)
+            {
+                if (this.flagMode == FlagMode.Full)
                 {
-                    this.flagMode = FlagMode.Comment;
+                    for (int i = 0; i < this.suffix.Length; i++)
+                    {
+                        if (this.suffix[i] != this.scanner.Read(i))
+                        {
+                            return false;
+                        }
+                    }
+
                     return true;
                 }
-#endif
-
-                if (disableeLogogram)
+#if ALLOWCOMMENT
+                else if (this.flagMode == FlagMode.Comment)
                 {
-                    return false;
+                    return this.scanner.Read() == '*' && this.scanner.Read(1) == this.flag;
                 }
-
-                if (char.IsLetter(this.scanner.Read(1)))
+#endif
+                else
                 {
-                    this.flagMode = FlagMode.Logogram;
+                    char value = this.scanner.Read();
+                    char prev = this.scanner.Read(-1);
+                    if (((value == '(' || Utility.AllowWord(value) || value == '[') && Utility.AllowWord(prev))
+                    || (Utility.AllowWord(value) && (prev == '.')))
+                    {
+                        return false;
+                    }
                     return true;
                 }
             }
+
+        }
+        return false;
+    }
+
+
+    private int GetPrevCharCount(char c)
+    {
+        int i = 1;
+        while (this.scanner.Read(-i) == c)
+        {
+            i++;
+        }
+        return i - 1;
+    }
+
+    /// <inheritdoc />
+    public bool MoveNext()
+    {
+        if (this.kind == TokenKind.EOF)
+        {
             return false;
         }
-
-        private bool IsTagEnd()
+        Token? token = null;
+        do
         {
-            if (this.flagMode != FlagMode.None && this.pos.Count == 0)
+            if (this.flagMode == FlagMode.None)
             {
-                if (this.scanner.IsEnd())
+                if (IsTagStart())
                 {
-                    return true;
-                }
-                if (this.scanner.Read() != '.' && this.kind != TokenKind.TagStart)
-                {
-                    if (this.flagMode == FlagMode.Full)
+                    token = GetToken(TokenKind.TagStart);
+                    if (this.flagMode == FlagMode.Full && this.prefix.Length > 1)
                     {
-                        for (int i = 0; i < this.suffix.Length; i++)
-                        {
-                            if (this.suffix[i] != this.scanner.Read(i))
-                            {
-                                return false;
-                            }
-                        }
-
-                        return true;
+                        Move(this.prefix.Length - 1);
                     }
 #if ALLOWCOMMENT
                     else if (this.flagMode == FlagMode.Comment)
                     {
-                        return this.scanner.Read() == '*' && this.scanner.Read(1) == this.flag;
+                        Move(1);
                     }
 #endif
+                    continue;
+                }
+                if (this.kind != TokenKind.TagEnd)
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                var c = this.scanner.Read();
+                if (c == '"')
+                {
+                    if (this.pos.Count > 0 && this.pos.Peek() == "\"")
+                    {
+                        if (this.scanner.Read(-1) != '\\'
+                            || GetPrevCharCount('\\') % 2 == 0)
+                        {
+                            token = GetToken(TokenKind.StringEnd);
+                            this.pos.Pop();
+                        }
+                        continue;
+                    }
                     else
                     {
-                        char value = this.scanner.Read();
-                        char prev = this.scanner.Read(-1);
-                        if (((value == '(' || Utility.AllowWord(value) || value == '[') && Utility.AllowWord(prev))
-                        || (Utility.AllowWord(value) && (prev == '.')))
+                        if (this.kind == TokenKind.TagStart
+                            || this.kind == TokenKind.LeftBracket
+                           || this.kind == TokenKind.LeftParentheses
+                           //|| this.kind == TokenKind.Operator
+                           || this.kind == TokenKind.Arithmetic
+                           || this.kind == TokenKind.Logic
+                           || this.kind == TokenKind.Punctuation
+                           || this.kind == TokenKind.Comma
+                           || this.kind == TokenKind.Colon
+                           || this.kind == TokenKind.LeftBrace
+                           || this.kind == TokenKind.Space)
                         {
-                            return false;
+                            token = GetToken(TokenKind.StringStart);
+                            this.pos.Push("\"");
+                            continue;
                         }
-                        return true;
+
                     }
                 }
 
+                if (this.kind == TokenKind.StringStart)
+                {
+                    token = GetToken(TokenKind.String);
+                    continue;
+                }
+
+                if (this.kind == TokenKind.String)
+                {
+                    continue;
+                }
+
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    this.pos.Push(this.scanner.Read().ToString());
+                }
+                else if (this.pos.Count > 0 &&
+                    ((c == ')' && this.pos.Peek() == "(")
+                    || (c == ']' && this.pos.Peek() == "[")
+                    || (c == '}' && this.pos.Peek() == "{")))// && this.pos.Count > 2
+                {
+                    this.pos.Pop();
+                }
+                else if (IsTagEnd())
+                {
+                    token = GetEndToken();
+                    continue;
+                }
             }
-            return false;
-        }
+            TokenKind tk = GetTokenKind();
 
-
-        private int GetPrevCharCount(char c)
-        {
-            int i = 1;
-            while (this.scanner.Read(-i) == c)
+            //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
+            if (
+                (((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
+                && (tk != TokenKind.Number || this.kind != TokenKind.TextData)
+                //&& (this.kind == TokenKind.Number && tk != TokenKind.Dot)
+                )
+                || (this.kind == tk && (tk == TokenKind.LeftBracket || tk == TokenKind.LeftParentheses || tk == TokenKind.LeftBrace || tk == TokenKind.RightBracket || tk == TokenKind.RightParentheses || tk == TokenKind.RightBrace))
+                ) && (tk != TokenKind.Dot || this.kind != TokenKind.Number))
+            //|| (this.kind != TokenKind.Number && tk == TokenKind.Dot)
             {
-                i++;
+                token = GetToken(tk);
             }
-            return i-1;
-        }
 
-        /// <inheritdoc />
-        public bool MoveNext()
+        }
+        while (Move() && token == null);
+
+        if (token == null)
         {
             if (this.kind == TokenKind.EOF)
             {
                 return false;
             }
-            Token token = null;
-            do
-            {
-                if (this.flagMode == FlagMode.None)
-                {
-                    if (IsTagStart())
-                    {
-                        token = GetToken(TokenKind.TagStart);
-                        if (this.flagMode == FlagMode.Full && this.prefix.Length > 1)
-                        {
-                            Move(this.prefix.Length - 1);
-                        }
-#if ALLOWCOMMENT
-                        else if (this.flagMode == FlagMode.Comment)
-                        {
-                            Move(1);
-                        }
-#endif
-                        continue;
-                    }
-                    if (this.kind != TokenKind.TagEnd)
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    var c = this.scanner.Read();
-                    if (c == '"')
-                    {
-                        if (this.pos.Count > 0 && this.pos.Peek() == "\"")
-                        {
-                            if (this.scanner.Read(-1) != '\\'
-                                || GetPrevCharCount('\\') % 2 == 0)
-                            {
-                                token = GetToken(TokenKind.StringEnd);
-                                this.pos.Pop();
-                            }
-                            continue;
-                        }
-                        else
-                        {
-                            if (this.kind == TokenKind.TagStart
-                                || this.kind == TokenKind.LeftBracket
-                               || this.kind == TokenKind.LeftParentheses
-                               //|| this.kind == TokenKind.Operator
-                               || this.kind == TokenKind.Arithmetic
-                               || this.kind == TokenKind.Logic
-                               || this.kind == TokenKind.Punctuation
-                               || this.kind == TokenKind.Comma
-                               || this.kind == TokenKind.Colon
-                               || this.kind == TokenKind.LeftBrace
-                               || this.kind == TokenKind.Space)
-                            {
-                                token = GetToken(TokenKind.StringStart);
-                                this.pos.Push("\"");
-                                continue;
-                            }
-
-                        }
-                    }
-
-                    if (this.kind == TokenKind.StringStart)
-                    {
-                        token = GetToken(TokenKind.String);
-                        continue;
-                    }
-
-                    if (this.kind == TokenKind.String)
-                    {
-                        continue;
-                    }
-
-                    if (c == '(' || c == '[' || c == '{')
-                    {
-                        this.pos.Push(this.scanner.Read().ToString());
-                    }
-                    else if (this.pos.Count > 0 &&
-                        ((c == ')' && this.pos.Peek() == "(")
-                        || (c == ']' && this.pos.Peek() == "[")
-                        || (c == '}' && this.pos.Peek() == "{")))// && this.pos.Count > 2
-                    {
-                        this.pos.Pop();
-                    }
-                    else if (IsTagEnd())
-                    {
-                        token = GetEndToken();
-                        continue;
-                    }
-                }
-                TokenKind tk = GetTokenKind();
-
-                //if (this.kind == tk || (tk == TokenKind.Number && this.kind == TokenKind.TextData))
-                if (
-                    (((this.kind != tk || this.kind == TokenKind.LeftParentheses || this.kind == TokenKind.RightParentheses)
-                    && (tk != TokenKind.Number || this.kind != TokenKind.TextData)
-                    //&& (this.kind == TokenKind.Number && tk != TokenKind.Dot)
-                    )
-                    || (this.kind == tk && (tk == TokenKind.LeftBracket || tk == TokenKind.LeftParentheses || tk == TokenKind.LeftBrace || tk == TokenKind.RightBracket || tk == TokenKind.RightParentheses || tk == TokenKind.RightBrace))
-                    ) && (tk != TokenKind.Dot || this.kind != TokenKind.Number))
-                //|| (this.kind != TokenKind.Number && tk == TokenKind.Dot)
-                {
-                    token = GetToken(tk);
-                }
-
-            }
-            while (Move() && token == null);
-
+            token = GetToken(TokenKind.EOF);
             if (token == null)
-            {
-                if (this.kind == TokenKind.EOF)
-                {
-                    return false;
-                }
-                token = GetToken(TokenKind.EOF);
-            }
-            this.Current = token;
-            return true;
+                return false;
         }
+        currentToken = token;
+        return true;
+    }
 
-        private Token GetEndToken()
+    private Token? GetEndToken()
+    {
+        var token = GetToken(TokenKind.TagEnd);
+        if (this.flagMode == FlagMode.Full)
         {
-            var token = GetToken(TokenKind.TagEnd);
-            if (this.flagMode == FlagMode.Full)
-            {
-                Move(this.suffix.Length - 1);
-            }
+            Move(this.suffix.Length - 1);
+        }
 #if ALLOWCOMMENT
-            else if (this.flagMode == FlagMode.Comment)
-            {
-                Move(1);
-            }
+        else if (this.flagMode == FlagMode.Comment)
+        {
+            Move(1);
+        }
 #endif
-            else if (this.flagMode == FlagMode.Logogram)
-            {
-                Move(-1);
-            }
-            this.flagMode = FlagMode.None;
-            return token;
-        }
-
-        private TokenKind GetTokenKind()
+        else if (this.flagMode == FlagMode.Logogram)
         {
-            var c = this.scanner.Read();
-            switch (c)
-            {
-                case '+':
-                case '-':
-                    if (char.IsNumber(this.scanner.Read(1)) &&
-                        (this.kind != TokenKind.Number
-                        && this.kind != TokenKind.RightBracket
-                        && this.kind != TokenKind.RightParentheses
-                        && this.kind != TokenKind.RightBrace
-                        && this.kind != TokenKind.String
-                        && this.kind != TokenKind.Tag
-                        && this.kind != TokenKind.TextData))
-                        return TokenKind.Number;
-                    return TokenKind.Arithmetic;
-                case '|':
-                    if (this.kind == TokenKind.Logic || this.scanner.Read(1) == c)
-                        return TokenKind.Logic;
-                    return TokenKind.BitwiseOr;
-                case '&':
-                    if (this.kind == TokenKind.Logic || this.scanner.Read(1) == c)
-                        return TokenKind.Logic;
-                    return TokenKind.BitwiseAnd;
-                default:
-                    return GetTokenKind(this.scanner.Read());
-            }
+            Move(-1);
         }
+        this.flagMode = FlagMode.None;
+        return token;
+    }
 
-        private TokenKind GetTokenKind(char c)
+    private TokenKind GetTokenKind()
+    {
+        var c = this.scanner.Read();
+        switch (c)
         {
-            if (this.flagMode == FlagMode.None)
-            {
-                return TokenKind.Text;
-            }
-            if (this.flagMode == FlagMode.Comment)
-            {
-                return TokenKind.Comment;
-            }
-            switch (c)
-            {
-                case ' ':
-                    return TokenKind.Space;
-                case '(':
-                    return TokenKind.LeftParentheses;
-                case ')':
-                    return TokenKind.RightParentheses;
-                case '[':
-                    return TokenKind.LeftBracket;
-                case ']':
-                    return TokenKind.RightBracket;
-                case '{':
-                    return TokenKind.LeftBrace;
-                case '}':
-                    return TokenKind.RightBrace;
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
+            case '+':
+            case '-':
+                if (char.IsNumber(this.scanner.Read(1)) &&
+                    (this.kind != TokenKind.Number
+                    && this.kind != TokenKind.RightBracket
+                    && this.kind != TokenKind.RightParentheses
+                    && this.kind != TokenKind.RightBrace
+                    && this.kind != TokenKind.String
+                    && this.kind != TokenKind.Tag
+                    && this.kind != TokenKind.TextData))
                     return TokenKind.Number;
-                case '*':
-                case '-':
-                case '+':
-                case '/':
-                case '%':
-                    return TokenKind.Arithmetic;
-                case '>':
-                case '<':
-                case '=':
-                case '!':
-                case '&':
-                case '|':
+                return TokenKind.Arithmetic;
+            case '|':
+                if (this.kind == TokenKind.Logic || this.scanner.Read(1) == c)
                     return TokenKind.Logic;
-                case '~':
-                case '^':
-                case '?':
-                    return TokenKind.Operator;
-                case ',':
-                    return TokenKind.Comma;
-                case '.':
-                    return TokenKind.Dot;
-                case '"':
-                    return TokenKind.StringStart;
-                case ';':
-                    return TokenKind.Punctuation;
-                case ':':
-                    return TokenKind.Colon;
-                default:
-                    return TokenKind.TextData;
-            }
+                return TokenKind.BitwiseOr;
+            case '&':
+                if (this.kind == TokenKind.Logic || this.scanner.Read(1) == c)
+                    return TokenKind.Logic;
+                return TokenKind.BitwiseAnd;
+            default:
+                return GetTokenKind(this.scanner.Read());
         }
+    }
 
-        /// <inheritdoc />
-        public IEnumerator<Token> GetEnumerator()
+    private TokenKind GetTokenKind(char c)
+    {
+        if (this.flagMode == FlagMode.None)
         {
-            return this;
+            return TokenKind.Text;
         }
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator()
+        if (this.flagMode == FlagMode.Comment)
         {
-            return this.GetEnumerator();
+            return TokenKind.Comment;
         }
-        /// <inheritdoc />
-        public void Dispose()
+        switch (c)
         {
+            case ' ':
+                return TokenKind.Space;
+            case '(':
+                return TokenKind.LeftParentheses;
+            case ')':
+                return TokenKind.RightParentheses;
+            case '[':
+                return TokenKind.LeftBracket;
+            case ']':
+                return TokenKind.RightBracket;
+            case '{':
+                return TokenKind.LeftBrace;
+            case '}':
+                return TokenKind.RightBrace;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                return TokenKind.Number;
+            case '*':
+            case '-':
+            case '+':
+            case '/':
+            case '%':
+                return TokenKind.Arithmetic;
+            case '>':
+            case '<':
+            case '=':
+            case '!':
+            case '&':
+            case '|':
+                return TokenKind.Logic;
+            case '~':
+            case '^':
+            case '?':
+                return TokenKind.Operator;
+            case ',':
+                return TokenKind.Comma;
+            case '.':
+                return TokenKind.Dot;
+            case '"':
+                return TokenKind.StringStart;
+            case ';':
+                return TokenKind.Punctuation;
+            case ':':
+                return TokenKind.Colon;
+            default:
+                return TokenKind.TextData;
+        }
+    }
 
-        }
+    /// <inheritdoc />
+    public IEnumerator<Token> GetEnumerator()
+    {
+        return this;
+    }
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return this.GetEnumerator();
+    }
+    /// <inheritdoc />
+    public void Dispose()
+    {
 
-        /// <inheritdoc />
-        public virtual Token[] Execute()
+    }
+
+    /// <inheritdoc />
+    public virtual Token[] Execute()
+    {
+        if (collection.Count == 0)
         {
-            if (collection.Count == 0)
+            while (MoveNext())
             {
-                while (MoveNext())
+                if (this.Current != null)
                 {
-                    if (this.Current != null)
+                    if (this.collection.Count > 0 && this.collection[this.collection.Count - 1].Next == null)
                     {
-                        if (this.collection.Count > 0 && this.collection[this.collection.Count - 1].Next == null)
-                        {
-                            this.collection[this.collection.Count - 1].Next = this.Current;
-                        }
-                        this.collection.Add(this.Current);
+                        this.collection[this.collection.Count - 1].Next = this.Current;
                     }
+                    this.collection.Add(this.Current);
                 }
             }
-            return collection.ToArray();
         }
+        return [.. collection];
     }
 }

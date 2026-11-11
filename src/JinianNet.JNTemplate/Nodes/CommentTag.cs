@@ -4,23 +4,22 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// CommentTag
+/// </summary>
+[Serializable]
+public class CommentTag : SpecialTag
 {
-    /// <summary>
-    /// CommentTag
-    /// </summary>
-    [Serializable]
-    public class CommentTag : SpecialTag
+
+    /// <inheritdoc />
+    public override bool Out => false;
+
+    /// <inheritdoc />
+    public override string ToString()
     {
-
-        /// <inheritdoc />
-        public override bool Out => false;
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.FirstToken.ToString();
-        }
-
+        return this.FirstToken?.ToString() ?? string.Empty;
     }
+
 }

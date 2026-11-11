@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net20;net35;net40;net46;net48;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+		<TargetFrameworks>net11.0;net10.0;net9.0;net8.0;net7.0;net6.0;net5.0;net48;net47;net46;net40;net35;net20;netcoreapp3.1;netstandard2.1;netstandard2.0</TargetFrameworks>
 		<AssemblyName>JinianNet.JNTemplate</AssemblyName>
 		<RootNamespace>JinianNet.JNTemplate</RootNamespace>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild> 
-		<VersionPatch>$([System.DateTime]::UtcNow.Subtract($([System.DateTime]::new(2025,5,21))).TotalDays.ToString("0"))</VersionPatch>
-		<Version>2.4.4</Version>
+		<VersionPatch>$([System.DateTime]::UtcNow.Subtract($([System.DateTime]::new(2026,11,11))).TotalDays.ToString("0"))</VersionPatch>
+		<Version>2.5.0</Version>
 		<Authors>JinianNet.com</Authors>
 		<Company>JinianNet.com</Company>
 		<Product>JNTemplate</Product>
@@ -21,7 +21,7 @@
 		<PackageTags>templating engine template 模板引擎</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage />
-		<SignAssembly>True</SignAssembly>
+		<SignAssembly Condition="Exists('jiniannet.snk')">True</SignAssembly>
 		<PreBuildEvent></PreBuildEvent>
 		<PostBuildEvent></PostBuildEvent>
 		<AssemblyOriginatorKeyFile>jiniannet.snk</AssemblyOriginatorKeyFile>
@@ -32,6 +32,7 @@
 		<PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
 		<Title>jntemplate</Title>
 		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 
@@ -53,14 +54,15 @@
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">bin\Debug\net8.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net9.0'">bin\Debug\net9.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net10.0'">bin\Debug\net10.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net11.0'">bin\Debug\net11.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<TreatSpecificWarningsAsErrors />
 		<NoWarn>1701;1702;1705</NoWarn>
 		<Optimize>True</Optimize>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NETCOREAPP;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;DEBUG;NS;NS2_0;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;DEBUG;NS;NS2_1;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;DEBUG;NC;NC2_1;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;DEBUG;NC;NC3_1;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;DEBUG;NFW;NF20</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;DEBUG;NFW;NF35</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;DEBUG;NFW;NF40</DefineConstants>
@@ -68,12 +70,13 @@
 		<DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;DEBUG;NFW;NF46</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;DEBUG;NFW;NF47</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;DEBUG;NFW;NF48</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NET5;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;DEBUG;NET6;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;DEBUG;NET7;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net9.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net10.0'">TRACE;DEBUG;NET8;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;DEBUG;NT5;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;DEBUG;NT6;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;DEBUG;NT7;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;DEBUG;NT8;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net9.0'">TRACE;DEBUG;NT9;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net10.0'">TRACE;DEBUG;NT10;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net11.0'">TRACE;DEBUG;NT11;NET</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -94,10 +97,11 @@
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net8.0'">bin\Release\net8.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net9.0'">bin\Release\net9.0\JinianNet.JNTemplate.xml</DocumentationFile>
 		<DocumentationFile Condition="'$(TargetFramework)' == 'net10.0'">bin\Release\net10.0\JinianNet.JNTemplate.xml</DocumentationFile>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD;NETSTANDARD2_0;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NETCOREAPP;NET</DefineConstants>
+		<DocumentationFile Condition="'$(TargetFramework)' == 'net11.0'">bin\Release\net11.0\JinianNet.JNTemplate.xml</DocumentationFile>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.0'">TRACE;RELEASE;NS;NS2_0;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">TRACE;RELEASE;NS;NS2_1;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp2.1'">TRACE;RELEASE;NC;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.1'">TRACE;RELEASE;NC;NET</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net20'">TRACE;RELEASE;NFW;NF20</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net35'">TRACE;RELEASE;NFW;NF35</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net40'">TRACE;RELEASE;NFW;NF40</DefineConstants>
@@ -105,13 +109,14 @@
 		<DefineConstants Condition="'$(TargetFramework)' == 'net46'">TRACE;RELEASE;NFW;NF46</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net47'">TRACE;RELEASE;NFW;NF47</DefineConstants>
 		<DefineConstants Condition="'$(TargetFramework)' == 'net48'">TRACE;RELEASE;NFW;NF48</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;RELEASE;NET5;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;RELEASE;NET6;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;RELEASE;NET7;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;RELEASE;NET8;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net9.0'">TRACE;RELEASE;NET9;NET</DefineConstants>
-		<DefineConstants Condition="'$(TargetFramework)' == 'net10.0'">TRACE;RELEASE;NET10;NET</DefineConstants>
-	</PropertyGroup>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">TRACE;RELEASE;NT5;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">TRACE;RELEASE;NT6;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net7.0'">TRACE;RELEASE;NT7;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net8.0'">TRACE;RELEASE;NT8;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net9.0'">TRACE;RELEASE;NT9;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net10.0'">TRACE;RELEASE;NT10;NET</DefineConstants>
+		<DefineConstants Condition="'$(TargetFramework)' == 'net11.0'">TRACE;RELEASE;NT11;NET</DefineConstants>
+	</PropertyGroup>  
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
 	  <WarningLevel>7</WarningLevel>

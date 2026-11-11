@@ -4,19 +4,17 @@
  ********************************************************************************/
 #define ALLOWCOMMENT
 using JinianNet.JNTemplate.Hosting;
-using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// The tag registrar
+/// </summary>
+public interface IRegistrar
 {
     /// <summary>
-    /// The tag registrar
+    /// Register the tag.
     /// </summary>
-    public interface IRegistrar
-    {
-        /// <summary>
-        /// Regiser the tag.
-        /// </summary>
-        /// <param name="host">The <see cref="IHost"/>.</param>
-        void Regiser(IHost host);
-    }
+    /// <param name="host">The <see cref="IHost"/>.</param>
+    void Register(IHost host);
 }

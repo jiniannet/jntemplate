@@ -5,51 +5,46 @@
 using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="TextTag"/> registrar
+/// </summary>
+public class TextVisitor : ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="TextTag"/> registrar
-    /// </summary>
-    public class TextVisitor : ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
-        {
-            return null;
-        }
+        return null;
+    }
 
-        /// <inheritdoc />
-        public string Name => nameof(TextTag);
+    /// <inheritdoc />
+    public string Name => nameof(TextTag);
 
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-            var t = tag as TextTag;
-            if (!string.IsNullOrEmpty(t.Text))
-            {
-                var type = typeof(string);
-                var mb = context.CreateReutrnMethod<TextTag>(type);
-                var il = mb.GetILGenerator();
-                il.Emit(OpCodes.Ldstr, t.Text);
-                il.Emit(OpCodes.Ret);
-                return mb.GetBaseDefinition();
-            }
-            return null;
-        }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-            return typeof(string);
-        }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as TextTag;
-            return t.ToString(context.OutMode);
-        } 
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var t = tag as TextTag;
+        var type = typeof(string);
+        var mb = context.CreateReturnMethod<TextTag>(type);
+        var il = mb.GetILGenerator();
+        il.Emit(OpCodes.Ldstr, t?.Text ?? string.Empty);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(string);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as TextTag;
+        return t?.ToString(context.OutMode);
     }
 }

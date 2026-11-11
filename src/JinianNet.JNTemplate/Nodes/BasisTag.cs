@@ -4,15 +4,14 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// BasisTag
+/// </summary>
+[Serializable]
+public abstract class BasisTag : Tag, ITag
 {
-    /// <summary>
-    /// BasisTag
-    /// </summary>
-    [Serializable]
-    public abstract class BasisTag : Tag, ITag
-    {
-        /// <inheritdoc />
-        public override bool IsSimple => true;
-    }
+    /// <inheritdoc />
+    public override bool IsSimple => true;
 }

@@ -8,46 +8,45 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="CommentTag"/> registrar
+/// </summary>
+public class CommentVisitor : TagVisitor<CommentTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="CommentTag"/> registrar
-    /// </summary>
-    public class CommentVisitor : TagVisitor<CommentTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count == 1
+            && tc[0].TokenKind == TokenKind.Comment
+            )
         {
-            if (tc.Count == 1
-                && tc[0].TokenKind == TokenKind.Comment
-                )
-            {
-                var tag = new CommentTag();
-                tag.FirstToken = tc[0];
-                return tag;
-            }
-            return null;
+            var tag = new CommentTag();
+            tag.FirstToken = tc[0];
+            return tag;
         }
+        return null;
+    }
 
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-            var type = typeof(void);
-            var mb = context.CreateReutrnMethod<CommentTag>(type);
-            var il = mb.GetILGenerator();
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
-        }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
-        {
-            return typeof(void);
-        }
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var type = typeof(void);
+        var mb = context.CreateReturnMethod<CommentTag>(type);
+        var il = mb.GetILGenerator();
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(void);
+    }
 
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            return null;
-        }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        return null;
     }
 }

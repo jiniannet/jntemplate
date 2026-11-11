@@ -2,187 +2,188 @@
  Copyright (c) jiniannet (http://www.jiniannet.com). All rights reserved.
  Licensed under the MIT license. See licence.txt file in the project root for full license information.
  ********************************************************************************/
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
 using JinianNet.JNTemplate.Exceptions;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// 
+/// </summary>
+public static class TokenCollectionExtensions
 {
     /// <summary>
     /// 
     /// </summary>
-    public static class TokenCollectionExtensions
+    /// <param name="coll">The <see cref="TokenCollection"/>.</param>
+    /// <returns></returns>
+    public static TokenCollection TrimParentheses(this TokenCollection coll)
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="coll">The <see cref="TokenCollection"/>.</param>
-        /// <returns></returns>
-        public static TokenCollection TrimParentheses(this TokenCollection coll)
+        var tc = coll;
+        while (tc != null && InsideParentheses(tc, 0, tc.Count))
         {
-            var tc = coll;
-            while (InsideParentheses(tc, 0, tc?.Count ?? 0))
+            var next = tc[1, tc.Count - 1];
+            if (next == null)
             {
-                tc = tc[1, tc.Count - 1];
+                break;
             }
-            return tc;
+            tc = next;
         }
+        return tc!;
+    }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="coll">The <see cref="TokenCollection"/>.</param>
-        /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
-        /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
-        /// <returns></returns>
-        public static bool InsideParentheses(this TokenCollection coll, int start, int end)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="coll">The <see cref="TokenCollection"/>.</param>
+    /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
+    /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
+    /// <returns></returns>
+    public static bool InsideParentheses(this TokenCollection coll, int start, int end)
+    {
+        if (coll == null
+            || coll.Count <= 2
+            || coll.First.TokenKind != TokenKind.LeftParentheses
+            || coll.Last.TokenKind != TokenKind.RightParentheses)
         {
-            if (coll == null
-                || coll.Count <= 2
-                || coll.First.TokenKind != TokenKind.LeftParentheses
-                || coll.Last.TokenKind != TokenKind.RightParentheses)
+            return false;
+        }
+        var pos = new Stack<TokenKind>();
+        for (int i = start; i < end; i++)
+        {
+            if (coll[i].TokenKind == TokenKind.LeftParentheses)
             {
-                return false;
+                pos.Push(coll[i].TokenKind);
+                continue;
             }
-            var pos = new Stack<TokenKind>();
-            for (int i = start; i < end; i++)
+            if (coll[i].TokenKind == TokenKind.RightParentheses)
             {
-                if (coll[i].TokenKind == TokenKind.LeftParentheses)
+                pos.Pop();
+                if (pos.Count == 0
+                    && i != (end - 1))
                 {
-                    pos.Push(coll[i].TokenKind);
+                    return false;
+                }
+            }
+        }
+        if (pos.Count > 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Splits a collection into substrings that are based on the kind in the separator array.
+    /// </summary>
+    /// <param name="coll">The <see cref="TokenCollection"/>.</param>
+    /// <param name="kinds">A kind array.</param>
+    /// <returns></returns>
+    public static TokenCollection[] Split(this TokenCollection coll, params TokenKind[] kinds)
+    {
+        return Split(coll, 0, coll.Count, kinds);
+    }
+
+    /// <summary>
+    /// Splits a collection into substrings that are based on the kind in the separator array.
+    /// </summary>
+    /// <param name="coll">The <see cref="TokenCollection"/>.</param>
+    /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
+    /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
+    /// <param name="kinds">A kind array.</param>
+    /// <returns></returns>
+    public static TokenCollection[] Split(this TokenCollection coll, int start, int end, params TokenKind[] kinds)
+    {
+        List<TokenCollection> tcs = new List<TokenCollection>();
+        if (end > coll.Count)
+        {
+            end = coll.Count;
+        }
+        int x = start, y = 0;
+        var pos = new Stack<TokenKind>();
+        for (int i = start; i < end; i++)
+        {
+            y = i;
+            if (coll[i].TokenKind == TokenKind.LeftParentheses ||
+                coll[i].TokenKind == TokenKind.LeftBracket
+                || coll[i].TokenKind == TokenKind.LeftBrace)
+            {
+                pos.Push(coll[i].TokenKind);
+                if (pos.Count == 1 && (IsInKinds(coll[i].TokenKind, kinds)))
+                {
+                    if (x != y)
+                    {
+                        tcs.Add(coll[x, y]);
+                        x = y;
+                    }
                     continue;
                 }
-                if (coll[i].TokenKind == TokenKind.RightParentheses)
+            }
+            if (coll[i].TokenKind == TokenKind.RightParentheses ||
+               coll[i].TokenKind == TokenKind.RightBrace
+               || coll[i].TokenKind == TokenKind.RightBracket
+               )
+            {
+                if (pos.Count > 0 &&
+                    (
+                    (pos.Peek() == TokenKind.LeftParentheses && coll[i].TokenKind == TokenKind.RightParentheses)
+                    ||
+                    (pos.Peek() == TokenKind.LeftBrace && coll[i].TokenKind == TokenKind.RightBrace)
+                    ||
+                    (pos.Peek() == TokenKind.LeftBracket && coll[i].TokenKind == TokenKind.RightBracket)
+                    ))
                 {
                     pos.Pop();
-                    if (pos.Count == 0
-                        && i != (end - 1))
-                    {
-                        return false;
-                    }
-                }
-            }
-            if (pos.Count > 0)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Splits a collection into substrings that are based on the kind in the separator array.
-        /// </summary>
-        /// <param name="coll">The <see cref="TokenCollection"/>.</param>
-        /// <param name="kinds">A kind array.</param>
-        /// <returns></returns>
-        public static TokenCollection[] Split(this TokenCollection coll, params TokenKind[] kinds)
-        {
-            return Split(coll, 0, coll.Count, kinds);
-        }
-
-        /// <summary>
-        /// Splits a collection into substrings that are based on the kind in the separator array.
-        /// </summary>
-        /// <param name="coll">The <see cref="TokenCollection"/>.</param>
-        /// <param name="start">The zero-based <see cref="TokenCollection"/> index at which the range starts.</param>
-        /// <param name="end">The zero-based <see cref="TokenCollection"/> index at which the range ends.</param>
-        /// <param name="kinds">A kind array.</param>
-        /// <returns></returns>
-        public static TokenCollection[] Split(this TokenCollection coll, int start, int end, params TokenKind[] kinds)
-        {
-            List<TokenCollection> tcs = new List<TokenCollection>();
-            if (end > coll.Count)
-            {
-                end = coll.Count;
-            }
-            int x = start, y = 0;
-            var pos = new Stack<TokenKind>();
-            for (int i = start; i < end; i++)
-            {
-                y = i;
-                if (coll[i].TokenKind == TokenKind.LeftParentheses ||
-                    coll[i].TokenKind == TokenKind.LeftBracket
-                    || coll[i].TokenKind == TokenKind.LeftBrace)
-                {
-                    pos.Push(coll[i].TokenKind);
-                    if (pos.Count == 1 && (IsInKinds(coll[i].TokenKind, kinds)))
+                    if (pos.Count == 0 && (IsInKinds(coll[i].TokenKind, kinds)))
                     {
                         if (x != y)
                         {
-                            tcs.Add(coll[x, y]);
+                            tcs.Add(coll[x, ++y]);
                             x = y;
                         }
                         continue;
                     }
                 }
-                if (coll[i].TokenKind == TokenKind.RightParentheses ||
-                   coll[i].TokenKind == TokenKind.RightBrace
-                   || coll[i].TokenKind == TokenKind.RightBracket
-                   )
+                else
                 {
-                    if (pos.Count > 0 &&
-                        (
-                        (pos.Peek() == TokenKind.LeftParentheses && coll[i].TokenKind == TokenKind.RightParentheses)
-                        ||
-                        (pos.Peek() == TokenKind.LeftBrace && coll[i].TokenKind == TokenKind.RightBrace)
-                        ||
-                        (pos.Peek() == TokenKind.LeftBracket && coll[i].TokenKind == TokenKind.RightBracket)
-                        ))
-                    {
-                        pos.Pop();
-                        if (pos.Count == 0 && (IsInKinds(coll[i].TokenKind, kinds)))
-                        {
-                            if (x != y)
-                            {
-                                tcs.Add(coll[x, ++y]);
-                                x = y;
-                            }
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        throw new ParseException($"syntax error near {coll[i].ToString()} on {coll.ToString()}", coll[i].BeginLine, coll[i].BeginColumn);
-                    }
-                }
-                if (pos.Count == 0 && IsInKinds(coll[i].TokenKind, kinds))
-                {
-                    if (y > x)
-                    {
-                        tcs.Add(coll[x, y]);
-                    }
-                    x = i + 1;
-                    var child = new TokenCollection();
-                    child.Add(coll[i]);
-                    tcs.Add(child);
-                }
-
-                if (i == end - 1 && y >= x)
-                {
-                    tcs.Add(coll[x, y + 1]);
-                    x = i + 1;
+                    throw new ParseException($"syntax error near {coll[i].ToString()} on {coll.ToString()}", coll[i].BeginLine, coll[i].BeginColumn);
                 }
             }
-            return tcs.ToArray();
+            if (pos.Count == 0 && IsInKinds(coll[i].TokenKind, kinds))
+            {
+                if (y > x)
+                {
+                    tcs.Add(coll[x, y]);
+                }
+                x = i + 1;
+                var child = new TokenCollection();
+                child.Add(coll[i]);
+                tcs.Add(child);
+            }
+
+            if (i == end - 1 && y >= x)
+            {
+                tcs.Add(coll[x, y + 1]);
+                x = i + 1;
+            }
         }
+        return [.. tcs];
+    }
 
-        private static bool IsInKinds(TokenKind kind, params TokenKind[] kinds)
+    private static bool IsInKinds(TokenKind kind, params TokenKind[] kinds)
+    {
+        if (kinds == null || kinds.Length == 0)
         {
-            if (kinds == null || kinds.Length == 0)
-            {
-                return false;
-            }
-            for (int i = 0; i < kinds.Length; i++)
-            {
-                if (kind == kinds[i])
-                {
-                    return true;
-                }
-            }
             return false;
         }
+        for (int i = 0; i < kinds.Length; i++)
+        {
+            if (kind == kinds[i])
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

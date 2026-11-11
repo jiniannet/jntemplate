@@ -1,8 +1,4 @@
 ﻿using JinianNet.JNTemplate.Resources;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JinianNet.JNTemplate.Test
 {

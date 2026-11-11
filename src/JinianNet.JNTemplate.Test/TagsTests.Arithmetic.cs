@@ -1,10 +1,4 @@
-﻿using JinianNet.JNTemplate;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace JinianNet.JNTemplate.Test
+﻿namespace JinianNet.JNTemplate.Test
 {
     /// <summary>
     /// 算术测试
@@ -20,10 +14,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestExpression()
         {
             var templateContent = "${8+2*5}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("18", render);
+            TestCreateRunDoubleEngine(templateContent, "18");
         }
 
         /// <summary>
@@ -33,13 +24,11 @@ namespace JinianNet.JNTemplate.Test
         public void TestNegativeExpressio()
         {
             var templateContent = "${3000-1000--200-20}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("2180", render);
+            TestCreateRunDoubleEngine(templateContent, "2180");
         }
 
 
-        
+
         /// <summary>
         /// 测试算术混合逻辑运算
         /// </summary>
@@ -47,9 +36,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestMixLogic()
         {
             var templateContent = @"${10000 != 0 +  0 + 10000}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("False", render);
+            TestCreateRunDoubleEngine(templateContent, "False");
 
         }
 
@@ -61,10 +48,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestArithmetic()
         {
             var templateContent = @"${10000 * 2 + 2 *  4 * 10 / 8 - 24 + 0 + 0 + 0 + 0 * 1 * 2 * 3 * 4}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("19986", render);
+            TestCreateRunDoubleEngine(templateContent, "19986");
 
         }
         /// <summary>
@@ -74,9 +58,7 @@ namespace JinianNet.JNTemplate.Test
         public void TestComplicatedExpression()
         {
             var templateContent = "${(8+2)*(5+5) - ((2+8)/2)}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("95", render);
+            TestCreateRunDoubleEngine(templateContent, "95");
         }
 
     }

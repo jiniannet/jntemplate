@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/doc/">
+    <File Path="appveyor.yml" />
+    <File Path="Developer-ReadMe" />
+    <File Path="License.txt" />
+    <File Path="README-zh-CN.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/JinianNet.JNTemplate.Test/JinianNet.JNTemplate.Test.csproj" />
+    <Project Path="src/JinianNet.JNTemplate/JinianNet.JNTemplate.csproj" />
+  </Folder>
+</Solution>

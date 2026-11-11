@@ -4,17 +4,16 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// EndTag
+/// </summary>
+[Serializable]
+public class EndTag : SpecialTag
 {
-    /// <summary>
-    /// EndTag
-    /// </summary>
-    [Serializable]
-    public class EndTag : SpecialTag
-    {
-        /// <inheritdoc />
-        public override bool Out => false;
-        /// <inheritdoc />
-        public override bool IsPrimitive => true;
-    }
+    /// <inheritdoc />
+    public override bool Out => false;
+    /// <inheritdoc />
+    public override bool IsPrimitive => true;
 }

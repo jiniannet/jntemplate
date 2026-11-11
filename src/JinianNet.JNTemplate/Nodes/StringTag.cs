@@ -4,14 +4,13 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
-{
-    /// <summary>
-    /// StringTag
-    /// </summary>
-    [Serializable]
-    public class StringTag : TypeTag<string>
-    {
+namespace JinianNet.JNTemplate.Nodes;
 
-    }
+/// <summary>
+/// StringTag
+/// </summary>
+[Serializable]
+public class StringTag : TypeTag<string>
+{
+
 }

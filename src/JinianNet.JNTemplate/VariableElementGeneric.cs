@@ -4,21 +4,19 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate
+namespace JinianNet.JNTemplate;
+
+/// <summary>
+/// Represents an variable element.
+/// </summary>
+public class VariableElement<T>
 {
     /// <summary>
-    /// Represents an variable element.
+    /// Gets or sets the type of the element.
     /// </summary>
-    public class VariableElement<T>
-    {
-        /// <summary>
-        /// Gets or sets the type of the element.
-        /// </summary>
-        public Type Type { get; set; }
-        /// <summary>
-        /// Gets or sets the value of the element.
-        /// </summary>
-        public T Value { get; set; }
-    }
-
+    public Type? Type { get; set; }
+    /// <summary>
+    /// Gets or sets the value of the element.
+    /// </summary>
+    public T? Value { get; set; } = default;
 }

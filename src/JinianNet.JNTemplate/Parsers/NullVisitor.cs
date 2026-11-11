@@ -8,44 +8,43 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JinianNet.JNTemplate.Parsers
-{
-    /// <summary>
-    /// The <see cref="NullTag"/> registrar
-    /// </summary>
-    public class NullVisitor : TagVisitor<NullTag>, ITagVisitor
-    {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
-        {
-            if (tc.Count == 1
-                && tc.First.TokenKind == TokenKind.TextData
-                && tc.First.Text == "null")
-            {
-                return new NullTag();
-            }
-            return null;
-        }
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
-        {
-            var type = typeof(object);
-            var mb = context.CreateReutrnMethod<NullTag>(type);
-            var il = mb.GetILGenerator();
-            il.Emit(OpCodes.Ldnull);
-            il.Emit(OpCodes.Ret);
-            return mb.GetBaseDefinition();
+namespace JinianNet.JNTemplate.Parsers;
 
-        }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
+/// <summary>
+/// The <see cref="NullTag"/> registrar
+/// </summary>
+public class NullVisitor : TagVisitor<NullTag>, ITagVisitor
+{
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
+    {
+        if (tc.Count == 1
+            && tc.First.TokenKind == TokenKind.TextData
+            && tc.First.Text == "null")
         {
-            return typeof(object);
+            return new NullTag();
         }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            return null;
-        }
+        return null;
+    }
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        var type = typeof(object);
+        var mb = context.CreateReturnMethod<NullTag>(type);
+        var il = mb.GetILGenerator();
+        il.Emit(OpCodes.Ldnull);
+        il.Emit(OpCodes.Ret);
+        return mb.GetBaseDefinition();
+
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return typeof(object);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        return null;
     }
 }

@@ -13,103 +13,102 @@ using System.Threading.Tasks;
 #endif
 using JinianNet.JNTemplate.Exceptions;
 
-namespace JinianNet.JNTemplate.CodeCompilation
+namespace JinianNet.JNTemplate.CodeCompilation;
+
+/// <summary>
+/// Represents the results of compilation that are returned from a compiler. 
+/// </summary>
+/// <summary>
+/// 
+/// </summary>
+public abstract class CompilerResult : ICompilerResult
 {
-    /// <summary>
-    /// Represents the results of compilation that are returned from a compiler. 
-    /// </summary>
+
+    /// <inheritdoc />
+    public virtual void Render(TextWriter writer, TemplateContext context)
+    {
+        if (writer == null)
+        {
+            writer = new StringWriter();
+        }
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+        RenderResult(writer, context);
+    }
+
     /// <summary>
     /// 
     /// </summary>
-    public abstract class CompilerResult : ICompilerResult
+    /// <param name="writer"></param>
+    /// <param name="context"></param>
+    protected abstract void RenderResult(TextWriter writer, TemplateContext context);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="exception"></param>
+    /// <param name="line"></param>
+    /// <param name="col"></param>
+    /// <param name="source"></param>
+    public static void ThrowException(TemplateContext ctx, Exception exception, int line, int col, string source)
     {
-
-        /// <inheritdoc />
-        public virtual void Render(TextWriter writer, TemplateContext context)
+        TemplateException templateException;
+        if (exception is TemplateException tempException)
         {
-            if (writer == null)
-            {
-                writer = new StringWriter();
-            }
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            RenderResult(writer, context);
+            templateException = tempException;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="context"></param>
-        protected abstract void RenderResult(TextWriter writer, TemplateContext context);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="exception"></param>
-        /// <param name="line"></param>
-        /// <param name="col"></param>
-        /// <param name="source"></param>
-        public static void ThrowException(TemplateContext ctx, Exception exception, int line, int col, string source)
+        else
         {
-            TemplateException templateException;
-            if (exception is TemplateException tempException)
-            {
-                templateException = tempException;
-            }
-            else
-            {
-                string message = string.Concat(exception.Message, " on ", source, " [line:", line, ",col:", col, "]");
-                templateException = new RuntimeException(message, exception);
-                templateException.Line = line;
-                templateException.Column = col;
-            }
-            ctx.AddError(templateException);
+            string message = string.Concat(exception.Message, " on ", source, " [line:", line, ",col:", col, "]");
+            templateException = new RuntimeException(message, exception);
+            templateException.Line = line;
+            templateException.Column = col;
         }
+        ctx.AddError(templateException);
+    }
 
 #if !NF40 && !NF45 && !NF35 && !NF20
-        /// <inheritdoc />
-        public virtual async Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public virtual async Task RenderAsync(TextWriter writer, TemplateContext context, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (writer == null)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (writer == null)
-            {
-                writer = new StringWriter();
-            }
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            var textWriter = writer;
-            var templateContext = context;
-
-            var tasks = GetRenderTask(templateContext);
-            foreach(var t in tasks)
-            {
-                if (t is Task<string> task)
-                {
-                    var text = await task;
-                    await textWriter.WriteAsync(text);
-                    continue;
-                }
-                if (t is string str)
-                {
-                    await textWriter.WriteAsync(str);
-                    continue;
-                }
-                await textWriter.WriteAsync(t?.ToString());
-            } 
+            writer = new StringWriter();
         }
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+        var textWriter = writer;
+        var templateContext = context;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected abstract List<object> GetRenderTask(TemplateContext context);
-#endif
+        var tasks = GetRenderTask(templateContext);
+        foreach(var t in tasks)
+        {
+            if (t is Task<string> task)
+            {
+                var text = await task;
+                await textWriter.WriteAsync(text);
+                continue;
+            }
+            if (t is string str)
+            {
+                await textWriter.WriteAsync(str);
+                continue;
+            }
+            await textWriter.WriteAsync(t?.ToString());
+        } 
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    protected abstract List<object> GetRenderTask(TemplateContext context);
+#endif
 }

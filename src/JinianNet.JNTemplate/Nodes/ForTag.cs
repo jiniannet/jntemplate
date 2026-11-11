@@ -4,31 +4,30 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// ForTag
+/// </summary>
+[Serializable]
+public class ForTag : ComplexTag
 {
     /// <summary>
-    /// ForTag
+    /// Gets or sets the initial of the tag.
     /// </summary>
-    [Serializable]
-    public class ForTag : ComplexTag
-    {
-        /// <summary>
-        /// Gets or sets the initial of the tag.
-        /// </summary>
-        public ITag Initial { get; set; }
+    public ITag? Initial { get; set; }
 
-        /// <summary>
-        /// Gets or sets the condition of the tag.
-        /// </summary>
-        public ITag Condition { get; set; }
+    /// <summary>
+    /// Gets or sets the condition of the tag.
+    /// </summary>
+    public ITag? Condition { get; set; }
 
-        /// <summary>
-        /// do things.
-        /// </summary>
-        public ITag Do { get; set; }
+    /// <summary>
+    /// do things.
+    /// </summary>
+    public ITag? Do { get; set; }
 
-        /// <inheritdoc />
-        public override bool Out => false;
+    /// <inheritdoc />
+    public override bool Out => false;
 
-    }
 }

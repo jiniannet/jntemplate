@@ -5,13 +5,12 @@
 
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// SpecialTag
+/// </summary>
+[Serializable]
+public abstract class SpecialTag : BasisTag
 {
-    /// <summary>
-    /// SpecialTag
-    /// </summary>
-    [Serializable]
-    public abstract class SpecialTag : BasisTag
-    {
-    }
 }

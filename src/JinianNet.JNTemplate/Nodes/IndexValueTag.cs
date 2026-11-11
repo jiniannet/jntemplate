@@ -4,17 +4,16 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// IndexValueTag
+/// </summary>
+[Serializable]
+public class IndexValueTag : ChildrenTag
 {
     /// <summary>
-    /// IndexValueTag
+    /// The zero-based index in the tag.
     /// </summary>
-    [Serializable]
-    public class IndexValueTag : ChildrenTag
-    {
-        /// <summary>
-        /// The zero-based index in the tag.
-        /// </summary>
-        public ITag Index { get; set; } 
-    }
+    public ITag? Index { get; set; } 
 }

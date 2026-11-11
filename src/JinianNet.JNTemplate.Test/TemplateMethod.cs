@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JinianNet.JNTemplate.Test
+﻿namespace JinianNet.JNTemplate.Test
 {
     public class TemplateMethod
     {

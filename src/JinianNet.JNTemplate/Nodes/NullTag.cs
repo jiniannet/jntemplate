@@ -4,20 +4,19 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// NullTag
+/// </summary>
+[Serializable]
+public class NullTag : SpecialTag
 {
-    /// <summary>
-    /// NullTag
-    /// </summary>
-    [Serializable]
-    public class NullTag : SpecialTag
+    /// <inheritdoc />
+    public override bool IsPrimitive => true;
+    /// <inheritdoc />
+    public override string ToString()
     {
-        /// <inheritdoc />
-        public override bool IsPrimitive => true;
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return string.Empty;
-        }
+        return string.Empty;
     }
 }

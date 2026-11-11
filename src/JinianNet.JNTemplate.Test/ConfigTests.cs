@@ -1,6 +1,4 @@
-﻿using Xunit;
-using System;
-using System.Threading.Tasks;
+﻿using static System.Net.Mime.MediaTypeNames;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -16,19 +14,19 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestConfig()
         {
-            var engine = BuildEngine();
-            engine.Configure((c) =>
-            {
-                c.TagFlag = '@';
-                c.TagSuffix = "}}";
-                c.TagPrefix = "{{";
-            });
 
             var templateContent = "你好，@name,欢迎来到{{name}}的世界";
-            var template = engine.CreateTemplate(templateContent);
-            template.Set("name", "jntemplate");
-            var render = template.Render(); 
-            Assert.Equal("你好，jntemplate,欢迎来到jntemplate的世界", render);
+            var text = "你好，jntemplate,欢迎来到jntemplate的世界";
+
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                engine => engine.Configure(c =>
+                {
+                    c.TagFlag = '@';
+                    c.TagSuffix = "}}";
+                    c.TagPrefix = "{{";
+                }),
+                template => template.Set("name", "jntemplate"));
 
         }
 
@@ -38,21 +36,22 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestTagConfig()
         {
-            var engine = BuildEngine();
-            engine.Configure((c) =>
-            {
-                c.TagFlag = '$';
-                c.TagSuffix = "}";
-                c.TagPrefix = "{$";
-            });
-
             var templateContent = "hello,{$username}{{jsVar}}{$year}!!";
-            var template = engine.CreateTemplate(templateContent);
-            template.Set("username", "jntemplate");
-            template.Set("year",2020);
-            var render = template.Render();
-            Assert.Equal("hello,jntemplate{{jsVar}}2020!!", render);
+            var text = "hello,jntemplate{{jsVar}}2020!!";
 
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                engine => engine.Configure(c =>
+                {
+                    c.TagFlag = '$';
+                    c.TagSuffix = "}";
+                    c.TagPrefix = "{$";
+                }),
+                template =>
+                {
+                    template.Set("username", "jntemplate");
+                    template.Set("year", 2020);
+                });
         }
 
         /// <summary>
@@ -61,15 +60,18 @@ namespace JinianNet.JNTemplate.Test
         [Fact]
         public void TestDisableeLogogram()
         {
-            var engine = BuildEngine();
-            engine.Configure((c) =>
-            {
-                c.DisableeLogogram = true;
-            });
-            var templateContent = "var $a =34;";
-            var template = engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("var $a =34;", render);
+            var templateContent = "var $a =34";
+            var text = "var $a =34";
+
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                engine => engine.Configure(c =>
+                {
+                    c.DisableLogogram = true;
+                }),
+                template =>
+                {
+                });
         }
 
         /// <summary>
@@ -87,10 +89,10 @@ $set(key4=4)
 $set(key5=5)
 $set(key6=6)
 $key5";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Context.OutMode = OutMode.StripWhiteSpace;
-            var render = template.Render();
-            Assert.Equal("your data is:5", render);
+            var text = "your data is:5";
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                template => template.Context.OutMode = OutMode.StripWhiteSpace);
         }
 
 
@@ -100,23 +102,22 @@ $key5";
         [Fact]
         public void TestAutoMode()
         {
-            var templateContent = 
+            var templateContent =
 @"<ul>
 $for(i =0;i<5;i++)
 <li>$i</li>
 $end
 <ul>";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Context.OutMode = OutMode.Auto;
-            var render = template.Render();
-            Assert.Equal(
-@"<ul>
+            var text = @"<ul>
 <li>0</li>
 <li>1</li>
 <li>2</li>
 <li>3</li>
 <li>4</li>
-<ul>", render);
+<ul>";
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                template => template.Context.OutMode = OutMode.Auto);
         }
 
 
@@ -127,13 +128,18 @@ $end
         [Fact]
         public void TestGlobalData()
         {
-            var engine = BuildEngine();
-            engine.Configure(o =>o.Data.Set("name","jntemplate"));
+            var templateContent = "hello,${name}";
+            var text = $"hello,jntemplate";
 
-            var templateContent ="hello,${name}";
-            var template = engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal($"hello,jntemplate", render);
+            TestCreateRunDoubleEngine(templateContent,
+                text,
+                engine => engine.Configure(c =>
+                {
+                    c.Data.Set("name", "jntemplate");
+                }),
+                template =>
+                {
+                });
         }
     }
 }

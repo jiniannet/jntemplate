@@ -6,55 +6,54 @@ using JinianNet.JNTemplate.CodeCompilation;
 using JinianNet.JNTemplate.Nodes;
 using System.Reflection;
 using System;
-using JinianNet.JNTemplate.Dynamic;
 
-namespace JinianNet.JNTemplate.Parsers
+namespace JinianNet.JNTemplate.Parsers;
+
+/// <summary>
+/// The <see cref="ElseTag"/> registrar
+/// </summary>
+public class ElseVisitor : TagVisitor<ElseTag>, ITagVisitor
 {
-    /// <summary>
-    /// The <see cref="ElseTag"/> registrar
-    /// </summary>
-    public class ElseVisitor : TagVisitor<ElseTag>, ITagVisitor
+    /// <inheritdoc />
+    public ITag? Parse(TemplateParser parser, TokenCollection tc)
     {
-        /// <inheritdoc />
-        public ITag Parse(TemplateParser parser, TokenCollection tc)
+        if (tc.Count == 1
+            && Utility.IsEqual(tc.First.Text, Const.KEY_ELSE))
         {
-            if (tc.Count == 1
-                && Utility.IsEqual(tc.First.Text, Const.KEY_ELSE))
-            {
-                return new ElseTag();
-            }
+            return new ElseTag();
+        }
 
+        return null;
+    }
+
+    /// <inheritdoc />
+    public MethodInfo? Compile(ITag tag, CompileContext context)
+    {
+        return context.IfCompile((ElseTag)tag);
+    }
+    /// <inheritdoc />
+    public Type? GuessType(ITag tag, CompileContext context)
+    {
+        return context.GuessIfType((ElseTag)tag);
+    }
+    /// <inheritdoc />
+    public object? Execute(ITag tag, TemplateContext context)
+    {
+        var t = tag as ElseTag;
+        if (t == null) return null;
+        if (t.Children.Count == 0)
+        {
             return null;
         }
-
-        /// <inheritdoc />
-        public MethodInfo Compile(ITag tag, CompileContext context)
+        if (t.Children.Count == 1)
         {
-            return context.IfCompile((ElseTag)tag);
+            return context.Execute(t.Children[0]);
         }
-        /// <inheritdoc />
-        public Type GuessType(ITag tag, CompileContext context)
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < t.Children.Count; i++)
         {
-            return context.GuessIfType((ElseTag)tag);
+            sb.Append(context.Execute(t.Children[i]));
         }
-        /// <inheritdoc />
-        public object Excute(ITag tag, TemplateContext context)
-        {
-            var t = tag as ElseTag;
-            if (t.Children.Count == 0)
-            {
-                return null;
-            }
-            if (t.Children.Count == 1)
-            {
-                return context.Execute(t.Children[0]);
-            }
-            var sb = new System.Text.StringBuilder();
-            for (int i = 0; i < t.Children.Count; i++)
-            {
-                sb.Append(context.Execute(t.Children[i]));
-            }
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 }

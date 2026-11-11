@@ -4,17 +4,16 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// IncludeTag
+/// </summary>
+[Serializable]
+public class IncludeTag : ComplexTag
 {
     /// <summary>
-    /// IncludeTag
+    /// The path of a tag.
     /// </summary>
-    [Serializable]
-    public class IncludeTag : ComplexTag
-    {
-        /// <summary>
-        /// The path of a tag.
-        /// </summary>
-        public ITag Path { get; set; }
-    }
+    public ITag? Path { get; set; }
 }

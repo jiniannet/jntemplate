@@ -1,6 +1,4 @@
-﻿
-using System;
-namespace JinianNet.JNTemplate.Test.Model
+﻿namespace JinianNet.JNTemplate.Test.Model
 {
     /// <summary>
     /// Product:实体类(属性说明自动提取数据库字段的描述信息)

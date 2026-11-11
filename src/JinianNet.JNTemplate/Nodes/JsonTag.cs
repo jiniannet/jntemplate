@@ -5,17 +5,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// JsonTag
+/// </summary>
+[Serializable]
+public class JsonTag : BasisTag
 {
     /// <summary>
-    /// JsonTag
+    /// Gets or sets the data of the tag.
     /// </summary>
-    [Serializable]
-    public class JsonTag : BasisTag
-    {
-        /// <summary>
-        /// Gets or sets the data of the tag.
-        /// </summary>
-        public Dictionary<ITag, ITag> Dict { get; } = new Dictionary<ITag, ITag>();
-    }
+    public Dictionary<ITag, ITag> Dict { get; } = new Dictionary<ITag, ITag>();
 }

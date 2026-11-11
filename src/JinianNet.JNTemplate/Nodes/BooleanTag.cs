@@ -4,13 +4,12 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// BooleanTag
+/// </summary>
+[Serializable]
+public class BooleanTag : TypeTag<bool>
 {
-    /// <summary>
-    /// BooleanTag
-    /// </summary>
-    [Serializable]
-    public class BooleanTag : TypeTag<bool>
-    {
-    }
 }

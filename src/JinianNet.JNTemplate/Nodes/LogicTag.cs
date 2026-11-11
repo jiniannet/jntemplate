@@ -4,13 +4,12 @@
  ********************************************************************************/
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// LogicTag
+/// </summary>
+[Serializable]
+public class LogicTag : BasisTag
 {
-    /// <summary>
-    /// LogicTag
-    /// </summary>
-    [Serializable]
-    public class LogicTag : BasisTag
-    {
-    }
 }

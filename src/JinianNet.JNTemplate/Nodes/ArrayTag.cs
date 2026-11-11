@@ -5,17 +5,16 @@
 
 using System;
 
-namespace JinianNet.JNTemplate.Nodes
+namespace JinianNet.JNTemplate.Nodes;
+
+/// <summary>
+/// ArrayTag
+/// </summary>
+[Serializable]
+public class ArrayTag : SpecialTag
 {
     /// <summary>
-    /// ArrayTag
+    /// Gets or sets the value of the tag.
     /// </summary>
-    [Serializable]
-    public class ArrayTag : SpecialTag
-    {
-        /// <summary>
-        /// Gets or sets the value of the tag.
-        /// </summary>
-        public Object[] Value { get; set; }
-    }
+    public Object[]? Value { get; set; }
 }

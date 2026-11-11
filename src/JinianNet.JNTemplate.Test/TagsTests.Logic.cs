@@ -1,9 +1,5 @@
-﻿using JinianNet.JNTemplate;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Xunit;
+﻿using JinianNet.JNTemplate.Test.Model;
+using JinianNet.JNTemplate.Test.ViewModel;
 
 namespace JinianNet.JNTemplate.Test
 {
@@ -19,19 +15,21 @@ namespace JinianNet.JNTemplate.Test
         public void TestForAndTag()
         {
             var templateContent = @"${foreach(entity in list)}${ if (entity.Name.Length > 4 && entity.Name.Substring(0, 4) == ""File"")}yes${else}no${end}${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            var arr = new List<Entity>();
-            arr.Add(new Entity
-            {
-                Name = "File20190128"
-            });
-            arr.Add(new Entity
-            {
-                Name = "19"
-            });
-            template.Set("list", arr);
-            var render = template.Render();
-            Assert.Equal("yesno", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yesno",
+                template =>
+                {
+                    var arr = new List<Entity>();
+                    arr.Add(new Entity
+                    {
+                        Name = "File20190128"
+                    });
+                    arr.Add(new Entity
+                    {
+                        Name = "19"
+                    });
+                    template.Set("list", arr);
+                });
         }
 
         /// <summary>
@@ -41,13 +39,15 @@ namespace JinianNet.JNTemplate.Test
         public void TestAndTag()
         {
             var templateContent = @"${ if (entity.Name.Length > 4 && entity.Name.Substring(0, 4) == ""File"" &&  entity.Name.EndsWith(""19""))}yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("entity", new Entity
-            {
-                Name = "File19"
-            });
-            var render =  template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("entity", new Entity
+                    {
+                        Name = "File19"
+                    });
+                });
         }
 
 
@@ -58,9 +58,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestLogicPriority()
         {
             var templateContent = @"${if(3+5>20 && 1-2<7 && 1<2) }yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("no", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "no");
         }
 
 
@@ -71,10 +70,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestLogicExpression()
         {
             var templateContent = "${4<=5}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("True", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "True");
         }
 
         /// <summary>
@@ -84,10 +81,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestLogicOrExpression()
         {
             var templateContent = "${4==5||5==5}";//如果是复杂的表达式，应优先考虑使用括号来表达优先级，比如 ${(4==5)||(5==5)} 比简单使用  ${4==5||5==5} 更好
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("True", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "True");
         }
 
         /// <summary>
@@ -97,10 +92,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestLogicAndExpression()
         {
             var templateContent = "${4==5&&5==5}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-
-            Assert.Equal("False", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "False");
         }
 
         /// <summary>
@@ -110,11 +103,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestIf()
         {
             var templateContent = "${if(3==8)}3=8 success${elseif(3>8)}3>8 success${elseif(2<5)}2<5 success${else}null${end}";
-            var template = Engine.CreateTemplate(templateContent);
-
-            var render = template.Render();
-
-            Assert.Equal("2<5 success", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "2<5 success"); 
         }
 
         /// <summary>
@@ -124,11 +114,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestAdmixtureIf()
         {
             var templateContent = "$if(date >= date.AddDays(-3))yes$end"; //数组取值用get即可取到 List<Int32>用get_Item  见.NET的索引实现原理
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("CreteDate", DateTime.Now);
-            template.Set("date", DateTime.Now);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("CreteDate", DateTime.Now);
+                    template.Set("date", DateTime.Now);
+                }); 
         }
 
         /// <summary>
@@ -138,10 +130,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestObjectIsNull()
         {
             var templateContent = "${if(dd)}yes${else}no$end";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("dd", new object());
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("dd", new object());
+                }); 
         }
 
         /// <summary>
@@ -151,9 +145,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestArithmeticAndArithmetic()
         {
             var templateContent = "$if(3>2 && 5<2)yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent); ;
-            var render = template.Render();
-            Assert.Equal("no", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "no");
         }
 
         /// <summary>
@@ -164,10 +157,12 @@ namespace JinianNet.JNTemplate.Test
         {
             //v1 为空 false,5<2为false，整体结果 false || false 为false
             var templateContent = "$if(v1 || 5<2)yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set<object>("v1", null);
-            var render = template.Render();
-            Assert.Equal("no", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "no",
+                template =>
+                {
+                    template.Set<object>("v1", null);
+                }); 
         }
 
         /// <summary>
@@ -182,11 +177,13 @@ namespace JinianNet.JNTemplate.Test
             //对象在为NULL时为FALSE，否则为TRUE
             //v1 为空 false,v2等于9，数字不等于0即为true,整体结果 false || true 为true
             var templateContent = "$if(v1 || v2)yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("v2", 9);
-            template.Set<object>("v1", null);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("v2", 9);
+                    template.Set<object>("v1", null);
+                }); 
         }
 
         /// <summary>
@@ -196,10 +193,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestElif()
         {
             var templateContent = "${if(3>5)}3>5${elif(2==2)}2=2${else}not${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("list", new int[] { 7, 0, 2, 0, 6 });
-            var render = template.Render();
-            Assert.Equal("2=2", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "2=2",
+                template =>
+                {
+                    template.Set("list", new int[] { 7, 0, 2, 0, 6 });
+                }); 
         }
         /// <summary>
         /// 测试NULL
@@ -209,10 +208,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestNull()
         {
             var templateContent = "${if(model==null)}true${else}false${end}";
-            var template = Engine.CreateTemplate("TestNull", templateContent);
-            template.Set<object>("model", null);
-            var render = template.Render();
-            Assert.Equal("true", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "true",
+                template =>
+                {
+                    template.Set<object>("model", null);
+                }); 
         }
         /// <summary>
         /// 测试NULL
@@ -222,10 +223,12 @@ namespace JinianNet.JNTemplate.Test
         public void TestNotNull()
         {
             var templateContent = "${if(model==null)}true${else}false${end}";
-            var template = Engine.CreateTemplate("TestNotNull", templateContent);
-            template.Set<object>("model", new object());
-            var render = template.Render();
-            Assert.Equal("false", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "false",
+                template =>
+                {
+                    template.Set<object>("model", new object());
+                }); 
         }
 
         /// <summary>
@@ -236,11 +239,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestNotTrue()
         {
             var templateContent = "${if(String.IsNullOrEmpty(Name)!=true)}ok${end}";
-            var template = Engine.CreateTemplate("TestNotTrue", templateContent);
-            template.Set("Name", "jntemplate");
-            template.SetStaticType("String", typeof(string));
-            var render = template.Render();
-            Assert.Equal("ok", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "ok",
+                template =>
+                {
+                    template.Set("Name", "jntemplate");
+                    template.SetStaticType("String", typeof(string));
+                }); 
         }
 
         /// <summary>
@@ -251,11 +256,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestFuncTrue()
         {
             var templateContent = "${if(String.IsNullOrEmpty(Name)==true)}ok${end}";
-            var template = Engine.CreateTemplate("TestFuncTrue", templateContent);
-            template.Set<string>("Name", null);
-            template.SetStaticType("String", typeof(string));
-            var render = template.Render();
-            Assert.Equal("ok", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "ok",
+                template =>
+                {
+                    template.Set<string>("Name", null);
+                    template.SetStaticType("String", typeof(string));
+                }); 
         }
 
         /// <summary>
@@ -266,12 +273,14 @@ namespace JinianNet.JNTemplate.Test
         public void TestStringEquals()
         {
             var templateContent = "${if(var1==var2)}yes${else}no${end}";
-            var template = Engine.CreateTemplate("TestStringEquals", templateContent);
-            template.Set("var1", "jntemplate");
-            template.Set("var2", "jntemplate");
-            template.SetStaticType("String", typeof(string));
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("var1", "jntemplate");
+                    template.Set("var2", "jntemplate");
+                    template.SetStaticType("String", typeof(string));
+                }); 
         }
 
 
@@ -283,12 +292,14 @@ namespace JinianNet.JNTemplate.Test
         public void TestStringNotEquals()
         {
             var templateContent = "${if(var1!=var2)}yes${else}no${end}";
-            var template = Engine.CreateTemplate("TestStringNotEquals", templateContent);
-            template.Set("var1", "jntemplate");
-            template.Set("var2", "jntemplate");
-            template.SetStaticType("String", typeof(string));
-            var render = template.Render();
-            Assert.Equal("no", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "no",
+                template =>
+                {
+                    template.Set("var1", "jntemplate");
+                    template.Set("var2", "jntemplate");
+                    template.SetStaticType("String", typeof(string));
+                }); 
         }
 
 
@@ -300,11 +311,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestEnumEquals()
         {
             var templateContent = "${if(enum1==enum2)}ok${end}";
-            var template = Engine.CreateTemplate("TestEnumEquals", templateContent);
-            template.Set("enum1", PlatformID.Win32NT);
-            template.Set("enum2", PlatformID.Win32NT);
-            var render = template.Render();
-            Assert.Equal("ok", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "ok",
+                template =>
+                {
+                    template.Set("enum1", PlatformID.Win32NT);
+                    template.Set("enum2", PlatformID.Win32NT);
+                }); 
         }
 
         /// <summary>
@@ -315,11 +328,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestEnumNotEquals()
         {
             var templateContent = "${if(enum1!=enum2)}ok${end}";
-            var template = Engine.CreateTemplate("TestEnumNotEquals", templateContent);
-            template.Set("enum1", PlatformID.Win32NT);
-            template.Set("enum2", PlatformID.Unix);
-            var render = template.Render();
-            Assert.Equal("ok", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "ok",
+                template =>
+                {
+                    template.Set("enum1", PlatformID.Win32NT);
+                    template.Set("enum2", PlatformID.Unix);
+                }); 
         }
 
 #if NOTODO 
@@ -366,9 +381,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestStrAndStr()
         {
             var templateContent = "${if(\"key\"==\"key\")}yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes"); 
         }
 
         /// <summary>
@@ -378,9 +392,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestParentheses()
         {
             var templateContent = "${if((true))}yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+             "yes");
         }
 
         /// <summary>
@@ -390,9 +403,8 @@ namespace JinianNet.JNTemplate.Test
         public void TestParenthesesAndArithmetic()
         {
             var templateContent = "${if((3+8)-4>0)}yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+             "yes");
         }
 
 
@@ -403,11 +415,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestParenthesesAndLogic()
         {
             var templateContent = "${if(id==0||(id>0 && value <10))}yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("id",4);
-            template.Set("value", 8);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("id", 4);
+                    template.Set("value", 8);
+                }); 
         }
 
         /// <summary>
@@ -417,11 +431,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestOrVsAndLogic()
         {
             var templateContent = "${if(id>0 && id<10 && value<10)}yes${else}no${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("id", 4);
-            template.Set("value", 8);
-            var render = template.Render();
-            Assert.Equal("yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "yes",
+                template =>
+                {
+                    template.Set("id", 4);
+                    template.Set("value", 8);
+                }); 
         }
 
 
@@ -432,11 +448,13 @@ namespace JinianNet.JNTemplate.Test
         public void TestIfOnes()
         {
             var templateContent = "$if(isCollecting)${collectingMoney}${end}";
-            var template = Engine.CreateTemplate(templateContent);
-            template.Set("isCollecting", true);
-            template.Set("collectingMoney", 88.8M);
-            var render = template.Render(); ;
-            Assert.Equal("88.8", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "88.8",
+                template =>
+                {
+                    template.Set("isCollecting", true);
+                    template.Set("collectingMoney", 88.8M);
+                }); 
         }
 
 
@@ -447,11 +465,37 @@ namespace JinianNet.JNTemplate.Test
         public void TestIfWithDecimal()
         {
             var templateContent = "${if(num>0)}Yes${else}No${end}";
-            var template = Engine.CreateTemplate(templateContent); 
-            decimal num = 1;
-            template.Set("num", num);
-            var render = template.Render();
-            Assert.Equal("Yes", render);
+            TestCreateRunDoubleEngine(templateContent,
+                "Yes",
+                template =>
+                {
+                    template.Set("num", 1M);
+                }); 
         }
+
+
+        /// <summary>
+        /// fixs #I8CNOA
+        /// </summary>
+        [Fact]
+        public void TestIfNotNull()
+        {
+            var model = new Goods()
+            {
+                Id = 1,
+                ImgUrl = "pic.png",
+                Title = "商品名称一",
+                Fields = new Dictionary<string, object>() {
+                         { "sell_price","200" },
+                         { "act_txt","IX20261103" },
+                     }
+            };
+            var templateContent = "${if(model.Fields[\"act_txt\"]!=null)}${model.Fields[\"act_txt\"]}${end}";
+            var text = "IX20261103";
+            TestCreateRunDoubleEngine(templateContent,
+               text,
+               template => template.Set("model", model));
+        }
+
     }
 }
